@@ -32,6 +32,7 @@
             Permweb
         </span>
     </div>
+    <div class="notice">Developed by <a href="https://github.com/nekomeowww">Ayaka Neko</a> for Project <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a></div>
     <style>
         #stars {
             width: 1px;
@@ -224,6 +225,35 @@
 
         #subtitle span:nth-child(3) {
             animation-name: animThree;
+        }
+
+        .notice {
+            position: fixed;
+            color: rgb(177, 177, 177);
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            text-align: center;
+            animation-name: fadeInOpacity;
+            animation-iteration-count: 1;
+            animation-timing-function: ease;
+            animation-duration: 6s;
+        }
+
+        a {
+            text-decoration: none;
+            color: #E56D9B;
+        }
+
+        @keyframes fadeInOpacity {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @keyframes animStar {
