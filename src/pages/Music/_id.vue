@@ -11,7 +11,7 @@
       </div>
       <div id='earth'></div>
       <div id='title'>
-          ArcLight
+          {{ audio.name }}
       </div>
       <div id='subtitle'>
           <span>
