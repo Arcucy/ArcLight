@@ -258,6 +258,33 @@ export default {
     animation-duration: 6s;
 }
 
+@media screen and (max-width: 1000px){
+  #title {
+    font-size: 6rem;
+    letter-spacing: 1rem;
+  }
+}
+
+@media screen and (max-width: 600px){
+  #title {
+    font-size: 4rem;
+    letter-spacing: 1rem;
+  }
+}
+
+@media screen and (max-width: 400px){
+  #title {
+    font-size: 2rem;
+    letter-spacing: 0.5rem;
+  }
+  #subtitle span {
+    font-size: 16px;
+  }
+  .notice {
+      font-size: 12px;
+  }
+}
+
 a {
     text-decoration: none;
     color: #E56D9B;
