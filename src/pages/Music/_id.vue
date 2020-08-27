@@ -31,7 +31,7 @@
 
 <script>
 
-import flac from '@/assets/Music/FlowerDance.flac'
+import mp3 from '@/assets/Music/FlowerDance.mp3'
 import album from '@/assets/Music/FlowerDance.jpg'
 
 import Header from '@/components/Header.vue'
@@ -48,7 +48,7 @@ export default {
         flowerdance: {
           name: 'Flower Dance',
           artist: 'DJ OKAWARI',
-          url: flac,
+          url: mp3,
           cover: album
         }
       }
@@ -296,6 +296,33 @@ export default {
     animation-iteration-count: 1;
     animation-timing-function: ease;
     animation-duration: 6s;
+}
+
+@media screen and (max-width: 1000px){
+  #title {
+    font-size: 6rem;
+    letter-spacing: 1rem;
+  }
+}
+
+@media screen and (max-width: 600px){
+  #title {
+    font-size: 4rem;
+    letter-spacing: 1rem;
+  }
+}
+
+@media screen and (max-width: 400px){
+  #title {
+    font-size: 2rem;
+    letter-spacing: 0.5rem;
+  }
+  #subtitle span {
+    font-size: 16px;
+  }
+  .notice {
+      font-size: 12px;
+  }
 }
 
 a {
