@@ -6,8 +6,10 @@ import router from './router'
 import store from '@/store/index.js'
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
+import APlayer from '@moefe/vue-aplayer'
 
 Vue.use(Buefy)
+Vue.use(APlayer)
 
 Vue.config.productionTip = false
 
