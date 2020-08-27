@@ -2,7 +2,7 @@
   <div class="music-list">
     <b-menu>
       <b-menu-list v-for="(audio, index) in audioList" :key="index" label="Music List">
-        <b-menu-item :label="audio.name" tag="router-link" target="_blank" :to="audio.path"></b-menu-item>
+        <b-menu-item :label="audio.name" tag="router-link" :to="audio.path"></b-menu-item>
       </b-menu-list>
     </b-menu>
   </div>
