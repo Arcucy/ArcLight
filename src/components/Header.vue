@@ -2,7 +2,7 @@
   <div class="header">
     <div class="link-container">
       <router-link :to="{ name: 'Landing' }" class="link">
-        <img src="../assets/logo.png" style="height: 3rem">
+        <img src="https://arweave.net/QBZ-GBVAsum9Eyjzwq04cKYky2pjZUPGtyrwwhwFpfg" style="height: 3rem">
       </router-link>
       <router-link :to="{ name: 'Landing' }" class="link text-link">
         ArcLight
