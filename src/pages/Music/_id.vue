@@ -31,9 +31,6 @@
 
 <script>
 
-import mp3 from '@/assets/Music/FlowerDance.mp3'
-import album from '@/assets/Music/FlowerDance.jpg'
-
 import Header from '@/components/Header.vue'
 
 export default {
@@ -48,8 +45,8 @@ export default {
         flowerdance: {
           name: 'Flower Dance',
           artist: 'DJ OKAWARI',
-          url: mp3,
-          cover: album
+          url: 'https://arweave.net/jRiasP366NS-swsGM925_YToVTEoyHLQJFoWuFwxQdM',
+          cover: 'https://arweave.net/i8sisZmu7r0IdbOmbYCv7n4VOo-3lF6GWLG5qS8RV5E'
         }
       }
     }
