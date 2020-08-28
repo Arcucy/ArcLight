@@ -33,8 +33,8 @@
 
 import Header from '@/components/Header.vue'
 
-import mp3 from '@/assets/Music/FlowerDance.mp3'
-import album from '@/assets/Music/FlowerDance.jpg'
+import mp3 from '@/assets/music/FlowerDance.mp3'
+import album from '@/assets/music/FlowerDance.jpg'
 
 export default {
   components: {
