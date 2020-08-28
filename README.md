@@ -1,6 +1,6 @@
 <h1 align="center">ArcLight</h1>
 <p align="center">A Arweave Storage App</p>
-<p align="center"><a href="https://arweave.net/0U9nD5NbkADJPzMoztzp0_7E0rwNI2Chd5H5Xp4ZxrE">Live Permweb</a> for ArcLight</p>
+<p align="center"><a href="https://arweave.net/DdjCHM9GiWxQ7NnRQq_jJ7Ib4kOe8tlSchdu4nGbVWw">Live Permweb</a> for ArcLight</p>
 <p align="center">
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
