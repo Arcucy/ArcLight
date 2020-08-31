@@ -17,9 +17,9 @@ arweave deploy-dir ./dist --key-file ./secrets/key.json
 ```
 
 ### Reference
-[arweave interface](https://www.arweave.org/build)
-[Arweave.js](https://github.com/ArweaveTeam/arweave-js): A library for interacting with the Arweave network from web applications and node.js programs.
-[Arweave Deploy](https://github.com/ArweaveTeam/arweave-deploy): A simple command line tool for deploying web apps, pages, and other files to the permaweb.
+[arweave interface](https://www.arweave.org/build)    
+[Arweave.js](https://github.com/ArweaveTeam/arweave-js): A library for interacting with the Arweave network from web applications and node.js programs.    
+[Arweave Deploy](https://github.com/ArweaveTeam/arweave-deploy): A simple command line tool for deploying web apps, pages, and other files to the permaweb.    
 ## Build Setup
 
 ``` bash
