@@ -23,7 +23,7 @@ export default {
 #title {
   position: absolute;
   font-weight: 300;
-  top: 56%;
+  top: 49%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -42,7 +42,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 80%;
+  top: 70%;
   left: 0;
   right: 0;
   font-size: 25px;

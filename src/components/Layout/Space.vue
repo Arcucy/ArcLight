@@ -36,6 +36,8 @@ export default {
 <style scoped>
 .slot-shell {
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .notice {
