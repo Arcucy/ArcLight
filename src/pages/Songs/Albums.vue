@@ -2,31 +2,9 @@
   <spaceLayout>
     <div class="songs">
       <div class="songs-header">
-        <h4>
-          Singles Sellings
-        </h4>
-        <router-link :to="{ name: 'SongsSingles' }">
-          All Sellings
-          <v-icon class="header-icon">keyboard_arrow_right</v-icon>
-        </router-link>
-      </div>
-      <div class="songs-list">
-        <singleCard
-          class="single-card"
-          v-for="(item, index) in singles"
-          :key="index"
-          :card="item"
-        />
-      </div>
-    </div>
-    <div class="songs">
-      <div class="songs-header">
-        <h4>
-          Albums Sellings
-        </h4>
-        <router-link :to="{ name: 'SongsAlbums' }">
-          All Sellings
-          <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+        <router-link :to="{ name: 'Songs' }">
+          <v-icon class="header-icon">keyboard_arrow_left</v-icon>
+          ALL Albums Sellings
         </router-link>
       </div>
       <div class="songs-list">
@@ -37,23 +15,31 @@
           :card="item"
         />
       </div>
+      <div class="songs-pagination">
+        <v-pagination
+          v-model="page"
+          :length="20"
+          :total-visible="10"
+          color="#E56D9B"
+          dark
+        />
+      </div>
     </div>
   </spaceLayout>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
-import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 
 export default {
   components: {
     spaceLayout,
-    singleCard,
     albumCard
   },
   data () {
     return {
+      page: 1,
       singles: [
         {
           title: 'RED',
@@ -127,25 +113,18 @@ export default {
   max-width: 1240px;
   width: 100%;
   &-header {
-    margin: 0 20px 16px;
+    margin: 0 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    h4 {
+    a {
       margin: 0;
       font-size: 16px;
       font-weight: 500;
       color: #E56D9B;
       line-height: 22px;
-    }
-    a {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 500;
-      color: #FFFFFF;
-      line-height: 20px;
       .header-icon {
-        color: #FFFFFF;
+        color: #E56D9B;
         font-size: 18px;
       }
     }
@@ -154,12 +133,13 @@ export default {
     margin: 0 20px 0;
     display: flex;
     overflow: hidden;
-    .single-card {
-      margin-right: 16px;
-    }
+    flex-wrap: wrap;
     .album-card {
-      margin-right: 42px;
+      margin: 16px 42px 32px 0;
     }
+  }
+  &-pagination {
+    margin: 16px 20px 0;
   }
 
 }
