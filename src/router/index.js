@@ -5,6 +5,7 @@ import Landing from '@/pages/Landing.vue'
 import Music from '@/pages/Music/_id.vue'
 import MusicMenu from '@/pages/Music.vue'
 import Songs from '@/pages/Songs/Index'
+import SongsSingles from '@/pages/Songs/Singles'
 
 Vue.use(Router)
 
@@ -31,6 +32,11 @@ export default new Router({
       path: '/songs',
       name: 'Songs',
       component: Songs
+    },
+    {
+      path: '/songs/singles',
+      name: 'SongsSingles',
+      component: SongsSingles
     }
   ]
 })
