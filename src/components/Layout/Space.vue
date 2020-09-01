@@ -8,14 +8,14 @@
       <div class='glow' />
     </div>
     <div id='earth' />
-    <div>
-      <slot />
-    </div>
     <div class="notice">
       Developed by
       <a href="https://github.com/nekomeowww">Ayaka Neko</a>
       for Project
       <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a>
+    </div>
+    <div class="slot-shell">
+      <slot />
     </div>
   </div>
 </template>
@@ -34,6 +34,10 @@ export default {
 <style scoped src="./Space.css" />
 
 <style scoped>
+.slot-shell {
+  position: relative;
+}
+
 .notice {
   position: fixed;
   color: rgb(177, 177, 177);
