@@ -4,11 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from '@/store/index.js'
-import Buefy from 'buefy'
-import 'buefy/dist/buefy.css'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
 import APlayer from '@moefe/vue-aplayer'
 
-Vue.use(Buefy)
+Vue.use(Vuetify)
 Vue.use(APlayer)
 
 Vue.config.productionTip = false
@@ -18,6 +18,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  vuetify: new Vuetify(),
   components: { App },
   template: '<App/>'
 })
