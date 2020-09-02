@@ -10,7 +10,7 @@
     <div id='earth' />
     <div class="notice">
       Developed by
-      <a href="https://github.com/nekomeowww">Ayaka Neko</a>
+      <a href="https://github.com/AyakaLab">Ayaka Lab</a>
       for Project
       <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a>
     </div>
