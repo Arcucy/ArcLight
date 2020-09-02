@@ -6,7 +6,7 @@
         <h4>
           Singles Sellings
         </h4>
-        <router-link :to="{ name: 'SongsSingles' }">
+        <router-link :to="{ name: 'SongsSingles', query: { tab } }">
           All Sellings
           <v-icon class="header-icon">keyboard_arrow_right</v-icon>
         </router-link>
@@ -46,7 +46,7 @@
         <h4>
           Albums Sellings
         </h4>
-        <router-link :to="{ name: 'SongsAlbums' }">
+        <router-link :to="{ name: 'SongsAlbums', query: { tab } }">
           All Sellings
           <v-icon class="header-icon">keyboard_arrow_right</v-icon>
         </router-link>
@@ -80,6 +80,7 @@
         </div>
       </div>
     </div>
+    <categoryNav v-model="tab" />
   </spaceLayout>
 </template>
 
@@ -87,15 +88,18 @@
 import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
+import categoryNav from '@/components/CategoryNav'
 
 export default {
   components: {
     spaceLayout,
     singleCard,
-    albumCard
+    albumCard,
+    categoryNav
   },
   data () {
     return {
+      tab: 'song',
       singlePara: {
         scrollRight: false,
         scrollLeft: false
@@ -191,6 +195,11 @@ export default {
       singles.push(...this.singles)
     }
     this.singles = singles
+  },
+  watch: {
+    tab (val) {
+      console.log('标签切换：', val)
+    }
   },
   // 取消侦测器
   destroyed () {

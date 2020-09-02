@@ -2,7 +2,7 @@
   <spaceLayout>
     <div class="songs">
       <div class="songs-header">
-        <router-link :to="{ name: 'Songs' }">
+        <router-link :to="{ name: 'Songs', query: { tab } }">
           <v-icon class="header-icon">keyboard_arrow_left</v-icon>
           ALL Albums Sellings
         </router-link>
@@ -25,20 +25,24 @@
         />
       </div>
     </div>
+    <categoryNav v-model="tab" />
   </spaceLayout>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
 import albumCard from '@/components/Song/AlbumCard'
+import categoryNav from '@/components/CategoryNav'
 
 export default {
   components: {
     spaceLayout,
-    albumCard
+    albumCard,
+    categoryNav
   },
   data () {
     return {
+      tab: 'song',
       page: 1,
       singles: [
         {
