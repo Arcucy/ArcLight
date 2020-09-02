@@ -19,8 +19,11 @@
       <p class="card-artist">
         by {{ card.artist }}
       </p>
-      <p class="card-price">
-        play {{ card.price }} AR
+      <p v-if="card.price != 0" class="card-price">
+        pay {{ card.price }} AR
+      </p>
+      <p v-else class="card-price">
+        free
       </p>
       <p class="card-time">
         {{ card.time }}
