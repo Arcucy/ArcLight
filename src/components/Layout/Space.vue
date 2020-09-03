@@ -1,21 +1,23 @@
 <template>
-  <div class="landing-container">
-    <Header />
-    <div id='stars' />
-    <div id='stars2' />
-    <div id='stars3' />
-    <div id='horizon'>
-      <div class='glow' />
+  <div class="layout">
+    <div class="layout-bg">
+      <div id='stars' />
+      <div id='stars2' />
+      <div id='stars3' />
+      <div id='horizon'>
+        <div class='glow' />
+      </div>
+      <div id='earth' />
     </div>
-    <div id='earth' />
+    <Header />
+    <div class="slot-shell">
+      <slot />
+    </div>
     <div class="notice">
       Developed by
       <a href="https://github.com/AyakaLab">Ayaka Lab</a>
       for Project
       <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a>
-    </div>
-    <div class="slot-shell">
-      <slot />
     </div>
   </div>
 </template>
@@ -34,19 +36,20 @@ export default {
 <style scoped src="./Space.css" />
 
 <style scoped>
+.layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 .slot-shell {
   position: relative;
   width: 100%;
-  height: 100%;
+  flex: 1;
 }
 
 .notice {
-  position: fixed;
   color: rgb(177, 177, 177);
-  bottom: 30px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+  margin: 100px auto 50px;
   text-align: center;
   animation-name: fadeInOpacity;
   animation-iteration-count: 1;
@@ -62,7 +65,11 @@ export default {
 </style>
 
 <style>
-html {
-  overflow: hidden !important;
+html, body {
+  height: 100%;
+}
+
+#app {
+  height: 100%;
 }
 </style>
