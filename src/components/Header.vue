@@ -214,7 +214,7 @@ export default {
 <style lang="less" scoped>
 
 .header {
-  margin-top: 2rem;
+  padding-top: 20px;
   display: flex;
   align-items: center;
 }

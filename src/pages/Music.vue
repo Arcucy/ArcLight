@@ -383,9 +383,3 @@ a {
     }
 }
 </style>
-
-<style>
-html {
-    overflow: hidden !important;
-}
-</style>
