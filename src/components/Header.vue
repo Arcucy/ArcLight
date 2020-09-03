@@ -29,6 +29,7 @@
             v-if="userAvatar"
             :src="userAvatar"
             :alt="username"
+            style="margin-right: 0.3rem;"
           >
         </v-avatar>
           {{ username }}
