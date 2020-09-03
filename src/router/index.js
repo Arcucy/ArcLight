@@ -11,7 +11,7 @@ import SongsAlbums from '@/pages/Songs/Albums'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/',
