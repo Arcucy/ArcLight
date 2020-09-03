@@ -179,7 +179,12 @@ export default {
   }
   &-list {
     margin: 0 20px 0;
+    .single-card {
+      margin-right: 16px;
+    }
+    .album-card {
+      margin-right: 42px;
+    }
   }
-
 }
 </style>
