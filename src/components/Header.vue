@@ -7,12 +7,26 @@
       <router-link :to="{ name: 'Landing' }" class="link text-link">
         ArcLight
       </router-link>
-      <router-link :to="{ name: 'MusicMenu' }" class="link text-link">
+      <router-link :to="{ name: 'Songs' }" class="link text-link">
         Music
       </router-link>
     </div>
     <Search class="search-bar"/>
     <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Login</v-btn>
+    <v-btn
+      v-if="isLoggedIn"
+      class="upload"
+      depressed
+      large
+      color="#E56D9B"
+      :outlined="true"
+      @click="uploadMusic"
+    >
+      <v-avatar :size="24">
+        <v-icon :size="24" light style="color: #E56D9B;">mdi-upload</v-icon>
+      </v-avatar>
+      Upload Music
+    </v-btn>
     <v-menu v-if="isLoggedIn" offset-y>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -23,15 +37,15 @@
           v-bind="attrs"
           v-on="on"
         >
-        <v-avatar :size="24">
-          <v-icon :size="24" v-if="!userAvatar" dark style="margin-right: 0.3rem;">mdi-account-circle</v-icon>
-          <img
-            v-if="userAvatar"
-            :src="userAvatar"
-            :alt="username"
-            style="margin-right: 0.3rem;"
-          >
-        </v-avatar>
+          <v-avatar :size="24">
+            <v-icon :size="24" v-if="!userAvatar" dark style="margin-right: 0.3rem;">mdi-account-circle</v-icon>
+            <img
+              v-if="userAvatar"
+              :src="userAvatar"
+              :alt="username"
+              style="margin-right: 0.3rem;"
+            >
+          </v-avatar>
           {{ username }}
         </v-btn>
       </template>
@@ -186,7 +200,12 @@ export default {
       if (item.type) {
         this.loginBtnLoading = false
         this.logout()
+      } else {
+        this.$router.push({ path: item.path })
       }
+    },
+    uploadMusic () {
+      console.log('music')
     }
   }
 }
@@ -257,11 +276,18 @@ export default {
 }
 
 /deep/ .v-menu__content > .v-list {
-  background-color: #333333;
+  background-color: rgba(51,51,51,0.5);
 }
 
 .upload-btn {
   /deep/ .v-btn__content {
+    color: white;
+  }
+}
+
+.upload {
+  margin-left: 1rem;
+  /deep/ i {
     color: white;
   }
 }
