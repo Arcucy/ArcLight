@@ -12,20 +12,59 @@
       </router-link>
     </div>
     <Search class="search-bar"/>
-    <v-btn depressed large color="#E56D9B" class="sign" @click="show = true">Sign In</v-btn>
+    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Sign In</v-btn>
+    <v-menu v-if="isLoggedIn" offset-y>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          depressed
+          class="user"
+          large
+          color="#E56D9B"
+          v-bind="attrs"
+          v-on="on"
+        >
+        <v-avatar :size="24">
+          <v-icon :size="24" v-if="!userAvatar" dark style="margin-right: 0.3rem;">mdi-account-circle</v-icon>
+          <img
+            v-if="userAvatar"
+            :src="userAvatar"
+            :alt="username"
+          >
+        </v-avatar>
+          {{ username }}
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          @click="goto(item)"
+        >
+          <v-list-item-title v-if="!item.type">{{ item.title }}</v-list-item-title>
+          <v-list-item-title v-if="item.type" :class="item.type">{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <v-dialog
       v-model="show"
       max-width="290"
     >
       <v-card>
         <v-card-title class="headline">Upload your key</v-card-title>
-        <v-file-input accept="application/json" label="Upload" style="width: 90%; margin-left: 10px;"></v-file-input>
+        <v-file-input
+          v-model="file"
+          accept="application/json"
+          label="Upload"
+          style="width: 90%; margin-left: 10px;"
+          placeholder="Insert your wallet key"
+        >
+        </v-file-input>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             depressed
             color="#ff92bc"
-            @click="show = false"
+            @click="submit"
             class="upload-btn"
           >
             Upload
@@ -40,10 +79,50 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="snackbar"
+      color="#00C853"
+      timeout="3000"
+      top="top"
+    >
+      File Read Successful
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          dark
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+      v-model="failSnackbar"
+      color="#E53935"
+      timeout="3000"
+      top="top"
+    >
+      File Read Failed, Try again
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          dark
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
+
+import { mapActions, mapState } from 'vuex'
 
 import Search from './Search.vue'
 
@@ -53,7 +132,59 @@ export default {
   },
   data () {
     return {
-      show: false
+      show: false,
+      loginBtnLoading: false,
+      file: null,
+      keyFile: '',
+      fileName: '',
+      fileContent: '',
+      fileRaw: '',
+      needUpload: false,
+      snackbar: false,
+      failSnackbar: false,
+      menuItems: [
+        { title: 'My Profile', path: '/profile' },
+        { title: 'My Library', path: '/library' },
+        { title: 'Sign Out', type: 'danger' }
+      ]
+    }
+  },
+  computed: {
+    ...mapState(['isLoggedIn', 'username', 'userAvatar'])
+  },
+  watch: {
+  },
+  methods: {
+    ...mapActions(['setKey', 'logout']),
+    submit () {
+      this.loginBtnLoading = true
+      this.keyFile = this.file
+      this.fileName = this.keyFile.name
+      const reader = new FileReader()
+      reader.readAsText(this.keyFile)
+      reader.onload = async (e) => {
+        try {
+          this.fileContent = JSON.parse(e.target.result)
+          this.fileRaw = JSON.stringify(this.fileContent)
+          const data = {
+            file: this.file,
+            raw: this.fileRaw,
+            name: this.fileName,
+            content: this.fileContent
+          }
+          this.setKey(data)
+          this.needUpload = false
+          this.snackbar = true
+          this.show = false
+        } catch (err) {
+          this.failSnackbar = true
+        }
+      }
+    },
+    goto (item) {
+      if (item.type) {
+        this.logout()
+      }
     }
   }
 }
@@ -109,6 +240,22 @@ export default {
   /deep/ .v-btn__content {
     color: white;
   }
+}
+
+.user {
+  margin-left: 1rem;
+  margin-right: 2rem;
+  /deep/ .v-btn__content {
+    color: white;
+  }
+}
+
+.danger {
+  color: #E53935 !important;
+}
+
+/deep/ .v-menu__content > .v-list {
+  background-color: #333333;
 }
 
 .upload-btn {
