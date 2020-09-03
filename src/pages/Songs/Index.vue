@@ -1,43 +1,48 @@
 <template>
   <spaceLayout>
+    <!-- Singles Sellings -->
     <div class="songs">
       <div class="songs-header">
         <h4>
           Singles Sellings
         </h4>
-        <router-link :to="{ name: 'SongsSingles' }">
+        <router-link :to="{ name: 'SongsSingles', query: { tab } }">
           All Sellings
           <v-icon class="header-icon">keyboard_arrow_right</v-icon>
         </router-link>
       </div>
-      <div class="songs-list">
+      <scrollXBox class="songs-list" list-id="single" card-id="single-card">
         <singleCard
+          id="single-card"
           class="single-card"
           v-for="(item, index) in singles"
           :key="index"
           :card="item"
         />
-      </div>
+      </scrollXBox>
     </div>
+    <!-- Albums Sellings -->
     <div class="songs">
       <div class="songs-header">
         <h4>
           Albums Sellings
         </h4>
-        <router-link :to="{ name: 'SongsAlbums' }">
+        <router-link :to="{ name: 'SongsAlbums', query: { tab } }">
           All Sellings
           <v-icon class="header-icon">keyboard_arrow_right</v-icon>
         </router-link>
       </div>
-      <div class="songs-list">
+      <scrollXBox class="songs-list" list-id="albums" card-id="albums-card">
         <albumCard
+          id="albums-card"
           class="album-card"
           v-for="(item, index) in singles"
           :key="index"
           :card="item"
         />
-      </div>
+      </scrollXBox>
     </div>
+    <categoryNav v-model="tab" />
   </spaceLayout>
 </template>
 
@@ -45,15 +50,20 @@
 import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
+import categoryNav from '@/components/CategoryNav'
+import scrollXBox from '@/components/ScrollXBox'
 
 export default {
   components: {
     spaceLayout,
     singleCard,
-    albumCard
+    albumCard,
+    categoryNav,
+    scrollXBox
   },
   data () {
     return {
+      tab: 'song',
       singles: [
         {
           title: 'RED',
@@ -82,7 +92,7 @@ export default {
         {
           title: 'B v S soundtrack',
           artist: 'Warner Brosaaaaa',
-          price: 4.3,
+          price: 0,
           time: '2020-08-23 10:22'
         },
         {
@@ -117,6 +127,23 @@ export default {
         }
       ]
     }
+  },
+  created () {
+  },
+  mounted () {
+    // 假数据
+    const singles = []
+    for (let i = 0; i < 3; i++) {
+      singles.push(...this.singles)
+    }
+    this.singles = singles
+  },
+  watch: {
+    tab (val) {
+      console.log('标签切换：', val)
+    }
+  },
+  methods: {
   }
 }
 </script>
@@ -152,14 +179,6 @@ export default {
   }
   &-list {
     margin: 0 20px 0;
-    display: flex;
-    overflow: hidden;
-    .single-card {
-      margin-right: 16px;
-    }
-    .album-card {
-      margin-right: 42px;
-    }
   }
 
 }
