@@ -78,7 +78,6 @@ export default new Vuex.Store({
             API.arweave.getAvatarFromAddress(res).then(data => {
               if (data) {
                 commit('setUserAvatar', data)
-                console.log(data)
               }
             })
           }
