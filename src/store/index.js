@@ -45,7 +45,7 @@ export default new Vuex.Store({
       state.keyFileContent = content
     },
     setWallet (state, address) {
-      state.walletAddress = address
+      state.wallet = address
     },
     setUsername (state, username) {
       state.username = username
@@ -67,7 +67,6 @@ export default new Vuex.Store({
       commit('setKeyFileContent', data.content)
 
       API.arweave.getAddress(data.content).then(res => {
-        console.log(res)
         commit('setWallet', res)
         API.arweave.getIdFromAddress(res).then(res2 => {
           console.log(res2)
