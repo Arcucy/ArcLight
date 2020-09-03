@@ -12,7 +12,7 @@
       </router-link>
     </div>
     <Search class="search-bar"/>
-    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Sign In</v-btn>
+    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Login</v-btn>
     <v-menu v-if="isLoggedIn" offset-y>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -183,6 +183,7 @@ export default {
     },
     goto (item) {
       if (item.type) {
+        this.loginBtnLoading = false
         this.logout()
       }
     }
