@@ -7,6 +7,7 @@ import MusicMenu from '@/pages/Music.vue'
 import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
+import User from '@/pages/User/_id'
 
 Vue.use(Router)
 
@@ -43,6 +44,11 @@ export default new Router({
       path: '/songs/albums',
       name: 'SongsAlbums',
       component: SongsAlbums
+    },
+    {
+      path: '/user/:id',
+      name: 'User',
+      component: User
     }
   ]
 })
