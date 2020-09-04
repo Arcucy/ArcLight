@@ -164,14 +164,14 @@ export default {
     align-items: center;
     h4 {
       margin: 0;
-      font-size: 16px;
+      font-size: 20px;
       font-weight: 500;
       color: #E56D9B;
       line-height: 22px;
     }
     a {
       margin: 0;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 500;
       color: #FFFFFF;
       line-height: 20px;
