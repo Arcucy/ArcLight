@@ -10,7 +10,7 @@
           </h4>
           <a>
             All Sellings
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </a>
         </div>
         <scrollXBox list-id="single" card-id="single-card">
@@ -31,7 +31,7 @@
           </h4>
           <a>
             All Sellings
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </a>
         </div>
         <scrollXBox list-id="albums" card-id="albums-card">
@@ -52,7 +52,7 @@
           </h4>
           <a>
             All Singers
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </a>
         </div>
         <scrollXBox list-id="singers" card-id="singers-card">
@@ -250,14 +250,14 @@ export default {
       align-items: center;
       h4 {
         margin: 0;
-        font-size: 16px;
+        font-size: 20px;
         font-weight: 500;
         color: #E56D9B;
         line-height: 22px;
       }
       a {
         margin: 0;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 500;
         color: #FFFFFF;
         line-height: 20px;

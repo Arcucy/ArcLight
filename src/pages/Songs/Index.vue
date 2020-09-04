@@ -9,7 +9,7 @@
           </h4>
           <router-link :to="{ name: 'SongsSingles', query: { tab } }">
             All Sellings
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
         <scrollXBox class="songs-list" list-id="single" card-id="single-card">
@@ -30,7 +30,7 @@
           </h4>
           <router-link :to="{ name: 'SongsAlbums', query: { tab } }">
             All Sellings
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
         <scrollXBox class="songs-list" list-id="albums" card-id="albums-card">
@@ -164,14 +164,14 @@ export default {
     align-items: center;
     h4 {
       margin: 0;
-      font-size: 16px;
+      font-size: 20px;
       font-weight: 500;
       color: #E56D9B;
       line-height: 22px;
     }
     a {
       margin: 0;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 500;
       color: #FFFFFF;
       line-height: 20px;

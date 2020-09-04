@@ -82,6 +82,11 @@ export default new Router({
       name: 'User',
       component: User,
       props: true
+    },
+    {
+      path: '/library',
+      name: 'Library',
+      component: Library
     }
   ]
 })

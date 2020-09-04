@@ -6,7 +6,7 @@
       class="scroll scroll-left"
       @click="scrollLeft(listId, cardId)"
     >
-      <v-icon>keyboard_arrow_left</v-icon>
+      <v-icon>mdi-chevron-left</v-icon>
     </div>
     <!-- List -->
     <div :id="listId" class="list">
@@ -18,7 +18,7 @@
       class="scroll scroll-right"
       @click="scrollRight(listId, cardId)"
     >
-      <v-icon>keyboard_arrow_right</v-icon>
+      <v-icon>mdi-chevron-right</v-icon>
     </div>
   </div>
 </template>

@@ -2,6 +2,7 @@
   <spaceLayout>
     <div class="home">
       <div id="title">ArcLight</div>
+      <v-btn :outlined="true" :rounded="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
       <div id="subtitle">
         <span>Store</span>
         <span>In</span>
@@ -71,6 +72,31 @@ export default {
     &:nth-child(3) {
       animation-name: animThree;
     }
+  }
+}
+
+.start-btn {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  animation-name: fadeInOpacity;
+  animation-duration: 3s;
+  animation-timing-function: ease;
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes fadeInOpacity {
+  0%,
+  35% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }
 
