@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import Arweave from 'arweave'
+import Arweave from 'arweave'
 
 import API from '../api/api'
 
 Vue.use(Vuex)
 
-// let ar = Arweave.init({
-//   host: 'arweave.net',
-//   port: 443,
-//   protocol: 'https',
-//   timeout: 20000,
-//   logging: false
-// })
+let ar = Arweave.init({
+  host: 'arweave.net',
+  port: 443,
+  protocol: 'https',
+  timeout: 20000,
+  logging: false
+})
 
 export default new Vuex.Store({
   modules: {
@@ -32,7 +32,16 @@ export default new Vuex.Store({
     userPage: {
       avatar: 'loading'
     },
-    userPageLoading: true
+    userPageLoading: true,
+    singleCoverFile: '',
+    singleCoverId: '',
+    singleCoverLink: '',
+    albumCoverFile: '',
+    albumCoverId: '',
+    albumCoverLink: '',
+    podcastCoverFile: '',
+    podcastCoverId: '',
+    podcastCoverLink: ''
   },
   mutations: {
     setIsLoggedIn (state, status) {
@@ -73,6 +82,33 @@ export default new Vuex.Store({
     },
     setUserPageLoading (state, status) {
       state.userPageLoading = status
+    },
+    setSingleCoverFile (state, file) {
+      state.singleCoverFile = file
+    },
+    setSingleCoverId (state, id) {
+      state.singleCoverId = id
+    },
+    setSingleCoverLink (state, link) {
+      state.singleCoverLink = link
+    },
+    setAlbumCoverFile (state, file) {
+      state.albumCoverFile = file
+    },
+    setAlbumCoverId (state, id) {
+      state.albumCoverId = id
+    },
+    setAlbumCoverLink (state, link) {
+      state.albumCoverLink = link
+    },
+    setPodcastCoverFile (state, file) {
+      state.podcastCoverFile = file
+    },
+    setPodcastCoverId (state, id) {
+      state.podcastCoverId = id
+    },
+    setPodcastCoverLink (state, link) {
+      state.podcastCoverLink = link
     }
   },
   getters: {
@@ -128,6 +164,43 @@ export default new Vuex.Store({
           commit('setUserPageLoading', false)
         }
       }
+    },
+    setSingleCoverFile ({ commit }, file) {
+      commit('setSingleCoverFile', file)
+    },
+    setAlbumCoverFile ({ commit }, file) {
+      commit('setAlbumCoverFile', file)
+    },
+    setPodcastCoverFile ({ commit }, file) {
+      commit('setPodcastCoverFile', file)
+    },
+    uploadSingleFile ({ commit }, data) {
+      ar.createTransaction({ data: data.data }, data.key).then(async transaction => {
+        const address = await API.arweave.getAddress(data.key)
+        const user = await API.arweave.getIdFromAddress(address)
+
+        // Add tag 添加标签
+        transaction.addTag('Content-Type', data.type)
+        transaction.addTag('App-Name', 'arclight')
+        transaction.addTag('Unix-Time', Date.now())
+        transaction.addTag('Type', 'single-cover')
+        transaction.addTag('Author-Address', address)
+        transaction.addTag('Author-Username', user.data)
+
+        await ar.transactions.sign(transaction, data.key)
+        let uploader = await ar.transactions.getUploader(transaction)
+
+        while (!uploader.isComplete) {
+          await uploader.uploadChunk()
+          commit('setUploadPct', uploader.pctComplete)
+          console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+        }
+
+        commit('setSingleCoverId', transaction.id)
+        commit('setSingleCoverLink', 'https://arweave.net/' + transaction.id)
+
+        await ar.transactions.post(transaction)
+      })
     }
   }
 })
