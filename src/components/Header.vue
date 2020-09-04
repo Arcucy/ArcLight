@@ -210,7 +210,7 @@ export default {
       }
     },
     uploadMusic () {
-      console.log('music')
+      this.$router.push({ name: 'Upload' })
     }
   },
   mounted () {
