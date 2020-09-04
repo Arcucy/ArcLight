@@ -6,6 +6,7 @@
       </h4>
       <div class="library-box">
         <div class="library-box-col">
+          <h4>Singles</h4>
           <div class="single-list">
             <mySingleCard
               v-for="(item, index) in singles"
@@ -22,6 +23,7 @@
           />
         </div>
         <div class="library-box-col">
+          <h4>Album</h4>
           <div class="single-list">
             <myAlbumCard
               v-for="(item, index) in singles"
@@ -120,7 +122,7 @@ export default {
 
   &-title {
     margin-bottom: 16px;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 500;
     color: #E56D9B;
     line-height: 22px;
@@ -142,6 +144,15 @@ export default {
 
   .single-list {
     margin-bottom: 40px;
+  }
+}
+
+.library-box-col {
+  h4 {
+    font-size: 16px;
+    color: white;
+    text-align: left;
+    margin-bottom: 16px;
   }
 }
 </style>
