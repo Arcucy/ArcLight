@@ -158,16 +158,19 @@ export default {
       snackbar: false,
       failSnackbar: false,
       menuItems: [
-        { title: 'My Profile', path: '/profile' },
+        { title: 'My Profile', path: '/user/' },
         { title: 'My Library', path: '/library' },
         { title: 'Sign Out', type: 'danger' }
       ]
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'username', 'userAvatar'])
+    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet'])
   },
   watch: {
+    wallet (val) {
+      this.menuItems[0].path = '/user/' + val
+    }
   },
   methods: {
     ...mapActions(['setKey', 'logout']),
@@ -195,6 +198,8 @@ export default {
           this.failSnackbar = true
         }
       }
+      console.log(this.wallet)
+      this.menuItems[0].path = '/user/' + this.wallet
     },
     goto (item) {
       if (item.type) {
@@ -205,7 +210,12 @@ export default {
       }
     },
     uploadMusic () {
-      console.log('music')
+      this.$router.push({ name: 'Upload' })
+    }
+  },
+  mounted () {
+    if (this.wallet) {
+      this.menuItems[0].path = '/user/' + this.wallet
     }
   }
 }

@@ -134,6 +134,7 @@ export default {
   created () {
   },
   mounted () {
+    document.title = 'Browse All Seling Music - ArcLight'
     // 假数据
     const singles = []
     for (let i = 0; i < 3; i++) {

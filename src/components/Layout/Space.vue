@@ -54,7 +54,17 @@ export default {
   animation-name: fadeInOpacity;
   animation-iteration-count: 1;
   animation-timing-function: ease;
-  animation-duration: 6s;
+  animation-duration: 4s;
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @media screen and (max-width: 400px){

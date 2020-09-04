@@ -76,6 +76,7 @@ import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import scrollXBox from '@/components/ScrollXBox'
 import userCard from '@/components/User/UserCard'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   components: {
@@ -88,11 +89,6 @@ export default {
   },
   data () {
     return {
-      user: {
-        avatar: 'https://picsum.photos/510/300?random',
-        nickname: 'Eason Chan',
-        introduction: 'Chan has won a number of Asian music awards. He is the second non-Taiwanese singer, after Jacky Cheung, to win Taiwan\'s Golden Melody Awards. He won "Best Male Singer" third, in 2003, 2015 and 2018, and "Best Album" twice. In 2003, 2009 and 2018. He also won Most Popular Male Singer in the Jade Solid Gold Best Ten Music Awards Presentation twice.'
-      },
       singles: [
         {
           title: 'RED',
@@ -191,7 +187,40 @@ export default {
       ]
     }
   },
+  methods: {
+    ...mapActions(['setUserPage', 'setIsMe'])
+  },
+  computed: {
+    ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType', 'userPage']),
+    user () {
+      let introduction = ''
+      if (this.isMe) {
+        if (this.userIntroduction === '') {
+          introduction = 'No Introduction Yet'
+        } else {
+          introduction = this.userIntroduction
+        }
+        return { nickname: this.username, avatar: this.userAvatar, introduction: introduction, type: this.userType }
+      } else {
+        if (this.userPage.introduction === '') {
+          introduction = 'No Introduction Yet'
+        } else {
+          introduction = this.userPage.introduction
+        }
+        return { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
+      }
+    }
+  },
   mounted () {
+    this.setUserPage({ wallet: this.$route.params.id })
+    if (this.wallet === this.$route.params.id) {
+      console.log('isMe')
+      this.setIsMe(true)
+      document.title = this.username + '\'s Profile - ArcLight'
+    } else {
+      document.title = this.userPage.nickname + '\'s Profile - ArcLight'
+    }
+
     // 假数据 循环 变多
     const followers = []
     for (let i = 0; i < 3; i++) {
