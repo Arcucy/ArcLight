@@ -198,7 +198,6 @@ export default {
           this.failSnackbar = true
         }
       }
-      console.log(this.wallet)
       this.menuItems[0].path = '/user/' + this.wallet
     },
     goto (item) {
