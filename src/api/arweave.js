@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 import Arweave from 'arweave'
 
 let ar = Arweave.init({
@@ -11,8 +12,9 @@ let ar = Arweave.init({
 let arweave = {
 
   /**
-   * Get user address based on key file content input
-   * @param {String} key      - The key file content, not file raw
+   * Get user address based on key file content input   
+   * 根据密钥文件内容获取用户地址
+   * @param {String} key      - 使用 keyFileContent，不是原始文件
    */
   getAddress (key) {
     return new Promise((resolve, reject) => {
@@ -25,8 +27,9 @@ let arweave = {
   },
 
   /**
-   * Get transaction detail entirely based on given txid
-   * @param {String} txid     - The transaction id
+   * Get transaction detail entirely based on given txid   
+   * 根据给定的 txid (交易ID) 获取完整的交易明细
+   * @param {String} txid     - 交易编号
    */
   getTransactionDetail (txid) {
     return new Promise((resolve, reject) => {
@@ -39,8 +42,9 @@ let arweave = {
   },
 
   /**
-   * Get the decoded data to string for the given transaction
-   * @param {String} txid     - The transaction id
+   * Get the decoded data and buffer to string from the given transaction id   
+   * 根据给定的 txid (交易ID) 获取解码的数据并缓冲为字符串
+   * @param {String} txid     - 交易编号
    */
   getTransactionDataDecodedString (txid) {
     return new Promise((resolve, reject) => {
@@ -53,27 +57,29 @@ let arweave = {
   },
 
   /**
-   * Get user arweave id from based on addresss input
-   * @param {String} address  - The address of user
+   * Get user's Arweave Id based on the input wallet address   
+   * 根据输入的钱包地址获取用户的 Arweave ID
+   * @param {String} address  - 用户的钱包地址
    */
   getIdFromAddress (address) {
     return new Promise((resolve, reject) => {
       /**
        * Use ArQL language to search the user's Arweave ID database
+       * 使用 ArQL 语言搜索用户的 Arweave ID 数据库
        */
       ar.arql({
         op: 'and',
         expr1: {
           op: 'equals',
           expr1: 'from',
-          expr2: address // User address
+          expr2: address // User address 用户钱包地址
         },
         expr2: {
           op: 'and',
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arweave-id' // Sepecified the App-Name to arweave-id
+            expr2: 'arweave-id' // Specified the App-Name as arweave-id 将应用程序名称指定为arweave-id
           },
           expr2: {
             op: 'equals',
@@ -83,12 +89,14 @@ let arweave = {
         }
       }).then(ids => {
         // Init a object to be resolved later
+        // 初始化要稍后返回的对象
         const res = {
           type: '',
           data: ''
         }
 
         // Sepecify the user to be a guest if ids is empty
+        // 如果 id 为空，则指定用户为访客 Guest
         if (ids.length === 0) {
           res.type = 'guest'
           res.data = 'Guest'
@@ -97,12 +105,15 @@ let arweave = {
         }
 
         // If the user has multiple records, use for go through
+        // 如果用户有多个记录，使用 for 循环遍历
         for (let i = 0; i < ids.length; i++) {
           const id = ids[i]
 
           // Get transaction detial
+          // 获取交易明细
           this.getTransactionDetail(id).then(transaction => {
             // Go through for each id to find the tag
+            // 遍历每个id来找到标签
             transaction.get('tags').forEach(tag => {
               let key = tag.get('name', { decode: true, string: true })
               let value = tag.get('value', { decode: true, string: true })
@@ -112,9 +123,11 @@ let arweave = {
             })
 
             // Get the encoded data from transaction
+            // 从交易中获取编码数据
             this.getTransactionDataDecodedString(id).then(data => {
               res.data = data
               // resolve data on finish
+              // 完成时返回数据
               resolve(res)
             })
           })
@@ -123,6 +136,11 @@ let arweave = {
     })
   },
 
+  /**
+   * Get user's Arweave Avatar based on the input wallet address   
+   * 根据输入的钱包地址获取用户的 Arweave 头像
+   * @param {String} address    - 用户的钱包地址
+   */
   getAvatarFromAddress (address) {
     return new Promise((resolve, reject) => {
       ar.arql({
@@ -157,6 +175,39 @@ let arweave = {
         })
       })
     })
+  },
+
+  /**
+   * Publish a single based on the given address and key file   
+   * 根据给定的钱包地址和密钥文件发布音乐（单曲）
+   * @param {String} address              - 用户的钱包地址
+   * @param {JSON Object} key             - 使用 keyFileContent，不是原始文件
+   * @param {SingleMusic Object} single   - Single 单曲音乐的 data obejct 对象
+   */
+  postSingleFromAddress (address, key, single) {
+
+  },
+
+  /**
+   * Publish an album based on the given address and key file   
+   * 根据给定的地址和密钥文件发布专辑
+   * @param {*} address                   - 用户的钱包地址
+   * @param {*} key                       - 使用 keyFileContent，不是原始文件
+   * @param {*} single                    - Album 专辑音乐的 data object 对象
+   */
+  postAlbumFromAddress (address, key, single) {
+
+  },
+
+  /**
+   * Publish a podcast based on the given address and key file   
+   * 根据给定的地址和密钥文件发布播客
+   * @param {*} address                   - 用户的钱包地址
+   * @param {*} key                       - 使用 keyFileContent，不是原始文件
+   * @param {*} podcast                   - Podcast 播客的 data object 对象
+   */
+  postPodcastFromAddress (address, key, podcast) {
+
   }
 }
 
