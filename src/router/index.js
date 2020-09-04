@@ -8,6 +8,7 @@ import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
 import User from '@/pages/User/_id'
+import Library from '@/pages/Library'
 
 import Upload from '@/pages/Upload/Index.vue'
 import UploadSingle from '@/pages/Upload/Single.vue'
