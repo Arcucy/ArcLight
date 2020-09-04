@@ -1,10 +1,12 @@
 <template>
   <spaceLayout>
-    <div id="title">ArcLight</div>
-    <div id="subtitle">
-      <span>Store</span>
-      <span>In</span>
-      <span>Permaweb</span>
+    <div class="home">
+      <div id="title">ArcLight</div>
+      <div id="subtitle">
+        <span>Store</span>
+        <span>In</span>
+        <span>Permaweb</span>
+      </div>
     </div>
   </spaceLayout>
 </template>
@@ -20,10 +22,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.home {
+  font-family: "lato", sans-serif;
+  color: #FFF;
+  background: radial-gradient(ellipse at bottom, #0c1116 0%, #090a0f 100%);
+}
 #title {
   position: absolute;
   font-weight: 300;
-  top: 49%;
+  top: 62%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -42,7 +49,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 70%;
+  top: 90%;
   left: 0;
   right: 0;
   font-size: 25px;
@@ -61,6 +68,79 @@ export default {
     &:nth-child(3) {
       animation-name: animThree;
     }
+  }
+}
+
+@keyframes animTitle {
+  0% {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+
+  30%,
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes animOne {
+
+  0%,
+  15% {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+
+  35%,
+  80% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+
+  92%,
+  100% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes animTwo {
+
+  0%,
+  25% {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+
+  45%,
+  80% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+
+  92%,
+  100% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes animThree {
+
+  0%,
+  35% {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+
+  55%,
+  80% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+
+  92%,
+  100% {
+    transform: translateY(-4px);
   }
 }
 

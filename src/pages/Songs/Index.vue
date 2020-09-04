@@ -1,48 +1,51 @@
 <template>
   <spaceLayout>
-    <!-- Singles Sellings -->
-    <div class="songs">
-      <div class="songs-header">
-        <h4>
-          Singles Sellings
-        </h4>
-        <router-link :to="{ name: 'SongsSingles', query: { tab } }">
-          All Sellings
-          <v-icon class="header-icon">keyboard_arrow_right</v-icon>
-        </router-link>
+    <div class="songs-bg">
+      <!-- Singles Sellings -->
+      <div class="songs">
+        <div class="songs-header">
+          <h4>
+            Singles Sellings
+          </h4>
+          <router-link :to="{ name: 'SongsSingles', query: { tab } }">
+            All Sellings
+            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+          </router-link>
+        </div>
+        <scrollXBox class="songs-list" list-id="single" card-id="single-card">
+          <singleCard
+            id="single-card"
+            class="single-card"
+            v-for="(item, index) in singles"
+            :key="index"
+            :card="item"
+          />
+        </scrollXBox>
       </div>
-      <scrollXBox class="songs-list" list-id="single" card-id="single-card">
-        <singleCard
-          id="single-card"
-          class="single-card"
-          v-for="(item, index) in singles"
-          :key="index"
-          :card="item"
-        />
-      </scrollXBox>
-    </div>
-    <!-- Albums Sellings -->
-    <div class="songs">
-      <div class="songs-header">
-        <h4>
-          Albums Sellings
-        </h4>
-        <router-link :to="{ name: 'SongsAlbums', query: { tab } }">
-          All Sellings
-          <v-icon class="header-icon">keyboard_arrow_right</v-icon>
-        </router-link>
+      <!-- Albums Sellings -->
+      <div class="songs">
+        <div class="songs-header">
+          <h4>
+            Albums Sellings
+          </h4>
+          <router-link :to="{ name: 'SongsAlbums', query: { tab } }">
+            All Sellings
+            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+          </router-link>
+        </div>
+        <scrollXBox class="songs-list" list-id="albums" card-id="albums-card">
+          <albumCard
+            id="albums-card"
+            class="album-card"
+            v-for="(item, index) in singles"
+            :key="index"
+            :card="item"
+          />
+        </scrollXBox>
       </div>
-      <scrollXBox class="songs-list" list-id="albums" card-id="albums-card">
-        <albumCard
-          id="albums-card"
-          class="album-card"
-          v-for="(item, index) in singles"
-          :key="index"
-          :card="item"
-        />
-      </scrollXBox>
+      <div class="come-down" />
+      <categoryNav v-model="tab" />
     </div>
-    <categoryNav v-model="tab" />
   </spaceLayout>
 </template>
 
@@ -150,7 +153,7 @@ export default {
 
 <style lang="less" scoped>
 .songs {
-  margin: 20px auto;
+  margin: 48px auto;
   max-width: 1240px;
   width: 100%;
   &-header {
@@ -179,7 +182,20 @@ export default {
   }
   &-list {
     margin: 0 20px 0;
+    .single-card {
+      margin-right: 16px;
+    }
+    .album-card {
+      margin-right: 42px;
+    }
   }
-
+}
+.songs-bg {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .come-down {
+    flex: 1;
+  }
 }
 </style>

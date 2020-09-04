@@ -1,31 +1,34 @@
 <template>
   <spaceLayout>
-    <div class="songs">
-      <div class="songs-header">
-        <router-link :to="{ name: 'Songs', query: { tab } }">
-          <v-icon class="header-icon">keyboard_arrow_left</v-icon>
-          ALL Albums Sellings
-        </router-link>
+    <div class="songs-bg">
+      <div class="songs">
+        <div class="songs-header">
+          <router-link :to="{ name: 'Songs', query: { tab } }">
+            <v-icon class="header-icon">keyboard_arrow_left</v-icon>
+            ALL Albums Sellings
+          </router-link>
+        </div>
+        <div class="songs-list">
+          <albumCard
+            class="album-card"
+            v-for="(item, index) in singles"
+            :key="index"
+            :card="item"
+          />
+        </div>
+        <div class="songs-pagination">
+          <v-pagination
+            v-model="page"
+            :length="20"
+            :total-visible="10"
+            color="#E56D9B"
+            dark
+          />
+        </div>
       </div>
-      <div class="songs-list">
-        <albumCard
-          class="album-card"
-          v-for="(item, index) in singles"
-          :key="index"
-          :card="item"
-        />
-      </div>
-      <div class="songs-pagination">
-        <v-pagination
-          v-model="page"
-          :length="20"
-          :total-visible="10"
-          color="#E56D9B"
-          dark
-        />
-      </div>
+      <div class="come-down" />
+      <categoryNav v-model="tab" />
     </div>
-    <categoryNav v-model="tab" />
   </spaceLayout>
 </template>
 
@@ -113,7 +116,7 @@ export default {
 
 <style lang="less" scoped>
 .songs {
-  margin: 20px auto;
+  margin: 48px auto;
   max-width: 1240px;
   width: 100%;
   &-header {
@@ -145,6 +148,13 @@ export default {
   &-pagination {
     margin: 16px 20px 0;
   }
-
+}
+.songs-bg {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .come-down {
+    flex: 1;
+  }
 }
 </style>

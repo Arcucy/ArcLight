@@ -146,14 +146,6 @@ export default {
     &::-webkit-scrollbar {
       display: none;
     }
-
-    .single-card {
-      margin-right: 16px;
-    }
-
-    .album-card {
-      margin-right: 42px;
-    }
   }
   .scroll {
     display: inline-flex;
