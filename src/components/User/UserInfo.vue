@@ -56,7 +56,7 @@ export default {
     align-items: center;
   }
   &-nickname {
-    margin: 16px 0 0;
+    margin: 16px 145px 0;
     text-align: center;
     font-size: 24px;
     font-weight: 500;
