@@ -8,6 +8,7 @@ import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
 import User from '@/pages/User/_id'
+import Library from '@/pages/Library'
 
 Vue.use(Router)
 
@@ -49,6 +50,11 @@ export default new Router({
       path: '/user/:id',
       name: 'User',
       component: User
+    },
+    {
+      path: '/library',
+      name: 'Library',
+      component: Library
     }
   ]
 })
