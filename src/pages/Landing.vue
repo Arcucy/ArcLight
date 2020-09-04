@@ -17,6 +17,9 @@ import spaceLayout from '@/components/Layout/Space'
 export default {
   components: {
     spaceLayout
+  },
+  mounted () {
+    document.title = 'ArcLight - Music Distribution Platform'
   }
 }
 </script>
@@ -30,7 +33,7 @@ export default {
 #title {
   position: absolute;
   font-weight: 300;
-  top: 62%;
+  top: 63%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -49,7 +52,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 90%;
+  top: 91%;
   left: 0;
   right: 0;
   font-size: 25px;
