@@ -110,6 +110,9 @@ export default {
         }
       ]
     }
+  },
+  mounted () {
+    document.title = 'Browse all selling albums - ArcLight'
   }
 }
 </script>

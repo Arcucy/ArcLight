@@ -146,6 +146,9 @@ export default {
         }
       ]
     }
+  },
+  mounted () {
+    document.title = 'Browse All Selling Singles - ArcLight'
   }
 }
 </script>
