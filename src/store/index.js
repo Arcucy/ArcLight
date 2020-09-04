@@ -26,7 +26,13 @@ export default new Vuex.Store({
     wallet: '',
     username: '',
     userType: '',
-    userAvatar: ''
+    userAvatar: '',
+    userIntroduction: '',
+    isMe: false,
+    userPage: {
+      avatar: 'loading'
+    },
+    userPageLoading: true
   },
   mutations: {
     setIsLoggedIn (state, status) {
@@ -55,6 +61,18 @@ export default new Vuex.Store({
     },
     setUserAvatar (state, avatar) {
       state.userAvatar = avatar
+    },
+    setUserIntroduction (state, intro) {
+      state.userIntroduction = intro
+    },
+    setIsMe (state, status) {
+      state.isMe = status
+    },
+    setUserPage (state, data) {
+      state.userPage = data
+    },
+    setUserPageLoading (state, status) {
+      state.userPageLoading = status
     }
   },
   getters: {
@@ -87,6 +105,29 @@ export default new Vuex.Store({
       commit('setUsername', '')
       commit('setUserAvatar', '')
       commit('setIsLoggedIn', false)
+    },
+    setIsMe ({ commit }, status) {
+      commit('setIsMe', status)
+    },
+    async setUserPage ({ commit }, data) {
+      let userPage = {
+        nickname: '',
+        avatar: '',
+        introduction: '',
+        type: ''
+      }
+
+      const user = await API.arweave.getIdFromAddress(data.wallet)
+      userPage.nickname = user.data
+      userPage.type = user.type
+      if (user.type !== 'guest') {
+        const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
+        if (avatar) {
+          userPage.avatar = avatar
+          commit('setUserPage', userPage)
+          commit('setUserPageLoading', false)
+        }
+      }
     }
   }
 })
