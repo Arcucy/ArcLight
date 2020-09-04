@@ -9,7 +9,7 @@
           </h4>
           <router-link :to="{ name: 'SongsSingles', query: { tab } }">
             All Sellings
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
         <scrollXBox class="songs-list" list-id="single" card-id="single-card">
@@ -30,7 +30,7 @@
           </h4>
           <router-link :to="{ name: 'SongsAlbums', query: { tab } }">
             All Sellings
-            <v-icon class="header-icon">keyboard_arrow_right</v-icon>
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
         <scrollXBox class="songs-list" list-id="albums" card-id="albums-card">

@@ -4,7 +4,7 @@
       <div class="songs">
         <div class="songs-header">
           <router-link :to="{ name: 'Songs', query: { tab } }">
-            <v-icon class="header-icon">keyboard_arrow_left</v-icon>
+            <v-icon class="header-icon">mdi-chevron-left</v-icon>
             ALL Albums Sellings
           </router-link>
         </div>
