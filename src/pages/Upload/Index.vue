@@ -21,6 +21,24 @@
         </router-link>
       </div>
     </div>
+    <v-snackbar
+        v-model="failSnackbar"
+        color="#E53935"
+        timeout="3000"
+        top="top"
+      >
+        Login is required to upload
+
+        <template>
+          <v-btn
+            dark
+            text
+            @click="snackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
   </spaceLayout>
 </template>
 
@@ -32,6 +50,7 @@ import singleImg from '@/assets/image/single.png'
 import albumImg from '@/assets/image/album.png'
 import podcastImg from '@/assets/image/podcast.png'
 import soundEffectImg from '@/assets/image/soundeffect.png'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -39,6 +58,7 @@ export default {
   },
   data () {
     return {
+      failSnackbar: false,
       cover: {
         single: singleImg,
         album: albumImg,
@@ -47,7 +67,32 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState(['isLoggedIn'])
+  },
+  watch: {
+    isLoggedIn (val) {
+      if (val === false) {
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }
+  },
   mounted () {
+    setTimeout(() => {
+      if (!this.isLoggedIn) {
+        this.failMessage = 'Login is required to upload'
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }, 3000)
+
     document.title = 'Choose Upload Type - ArcLight'
 
     const single = document.getElementById('single')

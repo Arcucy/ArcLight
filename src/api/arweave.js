@@ -177,6 +177,65 @@ let arweave = {
     })
   },
 
+  getPostFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  getSearchObject (data) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'equals',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: data
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
   /**
    * Publish a single based on the given address and key file   
    * 根据给定的钱包地址和密钥文件发布音乐（单曲）

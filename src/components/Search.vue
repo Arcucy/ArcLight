@@ -123,7 +123,7 @@ export default {
 }
 
 /deep/ .v-select-list.theme--light {
-  background-color: rgba(51,51,51,0.5);
+  background-color: rgba(51,51,51,0.8);
 }
 
 /deep/ .v-list-item__title {
