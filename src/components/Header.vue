@@ -74,6 +74,12 @@
           placeholder="Insert your wallet key"
         >
         </v-file-input>
+        <v-checkbox
+          color="#E56D9B"
+          v-model="writeCookie"
+          label="Save Key for 7 days"
+        >
+        </v-checkbox>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -85,7 +91,6 @@
             Upload
           </v-btn>
           <v-btn
-            color="green darken-1"
             text
             @click="show = false"
           >
@@ -141,6 +146,8 @@ import { mapActions, mapState } from 'vuex'
 
 import Search from './Search.vue'
 
+import { clearCookie, getCookie, setCookie } from '../util/cookie'
+
 export default {
   components: {
     Search
@@ -149,6 +156,7 @@ export default {
     return {
       show: false,
       loginBtnLoading: false,
+      writeCookie: false,
       file: null,
       keyFile: '',
       fileName: '',
@@ -190,10 +198,14 @@ export default {
             name: this.fileName,
             content: this.fileContent
           }
-          this.setKey(data)
+          await this.setKey(data)
           this.needUpload = false
           this.snackbar = true
           this.show = false
+          if (this.writeCookie) {
+            clearCookie('arclight_userkey')
+            setCookie('arclight_userkey', this.fileRaw)
+          }
         } catch (err) {
           this.failSnackbar = true
         }
@@ -203,6 +215,7 @@ export default {
     goto (item) {
       if (item.type) {
         this.loginBtnLoading = false
+        clearCookie('arclight_userkey')
         this.logout()
       } else {
         this.$router.push({ path: item.path })
@@ -213,6 +226,18 @@ export default {
     }
   },
   mounted () {
+    this.loginBtnLoading = true
+    const c = getCookie('arclight_userkey')
+    if (c) {
+      this.setKey({
+        file: 'keyFile',
+        raw: c,
+        name: 'key',
+        content: JSON.parse(c)
+      })
+      this.loginBtnLoading = false
+    }
+    this.loginBtnLoading = false
     if (this.wallet) {
       this.menuItems[0].path = '/user/' + this.wallet
     }
@@ -292,6 +317,21 @@ export default {
   /deep/ .v-btn__content {
     color: white;
   }
+}
+
+/deep/ .v-input__control > .v-input__slot > label {
+  color: black;
+}
+
+/deep/ .v-input--selection-controls {
+  margin-top: 0px;
+}
+
+/deep/ .v-card.v-sheet.theme--light {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .upload {
