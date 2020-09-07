@@ -114,7 +114,7 @@ export default new Vuex.Store({
   getters: {
   },
   actions: {
-    setKey ({ commit }, data) {
+    async setKey ({ commit }, data) {
       commit('setKeyFile', data.file)
       commit('setKeyFileRaw', data.raw)
       commit('setKeyFileName', data.name)
@@ -174,7 +174,7 @@ export default new Vuex.Store({
     setPodcastCoverFile ({ commit }, file) {
       commit('setPodcastCoverFile', file)
     },
-    uploadSingleFile ({ commit }, data) {
+    uploadSingleCoverFile ({ commit }, data) {
       ar.createTransaction({ data: data.data }, data.key).then(async transaction => {
         const address = await API.arweave.getAddress(data.key)
         const user = await API.arweave.getIdFromAddress(address)
@@ -184,6 +184,34 @@ export default new Vuex.Store({
         transaction.addTag('App-Name', 'arclight')
         transaction.addTag('Unix-Time', Date.now())
         transaction.addTag('Type', 'single-cover')
+        transaction.addTag('Author-Address', address)
+        transaction.addTag('Author-Username', user.data)
+
+        await ar.transactions.sign(transaction, data.key)
+        let uploader = await ar.transactions.getUploader(transaction)
+
+        while (!uploader.isComplete) {
+          await uploader.uploadChunk()
+          commit('setUploadPct', uploader.pctComplete)
+          console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+        }
+
+        commit('setSingleCoverId', transaction.id)
+        commit('setSingleCoverLink', 'https://arweave.net/' + transaction.id)
+
+        await ar.transactions.post(transaction)
+      })
+    },
+    uploadSingleMusicFile ({ commit }, data) {
+      ar.createTransaction({ data: data.data }, data.key).then(async transaction => {
+        const address = await API.arweave.getAddress(data.key)
+        const user = await API.arweave.getIdFromAddress(address)
+
+        // Add tag 添加标签
+        transaction.addTag('Content-Type', data.type)
+        transaction.addTag('App-Name', 'arclight')
+        transaction.addTag('Unix-Time', Date.now())
+        transaction.addTag('Type', 'single-music')
         transaction.addTag('Author-Address', address)
         transaction.addTag('Author-Username', user.data)
 

@@ -2,7 +2,7 @@
   <spaceLayout>
     <div class="home">
       <div id="title">ArcLight</div>
-      <v-btn :outlined="true" :rounded="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
+      <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
       <div id="subtitle">
         <span>Store</span>
         <span>In</span>
