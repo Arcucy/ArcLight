@@ -77,7 +77,7 @@
         <v-checkbox
           color="#E56D9B"
           v-model="writeCookie"
-          label="Save Key for 7 days"
+          label="Save Key for this Session for 7 days"
         >
         </v-checkbox>
         <v-card-actions>
@@ -310,7 +310,7 @@ export default {
 }
 
 /deep/ .v-menu__content > .v-list {
-  background-color: rgba(51,51,51,0.5);
+  background-color: rgba(51,51,51,0.8);
 }
 
 .upload-btn {
