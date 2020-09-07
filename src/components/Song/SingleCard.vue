@@ -1,33 +1,35 @@
 <template>
-  <div class="card">
-    <v-img
-      class="card-img"
-      src="https://picsum.photos/510/300?random"
-      alt="cover"
-      aspect-ratio="1"
-    >
-      <template v-slot:placeholder>
-        <div class="card-img-loading">
-          <v-progress-circular indeterminate color="#E56D9B" />
-        </div>
-      </template>
-    </v-img>
-    <p class="card-title">
-      {{ card.title }}
-    </p>
-    <p class="card-artist">
-      by {{ card.artist }}
-    </p>
-    <p v-if="card.price != 0" class="card-price">
-      pay {{ card.price }} AR
-    </p>
-    <p v-else class="card-price">
-      free
-    </p>
-    <p class="card-time">
-      {{ card.time }}
-    </p>
-  </div>
+  <router-link :to="{ name: 'Music', params: { id: 'flowerdance' } }" v-ripple>
+    <div class="card">
+      <v-img
+        class="card-img"
+        src="https://picsum.photos/510/300?random"
+        alt="cover"
+        aspect-ratio="1"
+      >
+        <template v-slot:placeholder>
+          <div class="card-img-loading">
+            <v-progress-circular indeterminate color="#E56D9B" />
+          </div>
+        </template>
+      </v-img>
+      <p class="card-title">
+        {{ card.title }}
+      </p>
+      <p class="card-artist">
+        by {{ card.artist }}
+      </p>
+      <p v-if="card.price != 0" class="card-price">
+        pay {{ card.price }} AR
+      </p>
+      <p v-else class="card-price">
+        free
+      </p>
+      <p class="card-time">
+        {{ card.time }}
+      </p>
+    </div>
+  </router-link>
 </template>
 
 <script>
@@ -47,6 +49,10 @@ export default {
 <style lang="less" scoped>
 p {
   text-align: left;
+}
+a {
+  text-decoration: none;
+  color: white;
 }
 .card {
   width: 128px;

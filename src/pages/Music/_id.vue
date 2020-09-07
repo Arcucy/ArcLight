@@ -18,7 +18,7 @@
       <!-- Player -->
       <aplayer v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
       <!-- Download -->
-      <div class="music-download">
+      <div v-if="owned" class="music-download">
         <v-btn
           block
           large
@@ -29,6 +29,24 @@
           :height="44"
         >
           DOWNLOAD
+        </v-btn>
+      </div>
+      <!-- Buy -->
+      <div v-else class="music-download">
+        <p>
+          Sale for {{ price }} AR
+        </p>
+        <v-btn
+          block
+          large
+          light
+          outlined
+          rounded
+          color="#E56D9B"
+          :height="44"
+          @click.stop="buyClick"
+        >
+          BUY
         </v-btn>
       </div>
       <!-- Payed Users -->
@@ -50,6 +68,30 @@
       <!-- Title -->
       <div id="title">{{ audio.name }}</div>
     </div>
+    <!-- Pay Dialog -->
+    <v-dialog
+      v-model="showDialog"
+      width="360"
+    >
+      <v-card dark>
+        <div class="pay">
+          <h3 class="pay-title">
+            Payment of 「{{ audio.name }}」
+          </h3>
+          <div class="pay-icon">
+            <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
+          </div>
+          <p class="pay-intro">
+            Succeed to unlock the music！
+          </p>
+
+          <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
+            BACK TO MUSIC PLAYER
+            <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
+          </v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
   </spaceLayout>
 </template>
 
@@ -70,6 +112,9 @@ export default {
     return {
       musicId: '',
       audio: '',
+      price: 4.3,
+      owned: false,
+      showDialog: false,
       audioList: {
         flowerdance: {
           name: 'Flower Dance',
@@ -114,6 +159,13 @@ export default {
   mounted () {
     if (this.audioList[this.$route.params.id] !== undefined || this.audioList[this.$route.params.id] !== '') this.audio = this.audioList[this.$route.params.id]
     else this.$router.push({ name: 'Landing' })
+  },
+  methods: {
+    buyClick () {
+      // 这里并没有真的付款代码，而是直接将参数设定为付款成功的状态。
+      this.showDialog = true
+      this.owned = true
+    }
   }
 }
 </script>
@@ -195,6 +247,14 @@ export default {
   &-download {
     margin: 48px auto 0;
     max-width: 240px;
+    p {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: #E56D9B;
+      line-height: 20px;
+      margin: 0 0 8px;
+    }
   }
   &-sold {
     margin-top: 24px;
@@ -219,6 +279,41 @@ export default {
           margin-left: 0;
         }
       }
+    }
+  }
+}
+
+.pay {
+  padding: 24px;
+  &-title {
+    text-align: left;
+    font-size: 20px;
+    font-weight: 500;
+    color: white;
+    line-height: 28px;
+    margin: 0 0 24px;
+  }
+  &-icon {
+    text-align: center;
+    margin-bottom: 16px;
+    img {
+      width: 128px;
+      height: 128px;
+      min-width: 128px;
+      min-height: 128px;
+    }
+  }
+  &-intro {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    line-height: 22px;
+    margin: 0 0 54px;
+  }
+  &-button {
+    &-icon {
+      font-size: 16px;
     }
   }
 }
