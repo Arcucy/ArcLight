@@ -16,7 +16,7 @@
         </a>
       </div>
       <!-- Player -->
-      <aplayer v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player"/>
+      <aplayer v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
       <!-- Download -->
       <div class="music-download">
         <v-btn
@@ -175,6 +175,22 @@ export default {
     margin: 0 auto;
     margin-top: 96px;
     border-radius: 5px;
+    background: #34343457;
+    /deep/ &.aplayer .aplayer-info {
+      .aplayer-music {
+        .aplayer-title {
+          color: #E56D9B;
+        }
+        .aplayer-author {
+          color: white;
+        }
+      }
+      .aplayer-controller .aplayer-time .aplayer-icon {
+        &:hover path {
+          fill: #E56D9B;
+        }
+      }
+    }
   }
   &-download {
     margin: 48px auto 0;
