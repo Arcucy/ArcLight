@@ -34,6 +34,7 @@
           </img-upload>
           <div class="name-title side-title">Music Name</div>
           <v-text-field
+            v-model="singleTitle"
             label="Solo"
             placeholder="Enter Your Music Title..."
             solo
@@ -42,17 +43,26 @@
           ></v-text-field>
           <div class="name-desp side-title">Description</div>
           <v-textarea
+            v-model="singleDesp"
             solo
             name="input-7-4"
-            label="Solo textarea"
+            label="Your Single Description..."
           ></v-textarea>
+          <div class="name-desp side-title">Demo Duration</div>
+          <v-select
+            v-model="duration"
+            :items="items"
+            label="Demo duration"
+            solo
+          ></v-select>
           <v-file-input
-            v-model="files"
+            v-model="file"
             color="#FFF"
             chips
-            placeholder="Select your files"
+            placeholder="Select your file"
             prepend-icon="mdi-paperclip"
             outlined
+            accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
             :show-size="1000"
             style="margin-top: 16px;"
           >
@@ -75,7 +85,7 @@
               </span>
             </template>
           </v-file-input>
-          <v-btn color="#E56D9B" depressed light class="side-title">Submit</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Submit</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -98,19 +108,39 @@
         </template>
       </v-snackbar>
       <v-snackbar
-        v-model="failSnackbar"
-        color="#E53935"
+        v-model="singleSnackbar"
+        color="#00C853"
         timeout="3000"
         top="top"
       >
-        Image Read Failed, Try again
+        Single Release Successful
 
         <template v-slot:action="{ attrs }">
           <v-btn
             dark
             text
             v-bind="attrs"
-            @click="snackbar = false"
+            @click="singleSnackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+      <v-snackbar
+        v-model="failSnackbar"
+        color="#E53935"
+        timeout="3000"
+        top="top"
+        style="margin-top: 16px;"
+      >
+        {{ failMessage }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            dark
+            text
+            v-bind="attrs"
+            @click="failSnackbar = false"
           >
             Close
           </v-btn>
@@ -135,7 +165,11 @@ export default {
   },
   data () {
     return {
+      file: null,
+      duration: '',
       singleDefault: singleDefault,
+      singleTitle: '',
+      singleDesp: '',
       needUpload: true,
       attachments: [],
       singleCover: '',
@@ -143,25 +177,97 @@ export default {
       fileRaw: '',
       fileName: '',
       imgUploadDone: 0,
+      music: '',
+      musicContent: '',
       snackbar: false,
-      failSnackbar: false
+      failSnackbar: false,
+      singleSnackbar: false,
+      failMessage: '',
+      submitBtnLoading: false,
+      items: ['10s', '30s', '60s', 'Off']
     }
   },
   computed: {
-    ...mapState(['singleCoverFile'])
+    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleUploadComplete', 'singleLink'])
+  },
+  watch: {
+    singleUploadComplete (val) {
+      this.submitBtnLoading = false
+      this.singleSnackbar = true
+
+      setTimeout(() => {
+        this.$router.push({ path: '/music/' + this.singleLink })
+      }, 2000)
+    }
   },
   methods: {
-    ...mapActions(['']),
+    ...mapActions(['uploadSingleCoverFile', 'uploadSingle']),
     submit () {
-      let type = {
+      this.submitBtnLoading = true
+      if (this.singleCover === '') {
+        this.failMessage = 'A cover for a single release is required'
+        this.failSnackbar = true
+        return
+      }
+
+      if (this.singleTitle === '') {
+        this.failMessage = 'A title for a single release is required'
+        this.failSnackbar = true
+        return
+      }
+
+      if (this.singleDesp === '') {
+        this.failMessage = 'A description for a single release is required'
+        this.failSnackbar = true
+        return
+      }
+
+      if (!this.duration) {
+        this.failMessage = 'The demo duration is required'
+        this.failSnackbar = true
+        return
+      }
+
+      if (!this.file) {
+        this.failMessage = 'A source music file for a single release is required'
+        this.failSnackbar = true
+        return
+      }
+
+      let imgType = {
         png: 'image/png',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
       let ext = this.singleCoverFile.name.split('.').pop()
-      console.log('Content-Type:', type[ext])
-      this.uploadSingleCoverFile({ data: this.fileRaw, key: this.keyFileContent, type: type[ext] })
+      console.log('Content-Type:', imgType[ext])
+
+      let audioType = {
+        mp3: 'audio/mp3',
+        flac: 'audio/flac',
+        wav: 'audio/wav',
+        ogg: 'audio/ogg'
+      }
+
+      let aext = this.file.name.split('.').pop()
+      console.log('Content-Type:', audioType[aext])
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(this.file)
+      reader.onload = async (e) => {
+        this.music = e.target.result
+        this.musicContent = this.file
+
+        this.uploadSingle({
+          img: { data: this.fileRaw, type: imgType[ext] },
+          music: { data: this.music, type: audioType[aext] },
+          key: this.keyFileContent,
+          single: {
+            title: this.singleTitle,
+            desp: this.singleDesp
+          }
+        })
+      }
     },
     doneImageUpload () {
       this.singleCover = this.singleCoverFile
@@ -176,7 +282,7 @@ export default {
           this.singleCover = this.fileRaw
           this.snackbar = true
         } catch (err) {
-          this.failSnackbar = true
+          this.imgFailSnackbar = true
         }
       }
       this.imgUploadDone += Date.now()
@@ -185,7 +291,17 @@ export default {
   },
   mounted () {
     document.title = 'Upload a new Single - ArcLight'
-    console.log(this.singleCover)
+
+    setTimeout(() => {
+      if (!this.isLoggedIn) {
+        this.failMessage = 'Login is required to upload'
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }, 3000)
   }
 }
 </script>
@@ -209,6 +325,7 @@ export default {
   display: block;
   text-align: left;
   color: white;
+  margin-bottom: 16px;
 }
 
 .user-avatar {
@@ -217,7 +334,7 @@ export default {
 
 .app-icon {
   cursor: pointer;
-  margin-top: 16px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -275,10 +392,6 @@ export default {
   }
 }
 
-/deep/ .v-btn__content {
-  color: white;
-}
-
 /deep/ .v-text-field__slot > textarea {
   color: white;
 }
@@ -288,6 +401,18 @@ export default {
 }
 
 /deep/ .v-icon--link {
+  color: white;
+}
+
+/deep/ .v-select__selection {
+  color: white !important;
+}
+
+/deep/ .v-select__slot > label {
+  color: white;
+}
+
+/deep/ .v-input__icon > i {
   color: white;
 }
 
@@ -301,6 +426,6 @@ export default {
 }
 
 /deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-  background-color: rgba(51,51,51,0.5);
+  background-color: rgba(51,51,51,0.8);
 }
 </style>
