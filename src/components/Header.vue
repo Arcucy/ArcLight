@@ -206,7 +206,7 @@ export default {
   },
   methods: {
     ...mapActions(['setKey', 'logout']),
-    scrollShow() {
+    scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
       if (currentTop > this.showPosition) this.frosted = true
       else this.frosted = false

@@ -16,7 +16,7 @@
         </a>
       </div>
       <!-- Player -->
-      <aplayer v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <aplayer id="aplayer123456" v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
       <!-- Download -->
       <div v-if="owned" class="music-download">
         <v-btn
@@ -102,6 +102,7 @@ import miniAvatar from '@/components/User/MiniAvatar'
 
 import mp3 from '@/assets/music/FlowerDance.mp3'
 import album from '@/assets/music/FlowerDance.jpg'
+import api from '@/api/api'
 
 export default {
   components: {
@@ -152,19 +153,58 @@ export default {
     }
   },
   watch: {
-    $route (val) {
-      if (this.audioList[val.params.id] !== undefined || this.audioList[val.params.id] !== '') this.audio = this.audioList[val.params.id]
-    }
+    // $route (val) {
+    //   if (this.audioList[val.params.id] !== undefined || this.audioList[val.params.id] !== '') this.audio = this.audioList[val.params.id]
+    // }
   },
   mounted () {
-    if (this.audioList[this.$route.params.id] !== undefined || this.audioList[this.$route.params.id] !== '') this.audio = this.audioList[this.$route.params.id]
-    else this.$router.push({ name: 'Landing' })
+    // if (this.audioList[this.$route.params.id] !== undefined || this.audioList[this.$route.params.id] !== '') this.audio = this.audioList[this.$route.params.id]
+    // else this.$router.push({ name: 'Landing' })
+
+    // this.audio = this.audioList.flowerdance
+
+    this.getMusic(this.$route.params.id)
   },
   methods: {
     buyClick () {
       // 这里并没有真的付款代码，而是直接将参数设定为付款成功的状态。
       this.showDialog = true
       this.owned = true
+    },
+    async getMusic (id) {
+      const audio = {
+        name: '',
+        artist: '',
+        url: null,
+        cover: null
+      }
+      // 根据 id 获取数据块对应的 Tag，指定作者
+      const musicInfo = await api.arweave.getTransactionDetail(id)
+      audio.artist = this.getTag(musicInfo, 'Author-Username')
+
+      // 根据 id 获取数据内容
+      const single = JSON.parse(await api.arweave.getTransactionDataDecodedString(id))
+      // 歌曲名称
+      audio.name = single.title
+      // 获取封面和音频
+      audio.cover = await api.arweave.getCover(single.cover)
+      const music = await api.arweave.getMusic(single.music)
+
+      // 挂载音频到一个 URL，并指定给 audio.url
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
+      reader.onload = (event) => {
+        const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
+        audio.url = url
+        this.audio = audio
+      }
+    },
+    getTag (data, key) {
+      const tags = data.get('tags')
+      for (let i = 0; i < tags.length; i++) {
+        let newKey = tags[i].get('name', { decode: true, string: true })
+        if (newKey === key) return tags[i].get('value', { decode: true, string: true })
+      }
     }
   }
 }
