@@ -1,5 +1,8 @@
 /* eslint-disable no-trailing-spaces */
 import Arweave from 'arweave'
+import Axios from 'axios'
+
+const arweaveHost = 'https://arweave.net/'
 
 let ar = Arweave.init({
   host: 'arweave.net',
@@ -194,13 +197,18 @@ let arweave = {
    * Get audio data based on given txid (transaction id)
    * @param {String} txid(TransactionId)  - 音频的交易地址
    */
+  getMusicUrl (txid) {
+    return arweaveHost + txid
+  },
+
+  /**
+   * Get audio data based on given txid (transaction id)
+   * @param {String} txid(TransactionId)  - 音频的交易地址
+   */
   getMusic (txid) {
     return new Promise((resolve, reject) => {
-      ar.transactions.getData(txid, {decode: true}).then(data => {
-        let audioCtx = new AudioContext()
-        audioCtx.decodeAudioData(data, (audio) => {
-          resolve(audio)
-        })
+      Axios.get(arweaveHost + txid, { responseType: 'arraybuffer' }).then(res => {
+        resolve({ data: res.data, type: res.headers['content-type'] })
       })
     })
   },
