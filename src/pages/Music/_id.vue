@@ -7,7 +7,7 @@
           <v-icon>mdi-chevron-left</v-icon>
           <span class="title">
             <span class="title-text">
-              {{ audio.name }}
+              {{ info.name || 'Back' }}
             </span>
             <span class="title-back">
               Back
@@ -16,7 +16,17 @@
         </a>
       </div>
       <!-- Player -->
-      <aplayer id="aplayer123456" v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <aplayer v-if="audio && !loading" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <!-- Loading -->
+      <div v-if="loading" class="music-loading">
+        <v-progress-linear
+          indeterminate
+          color="#E56D9B"
+        />
+        <p>
+          Music loading...
+        </p>
+      </div>
       <!-- Download -->
       <div v-if="owned" class="music-download">
         <v-btn
@@ -66,7 +76,7 @@
         </div>
       </div>
       <!-- Title -->
-      <div id="title">{{ audio.name }}</div>
+      <div id="title">{{ info.name }}</div>
     </div>
     <!-- Pay Dialog -->
     <v-dialog
@@ -76,7 +86,7 @@
       <v-card dark>
         <div class="pay">
           <h3 class="pay-title">
-            Payment of 「{{ audio.name }}」
+            Payment of 「{{ info.name }}」
           </h3>
           <div class="pay-icon">
             <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
@@ -113,9 +123,16 @@ export default {
     return {
       musicId: '',
       audio: '',
+      info: {
+        name: '',
+        artist: '',
+        artistId: '',
+        desp: ''
+      },
       price: 4.3,
       owned: false,
       showDialog: false,
+      loading: true,
       audioList: {
         flowerdance: {
           name: 'Flower Dance',
@@ -172,6 +189,7 @@ export default {
       this.owned = true
     },
     async getMusic (id) {
+      this.loading = true
       const audio = {
         name: '',
         artist: '',
@@ -181,11 +199,14 @@ export default {
       // 根据 id 获取数据块对应的 Tag，指定作者
       const musicInfo = await api.arweave.getTransactionDetail(id)
       audio.artist = this.getTag(musicInfo, 'Author-Username')
-
+      this.info.artist = audio.artist
+      this.info.artistId = this.getTag(musicInfo, 'Author-Address')
       // 根据 id 获取数据内容
       const single = JSON.parse(await api.arweave.getTransactionDataDecodedString(id))
       // 歌曲名称
       audio.name = single.title
+      this.info.name = single.title
+      this.info.desp = single.desp
       // 获取封面和音频
       audio.cover = await api.arweave.getCover(single.cover)
       const music = await api.arweave.getMusic(single.music)
@@ -197,6 +218,7 @@ export default {
         const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
         audio.url = url
         this.audio = audio
+        this.loading = false
       }
     },
     getTag (data, key) {
@@ -236,6 +258,7 @@ export default {
         .title {
           &-text {
             transform: translateY(-22px);
+            white-space: nowrap;
           }
           &-back {
             transform: translateY(-22px);
@@ -264,8 +287,7 @@ export default {
 
   &-player {
     max-width: 588px;
-    margin: 0 auto;
-    margin-top: 96px;
+    margin: 96px auto 0;
     border-radius: 5px;
     background: #7e7e7e4d;
     box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
@@ -296,6 +318,22 @@ export default {
       }
     }
   }
+
+  &-loading {
+    max-width: 588px;
+    height: 66px;
+    margin: 96px auto 0;
+    border-radius: 5px;
+    background: #7e7e7e4d;
+    box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
+    overflow: hidden;
+    backdrop-filter: blur(2px);
+    p {
+      color: white;
+      margin: 21px 0 0;
+    }
+  }
+
   &-download {
     margin: 48px auto 0;
     max-width: 240px;
@@ -344,6 +382,11 @@ export default {
     color: white;
     line-height: 28px;
     margin: 0 0 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
   }
   &-icon {
     text-align: center;
