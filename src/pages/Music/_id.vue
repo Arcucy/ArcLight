@@ -227,7 +227,19 @@ export default {
     margin: 0 auto;
     margin-top: 96px;
     border-radius: 5px;
-    background: #34343457;
+    background: #7e7e7e4d;
+    box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
+    overflow: hidden;
+    &::before {
+      transition: all 0.3s;
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 0; right: 0;
+      backdrop-filter: blur(2px);
+      z-index: -1;
+      margin: -30px;
+    }
     /deep/ &.aplayer .aplayer-info {
       .aplayer-music {
         .aplayer-title {
