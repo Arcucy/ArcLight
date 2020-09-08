@@ -178,7 +178,7 @@ let arweave = {
   },
 
   /**
-   * Get cover image based on 
+   * Get cover image based on given txid (transaction id)
    * 根据输入的 txid (交易 ID)获取封面
    * @param {String} txid(TransactionId)  - 图片的交易地址
    */
@@ -186,6 +186,21 @@ let arweave = {
     return new Promise((resolve, reject) => {
       ar.transactions.getData(txid, {decode: true, string: true}).then(data => {
         resolve(data)
+      })
+    })
+  },
+
+  /**
+   * Get audio data based on given txid (transaction id)
+   * @param {String} txid(TransactionId)  - 音频的交易地址
+   */
+  getMusic (txid) {
+    return new Promise((resolve, reject) => {
+      ar.transactions.getData(txid, {decode: true}).then(data => {
+        let audioCtx = new AudioContext()
+        audioCtx.decodeAudioData(data, (audio) => {
+          resolve(audio)
+        })
       })
     })
   },
