@@ -177,6 +177,19 @@ let arweave = {
     })
   },
 
+  /**
+   * Get cover image based on 
+   * 根据输入的 txid (交易 ID)获取封面
+   * @param {String} txid(TransactionId)  - 图片的交易地址
+   */
+  getCover (txid) {
+    return new Promise((resolve, reject) => {
+      ar.transactions.getData(txid, {decode: true, string: true}).then(data => {
+        resolve(data)
+      })
+    })
+  },
+
   getPostFromAddress (address) {
     return new Promise((resolve, reject) => {
       ar.arql({
