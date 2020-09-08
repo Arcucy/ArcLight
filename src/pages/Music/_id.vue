@@ -16,7 +16,7 @@
         </a>
       </div>
       <!-- Player -->
-      <aplayer id="aplayer123456" v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <aplayer id="aplayer123456" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
       <audio v-show="false" controls>
         <source :src="audio" type="audio/mp3">
       </audio>
@@ -174,18 +174,12 @@ export default {
       ]
     }
   },
-  watch: {
-    // $route (val) {
-    //   if (this.audioList[val.params.id] !== undefined || this.audioList[val.params.id] !== '') this.audio = this.audioList[val.params.id]
-    // }
-  },
   mounted () {
-    // if (this.audioList[this.$route.params.id] !== undefined || this.audioList[this.$route.params.id] !== '') this.audio = this.audioList[this.$route.params.id]
-    // else this.$router.push({ name: 'Landing' })
-
-    // this.audio = this.audioList.flowerdance
-
-    this.getMusic(this.$route.params.id)
+    this.getInfo(this.$route.params.id)
+  },
+  destroyed () {
+    // 释放 webkitURL
+    if (this.audio && this.audio.url) window.webkitURL.revokeObjectURL(this.audio.url)
   },
   methods: {
     buyClick () {
@@ -193,13 +187,13 @@ export default {
       this.showDialog = true
       this.owned = true
     },
-    async getMusic (id) {
+    async getInfo (id) {
       this.loading = true
       const audio = {
-        name: '',
+        title: '',
         artist: '',
-        url: null,
-        cover: null
+        src: null,
+        pic: null
       }
       // 根据 id 获取数据块对应的 Tag，指定作者
       const musicInfo = await api.arweave.getTransactionDetail(id)
@@ -209,23 +203,26 @@ export default {
       // 根据 id 获取数据内容
       const single = JSON.parse(await api.arweave.getTransactionDataDecodedString(id))
       // 歌曲名称
-      audio.name = single.title
+      audio.title = single.title
       this.info.name = single.title
       this.info.desp = single.desp
       // 获取封面和音频
-      audio.cover = await api.arweave.getCover(single.cover)
-      const music = await api.arweave.getMusic(single.music, pct => { this.pct = pct })
-
-      // 挂载音频到一个 URL，并指定给 audio.url
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
-      reader.onload = (event) => {
-        console.log('event:', event)
-        const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
-        audio.url = url
-        this.audio = audio
-        this.loading = false
-      }
+      audio.pic = await api.arweave.getCover(single.cover)
+      audio.src = await this.getMusic(single.music)
+      this.audio = audio
+      this.loading = false
+    },
+    getMusic (id) {
+      return new Promise(async (resolve, reject) => {
+        const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+        // 挂载音频到一个 URL，并指定给 audio.pic
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
+        reader.onload = (event) => {
+          const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
+          resolve(url)
+        }
+      })
     },
     getTag (data, key) {
       const tags = data.get('tags')
@@ -309,6 +306,7 @@ export default {
       margin: -30px;
     }
     /deep/ &.aplayer .aplayer-info {
+      padding: 14px 7px 5px 10px;
       .aplayer-music {
         .aplayer-title {
           color: #E56D9B;
@@ -317,9 +315,27 @@ export default {
           color: white;
         }
       }
-      .aplayer-controller .aplayer-time .aplayer-icon {
-        &:hover path {
-          fill: #E56D9B;
+      .aplayer-controller .aplayer-time {
+        color: white;
+        .aplayer-icon {
+          path {
+            fill: white;
+          }
+          &:hover path {
+            fill: #E56D9B;
+          }
+          &.inactive {
+            opacity: 0.5;
+          }
+          &.aplayer-icon-mode {
+            display: none;
+          }
+        }
+        .aplayer-volume-wrap .aplayer-volume-bar-wrap {
+          &:after {
+            background-color: #0000;
+            box-shadow: none;
+          }
         }
       }
     }
