@@ -20,7 +20,8 @@
       <!-- Loading -->
       <div v-if="loading" class="music-loading">
         <v-progress-linear
-          indeterminate
+          :indeterminate="!pct"
+          v-model="pct"
           color="#E56D9B"
         />
         <p>
@@ -129,6 +130,7 @@ export default {
         artistId: '',
         desp: ''
       },
+      pct: 0,
       price: 4.3,
       owned: false,
       showDialog: false,
@@ -209,12 +211,13 @@ export default {
       this.info.desp = single.desp
       // 获取封面和音频
       audio.cover = await api.arweave.getCover(single.cover)
-      const music = await api.arweave.getMusic(single.music)
+      const music = await api.arweave.getMusic(single.music, pct => { this.pct = pct })
 
       // 挂载音频到一个 URL，并指定给 audio.url
       const reader = new FileReader()
       reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
       reader.onload = (event) => {
+        console.log('event:', event)
         const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
         audio.url = url
         this.audio = audio
