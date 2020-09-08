@@ -204,10 +204,23 @@ let arweave = {
   /**
    * Get audio data based on given txid (transaction id)
    * @param {String} txid(TransactionId)  - 音频的交易地址
+   * @param {Function} callback - 如果需要获取加载进度，请使用这个回调方法
    */
-  getMusic (txid) {
+  getMusic (txid, callback) {
     return new Promise((resolve, reject) => {
-      Axios.get(arweaveHost + txid, { responseType: 'arraybuffer' }).then(res => {
+      // 加载进度回调
+      let onDownloadProgress
+      if (callback) {
+        onDownloadProgress = progressEvent => {
+          let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          if (callback) callback(percentCompleted)
+        }
+      }
+      // get
+      Axios.get(arweaveHost + txid, {
+        responseType: 'arraybuffer',
+        onDownloadProgress
+      }).then(res => {
         resolve({ data: res.data, type: res.headers['content-type'] })
       })
     })
