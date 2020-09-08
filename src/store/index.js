@@ -266,6 +266,7 @@ export default new Vuex.Store({
       const singleInfo = {
         title: data.single.title,
         desp: data.single.desp,
+        genre: data.genre,
         cover: imgTransaction.id,
         music: musicTransaction.id
       }

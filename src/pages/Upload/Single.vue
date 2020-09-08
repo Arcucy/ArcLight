@@ -53,7 +53,7 @@
           <div class="name-desp side-title">Demo Duration</div>
           <v-select
             v-model="duration"
-            :items="items"
+            :items="durationSelection"
             label="Select Demo duration"
             solo
           ></v-select>
@@ -189,7 +189,7 @@ export default {
       singleSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
-      items: ['10s', '30s', '60s', 'Off']
+      durationSelection: ['10s', '30s', '60s', 'Off']
     }
   },
   computed: {
@@ -268,15 +268,16 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
-        // this.uploadSingle({
-        //   img: { data: this.fileRaw, type: imgType[ext] },
-        //   music: { data: this.music, type: audioType[aext] },
-        //   key: this.keyFileContent,
-        //   single: {
-        //     title: this.singleTitle,
-        //     desp: this.singleDesp
-        //   }
-        // })
+        this.uploadSingle({
+          img: { data: this.fileRaw, type: imgType[ext] },
+          music: { data: this.music, type: audioType[aext] },
+          key: this.keyFileContent,
+          single: {
+            title: this.singleTitle,
+            desp: this.singleDesp,
+            genre: this.genre
+          }
+        })
       }
     },
     doneImageUpload () {
