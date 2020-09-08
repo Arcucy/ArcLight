@@ -15,11 +15,13 @@ import UploadSingle from '@/pages/Upload/Single.vue'
 import UploadAlbum from '@/pages/Upload/Album.vue'
 import UploadPodcast from '@/pages/Upload/Podcast.vue'
 import UploadSoundEffect from '@/pages/Upload/SoundEffect'
+import Sound from '@/pages/Sound/Index'
+import Podcast from '@/pages/Podcast/Index'
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'hash',
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -76,6 +78,16 @@ export default new Router({
       path: '/songs/albums',
       name: 'SongsAlbums',
       component: SongsAlbums
+    },
+    {
+      path: '/sound',
+      name: 'Sound',
+      component: Sound
+    },
+    {
+      path: '/podcast',
+      name: 'Podcast',
+      component: Podcast
     },
     {
       path: '/user/:id',

@@ -1,72 +1,36 @@
 <template>
   <div class="nav">
-    <h1
+    <router-link
       v-for="(tab, index) in tabs"
       :key="index"
-      :class="navTab === tab.value && 'active'"
-      @click="switchTab(tab.value)"
+      :class="$route.name === tab.name && 'active'"
+      :to="{ name: tab.name }"
     >
       {{ tab.label }}
-    </h1>
+    </router-link>
   </div>
 </template>
 
 <script>
 
 export default {
-  components: {
-  },
-  props: {
-    value: {
-      type: String,
-      default: 'song'
-    }
-  },
   data () {
     return {
       navTab: '',
       tabs: [
         {
-          value: 'song',
+          name: 'Songs',
           label: 'SONG'
         },
         {
-          value: 'sound',
+          name: 'Sound',
           label: 'SOUND'
         },
         {
-          value: 'podcast',
+          name: 'Podcast',
           label: 'PODCAST'
         }
       ]
-    }
-  },
-  watch: {
-    value (val) {
-      this.navTab = val
-      this.updateQuery('tab', val)
-    }
-  },
-  created () {
-    if (this.$route.query.tab) {
-      this.navTab = this.$route.query.tab
-      this.$emit('input', this.navTab)
-    } else {
-      this.navTab = this.value || 'song'
-    }
-  },
-  methods: {
-    switchTab (val) {
-      this.navTab = val
-      this.$emit('input', this.navTab)
-      this.updateQuery('tab', this.navTab)
-    },
-    updateQuery (key, val) {
-      const query = { ...this.$route.query }
-      if (query[key] !== val) {
-        query[key] = val
-        this.$router.replace({ query })
-      }
     }
   }
 }
@@ -80,7 +44,7 @@ export default {
   justify-content: center;
   position: relative;
 
-  h1 {
+  a {
     cursor: pointer;
     color: rgba(178, 178, 178, 1);
     padding: 0 0 5px 0;
@@ -91,6 +55,7 @@ export default {
     font-weight: 500;
     box-sizing: border-box;
     border-bottom: 3px solid transparent;
+    text-decoration: none;
 
     &:hover {
       color: white;

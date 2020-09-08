@@ -3,7 +3,7 @@
     <div class="songs-bg">
       <div class="songs">
         <div class="songs-header">
-          <router-link :to="{ name: 'Songs', query: { tab } }">
+          <router-link :to="{ name: 'Songs' }">
             <v-icon class="header-icon">mdi-chevron-left</v-icon>
             ALL Albums Sellings
           </router-link>
@@ -27,7 +27,6 @@
         </div>
       </div>
       <div class="come-down" />
-      <categoryNav v-model="tab" />
     </div>
   </spaceLayout>
 </template>
@@ -35,13 +34,11 @@
 <script>
 import spaceLayout from '@/components/Layout/Space'
 import albumCard from '@/components/Song/AlbumCard'
-import categoryNav from '@/components/CategoryNav'
 
 export default {
   components: {
     spaceLayout,
-    albumCard,
-    categoryNav
+    albumCard
   },
   data () {
     return {

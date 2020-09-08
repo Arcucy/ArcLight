@@ -42,6 +42,7 @@ export default {
   flex-direction: column;
 }
 .slot-shell {
+  margin-top: 73px;
   position: relative;
   width: 100%;
   flex: 1;
