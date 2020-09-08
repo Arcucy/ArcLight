@@ -6,10 +6,10 @@ import router from './router'
 import store from '@/store/index.js'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
-import APlayer from '@moefe/vue-aplayer'
+import Aplayer from 'vue-aplayer'
 
 Vue.use(Vuetify)
-Vue.use(APlayer)
+Vue.component('aplayer', Aplayer)
 
 Vue.config.productionTip = false
 
@@ -19,6 +19,6 @@ new Vue({
   router,
   store,
   vuetify: new Vuetify(),
-  components: { App },
+  components: { App, Aplayer },
   template: '<App/>'
 })
