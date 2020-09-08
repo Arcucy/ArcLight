@@ -17,6 +17,9 @@
       </div>
       <!-- Player -->
       <aplayer id="aplayer123456" v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <audio v-show="false" controls>
+        <source :src="audio" type="audio/mp3">
+      </audio>
       <!-- Download -->
       <div v-if="owned" class="music-download">
         <v-btn
