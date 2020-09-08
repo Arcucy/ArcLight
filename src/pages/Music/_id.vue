@@ -306,6 +306,7 @@ export default {
       margin: -30px;
     }
     /deep/ &.aplayer .aplayer-info {
+      padding: 14px 7px 5px 10px;
       .aplayer-music {
         .aplayer-title {
           color: #E56D9B;
@@ -314,9 +315,27 @@ export default {
           color: white;
         }
       }
-      .aplayer-controller .aplayer-time .aplayer-icon {
-        &:hover path {
-          fill: #E56D9B;
+      .aplayer-controller .aplayer-time {
+        color: white;
+        .aplayer-icon {
+          path {
+            fill: white;
+          }
+          &:hover path {
+            fill: #E56D9B;
+          }
+          &.inactive {
+            opacity: 0.5;
+          }
+          &.aplayer-icon-mode {
+            display: none;
+          }
+        }
+        .aplayer-volume-wrap .aplayer-volume-bar-wrap {
+          &:after {
+            background-color: #0000;
+            box-shadow: none;
+          }
         }
       }
     }
