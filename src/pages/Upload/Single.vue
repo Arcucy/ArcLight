@@ -48,11 +48,13 @@
             name="input-7-4"
             label="Your Single Description..."
           ></v-textarea>
+          <div class="name-desp side-title">Genre</div>
+          <genreSelect v-model="genre" style="margin-bottom: 16px;" />
           <div class="name-desp side-title">Demo Duration</div>
           <v-select
             v-model="duration"
             :items="items"
-            label="Demo duration"
+            label="Select Demo duration"
             solo
           ></v-select>
           <v-file-input
@@ -154,6 +156,7 @@
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
+import genreSelect from '@/components/GenreSelect.vue'
 
 import singleDefault from '@/assets/image/single.png'
 import { mapActions, mapState } from 'vuex'
@@ -161,11 +164,13 @@ import { mapActions, mapState } from 'vuex'
 export default {
   components: {
     imgUpload,
-    spaceLayout
+    spaceLayout,
+    genreSelect
   },
   data () {
     return {
       file: null,
+      genre: '',
       duration: '',
       singleDefault: singleDefault,
       singleTitle: '',
@@ -222,6 +227,11 @@ export default {
         return
       }
 
+      if (!this.genre) {
+        this.failMessage = 'Please select the genre of your music (None for blank)'
+        this.failSnackbar = true
+      }
+
       if (!this.duration) {
         this.failMessage = 'The demo duration is required'
         this.failSnackbar = true
@@ -258,15 +268,15 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
-        this.uploadSingle({
-          img: { data: this.fileRaw, type: imgType[ext] },
-          music: { data: this.music, type: audioType[aext] },
-          key: this.keyFileContent,
-          single: {
-            title: this.singleTitle,
-            desp: this.singleDesp
-          }
-        })
+        // this.uploadSingle({
+        //   img: { data: this.fileRaw, type: imgType[ext] },
+        //   music: { data: this.music, type: audioType[aext] },
+        //   key: this.keyFileContent,
+        //   single: {
+        //     title: this.singleTitle,
+        //     desp: this.singleDesp
+        //   }
+        // })
       }
     },
     doneImageUpload () {

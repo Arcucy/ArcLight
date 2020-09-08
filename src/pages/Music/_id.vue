@@ -16,7 +16,10 @@
         </a>
       </div>
       <!-- Player -->
-      <aplayer v-if="audio && !loading" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <aplayer id="aplayer123456" v-if="audio !== ''" :audio="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+      <audio v-show="false" controls>
+        <source :src="audio" type="audio/mp3">
+      </audio>
       <!-- Loading -->
       <div v-if="loading" class="music-loading">
         <v-progress-linear
