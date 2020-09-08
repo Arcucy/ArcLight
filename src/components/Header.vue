@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" :class="frosted && 'frosted'">
     <div class="link-container">
       <router-link :to="{ name: 'Landing' }" class="link">
         <img src="../assets/logo.png" style="height: 3rem">
@@ -169,7 +169,9 @@ export default {
         { title: 'My Profile', path: '/user/' },
         { title: 'My Library', path: '/library' },
         { title: 'Sign Out', type: 'danger' }
-      ]
+      ],
+      frosted: false,
+      showPosition: 1
     }
   },
   computed: {
@@ -180,8 +182,35 @@ export default {
       this.menuItems[0].path = '/user/' + val
     }
   },
+  mounted () {
+    this.$nextTick(() => {
+      this.scrollShow()
+      window.addEventListener('scroll', this.scrollShow)
+    })
+
+    this.loginBtnLoading = true
+    const c = getCookie('arclight_userkey')
+    if (c) {
+      this.setKey({
+        file: 'keyFile',
+        raw: c,
+        name: 'key',
+        content: JSON.parse(c)
+      })
+      this.loginBtnLoading = false
+    }
+    this.loginBtnLoading = false
+    if (this.wallet) {
+      this.menuItems[0].path = '/user/' + this.wallet
+    }
+  },
   methods: {
     ...mapActions(['setKey', 'logout']),
+    scrollShow() {
+      const currentTop = document.body.scrollTop || document.documentElement.scrollTop
+      if (currentTop > this.showPosition) this.frosted = true
+      else this.frosted = false
+    },
     submit () {
       this.loginBtnLoading = true
       this.keyFile = this.file
@@ -224,23 +253,6 @@ export default {
     uploadMusic () {
       this.$router.push({ name: 'Upload' })
     }
-  },
-  mounted () {
-    this.loginBtnLoading = true
-    const c = getCookie('arclight_userkey')
-    if (c) {
-      this.setKey({
-        file: 'keyFile',
-        raw: c,
-        name: 'key',
-        content: JSON.parse(c)
-      })
-      this.loginBtnLoading = false
-    }
-    this.loginBtnLoading = false
-    if (this.wallet) {
-      this.menuItems[0].path = '/user/' + this.wallet
-    }
   }
 }
 </script>
@@ -248,9 +260,34 @@ export default {
 <style lang="less" scoped>
 
 .header {
-  padding-top: 20px;
+  padding: 20px 0 0;
   display: flex;
   align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  overflow: hidden;
+  transition: all 0.3s;
+  &.frosted {
+    padding: 5px 0;
+    background: #adadad4d;
+    box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
+    &::before {
+      backdrop-filter: blur(20px);
+    }
+  }
+  &::before {
+    transition: all 0.3s;
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    backdrop-filter: blur(0px);
+    z-index: -1;
+    margin: -30px;
+  }
 }
 
 .link-container {

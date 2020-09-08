@@ -233,7 +233,7 @@ export default {
 
 <style lang="less" scoped>
 .user {
-  margin: 20px auto;
+  margin: 48px auto;
   max-width: 1240px;
   width: 100%;
   padding: 0 20px;
