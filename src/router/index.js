@@ -12,6 +12,7 @@ import Library from '@/pages/Library'
 
 import Upload from '@/pages/Upload/Index.vue'
 import UploadSingle from '@/pages/Upload/Single.vue'
+import ReviewSingle from '@/pages/Upload/ReviewSingle.vue'
 import UploadAlbum from '@/pages/Upload/Album.vue'
 import UploadPodcast from '@/pages/Upload/Podcast.vue'
 import UploadSoundEffect from '@/pages/Upload/SoundEffect'
@@ -43,6 +44,11 @@ export default new Router({
       path: '/upload/single',
       name: 'uploadSingle',
       component: UploadSingle
+    },
+    {
+      path: '/review/single',
+      name: 'ReviewSingle',
+      component: ReviewSingle
     },
     {
       path: '/upload/album',

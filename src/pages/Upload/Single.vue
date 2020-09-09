@@ -57,6 +57,15 @@
             label="Select Demo duration"
             solo
           ></v-select>
+          <div class="name-desp side-title">Price</div>
+          <v-text-field
+            v-model="price"
+            class="price"
+            id="price"
+            solo
+            label="Prepend"
+            prepend-inner-icon="mdi-cash-multiple"
+          ></v-text-field>
           <v-file-input
             v-model="file"
             color="#FFF"
@@ -87,7 +96,7 @@
               </span>
             </template>
           </v-file-input>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Submit</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -172,6 +181,7 @@ export default {
       file: null,
       genre: '',
       duration: '',
+      price: 0,
       singleDefault: singleDefault,
       singleTitle: '',
       singleDesp: '',
@@ -206,41 +216,54 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['uploadSingleCoverFile', 'uploadSingle']),
+    ...mapActions(['uploadSingleCoverFile', 'reviewSingle']),
     submit () {
       this.submitBtnLoading = true
       if (this.singleCover === '') {
         this.failMessage = 'A cover for a single release is required'
         this.failSnackbar = true
+        this.submitBtnLoading = false
         return
       }
 
       if (this.singleTitle === '') {
         this.failMessage = 'A title for a single release is required'
         this.failSnackbar = true
+        this.submitBtnLoading = false
         return
       }
 
       if (this.singleDesp === '') {
         this.failMessage = 'A description for a single release is required'
         this.failSnackbar = true
+        this.submitBtnLoading = false
         return
       }
 
-      if (!this.genre) {
-        this.failMessage = 'Please select the genre of your music (None for blank)'
-        this.failSnackbar = true
-      }
+      // if (!this.genre) {
+      //   this.failMessage = 'Please select the genre of your music (None for blank)'
+      //   this.failSnackbar = true
+      //   this.submitBtnLoading = false
+      // }
 
-      if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+      // if (!this.duration) {
+      //   this.failMessage = 'The demo duration is required'
+      //   this.failSnackbar = true
+      //   this.submitBtnLoading = false
+      //   return
+      // }
+
+      if (isNaN(parseFloat(this.price))) {
+        this.failMessage = 'The price must be numbers'
         this.failSnackbar = true
+        this.submitBtnLoading = false
         return
       }
 
       if (!this.file) {
         this.failMessage = 'A source music file for a single release is required'
         this.failSnackbar = true
+        this.submitBtnLoading = false
         return
       }
 
@@ -268,16 +291,20 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
-        this.uploadSingle({
+        this.reviewSingle({
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext] },
           key: this.keyFileContent,
           single: {
             title: this.singleTitle,
             desp: this.singleDesp,
-            genre: this.genre
+            genre: this.genre,
+            duration: this.duration,
+            price: parseFloat(this.price)
           }
         })
+
+        this.$router.push({ name: 'ReviewSingle' })
       }
     },
     doneImageUpload () {
@@ -409,6 +436,20 @@ export default {
 
 /deep/ .v-text-field__slot > label {
   color: white;
+}
+
+.price {
+  /deep/ &.v-text-field {
+    .v-input__control .v-input__slot .v-text-field__slot {
+      margin-left: 10px;
+      &::after {
+        content: 'AR';
+        color: white;
+        font-weight: 900;
+        margin-right: 5px;
+      }
+    }
+  }
 }
 
 /deep/ .v-icon--link {

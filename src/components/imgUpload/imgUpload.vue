@@ -24,8 +24,8 @@
       class="img-upload-modal br10"
     >
       <v-card>
-        <v-card-title class="headline grey lighten-2" style="text-align: center; display: block; margin-top: 10px;">
-          <p class="modal-header-title">Edit Avatar</p>
+        <v-card-title class="headline" style="text-align: center; display: block; margin-top: 10px;">
+          <p class="modal-header-title" style="margin-bottom: 0px;">Edit Avatar</p>
         </v-card-title>
         <p class="modal-header-subtitle" style="margin-bottom: 10px;">Adjust size and position of image</p>
         <div
@@ -339,5 +339,9 @@ export default {
 
 /deep/ .v-card__title {
   display: block;
+}
+
+/deep/ .modal-header-title {
+  margin-bottom: 0px !important;
 }
 </style>
