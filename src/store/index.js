@@ -44,8 +44,25 @@ export default new Vuex.Store({
     albumCoverId: '',
     albumCoverLink: '',
     podcastCoverFile: '',
+    podcastCoverRaw: '',
     podcastCoverId: '',
     podcastCoverLink: '',
+    podcastCoverType: '',
+    podcastMusicRaw: '',
+    podcastMusicFile: '',
+    podcastMusicType: '',
+    podcastInfo: '',
+    podcastObj: '',
+    soundEffectCoverFile: '',
+    soundEffectCoverRaw: '',
+    soundEffectCoverId: '',
+    soundEffectCoverLink: '',
+    soundEffectCoverType: '',
+    soundEffectMusicRaw: '',
+    soundEffectMusicFile: '',
+    soundEffectMusicType: '',
+    soundEffectInfo: '',
+    soundEffectObj: '',
     uploadCoverPct: 0,
     uploadMusicPct: 0,
     singleMuiscFile: '',
@@ -125,11 +142,62 @@ export default new Vuex.Store({
     setPodcastCoverFile (state, file) {
       state.podcastCoverFile = file
     },
+    setPodcastCoverRaw (state, raw) {
+      state.podcastCoverRaw = raw
+    },
     setPodcastCoverId (state, id) {
       state.podcastCoverId = id
     },
     setPodcastCoverLink (state, link) {
       state.podcastCoverLink = link
+    },
+    setPodcastCoverType (state, type) {
+      state.podcastCoverType = type
+    },
+    setPodcastMusicRaw (state, raw) {
+      state.podcastMusicRaw = raw
+    },
+    setPodcastMusicFile (state, file) {
+      state.podcastMusicFile = file
+    },
+    setPodcastMusicType (state, type) {
+      state.podcastMusicType = type
+    },
+    setPodcastInfo (state, info) {
+      state.podcastInfo = info
+    },
+    setPodcastObj (state, obj) {
+      state.podcastObj = obj
+    },
+    setSoundEffectCoverFile (state, file) {
+      state.soundEffectCoverFile = file
+    },
+    setSoundEffectCoverRaw (state, raw) {
+      state.soundEffectCoverRaw = raw
+    },
+    setSoundEffectCoverId (state, id) {
+      state.soundEffectCoverId = id
+    },
+    setSoundEffectCoverLink (state, link) {
+      state.soundEffectCoverLink = link
+    },
+    setSoundEffectCoverType (state, type) {
+      state.soundEffectCoverType = type
+    },
+    setSoundEffectMusicRaw (state, raw) {
+      state.soundEffectMusicRaw = raw
+    },
+    setSoundEffectMusicFile (state, file) {
+      state.soundEffectMusicFile = file
+    },
+    setSoundEffectMusicType (state, type) {
+      state.soundEffectMusicType = type
+    },
+    setSoundEffectInfo (state, info) {
+      state.soundEffectInfo = info
+    },
+    setSoundEffectObj (state, obj) {
+      state.soundEffectObj = obj
     },
     setUploadCoverPct (state, pct) {
       state.uploadCoverPct = pct
@@ -236,6 +304,33 @@ export default new Vuex.Store({
       commit('setSingleMusicType', data.music.type)
       commit('setSingleInfo', data.single)
       commit('setSingleObj', data)
+    },
+    reviewAlbum ({ commit }, data) {
+      commit('setAlbumCoverRaw', data.img.data)
+      commit('setAlbumCoverType', data.img.type)
+      commit('setAlbumMusicRaw', data.music.data)
+      commit('setAlbumMusicFile', data.music.read)
+      commit('setAlbumMusicType', data.music.type)
+      commit('setAlbumInfo', data.single)
+      commit('setAlbumObj', data)
+    },
+    reviewPodcast ({ commit }, data) {
+      commit('setPodcastCoverRaw', data.img.data)
+      commit('setPodcastCoverType', data.img.type)
+      commit('setPodcastMusicRaw', data.music.data)
+      commit('setPodcastMusicFile', data.music.read)
+      commit('setPodcastMusicType', data.music.type)
+      commit('setPodcastInfo', data.single)
+      commit('setPodcastObj', data)
+    },
+    reviewSoundEffect ({ commit }, data) {
+      commit('setSoundEffectCoverRaw', data.img.data)
+      commit('setSoundEffectCoverType', data.img.type)
+      commit('setSoundEffectMusicRaw', data.music.data)
+      commit('setSoundEffectMusicFile', data.music.read)
+      commit('setSoundEffectMusicType', data.music.type)
+      commit('setSoundEffectInfo', data.single)
+      commit('setSoundEffectObj', data)
     },
     async uploadSingle ({ commit }, data) {
       let imgTransaction = ''
