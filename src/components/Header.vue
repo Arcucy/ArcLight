@@ -346,18 +346,10 @@ export default {
   color: #E53935 !important;
 }
 
-/deep/ .v-menu__content > .v-list {
-  background-color: rgba(51,51,51,0.8);
-}
-
 .upload-btn {
   /deep/ .v-btn__content {
     color: white;
   }
-}
-
-/deep/ .v-input__control > .v-input__slot > label {
-  color: black;
 }
 
 /deep/ .v-input--selection-controls {
@@ -381,5 +373,19 @@ export default {
 /deep/ a {
   color: white;
   text-decoration: none;
+}
+
+.autocomplete {
+  /deep/ .v-label.theme--light{
+    color: white;
+  }
+
+  /deep/ .v-icon.mdi-menu-down.theme--light {
+    color: white;
+    &.primary--text {
+      color: #E56D9B !important;
+      caret-color: #E56D9B !important;
+    }
+  }
 }
 </style>
