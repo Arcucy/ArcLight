@@ -95,7 +95,7 @@
 <script>
 
 import spaceLayout from '@/components/Layout/Space.vue'
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   components: {
@@ -116,7 +116,9 @@ export default {
     ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicFile', 'singleMusicRaw', 'singleMusicType', 'singleInfo'])
   },
   methods: {
+    ...mapActions(['uploadSingle']),
     submit () {
+      this.submitBtnLoading = true
       this.uploadSingle({
         img: { data: this.singleCoverRaw, type: this.singleCoverType },
         music: { data: this.$route.params.data, type: this.singleMusicType },
@@ -127,7 +129,7 @@ export default {
     getMusic () {
       return new Promise(async (resolve, reject) => {
         const reader = new FileReader()
-        reader.readAsArrayBuffer(new Blob([this.$route.params.data], { type: this.singleMusicType }))
+        reader.readAsArrayBuffer(new Blob([this.$route.params.data.music], { type: this.singleMusicType }))
         reader.onload = (event) => {
           const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
           resolve(url)
@@ -152,11 +154,14 @@ export default {
       }
       this.audio = audio
     })
+
     this.price = this.singleInfo.price + ' AR'
     this.duration = this.singleInfo.duration
 
     const priceString = this.singleInfo.price + ''
-    this.priceWidth = priceString.length * 10 + 30
+    let length = priceString.length
+    if (length < 4) length = 4
+    this.priceWidth = length * 10 + 30
   }
 }
 </script>

@@ -306,7 +306,7 @@ export default {
         }
         this.reviewSingle(dataObj)
 
-        this.$router.push({ name: 'ReviewSingle', params: { data: this.music } })
+        this.$router.push({ name: 'ReviewSingle', params: { data: { music: this.music, raw: this.musicContent, file: this.file } } })
       }
     },
     doneImageUpload () {

@@ -2,6 +2,8 @@
 import Arweave from 'arweave'
 import Axios from 'axios'
 
+import { decryptBuffer } from '../util/encrypt'
+
 const arweaveHost = 'https://arweave.net/'
 
 let ar = Arweave.init({
@@ -221,6 +223,9 @@ let arweave = {
         responseType: 'arraybuffer',
         onDownloadProgress
       }).then(res => {
+        const data = decryptBuffer(res.data)
+        console.log(data)
+        console.log(res.data)
         resolve({ data: res.data, type: res.headers['content-type'] })
       })
     })
