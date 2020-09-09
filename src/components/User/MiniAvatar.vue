@@ -1,5 +1,5 @@
 <template>
-  <v-avatar class="avatar" :size="size">
+  <v-avatar :style="`border: 2px solid ${color};`" class="avatar" :size="size">
     <v-img
       v-if="src"
       class="avatar-img"
@@ -33,6 +33,10 @@ export default {
     size: {
       type: Number,
       default: 20
+    },
+    color: {
+      type: String,
+      default: 'white'
     }
   }
 }
@@ -41,7 +45,6 @@ export default {
 <style lang="less" scoped>
 .avatar {
   background: #252525;
-  border: 2px solid white;
   &-img {
     width: 100%;
     height: 100%;
