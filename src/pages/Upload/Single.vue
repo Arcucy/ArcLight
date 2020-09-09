@@ -242,18 +242,18 @@ export default {
         return
       }
 
-      // if (!this.genre) {
-      //   this.failMessage = 'Please select the genre of your music (None for blank)'
-      //   this.failSnackbar = true
-      //   this.submitBtnLoading = false
-      // }
+      if (!this.genre) {
+        this.failMessage = 'Please select the genre of your music (None for blank)'
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+      }
 
-      // if (!this.duration) {
-      //   this.failMessage = 'The demo duration is required'
-      //   this.failSnackbar = true
-      //   this.submitBtnLoading = false
-      //   return
-      // }
+      if (!this.duration) {
+        this.failMessage = 'The demo duration is required'
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      }
 
       if (isNaN(parseFloat(this.price))) {
         this.failMessage = 'The price must be numbers'
@@ -292,10 +292,9 @@ export default {
       reader.onload = async (e) => {
         this.music = e.target.result
         this.musicContent = this.file
-
-        this.reviewSingle({
+        const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
-          music: { data: this.music, type: audioType[aext] },
+          music: { data: this.music, type: audioType[aext], read: this.file },
           key: this.keyFileContent,
           single: {
             title: this.singleTitle,
@@ -304,9 +303,10 @@ export default {
             duration: this.duration,
             price: parseFloat(this.price)
           }
-        })
+        }
+        this.reviewSingle(dataObj)
 
-        this.$router.push({ name: 'ReviewSingle' })
+        this.$router.push({ name: 'ReviewSingle', params: { data: this.music } })
       }
     },
     doneImageUpload () {

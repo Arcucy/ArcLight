@@ -46,6 +46,7 @@ export default new Vuex.Store({
     podcastCoverLink: '',
     uploadCoverPct: 0,
     uploadMusicPct: 0,
+    singleMuiscFile: '',
     singleMuiscRaw: '',
     singleMusicId: '',
     singleMusicLink: '',
@@ -133,6 +134,10 @@ export default new Vuex.Store({
     },
     setUploadMusicPct (state, pct) {
       state.uploadMusicPct = pct
+    },
+    setSingleMusicFile (state, file) {
+      state.singleMuiscFile = file
+      console.log(state.singleMuiscFile)
     },
     setSingleMusicRaw (state, raw) {
       state.singleMuiscRaw = raw
@@ -225,6 +230,7 @@ export default new Vuex.Store({
       commit('setSingleCoverRaw', data.img.data)
       commit('setSingleCoverType', data.img.type)
       commit('setSingleMusicRaw', data.music.data)
+      commit('setSingleMusicFile', data.music.read)
       commit('setSingleMusicType', data.music.type)
       commit('setSingleInfo', data.single)
       commit('setSingleObj', data)
