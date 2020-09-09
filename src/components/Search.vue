@@ -6,7 +6,7 @@
       :items="items"
       :search-input.sync="search"
       cache-items
-      class="mx-4"
+      class="mx-4 autocomplete"
       flat
       hide-no-data
       hide-details
@@ -110,28 +110,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .v-label.theme--light{
-  color: white;
-}
+.autocomplete {
+  /deep/ .v-label.theme--light{
+    color: white;
+  }
 
-/deep/ .v-icon.mdi-menu-down.theme--light {
-  color: white;
-}
-
-/deep/ .v-list-item__title {
-  text-align: left;
-}
-
-/deep/ .v-select-list.theme--light {
-  background-color: rgba(51,51,51,0.8);
-}
-
-/deep/ .v-list-item__title {
-  color: white;
-}
-
-/deep/ .v-list-item__mask {
-color: white !important;
-  background-color: #E56D9B !important;
+  /deep/ .v-icon.mdi-menu-down.theme--light {
+    color: white;
+    &.primary--text {
+      color: #E56D9B !important;
+      caret-color: #E56D9B !important;
+    }
+  }
 }
 </style>
