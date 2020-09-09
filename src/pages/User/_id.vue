@@ -261,6 +261,15 @@ export default {
         font-weight: 500;
         color: #FFFFFF;
         line-height: 20px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s;
+        &:hover {
+          .header-icon {
+            transform: translateX(5px);
+          }
+        }
         .header-icon {
           color: #FFFFFF;
           font-size: 18px;

@@ -165,9 +165,18 @@ export default {
       font-weight: 500;
       color: #E56D9B;
       line-height: 22px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+      &:hover {
+        .header-icon {
+          transform: translateX(-5px);
+        }
+      }
       .header-icon {
         color: #E56D9B;
-        font-size: 18px;
+        font-size: 22px;
       }
     }
   }

@@ -2,10 +2,12 @@
   <div>
     <spaceLayout>
       <div class="upload-single-container">
-        <router-link :to="{ name: 'Upload' }" class="back-link">
-          <v-icon color="#E56D9B">mdi-chevron-left</v-icon>
-          Back to Selection
-        </router-link>
+        <div class="upload-header">
+          <router-link :to="{ name: 'Upload' }" class="back-link">
+            <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
+            Back to Selection
+          </router-link>
+        </div>
       </div>
     </spaceLayout>
   </div>
@@ -27,14 +29,36 @@ export default {
 
 <style lang="less" scoped>
 .upload-single-container {
-  margin: 20px auto;
+  margin: 48px auto 20px;
   max-width: 1240px;
   width: 100%;
   padding: 0 20px;
 }
 
-.back-link {
-  display: block;
-  text-align: left;
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  .back-link {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: #E56D9B;
+    line-height: 22px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+    &:hover {
+      .back-link-icon {
+        transform: translateX(-5px);
+      }
+    }
+    .back-link-icon {
+      color: #E56D9B;
+      font-size: 22px;
+    }
+  }
 }
 </style>
