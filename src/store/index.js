@@ -34,8 +34,10 @@ export default new Vuex.Store({
     },
     userPageLoading: true,
     singleCoverFile: '',
+    singleCoverRaw: '',
     singleCoverId: '',
     singleCoverLink: '',
+    singleCoverType: '',
     albumCoverFile: '',
     albumCoverId: '',
     albumCoverLink: '',
@@ -44,10 +46,15 @@ export default new Vuex.Store({
     podcastCoverLink: '',
     uploadCoverPct: 0,
     uploadMusicPct: 0,
+    singleMuiscFile: '',
+    singleMuiscRaw: '',
     singleMusicId: '',
     singleMusicLink: '',
+    singleMusicType: '',
     singleUploadComplete: false,
-    singleLink: ''
+    singleLink: '',
+    singleInfo: '',
+    singleObj: ''
   },
   mutations: {
     setIsLoggedIn (state, status) {
@@ -92,11 +99,17 @@ export default new Vuex.Store({
     setSingleCoverFile (state, file) {
       state.singleCoverFile = file
     },
+    setSingleCoverRaw (state, raw) {
+      state.singleCoverRaw = raw
+    },
     setSingleCoverId (state, id) {
       state.singleCoverId = id
     },
     setSingleCoverLink (state, link) {
       state.singleCoverLink = link
+    },
+    setSingleCoverType (state, type) {
+      state.singleCoverType = type
     },
     setAlbumCoverFile (state, file) {
       state.albumCoverFile = file
@@ -122,17 +135,33 @@ export default new Vuex.Store({
     setUploadMusicPct (state, pct) {
       state.uploadMusicPct = pct
     },
+    setSingleMusicFile (state, file) {
+      state.singleMuiscFile = file
+      console.log(state.singleMuiscFile)
+    },
+    setSingleMusicRaw (state, raw) {
+      state.singleMuiscRaw = raw
+    },
     setSingleMusicId (state, id) {
       state.singleMusicId = id
     },
     setSingleMusicLink (state, link) {
       state.singleMusicLink = link
     },
+    setSingleMusicType (state, type) {
+      state.singleMusicType = type
+    },
     setSingleUploadComplete (state, status) {
       state.singleUploadComplete = status
     },
     setSingleLink (state, link) {
       state.singleLink = link
+    },
+    setSingleInfo (state, info) {
+      state.singleInfo = info
+    },
+    setSingleObj (state, obj) {
+      state.singleObj = obj
     }
   },
   getters: {
@@ -196,6 +225,15 @@ export default new Vuex.Store({
     },
     setPodcastCoverFile ({ commit }, file) {
       commit('setPodcastCoverFile', file)
+    },
+    reviewSingle ({ commit }, data) {
+      commit('setSingleCoverRaw', data.img.data)
+      commit('setSingleCoverType', data.img.type)
+      commit('setSingleMusicRaw', data.music.data)
+      commit('setSingleMusicFile', data.music.read)
+      commit('setSingleMusicType', data.music.type)
+      commit('setSingleInfo', data.single)
+      commit('setSingleObj', data)
     },
     async uploadSingle ({ commit }, data) {
       let imgTransaction = ''

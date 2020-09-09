@@ -64,7 +64,6 @@ export default {
         this.items = this.genres.filter(e => {
           return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
         })
-        console.log(this.items)
         this.loading = false
       }, 500)
     }
