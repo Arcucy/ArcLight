@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Arweave from 'arweave'
 
-import { encryptBuffer, decryptBuffer } from '../util/encrypt'
+import { encryptBuffer } from '../util/encrypt'
 
 import API from '../api/api'
 
