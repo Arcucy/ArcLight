@@ -16,10 +16,7 @@
         </a>
       </div>
       <!-- Player -->
-      <aplayer id="aplayer123456" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
-      <audio v-show="false" controls>
-        <source :src="audio" type="audio/mp3">
-      </audio>
+      <aplayer v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
       <!-- Loading -->
       <div v-if="loading" class="music-loading">
         <v-progress-linear
@@ -81,6 +78,18 @@
       </div>
       <!-- Title -->
       <div id="title">{{ info.name }}</div>
+      <!-- Artist -->
+      <div class="music-artist">
+        <router-link :to="{ name: 'User', params: { id: artist.id } }">
+          <miniAvatar :size="64" color="#E56D9B" :src="artist.avatar" />
+        </router-link>
+        <router-link class="music-artist-username" :to="{ name: 'User', params: { id: artist.id } }">
+          {{ artist.username }}
+        </router-link>
+      </div>
+      <p class="music-desp">
+        {{ info.desp }}
+      </p>
     </div>
     <!-- Pay Dialog -->
     <v-dialog
@@ -132,6 +141,11 @@ export default {
         artist: '',
         artistId: '',
         desp: ''
+      },
+      artist: {
+        id: '',
+        avatar: 'loading',
+        username: 'Artist loading...'
       },
       pct: 0,
       price: 4.3,
@@ -196,33 +210,77 @@ export default {
         pic: null
       }
       // 根据 id 获取数据块对应的 Tag，指定作者
-      const musicInfo = await api.arweave.getTransactionDetail(id)
-      audio.artist = this.getTag(musicInfo, 'Author-Username')
-      this.info.artist = audio.artist
-      this.info.artistId = this.getTag(musicInfo, 'Author-Address')
-      // 根据 id 获取数据内容
-      const single = JSON.parse(await api.arweave.getTransactionDataDecodedString(id))
-      // 歌曲名称
-      audio.title = single.title
-      this.info.name = single.title
-      this.info.desp = single.desp
-      // 获取封面和音频
-      audio.pic = await api.arweave.getCover(single.cover)
-      audio.src = await this.getMusic(single.music)
-      this.audio = audio
+      try {
+        const musicInfo = await api.arweave.getTransactionDetail(id)
+        audio.artist = this.getTag(musicInfo, 'Author-Username')
+        this.info.artist = audio.artist
+        this.info.artistId = this.getTag(musicInfo, 'Author-Address')
+        this.getArtist(this.info.artistId)
+        // 根据 id 获取数据内容
+        const single = JSON.parse(await api.arweave.getTransactionDataDecodedString(id))
+        // 歌曲名称
+        audio.title = single.title
+        this.info.name = single.title
+        this.info.desp = single.desp
+        // 获取封面和音频
+        audio.pic = await this.getCover(single.cover)
+        audio.src = await this.getMusic(single.music)
+        this.audio = audio
+      } catch (e) {
+        console.error('[Failed to get music information]', e)
+        this.$message.error('Failed to get music information')
+      }
       this.loading = false
     },
     getMusic (id) {
       return new Promise(async (resolve, reject) => {
-        const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
-        // 挂载音频到一个 URL，并指定给 audio.pic
-        const reader = new FileReader()
-        reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
-        reader.onload = (event) => {
-          const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
-          resolve(url)
+        try {
+          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+          // 挂载音频到一个 URL，并指定给 audio.pic
+          const reader = new FileReader()
+          reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
+          reader.onload = (event) => {
+            const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
+            resolve(url)
+          }
+        } catch (e) {
+          console.error('[Failed to get audio data]', e)
+          this.$message.error('Failed to get audio data')
+          resolve('')
         }
       })
+    },
+    async getArtist (id) {
+      this.artist.id = id
+      try {
+        const user = await api.arweave.getIdFromAddress(id)
+        if (user) this.artist.username = user.data
+        else {
+          this.artist.username = 'unknown'
+          this.$message.error('Failed to get author information')
+        }
+      } catch (e) {
+        console.error('[Failed to get author information]', e)
+        this.$message.error('Failed to get author information')
+      }
+      try {
+        const avatar = await api.arweave.getAvatarFromAddress(id)
+        this.artist.avatar = avatar || ''
+      } catch (e) {
+        console.error('[Failed to get author avatar]', e)
+        this.$message.error('Failed to get author avatar')
+        this.artist.avatar = ''
+      }
+    },
+    async getCover (id) {
+      try {
+        const cover = await api.arweave.getCover(id)
+        return cover
+      } catch (e) {
+        console.error('[Failed to get cover]', e)
+        this.$message.error('Failed to get cover')
+        return ''
+      }
     },
     getTag (data, key) {
       const tags = data.get('tags')
@@ -392,6 +450,36 @@ export default {
         }
       }
     }
+  }
+
+  &-artist {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    a {
+      text-decoration: none;
+    }
+
+    &-username {
+      font-size: 14px;
+      font-weight: 500;
+      color: white;
+      line-height: 20px;
+      margin: 8px 0 0;
+    }
+  }
+
+  &-desp {
+    width: 720px;
+    margin:60px 0 0;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 400;
+    color: white;
+    line-height: 22px;
   }
 }
 
