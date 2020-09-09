@@ -25,7 +25,7 @@
     >
       <v-card>
         <v-card-title class="headline" style="text-align: center; display: block; margin-top: 10px;">
-          <p class="modal-header-title" style="margin-bottom: 0px;">Edit Avatar</p>
+          <p class="modal-header-title" style="margin-bottom: 0px;">Edit Cover</p>
         </v-card-title>
         <p class="modal-header-subtitle" style="margin-bottom: 10px;">Adjust size and position of image</p>
         <div
