@@ -10,7 +10,6 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
 import { Message, Notification } from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(Vuetify)
 Vue.use(Message)
