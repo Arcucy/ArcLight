@@ -9,15 +9,15 @@ import Aplayer from 'vue-aplayer'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
-import { Message, Notification } from 'element-ui'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(Vuetify)
-Vue.use(Message)
-Vue.use(Notification)
+Vue.use(ElementUI)
 Vue.component('aplayer', Aplayer)
 
-Vue.prototype.$message = Message
-Vue.prototype.$notify = Notification
+Vue.prototype.$message = ElementUI.Message
+Vue.prototype.$notify = ElementUI.Notification
 
 Vue.config.productionTip = false
 
