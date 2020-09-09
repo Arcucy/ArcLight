@@ -18,11 +18,11 @@
       </div>
     </div>
     <div class="card-right">
-      <div class="info">
-        <p class="info-title">
+      <div class="music-info">
+        <p class="music-info-title">
           {{ card.title }}
         </p>
-        <p class="info-artist">
+        <p class="music-info-artist">
           by {{ card.artist }}
         </p>
       </div>
@@ -102,7 +102,7 @@ p {
     flex: 1;
     display: flex;
     border-bottom: 1px solid #B2B2B2;
-    .info {
+    .music-info {
       flex: 1;
       &-title {
         margin: 9px 0 4px;

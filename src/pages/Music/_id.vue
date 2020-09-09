@@ -5,11 +5,11 @@
       <div class="music-header">
         <a @click="$router.go(-1)">
           <v-icon>mdi-chevron-left</v-icon>
-          <span class="title">
-            <span class="title-text">
+          <span class="header-title">
+            <span class="header-title-text">
               {{ info.name || 'Back' }}
             </span>
-            <span class="title-back">
+            <span class="header-title-back">
               Back
             </span>
           </span>
@@ -237,7 +237,7 @@ export default {
 
 <style lang="less" scoped>
 .music {
-  margin: 20px auto;
+  margin: 48px auto 20px;
   max-width: 1240px;
   width: 100%;
   padding: 0 20px;
@@ -246,25 +246,25 @@ export default {
     text-align: left;
     a {
       cursor: pointer;
-      font-size: 20px;
-      font-weight: 500;
-      color: #E56D9B;
-      line-height: 22px;
       transition: all 0.3s;
       display: inline-flex;
       align-items: center;
+      font-size: 20px;
+      font-weight: 500;
+      color: #E56D9B;
+      line-height: 25px;
 
       &:hover {
         i {
           transform: translateX(-5px);
         }
-        .title {
+        .header-title {
           &-text {
-            transform: translateY(-22px);
+            transform: translateY(-25px);
             white-space: nowrap;
           }
           &-back {
-            transform: translateY(-22px);
+            transform: translateY(-25px);
           }
         }
       }
@@ -273,9 +273,9 @@ export default {
         color: #E56D9B;
       }
 
-      .title {
+      .header-title {
         overflow: hidden;
-        height: 22px;
+        height: 25px;
         display: inline-flex;
         flex-direction: column;
         &-text {
