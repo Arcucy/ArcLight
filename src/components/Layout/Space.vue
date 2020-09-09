@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <v-app class="layout appstyle">
     <div class="layout-bg">
       <div id='stars' />
       <div id='stars2' />
@@ -19,7 +19,7 @@
       for Project
       <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -35,11 +35,14 @@ export default {
 
 <style scoped src="./Space.css" />
 
+<style lang="less" scoped src="./AppStyle.less" />
+
 <style scoped>
 .layout {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: #0000;
 }
 .slot-shell {
   margin-top: 73px;
