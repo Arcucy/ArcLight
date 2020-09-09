@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Arweave from 'arweave'
 
+import { encryptBuffer, decryptBuffer } from '../util/encrypt'
+
 import API from '../api/api'
 
 Vue.use(Vuex)
@@ -250,7 +252,7 @@ export default new Vuex.Store({
 
       // // Add tag 添加标签
       imgTransaction.addTag('Content-Type', data.img.type)
-      imgTransaction.addTag('App-Name', 'arclight')
+      imgTransaction.addTag('App-Name', 'arclight-test')
       imgTransaction.addTag('Unix-Time', Date.now())
       imgTransaction.addTag('Type', 'single-cover')
       imgTransaction.addTag('Author-Address', address)
@@ -273,12 +275,13 @@ export default new Vuex.Store({
       console.log(imgTransaction.id + ': ' + imgRes)
 
       // Upload Music
-      console.log(data.music.data)
-      musicTransaction = await ar.createTransaction({ data: data.music.data }, data.key).catch(err => console.log('Music Transaction Created Failed: ', err))
+      const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
+      console.log(musicReady)
+      musicTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Music Transaction Created Failed: ', err))
 
       // Add tag 添加标签
       musicTransaction.addTag('Content-Type', data.music.type)
-      musicTransaction.addTag('App-Name', 'arclight')
+      musicTransaction.addTag('App-Name', 'arclight-test')
       musicTransaction.addTag('Unix-Time', Date.now())
       musicTransaction.addTag('Type', 'single-music')
       musicTransaction.addTag('Author-Address', address)
@@ -304,7 +307,9 @@ export default new Vuex.Store({
       const singleInfo = {
         title: data.single.title,
         desp: data.single.desp,
-        genre: data.genre,
+        genre: data.single.genre,
+        price: data.single.price,
+        duration: data.single.duration,
         cover: imgTransaction.id,
         music: musicTransaction.id
       }
@@ -313,7 +318,7 @@ export default new Vuex.Store({
 
       singleTransaction = await ar.createTransaction({ data: JSON.stringify(singleInfo) }, data.key).catch(err => console.log('Single Transaction Created Failed: ', err))
 
-      singleTransaction.addTag('App-Name', 'arclight')
+      singleTransaction.addTag('App-Name', 'arclight-test')
       singleTransaction.addTag('Unix-Time', Date.now())
       singleTransaction.addTag('Type', 'single-info')
       singleTransaction.addTag('Author-Address', address)
@@ -342,7 +347,7 @@ export default new Vuex.Store({
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      postInfoTransaction.addTag('App-Name', 'arclight')
+      postInfoTransaction.addTag('App-Name', 'arclight-test')
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
       postInfoTransaction.addTag('Author-Address', address)
