@@ -1,5 +1,5 @@
 <template>
-  <div data-app="true">
+  <div>
     <v-autocomplete
       v-model="select"
       :loading="loading"
@@ -85,8 +85,8 @@ export default {
   text-align: left;
 }
 
-/deep/ .v-select-list.theme--light {
-  background-color: rgba(51,51,51,0.8);
+/deep/ .theme--light .v-list {
+  background-color: rgba(51,51,51,0.8) !important;
 }
 
 /deep/ .v-list-item__title {
