@@ -2,10 +2,12 @@
   <spaceLayout>
     <div>
       <div class="single">
-        <a class="back-link">
-          <v-icon color="#E56D9B">mdi-chevron-left</v-icon>
-          Back to Selection
-        </a>
+        <div class="upload-header">
+          <a @click="$router.go(-1)" class="back-link">
+            <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
+            Back to Upload
+          </a>
+        </div>
         <div class="notice-title">
           <v-icon light color="rgba(251, 140, 0, 1.000)" style="font-size: 40px; margin-right: 20px;">mdi-alert-circle-outline</v-icon>
           <div class="notice-content">
@@ -33,34 +35,59 @@
             </div>
           </div>
         </div>
-        <div class="other-container">
-          <div class="single-price">
-              <div class="other-title">
-                Price Cost
-              </div>
-              <v-text-field
-                v-model="price"
-                solo
-                disabled
-                class="single-price"
-                :style="`width: ${priceWidth}px;`"
-              ></v-text-field>
+        <div class="other">
+          <div class="other-container">
+            <div class="single-price">
+                <div class="other-title">
+                  Price Cost
+                </div>
+                <v-text-field
+                  v-model="price"
+                  solo
+                  disabled
+                  class="single-price"
+                  :style="`width: ${priceWidth}px;`"
+                ></v-text-field>
+            </div>
+            <div class="single-demo">
+                <div class="other-title">
+                  Demo Duration
+                </div>
+                <v-text-field
+                  v-model="duration"
+                  solo
+                  disabled
+                  class="single-demo"
+                  :style="`width: 54px;`"
+                ></v-text-field>
+            </div>
           </div>
-          <div class="single-demo">
-              <div class="other-title">
-                Demo Duration
-              </div>
-              <v-text-field
-                v-model="duration"
-                solo
-                disabled
-                class="single-demo"
-                :style="`width: 54px;`"
-              ></v-text-field>
-          </div>
+          <div class="player">
+              <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
+            </div>
         </div>
         <v-btn color="#E56D9B" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
       </div>
+      <v-snackbar
+        v-model="failSnackbar"
+        color="#E53935"
+        timeout="3000"
+        top="top"
+        style="margin-top: 16px;"
+      >
+        {{ failMessage }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            dark
+            text
+            v-bind="attrs"
+            @click="failSnackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </div>
   </spaceLayout>
 </template>
@@ -79,28 +106,57 @@ export default {
       price: '',
       duration: '',
       priceWidth: 0,
-      submitBtnLoading: false
+      audio: '',
+      submitBtnLoading: false,
+      failSnackbar: false,
+      failMessage: ''
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicRaw', 'singleMusicType', 'singleInfo'])
+    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicFile', 'singleMusicRaw', 'singleMusicType', 'singleInfo'])
   },
   methods: {
     submit () {
       this.uploadSingle({
         img: { data: this.singleCoverRaw, type: this.singleCoverType },
-        music: { data: this.singleMusicRaw, type: this.singleMusicType },
+        music: { data: this.$route.params.data, type: this.singleMusicType },
         key: this.keyFileContent,
         single: this.singleInfo
+      })
+    },
+    getMusic () {
+      return new Promise(async (resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(new Blob([this.$route.params.data], { type: this.singleMusicType }))
+        reader.onload = (event) => {
+          const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
+          resolve(url)
+        }
       })
     }
   },
   mounted () {
+    if (!this.singleInfo) {
+      this.failMessage = 'Unknown Error Occurred'
+      this.failSnackbar = true
+
+      this.$router.push({ name: 'Upload' })
+    }
+
+    this.getMusic().then(url => {
+      const audio = {
+        title: this.singleInfo.title,
+        artist: this.username,
+        src: url,
+        pic: this.singleCoverRaw
+      }
+      this.audio = audio
+    })
     this.price = this.singleInfo.price + ' AR'
     this.duration = this.singleInfo.duration
 
     const priceString = this.singleInfo.price + ''
-    this.priceWidth = priceString.length * 8 + 52
+    this.priceWidth = priceString.length * 10 + 30
   }
 }
 </script>
@@ -114,6 +170,33 @@ export default {
   display: flex;
   flex-direction: column;
   text-align: left;
+}
+
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  .back-link {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: #E56D9B;
+    line-height: 22px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+    &:hover {
+      .back-link-icon {
+        transform: translateX(-5px);
+      }
+    }
+    .back-link-icon {
+      color: #E56D9B;
+      font-size: 22px;
+    }
+  }
 }
 
 .notice-title {
@@ -179,10 +262,16 @@ export default {
   margin-right: 20px;
 }
 
+.other {
+  display: flex;
+  flex-direction: row;
+}
+
 .other-container {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .other-title {
@@ -206,6 +295,14 @@ export default {
   .v-text-field__slot > input {
     color: white;
   }
+}
+
+/deep/ .theme--light.v-input {
+  color: white;
+}
+
+.player {
+  right: 0;
 }
 
 </style>
