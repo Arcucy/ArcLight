@@ -183,6 +183,15 @@ export default {
 }
 
 .upload-cover {
+  text-decoration: none;
+  color: white;
+
+  &:hover {
+    animation-name: scaleUp;
+    animation-timing-function: ease-in-out;
+    animation-duration: 0.5s;
+  }
+
   .selection-text {
     font-size: 1.2rem;
     font-weight: 400;
@@ -190,14 +199,6 @@ export default {
   }
 }
 
-.upload-cover:hover {
-  animation-name: scaleUp;
-  animation-timing-function: ease-in-out;
-  animation-duration: 0.5s;
-}
-</style>
-
-<style lang="less">
 @keyframes scaleUp {
   0% {
     transform: scale(1);
