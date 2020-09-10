@@ -27,13 +27,13 @@
         timeout="3000"
         top="top"
       >
-        Login is required to upload
+        {{ failMessage }}
 
         <template>
           <v-btn
             dark
             text
-            @click="snackbar = false"
+            @click="failSnackbar = false"
           >
             Close
           </v-btn>
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 import spaceLayout from '@/components/Layout/Space.vue'
 
@@ -50,7 +51,8 @@ import singleImg from '@/assets/image/single.png'
 import albumImg from '@/assets/image/album.png'
 import podcastImg from '@/assets/image/podcast.png'
 import soundEffectImg from '@/assets/image/soundeffect.png'
-import { mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -58,6 +60,7 @@ export default {
   },
   data () {
     return {
+      failMessage: '',
       failSnackbar: false,
       cover: {
         single: singleImg,
@@ -70,20 +73,10 @@ export default {
   computed: {
     ...mapState(['isLoggedIn'])
   },
-  watch: {
-    isLoggedIn (val) {
-      if (val === false) {
-        this.failSnackbar = true
-
-        setTimeout(() => {
-          this.$router.push({ name: 'Landing' })
-        }, 3000)
-      }
-    }
-  },
   mounted () {
+    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn) {
+      if (!c || !this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 

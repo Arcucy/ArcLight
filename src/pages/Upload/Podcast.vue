@@ -173,13 +173,15 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
 import podcastSelect from '@/components/PodcastCategorySelect.vue'
 
 import podcastDefault from '@/assets/image/podcast.png'
-import { mapActions, mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -351,8 +353,9 @@ export default {
   mounted () {
     document.title = 'Upload a new Podcast - ArcLight'
 
+    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn) {
+      if (!c || !this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 
