@@ -239,14 +239,14 @@ export default {
       }
 
       if (this.podcastTitle === '') {
-        this.failMessage = 'A title for a podcast release is required'
+        this.failMessage = 'A title for your Podcast release is required'
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.programTitle === '') {
-        this.failMessage = 'A title for a podcast release is required'
+        this.failMessage = 'A title for a program (episode) release is required'
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -319,14 +319,13 @@ export default {
             podcast: this.podcastTitle,
             title: this.programTitle,
             desp: this.podcastDesp,
-            genre: newCategory,
+            category: newCategory,
             duration: this.duration,
             price: parseFloat(this.price)
           }
         }
         this.reviewPodcast(dataObj)
-
-        this.$router.push({ name: 'ReviewPodcast', params: { data: this.music } })
+        this.$router.push({ name: 'ReviewPodcast', params: { data: { music: this.music, raw: this.musicContent, file: this.file } } })
       }
     },
     doneImageUpload () {

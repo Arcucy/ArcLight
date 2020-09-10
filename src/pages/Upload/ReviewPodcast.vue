@@ -20,12 +20,15 @@
           <img :src="podcastCoverRaw" class="cover" />
           <div class="info-container">
             <div class="podcast-title-container">
-              <div class="podcast-genre">
-                {{ podcastInfo.genre }}
+              <div class="podcast-category">
+                {{ podcastInfo.category }}
               </div>
               <div class="podcast-title">
-                {{ podcastInfo.title }}
+                {{ podcastInfo.podcast }}
               </div>
+            </div>
+            <div class="program-title">
+              {{ podcastInfo.title }}
             </div>
             <div class="podcast-artist">
               {{ username }}
@@ -223,7 +226,7 @@ export default {
   align-items: center;
 }
 
-.podcast-genre {
+.podcast-category {
   margin-right: 8px;
   padding: 8px 16px 8px;
   background-color: #FAE5ED;
@@ -236,6 +239,18 @@ export default {
   color: white;
   font-size: 32px;
   font-weight: 700;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.program-title {
+  margin-top: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: 400;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -307,6 +322,7 @@ export default {
 }
 
 .player {
+  margin-top: 16px;
   right: 0;
 }
 
