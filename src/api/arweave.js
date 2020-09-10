@@ -79,6 +79,21 @@ let arweave = {
   },
 
   /**
+   * 提取给定的交易对象中的所有标签
+   * @param {Object} transaction 
+   */
+  getTagsByTransaction (transaction) {
+    const tags = transaction.get('tags')
+    let ret = {}
+    for (let i = 0; i < tags.length; i++) {
+      let key = tags[i].get('name', { decode: true, string: true })
+      let value = tags[i].get('value', { decode: true, string: true })
+      ret[key] = value
+    }
+    return ret
+  },
+
+  /**
    * Get user's Arweave Id based on the input wallet address   
    * 根据输入的钱包地址获取用户的 Arweave ID
    * @param {String} address  - 用户的钱包地址
