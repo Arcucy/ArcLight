@@ -17,12 +17,9 @@
           </div>
         </div>
         <div class="soundeffect-container">
-          <img :src="soundeffectCoverRaw" class="cover" />
+          <img :src="soundEffectCoverRaw" class="cover" />
           <div class="info-container">
             <div class="soundeffect-title-container">
-              <div class="soundeffect-genre">
-                {{ soundEffectInfo.genre }}
-              </div>
               <div class="soundeffect-title">
                 {{ soundEffectInfo.title }}
               </div>
@@ -63,8 +60,8 @@
             </div>
           </div>
           <div class="player">
-              <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
-            </div>
+            <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
+          </div>
         </div>
         <v-btn color="#E56D9B" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
       </div>
@@ -221,15 +218,6 @@ export default {
 .soundeffect-title-container {
   display: flex;
   align-items: center;
-}
-
-.soundeffect-genre {
-  margin-right: 8px;
-  padding: 8px 16px 8px;
-  background-color: #FAE5ED;
-  border-radius: 10px;
-  font-weight: 700;
-  color: #D85C8B;
 }
 
 .soundeffect-title {
