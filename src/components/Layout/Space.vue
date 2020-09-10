@@ -1,9 +1,11 @@
 <template>
   <v-app class="layout appstyle">
     <div class="layout-bg">
-      <div id='stars' />
-      <div id='stars2' />
-      <div id='stars3' />
+      <div class="stars">
+        <div id='stars' />
+        <div id='stars2' />
+        <div id='stars3' />
+      </div>
       <div id='horizon'>
         <div class='glow' />
       </div>
