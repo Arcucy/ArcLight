@@ -3,6 +3,7 @@ import Arweave from 'arweave'
 import Axios from 'axios'
 
 import { decryptBuffer } from '../util/encrypt'
+import decode from '../util/decode'
 
 const arweaveHost = 'https://arweave.net/'
 
@@ -257,6 +258,43 @@ let arweave = {
         }
       })
     })
+  },
+
+  /**
+   * 根据给定的交易 ID 列表获取歌曲信息列表
+   * @param {Number} txids 交易 ID 列表
+   * @param {Boolean} needCover 是否需要获取封面
+   * @param {Function} callback (item, index) 如果需要实时的逐条获取列表，请使用这个回调，如果需要在所有的查询完成后获取，则直接接收返回值。
+   */
+  async getAudioInfoByTxids (txids, needCover, callback) {
+    const infoList = []
+    for (let i = 0; i < txids.length; i++) {
+      const transaction = await this.getTransactionDetail(txids[i])
+      let audioInfo = null
+      if (transaction) {
+        const tags = this.getTagsByTransaction(transaction)
+        const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        audioInfo = {
+          authorAddress: tags['Author-Address'],
+          authorUsername: tags['Author-Username'],
+          type: tags.Type,
+          unixTime: Number(tags['Unix-Time']),
+          title: audioData.title,
+          desp: audioData.desp,
+          price: audioData.price,
+          duration: audioData.duration,
+          coverTxid: audioData.cover,
+          musicTxid: audioData.music,
+          cover: ''
+        }
+        if (needCover) {
+          audioInfo.cover = await this.getCover(audioData.cover)
+        }
+      }
+      infoList.push(audioInfo)
+      if (callback) callback(audioInfo, i)
+    }
+    return infoList
   },
 
   /**
