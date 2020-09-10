@@ -126,6 +126,7 @@ import miniAvatar from '@/components/User/MiniAvatar'
 import mp3 from '@/assets/music/FlowerDance.mp3'
 import album from '@/assets/music/FlowerDance.jpg'
 import api from '@/api/api'
+import decode from '@/util/decode'
 
 export default {
   components: {
@@ -209,15 +210,16 @@ export default {
         src: null,
         pic: null
       }
-      // 根据 id 获取数据块对应的 Tag，指定作者
       try {
+      // 根据 id 获取数据块对应的 Tag
         const musicInfo = await api.arweave.getTransactionDetail(id)
+        console.log('歌曲信息：', musicInfo)
         audio.artist = this.getTag(musicInfo, 'Author-Username')
         this.info.artist = audio.artist
         this.info.artistId = this.getTag(musicInfo, 'Author-Address')
         this.getArtist(this.info.artistId)
         // 根据 id 获取数据内容
-        const single = JSON.parse(await api.arweave.getTransactionDataDecodedString(id))
+        const single = JSON.parse(decode.uint8ArrayToString(musicInfo.data))
         // 歌曲名称
         audio.title = single.title
         this.info.name = single.title
