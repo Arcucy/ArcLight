@@ -263,10 +263,9 @@ let arweave = {
   /**
    * 根据给定的交易 ID 列表获取歌曲信息列表
    * @param {Number} txids 交易 ID 列表
-   * @param {Boolean} needCover 是否需要获取封面
    * @param {Function} callback (item, index) 如果需要实时的逐条获取列表，请使用这个回调，如果需要在所有的查询完成后获取，则直接接收返回值。
    */
-  async getAudioInfoByTxids (txids, needCover, callback) {
+  async getAudioInfoByTxids (txids, callback) {
     const infoList = []
     for (let i = 0; i < txids.length; i++) {
       const transaction = await this.getTransactionDetail(txids[i])
@@ -275,6 +274,7 @@ let arweave = {
         const tags = this.getTagsByTransaction(transaction)
         const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
         audioInfo = {
+          txid: txids[i],
           authorAddress: tags['Author-Address'],
           authorUsername: tags['Author-Username'],
           type: tags.Type,
@@ -284,11 +284,7 @@ let arweave = {
           price: audioData.price,
           duration: audioData.duration,
           coverTxid: audioData.cover,
-          musicTxid: audioData.music,
-          cover: ''
-        }
-        if (needCover) {
-          audioInfo.cover = await this.getCover(audioData.cover)
+          musicTxid: audioData.music
         }
       }
       infoList.push(audioInfo)
