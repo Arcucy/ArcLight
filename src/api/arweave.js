@@ -183,6 +183,41 @@ let arweave = {
   },
 
   /**
+   * Single 单曲信息的标记均为 single-info
+   * Album 专辑信息的标记均为 album-info
+   * Podcast 播客的标记均为 podcast-info
+   * SoundEffect 音效的标记均为 soundeffect-info
+   */
+
+  /**
+   * Get All Single Release List
+   * 获取所有单曲发行列表
+   */
+  getAllSingleList () {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and', // 使用 AND 运算符
+        expr1: {
+          op: 'equals', // 使用 相等 运算符
+          expr1: 'App-Name', // 特指 App-Name 标签
+          expr2: 'arclight-test' // 特指值为 arclight-test (测试网)
+        },
+        expr2: {
+          op: 'equals', // 使用相等运算符
+          expr1: 'Type', // 特指 Type 标签
+          expr2: 'single-info' // 特指值为 single-info
+        }
+      }).then(ids => {
+        if (ids.length === 0) {
+          resolve(false)
+        } else {
+          resolve(ids)
+        }
+      })
+    })
+  },
+
+  /**
    * Get cover image based on given txid (transaction id)
    * 根据输入的 txid (交易 ID)获取封面
    * @param {String} txid(TransactionId)  - 图片的交易地址
@@ -223,6 +258,7 @@ let arweave = {
         responseType: 'arraybuffer',
         onDownloadProgress
       }).then(res => {
+        // eslint-disable-next-line standard/no-callback-literal
         if (callback) callback(0)
         const data = decryptBuffer(Buffer.from(res.data))
         resolve({ data: data, type: res.headers['content-type'] })
