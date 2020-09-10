@@ -307,6 +307,7 @@ export default {
 }
 
 .player {
+  margin-top: 16px;
   right: 0;
 }
 
