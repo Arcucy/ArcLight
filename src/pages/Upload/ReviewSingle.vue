@@ -11,7 +11,7 @@
         <div class="notice-title">
           <v-icon light color="rgba(251, 140, 0, 1.000)" style="font-size: 40px; margin-right: 20px;">mdi-alert-circle-outline</v-icon>
           <div class="notice-content">
-            Please carefully review your single release here,
+            Please carefully review your Single release here,
             <br>
             if there is no problem, you can submit your wonderful work
           </div>
