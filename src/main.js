@@ -12,12 +12,16 @@ import 'vuetify/dist/vuetify.min.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import moment from 'moment'
+moment.locale('en-US')
+
 Vue.use(Vuetify)
 Vue.use(ElementUI)
 Vue.component('aplayer', Aplayer)
 
 Vue.prototype.$message = ElementUI.Message
 Vue.prototype.$notify = ElementUI.Notification
+Vue.prototype.$moment = moment
 
 Vue.config.productionTip = false
 

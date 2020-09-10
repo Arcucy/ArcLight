@@ -1,9 +1,9 @@
 <template>
-  <router-link :to="{ name: 'Music', params: { id: 'flowerdance' } }" v-ripple>
+  <router-link :to="{ name: 'Music', params: { id: card.txid } }" v-ripple>
     <div class="card">
       <v-img
         class="card-img"
-        src="https://picsum.photos/510/300?random"
+        :src="cover"
         alt="cover"
         aspect-ratio="1"
       >
@@ -17,22 +17,23 @@
         {{ card.title }}
       </p>
       <p class="card-artist">
-        by {{ card.artist }}
+        by {{ card.authorUsername }}
       </p>
       <p v-if="card.price != 0" class="card-price">
         pay {{ card.price }} AR
       </p>
-      <p v-else class="card-price">
-        free
+      <p v-else class="card-price free-song">
+        Free
       </p>
       <p class="card-time">
-        {{ card.time }}
+        {{ time }}
       </p>
     </div>
   </router-link>
 </template>
 
 <script>
+import api from '@/api/api'
 
 export default {
   components: {
@@ -41,6 +42,29 @@ export default {
     card: {
       type: Object,
       required: true
+    }
+  },
+  data () {
+    return {
+      cover: 'Loading'
+    }
+  },
+  computed: {
+    time () {
+      const time = this.$moment(this.card.unixTime)
+      return this.isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
+    }
+  },
+  async mounted () {
+    if (this.card && this.card.coverTxid) {
+      if (this.cover === 'Loading') this.cover = await api.arweave.getCover(this.card.coverTxid)
+    } else this.cover = ''
+  },
+  methods: {
+    isNDaysAgo (n, time) {
+      const nowTime = this.$moment().subtract(n, 'days').format('YYYY-MM-DD')
+      const timeFormat = this.$moment(time).format('YYYY-MM-DD')
+      return this.$moment(nowTime).isAfter(timeFormat)
     }
   }
 }
@@ -103,6 +127,9 @@ a {
   &-price {
     .content();
     .word-limit();
+    &.free-song {
+      color: #66BB6A;
+    }
   }
 
   &-time {
