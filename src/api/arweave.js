@@ -14,6 +14,23 @@ let ar = Arweave.init({
   logging: false
 })
 
+// Configuration
+
+/**
+ * Single 单曲信息的标记均为 single-info,
+ * Album 专辑信息的标记均为 album-info,
+ * Podcast 播客的标记均为 podcast-info,
+ * SoundEffect 音效的标记均为 soundeffect-info.
+ */
+const AUDIO_TYPE = {
+  single: 'single-info',
+  album: 'album-info',
+  podcast: 'podcast-info',
+  soundEffect: 'soundeffect-info'
+}
+
+const APP_NAME = 'arclight-test'
+
 let arweave = {
 
   /**
@@ -183,33 +200,43 @@ let arweave = {
   },
 
   /**
-   * Single 单曲信息的标记均为 single-info
-   * Album 专辑信息的标记均为 album-info
-   * Podcast 播客的标记均为 podcast-info
-   * SoundEffect 音效的标记均为 soundeffect-info
+   * Get All Audio Release List
+   * 获取所有音频发行列表
+   * @param {String} type 音频类型（single, album, podcast, soundEffect）
+   * @param {String} style 【可选】筛选歌曲风格（需要注意的是部分音频类型下没有区分歌曲风格）
    */
-
-  /**
-   * Get All Single Release List
-   * 获取所有单曲发行列表
-   */
-  getAllSingleList () {
+  getAllAudioList (type, style) {
     return new Promise((resolve, reject) => {
+      // 筛选音频类型
+      const typeString = AUDIO_TYPE[type]
+      if (!typeString) throw new Error(`${type} is the wrong type`)
+      // 筛选歌曲风格
+      const ordinary = {
+        op: 'equals',
+        expr1: 'Type',
+        expr2: typeString
+      }
+      let hasTypedSearch = style ? {
+        op: 'and', // 使用相等运算符
+        expr1: ordinary,
+        expr2: {
+          op: 'equals',
+          expr1: 'Genre',
+          expr2: style
+        }
+      } : ordinary
+
       ar.arql({
         op: 'and', // 使用 AND 运算符
         expr1: {
           op: 'equals', // 使用 相等 运算符
           expr1: 'App-Name', // 特指 App-Name 标签
-          expr2: 'arclight-test' // 特指值为 arclight-test (测试网)
+          expr2: APP_NAME // 特指值为 arclight-test (测试网)
         },
-        expr2: {
-          op: 'equals', // 使用相等运算符
-          expr1: 'Type', // 特指 Type 标签
-          expr2: 'single-info' // 特指值为 single-info
-        }
+        expr2: hasTypedSearch
       }).then(ids => {
         if (ids.length === 0) {
-          resolve(false)
+          resolve([])
         } else {
           resolve(ids)
         }
@@ -250,7 +277,7 @@ let arweave = {
       if (callback) {
         onDownloadProgress = progressEvent => {
           let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          if (callback) callback(percentCompleted)
+          callback(percentCompleted)
         }
       }
       // get
@@ -258,8 +285,7 @@ let arweave = {
         responseType: 'arraybuffer',
         onDownloadProgress
       }).then(res => {
-        // eslint-disable-next-line standard/no-callback-literal
-        if (callback) callback(0)
+        if (callback) callback()
         const data = decryptBuffer(Buffer.from(res.data))
         resolve({ data: data, type: res.headers['content-type'] })
       })
