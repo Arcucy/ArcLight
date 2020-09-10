@@ -11,7 +11,7 @@
         <div class="notice-title">
           <v-icon light color="rgba(251, 140, 0, 1.000)" style="font-size: 40px; margin-right: 20px;">mdi-alert-circle-outline</v-icon>
           <div class="notice-content">
-            Please carefully review your single release here,
+            Please carefully review your Single release here,
             <br>
             if there is no problem, you can submit your wonderful work
           </div>
@@ -63,8 +63,8 @@
             </div>
           </div>
           <div class="player">
-              <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
-            </div>
+            <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
+          </div>
         </div>
         <v-btn color="#E56D9B" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
       </div>
@@ -307,6 +307,7 @@ export default {
 }
 
 .player {
+  margin-top: 16px;
   right: 0;
 }
 

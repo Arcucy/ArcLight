@@ -51,6 +51,7 @@ export default new Vuex.Store({
     podcastMusicRaw: '',
     podcastMusicFile: '',
     podcastMusicType: '',
+    podcastUploadComplete: false,
     podcastInfo: '',
     podcastObj: '',
     soundEffectCoverFile: '',
@@ -61,6 +62,7 @@ export default new Vuex.Store({
     soundEffectMusicRaw: '',
     soundEffectMusicFile: '',
     soundEffectMusicType: '',
+    soundEffectUploadComplete: false,
     soundEffectInfo: '',
     soundEffectObj: '',
     uploadCoverPct: 0,
@@ -163,6 +165,9 @@ export default new Vuex.Store({
     setPodcastMusicType (state, type) {
       state.podcastMusicType = type
     },
+    setPodcastUploadComplete (state, status) {
+      state.podcastUploadComplete = status
+    },
     setPodcastInfo (state, info) {
       state.podcastInfo = info
     },
@@ -193,6 +198,9 @@ export default new Vuex.Store({
     setSoundEffectMusicType (state, type) {
       state.soundEffectMusicType = type
     },
+    setSoundEffectUploadComplete (state, status) {
+      state.soundEffectUploadComplete = status
+    },
     setSoundEffectInfo (state, info) {
       state.soundEffectInfo = info
     },
@@ -207,7 +215,6 @@ export default new Vuex.Store({
     },
     setSingleMusicFile (state, file) {
       state.singleMuiscFile = file
-      console.log(state.singleMuiscFile)
     },
     setSingleMusicRaw (state, raw) {
       state.singleMuiscRaw = raw
@@ -296,6 +303,9 @@ export default new Vuex.Store({
     setPodcastCoverFile ({ commit }, file) {
       commit('setPodcastCoverFile', file)
     },
+    setSoundEffectCoverFile ({ commit }, file) {
+      commit('setSoundEffectCoverFile', file)
+    },
     reviewSingle ({ commit }, data) {
       commit('setSingleCoverRaw', data.img.data)
       commit('setSingleCoverType', data.img.type)
@@ -311,16 +321,17 @@ export default new Vuex.Store({
       commit('setAlbumMusicRaw', data.music.data)
       commit('setAlbumMusicFile', data.music.read)
       commit('setAlbumMusicType', data.music.type)
-      commit('setAlbumInfo', data.single)
+      commit('setAlbumInfo', data.album)
       commit('setAlbumObj', data)
     },
     reviewPodcast ({ commit }, data) {
+      console.log(data)
       commit('setPodcastCoverRaw', data.img.data)
       commit('setPodcastCoverType', data.img.type)
       commit('setPodcastMusicRaw', data.music.data)
       commit('setPodcastMusicFile', data.music.read)
       commit('setPodcastMusicType', data.music.type)
-      commit('setPodcastInfo', data.single)
+      commit('setPodcastInfo', data.podcast)
       commit('setPodcastObj', data)
     },
     reviewSoundEffect ({ commit }, data) {
@@ -329,7 +340,7 @@ export default new Vuex.Store({
       commit('setSoundEffectMusicRaw', data.music.data)
       commit('setSoundEffectMusicFile', data.music.read)
       commit('setSoundEffectMusicType', data.music.type)
-      commit('setSoundEffectInfo', data.single)
+      commit('setSoundEffectInfo', data.soundeffect)
       commit('setSoundEffectObj', data)
     },
     async uploadSingle ({ commit }, data) {
@@ -416,6 +427,9 @@ export default new Vuex.Store({
       singleTransaction.addTag('App-Name', 'arclight-test')
       singleTransaction.addTag('Unix-Time', Date.now())
       singleTransaction.addTag('Type', 'single-info')
+      singleTransaction.addTag('Title', data.single.title)
+      singleTransaction.addTag('Genre', data.single.genre)
+      singleTransaction.addTag('Price', data.single.price)
       singleTransaction.addTag('Author-Address', address)
       singleTransaction.addTag('Author-Username', user.data)
 
@@ -461,6 +475,274 @@ export default new Vuex.Store({
 
       commit('setSingleLink', singleTransaction.id)
       commit('setSingleUploadComplete', true)
+    },
+    async uploadPodcast ({ commit }, data) {
+      let imgTransaction = ''
+      let programTransaction = ''
+      let podcastTransaction = ''
+      let postInfoTransaction = ''
+
+      // User info
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      // Image Upload
+      imgTransaction = await ar.createTransaction({ data: data.img.data }, data.key).catch(err => console.log('Image Transaction Created Failed: ', err))
+
+      // // Add tag 添加标签
+      imgTransaction.addTag('Content-Type', data.img.type)
+      imgTransaction.addTag('App-Name', 'arclight-test')
+      imgTransaction.addTag('Unix-Time', Date.now())
+      imgTransaction.addTag('Type', 'podcast-cover')
+      imgTransaction.addTag('Author-Address', address)
+      imgTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(imgTransaction, data.key)
+      let imgUploader = await ar.transactions.getUploader(imgTransaction)
+
+      while (!imgUploader.isComplete) {
+        await imgUploader.uploadChunk()
+        commit('setUploadCoverPct', imgUploader.pctComplete)
+        console.log(`${imgUploader.pctComplete}% complete, ${imgUploader.uploadedChunks}/${imgUploader.totalChunks}`)
+      }
+
+      commit('setSingleCoverId', imgTransaction.id)
+      commit('setSingleCoverLink', 'https://arweave.net/' + imgTransaction.id)
+      console.log(imgTransaction.id)
+
+      const imgRes = await ar.transactions.post(imgTransaction)
+      console.log(imgTransaction.id + ': ' + imgRes)
+
+      // Upload Program
+      const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
+      console.log(musicReady)
+      programTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Program Transaction Created Failed: ', err))
+
+      // Add tag 添加标签
+      programTransaction.addTag('Content-Type', data.music.type)
+      programTransaction.addTag('App-Name', 'arclight-test')
+      programTransaction.addTag('Unix-Time', Date.now())
+      programTransaction.addTag('Type', 'podcast-program')
+      programTransaction.addTag('Author-Address', address)
+      programTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(programTransaction, data.key)
+      let programUploader = await ar.transactions.getUploader(programTransaction)
+
+      while (!programUploader.isComplete) {
+        await programUploader.uploadChunk()
+        if (programUploader.pctComplete > 98) {
+          return
+        } else {
+          commit('setUploadMusicPct', programUploader.pctComplete)
+          console.log(`${programUploader.pctComplete}% complete, ${programUploader.uploadedChunks}/${programUploader.totalChunks}`)
+        }
+      }
+
+      commit('setSingleMusicId', programTransaction.id)
+      commit('setSingleMusicLink', 'https://arweave.net/' + programTransaction.id)
+      console.log(programTransaction.id)
+
+      const musicRes = await ar.transactions.post(programTransaction)
+      console.log(programTransaction.id + ': ' + musicRes)
+
+      // Create Podcast info
+      const podcastInfo = {
+        title: data.podcast.title,
+        desp: data.podcast.desp,
+        category: data.podcast.category,
+        price: data.podcast.price,
+        duration: data.podcast.duration,
+        cover: imgTransaction.id,
+        program: programTransaction.id
+      }
+
+      console.log(podcastInfo)
+
+      podcastTransaction = await ar.createTransaction({ data: JSON.stringify(podcastInfo) }, data.key).catch(err => console.log('Podcast Transaction Created Failed: ', err))
+
+      podcastTransaction.addTag('App-Name', 'arclight-test')
+      podcastTransaction.addTag('Unix-Time', Date.now())
+      podcastTransaction.addTag('Type', 'podcast-info')
+      podcastTransaction.addTag('Podcast', data.podcast.title)
+      podcastTransaction.addTag('Title', data.podcast.title)
+      podcastTransaction.addTag('Category', data.podcast.category)
+      podcastTransaction.addTag('Price', data.podcast.price)
+      podcastTransaction.addTag('Author-Address', address)
+      podcastTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(podcastTransaction, data.key)
+      let podcastUploader = await ar.transactions.getUploader(podcastTransaction)
+
+      while (!podcastUploader.isComplete) {
+        await podcastUploader.uploadChunk()
+        console.log(`${podcastUploader.pctComplete}% complete, ${podcastUploader.uploadedChunks}/${podcastUploader.totalChunks}`)
+      }
+
+      const singleRes = await ar.transactions.post(podcastTransaction)
+      console.log(podcastTransaction.id + ': ' + singleRes)
+
+      // Create post info
+      let postInfo = await API.arweave.getPostFromAddress(address)
+      if (postInfo) {
+        postInfo = JSON.parse(postInfo)
+      } else {
+        postInfo = []
+      }
+
+      postInfo.push({ 'podcast': podcastTransaction.id, 'timestamp': Date.now() })
+
+      postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      postInfoTransaction.addTag('App-Name', 'arclight-test')
+      postInfoTransaction.addTag('Unix-Time', Date.now())
+      postInfoTransaction.addTag('Type', 'post-info')
+      postInfoTransaction.addTag('Author-Address', address)
+      postInfoTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(postInfoTransaction, data.key)
+      let postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
+
+      while (!postInfoUploader.isComplete) {
+        await postInfoUploader.uploadChunk()
+        console.log(`${postInfoUploader.pctComplete}% complete, ${postInfoUploader.uploadedChunks}/${postInfoUploader.totalChunks}`)
+      }
+
+      const postInfoRes = await ar.transactions.post(postInfoTransaction)
+      console.log(postInfoTransaction.id + ': ' + postInfoRes)
+
+      commit('setPodcastUploadComplete', true)
+    },
+    async uploadSoundEffect ({ commit }, data) {
+      let imgTransaction = ''
+      let audioTransaction = ''
+      let soundEffectTransaction = ''
+      let postInfoTransaction = ''
+
+      // User info
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      // Image Upload
+      imgTransaction = await ar.createTransaction({ data: data.img.data }, data.key).catch(err => console.log('Image Transaction Created Failed: ', err))
+
+      // // Add tag 添加标签
+      imgTransaction.addTag('Content-Type', data.img.type)
+      imgTransaction.addTag('App-Name', 'arclight-test')
+      imgTransaction.addTag('Unix-Time', Date.now())
+      imgTransaction.addTag('Type', 'soundeffect-cover')
+      imgTransaction.addTag('Author-Address', address)
+      imgTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(imgTransaction, data.key)
+      let imgUploader = await ar.transactions.getUploader(imgTransaction)
+
+      while (!imgUploader.isComplete) {
+        await imgUploader.uploadChunk()
+        commit('setUploadCoverPct', imgUploader.pctComplete)
+        console.log(`${imgUploader.pctComplete}% complete, ${imgUploader.uploadedChunks}/${imgUploader.totalChunks}`)
+      }
+
+      commit('setSingleCoverId', imgTransaction.id)
+      commit('setSingleCoverLink', 'https://arweave.net/' + imgTransaction.id)
+      console.log(imgTransaction.id)
+
+      const imgRes = await ar.transactions.post(imgTransaction)
+      console.log(imgTransaction.id + ': ' + imgRes)
+
+      // Upload Audio
+      const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
+      console.log(musicReady)
+      audioTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Music Transaction Created Failed: ', err))
+
+      // Add tag 添加标签
+      audioTransaction.addTag('Content-Type', data.music.type)
+      audioTransaction.addTag('App-Name', 'arclight-test')
+      audioTransaction.addTag('Unix-Time', Date.now())
+      audioTransaction.addTag('Type', 'soundeffect-audio')
+      audioTransaction.addTag('Author-Address', address)
+      audioTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(audioTransaction, data.key)
+      let musicUploader = await ar.transactions.getUploader(audioTransaction)
+
+      while (!musicUploader.isComplete) {
+        await musicUploader.uploadChunk()
+        commit('setUploadMusicPct', musicUploader.pctComplete)
+        console.log(`${musicUploader.pctComplete}% complete, ${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
+      }
+
+      commit('setSingleMusicId', audioTransaction.id)
+      commit('setSingleMusicLink', 'https://arweave.net/' + audioTransaction.id)
+      console.log(audioTransaction.id)
+
+      const musicRes = await ar.transactions.post(audioTransaction)
+      console.log(audioTransaction.id + ': ' + musicRes)
+
+      // Create SoundEffect info
+      const soundEffectInfo = {
+        title: data.soundeffect.title,
+        desp: data.soundeffect.desp,
+        genre: data.soundeffect.genre,
+        price: data.soundeffect.price,
+        duration: data.soundeffect.duration,
+        cover: imgTransaction.id,
+        audio: audioTransaction.id
+      }
+
+      console.log(soundEffectInfo)
+
+      soundEffectTransaction = await ar.createTransaction({ data: JSON.stringify(soundEffectInfo) }, data.key).catch(err => console.log('Single Transaction Created Failed: ', err))
+
+      soundEffectTransaction.addTag('App-Name', 'arclight-test')
+      soundEffectTransaction.addTag('Unix-Time', Date.now())
+      soundEffectTransaction.addTag('Type', 'soundeffect-info')
+      soundEffectTransaction.addTag('Title', data.soundeffect.title)
+      soundEffectTransaction.addTag('Price', data.soundeffect.price)
+      soundEffectTransaction.addTag('Author-Address', address)
+      soundEffectTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(soundEffectTransaction, data.key)
+      let singleUploader = await ar.transactions.getUploader(soundEffectTransaction)
+
+      while (!singleUploader.isComplete) {
+        await singleUploader.uploadChunk()
+        console.log(`${singleUploader.pctComplete}% complete, ${singleUploader.uploadedChunks}/${singleUploader.totalChunks}`)
+      }
+
+      const singleRes = await ar.transactions.post(soundEffectTransaction)
+      console.log(soundEffectTransaction.id + ': ' + singleRes)
+
+      // Create post info
+      let postInfo = await API.arweave.getPostFromAddress(address)
+      if (postInfo) {
+        postInfo = JSON.parse(postInfo)
+      } else {
+        postInfo = []
+      }
+
+      postInfo.push({ 'single': soundEffectTransaction.id, 'timestamp': Date.now() })
+
+      postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      postInfoTransaction.addTag('App-Name', 'arclight-test')
+      postInfoTransaction.addTag('Unix-Time', Date.now())
+      postInfoTransaction.addTag('Type', 'post-info')
+      postInfoTransaction.addTag('Author-Address', address)
+      postInfoTransaction.addTag('Author-Username', user.data)
+
+      await ar.transactions.sign(postInfoTransaction, data.key)
+      let postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
+
+      while (!postInfoUploader.isComplete) {
+        await postInfoUploader.uploadChunk()
+        console.log(`${postInfoUploader.pctComplete}% complete, ${postInfoUploader.uploadedChunks}/${postInfoUploader.totalChunks}`)
+      }
+
+      const postInfoRes = await ar.transactions.post(postInfoTransaction)
+      console.log(postInfoTransaction.id + ': ' + postInfoRes)
+
+      commit('setSoundEffectUploadComplete', true)
     }
   }
 })

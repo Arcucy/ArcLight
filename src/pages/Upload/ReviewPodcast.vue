@@ -1,7 +1,7 @@
 <template>
   <spaceLayout>
     <div>
-      <div class="soundeffect">
+      <div class="podcast">
         <div class="upload-header">
           <a @click="$router.go(-1)" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
@@ -11,30 +11,36 @@
         <div class="notice-title">
           <v-icon light color="rgba(251, 140, 0, 1.000)" style="font-size: 40px; margin-right: 20px;">mdi-alert-circle-outline</v-icon>
           <div class="notice-content">
-            Please carefully review your Sound Effect release here,
+            Please carefully review your Podcast release here,
             <br>
             if there is no problem, you can submit your wonderful work
           </div>
         </div>
-        <div class="soundeffect-container">
-          <img :src="soundEffectCoverRaw" class="cover" />
+        <div class="podcast-container">
+          <img :src="podcastCoverRaw" class="cover" />
           <div class="info-container">
-            <div class="soundeffect-title-container">
-              <div class="soundeffect-title">
-                {{ soundEffectInfo.title }}
+            <div class="podcast-title-container">
+              <div class="podcast-category">
+                {{ podcastInfo.category }}
+              </div>
+              <div class="podcast-title">
+                {{ podcastInfo.podcast }}
               </div>
             </div>
-            <div class="soundeffect-artist">
+            <div class="program-title">
+              {{ podcastInfo.title }}
+            </div>
+            <div class="podcast-artist">
               {{ username }}
             </div>
-            <div class="soundeffect-desp">
-              {{ soundEffectInfo.desp }}
+            <div class="podcast-desp">
+              {{ podcastInfo.desp }}
             </div>
           </div>
         </div>
         <div class="other">
           <div class="other-container">
-            <div class="soundeffect-price">
+            <div class="podcast-price">
                 <div class="other-title">
                   Price Cost
                 </div>
@@ -42,11 +48,11 @@
                   v-model="price"
                   solo
                   disabled
-                  class="soundeffect-price"
+                  class="podcast-price"
                   :style="`width: ${priceWidth}px;`"
                 ></v-text-field>
             </div>
-            <div class="soundeffect-demo">
+            <div class="podcast-demo">
                 <div class="other-title">
                   Demo Duration
                 </div>
@@ -54,7 +60,7 @@
                   v-model="duration"
                   solo
                   disabled
-                  class="soundeffect-demo"
+                  class="podcast-demo"
                   :style="`width: 54px;`"
                 ></v-text-field>
             </div>
@@ -110,23 +116,23 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo'])
+    ...mapState(['keyFileContent', 'username', 'podcastCoverFile', 'podcastCoverRaw', 'podcastCoverType', 'podcastMusicFile', 'podcastMusicRaw', 'podcastMusicType', 'podcastInfo'])
   },
   methods: {
-    ...mapActions(['uploadsoundEffect']),
+    ...mapActions(['uploadSingle']),
     submit () {
       this.submitBtnLoading = true
-      this.uploadsoundEffect({
-        img: { data: this.soundEffectCoverRaw, type: this.soundEffectCoverType },
-        music: { data: this.$route.params.data, type: this.soundEffectMusicType },
+      this.uploadSingle({
+        img: { data: this.podcastCoverRaw, type: this.podcastCoverType },
+        music: { data: this.$route.params.data, type: this.podcastMusicType },
         key: this.keyFileContent,
-        soundEffect: this.soundEffectInfo
+        podcast: this.podcastInfo
       })
     },
     getMusic () {
       return new Promise(async (resolve, reject) => {
         const reader = new FileReader()
-        reader.readAsArrayBuffer(new Blob([this.$route.params.data.music], { type: this.soundEffectMusicType }))
+        reader.readAsArrayBuffer(new Blob([this.$route.params.data.music], { type: this.podcastMusicType }))
         reader.onload = (event) => {
           const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
           resolve(url)
@@ -135,7 +141,7 @@ export default {
     }
   },
   mounted () {
-    if (!this.soundEffectInfo) {
+    if (!this.podcastInfo) {
       this.failMessage = 'Unknown Error Occurred'
       this.failSnackbar = true
 
@@ -144,18 +150,18 @@ export default {
 
     this.getMusic().then(url => {
       const audio = {
-        title: this.soundEffectInfo.title,
+        title: this.podcastInfo.title,
         artist: this.username,
         src: url,
-        pic: this.soundEffectCoverRaw
+        pic: this.podcastCoverRaw
       }
       this.audio = audio
     })
 
-    this.price = this.soundEffectInfo.price + ' AR'
-    this.duration = this.soundEffectInfo.duration
+    this.price = this.podcastInfo.price + ' AR'
+    this.duration = this.podcastInfo.duration
 
-    const priceString = this.soundEffectInfo.price + ''
+    const priceString = this.podcastInfo.price + ''
     let length = priceString.length
     if (length < 4) length = 4
     this.priceWidth = length * 10 + 30
@@ -164,7 +170,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.soundeffect {
+.podcast {
   margin: 40px auto;
   max-width: 1040px;
   width: 100%;
@@ -210,17 +216,26 @@ export default {
   font-weight: 700;
 }
 
-.soundeffect-container {
+.podcast-container {
   margin-top: 16px;
   display: flex;
 }
 
-.soundeffect-title-container {
+.podcast-title-container {
   display: flex;
   align-items: center;
 }
 
-.soundeffect-title {
+.podcast-category {
+  margin-right: 8px;
+  padding: 8px 16px 8px;
+  background-color: #FAE5ED;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #D85C8B;
+}
+
+.podcast-title {
   color: white;
   font-size: 32px;
   font-weight: 700;
@@ -231,7 +246,19 @@ export default {
   word-break: break-all;
 }
 
-.soundeffect-artist {
+.program-title {
+  margin-top: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: 400;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.podcast-artist {
   margin-top: 10px;
   font-size: 24px;
   color: #E56D9B;
@@ -242,7 +269,7 @@ export default {
   word-break: break-all;
 }
 
-.soundeffect-desp {
+.podcast-desp {
   margin-top: 10px;
   color: white;
   font-size: 20px;
@@ -274,7 +301,7 @@ export default {
   font-weight: 600;
 }
 
-.soundeffect-price {
+.podcast-price {
   margin-right: 20px;
 }
 

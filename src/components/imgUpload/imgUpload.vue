@@ -166,7 +166,7 @@ export default {
     this.isShowFileUpload = true
   },
   methods: {
-    ...mapActions(['setSingleCoverFile', 'setAlbumCoverFile', 'setPodcastCoverFile']),
+    ...mapActions(['setSingleCoverFile', 'setAlbumCoverFile', 'setPodcastCoverFile', 'setSoundEffectCoverFile']),
     /**
      * Pretreatment // 过滤操作可以写在这里
      * @param  Object|undefined   newFile   读写
@@ -270,6 +270,9 @@ export default {
             break
           case 'podcast':
             this.setPodcastCoverFile(file)
+            break
+          case 'soundeffect':
+            this.setSoundEffectCoverFile(file)
             break
         }
         if (res.data.code === 0 || res.data.code === 1) {
