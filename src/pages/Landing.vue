@@ -2,11 +2,14 @@
   <spaceLayout>
     <div class="home">
       <div id="title">ArcLight</div>
-      <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
       <div id="subtitle">
         <span>Store</span>
         <span>In</span>
         <span>Permaweb</span>
+      </div>
+      <div class="btn-group">
+        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">Why ArcLight</v-btn>
       </div>
     </div>
   </spaceLayout>
@@ -75,7 +78,7 @@ export default {
   }
 }
 
-.start-btn {
+.btn-group {
   position: absolute;
   top: 100%;
   left: 0;
@@ -84,6 +87,16 @@ export default {
   animation-name: fadeInOpacity;
   animation-duration: 3s;
   animation-timing-function: ease;
+}
+
+.start-btn {
+  margin-right: 16px;
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+.about-btn {
   &:hover {
     transform: scale(1.15);
   }

@@ -26,9 +26,9 @@
               </div>
               <img
                 id="avatar"
-                v-if="soundeffectCover"
+                v-if="soundEffectCover"
                 slot="description"
-                :src="soundeffectCover"
+                :src="soundEffectCover"
                 alt="avatar"
               >
               <img v-else id="new-logo" src="../../assets/image/soundeffect.png" style="margin-top: 10px;"/>
@@ -80,7 +80,7 @@
             <template v-slot:selection="{ index, text }">
               <v-chip
                 v-if="index < 2"
-                color="deep-purple accent-4"
+                color="#C2185B"
                 dark
                 label
                 small
@@ -162,12 +162,14 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
 
 import soundeffectDefault from '@/assets/image/soundeffect.png'
-import { mapActions, mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -184,7 +186,7 @@ export default {
       soundeffectDesp: '',
       needUpload: true,
       attachments: [],
-      soundeffectCover: '',
+      soundEffectCover: '',
       fileContent: '',
       fileRaw: '',
       fileName: '',
@@ -200,7 +202,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['soundeffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundeffectUploadComplete', 'soundeffectLink'])
+    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectUploadComplete', 'soundEffectLink'])
   },
   watch: {
     soundeffectUploadComplete (val) {
@@ -216,7 +218,7 @@ export default {
     ...mapActions(['uploadSoundEffectCoverFile', 'reviewSoundEffect']),
     submit () {
       this.submitBtnLoading = true
-      if (this.soundeffectCover === '') {
+      if (this.soundEffectCover === '') {
         this.failMessage = 'A cover for a soundeffect release is required'
         this.failSnackbar = true
         this.submitBtnLoading = false
@@ -264,7 +266,7 @@ export default {
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
-      let ext = this.soundeffectCoverFile.name.split('.').pop()
+      let ext = this.soundEffectCoverFile.name.split('.').pop()
       console.log('Content-Type:', imgType[ext])
 
       let audioType = {
@@ -293,21 +295,20 @@ export default {
           }
         }
         this.reviewSoundEffect(dataObj)
-
         this.$router.push({ name: 'ReviewSoundEffect', params: { data: { music: this.music, raw: this.musicContent, file: this.file } } })
       }
     },
     doneImageUpload () {
-      this.soundeffectCover = this.soundeffectCoverFile
-      this.fileName = this.soundeffectCover.name
+      this.soundEffectCover = this.soundEffectCoverFile
+      this.fileName = this.soundEffectCover.name
       const reader = new FileReader()
-      reader.readAsDataURL(this.soundeffectCover)
+      reader.readAsDataURL(this.soundEffectCover)
       reader.onload = async (e) => {
         try {
           this.fileContent = e.target.result
           this.fileRaw = this.fileContent
           this.needUpload = false
-          this.soundeffectCover = this.fileRaw
+          this.soundEffectCover = this.fileRaw
           this.snackbar = true
         } catch (err) {
           this.imgFailSnackbar = true
@@ -320,8 +321,9 @@ export default {
   mounted () {
     document.title = 'Upload a new Sound Effect - ArcLight'
 
+    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn) {
+      if (!c || !this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 

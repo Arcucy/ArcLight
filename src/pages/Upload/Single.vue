@@ -82,7 +82,7 @@
             <template v-slot:selection="{ index, text }">
               <v-chip
                 v-if="index < 2"
-                color="deep-purple accent-4"
+                color="#C2185B"
                 dark
                 label
                 small
@@ -164,13 +164,15 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
 import genreSelect from '@/components/GenreSelect.vue'
 
 import singleDefault from '@/assets/image/single.png'
-import { mapActions, mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -305,7 +307,6 @@ export default {
           }
         }
         this.reviewSingle(dataObj)
-
         this.$router.push({ name: 'ReviewSingle', params: { data: { music: this.music, raw: this.musicContent, file: this.file } } })
       }
     },
@@ -332,8 +333,9 @@ export default {
   mounted () {
     document.title = 'Upload a new Single - ArcLight'
 
+    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn) {
+      if (!c || !this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 

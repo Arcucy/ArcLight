@@ -59,8 +59,8 @@
             name="input-7-4"
             label="Your podcast Description..."
           ></v-textarea>
-          <div class="name-desp side-title">Genre</div>
-          <podcastSelect v-model="genre" style="margin-bottom: 16px;" />
+          <div class="name-desp side-title">Category</div>
+          <podcastSelect v-model="category" style="margin-bottom: 16px;" />
           <div class="name-desp side-title">Demo Duration</div>
           <v-select
             v-model="duration"
@@ -91,7 +91,7 @@
             <template v-slot:selection="{ index, text }">
               <v-chip
                 v-if="index < 2"
-                color="deep-purple accent-4"
+                color="#C2185B"
                 dark
                 label
                 small
@@ -173,13 +173,15 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
 import podcastSelect from '@/components/PodcastCategorySelect.vue'
 
 import podcastDefault from '@/assets/image/podcast.png'
-import { mapActions, mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -190,7 +192,7 @@ export default {
   data () {
     return {
       file: null,
-      genre: '',
+      category: '',
       duration: '',
       price: 0,
       podcastDefault: podcastDefault,
@@ -239,7 +241,14 @@ export default {
       }
 
       if (this.podcastTitle === '') {
-        this.failMessage = 'A title for a podcast release is required'
+        this.failMessage = 'A title for your Podcast release is required'
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      }
+
+      if (this.programTitle === '') {
+        this.failMessage = 'A title for a program (episode) release is required'
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -252,8 +261,8 @@ export default {
         return
       }
 
-      if (!this.genre) {
-        this.failMessage = 'Please select the genre of your music (None for blank)'
+      if (!this.category) {
+        this.failMessage = 'Please select the category of your program (None for blank)'
         this.failSnackbar = true
         this.submitBtnLoading = false
       }
@@ -278,6 +287,8 @@ export default {
         this.submitBtnLoading = false
         return
       }
+
+      const newCategory = this.category.split('(').pop().trim()
 
       let imgType = {
         png: 'image/png',
@@ -307,16 +318,16 @@ export default {
           music: { data: this.music, type: audioType[aext], read: this.file },
           key: this.keyFileContent,
           podcast: {
-            title: this.podcastTitle,
+            podcast: this.podcastTitle,
+            title: this.programTitle,
             desp: this.podcastDesp,
-            genre: this.genre,
+            category: newCategory,
             duration: this.duration,
             price: parseFloat(this.price)
           }
         }
         this.reviewPodcast(dataObj)
-
-        this.$router.push({ name: 'ReviewPodcast', params: { data: this.music } })
+        this.$router.push({ name: 'ReviewPodcast', params: { data: { music: this.music, raw: this.musicContent, file: this.file } } })
       }
     },
     doneImageUpload () {
@@ -342,8 +353,9 @@ export default {
   mounted () {
     document.title = 'Upload a new Podcast - ArcLight'
 
+    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn) {
+      if (!c || !this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 

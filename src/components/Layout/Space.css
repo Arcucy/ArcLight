@@ -1,3 +1,7 @@
+.stars {
+  transform: scale(2);
+}
+
 #stars {
   width: 1px;
   height: 1px;

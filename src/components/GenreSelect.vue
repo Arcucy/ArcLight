@@ -40,6 +40,7 @@ export default {
   created () {
     const mg = new MusicGenres()
     this.genres = mg.genres
+    this.genres.push('None')
     this.select = this.value
   },
   watch: {

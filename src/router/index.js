@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Landing from '@/pages/Landing.vue'
+import About from '@/pages/About.vue'
 import Music from '@/pages/Music/_id.vue'
 import MusicMenu from '@/pages/Music.vue'
 import Songs from '@/pages/Songs/Index'
@@ -15,7 +16,9 @@ import UploadSingle from '@/pages/Upload/Single.vue'
 import ReviewSingle from '@/pages/Upload/ReviewSingle.vue'
 import UploadAlbum from '@/pages/Upload/Album.vue'
 import UploadPodcast from '@/pages/Upload/Podcast.vue'
-import UploadSoundEffect from '@/pages/Upload/SoundEffect'
+import ReviewPodcast from '@/pages/Upload/ReviewPodcast.vue'
+import UploadSoundEffect from '@/pages/Upload/SoundEffect.vue'
+import ReviewSoundEffect from '@/pages/Upload/ReviewSoundEffect.vue'
 import Sound from '@/pages/Sound/Index'
 import Podcast from '@/pages/Podcast/Index'
 import Test from '@/pages/Upload/Test.vue'
@@ -34,6 +37,11 @@ export default new Router({
       path: '/',
       name: 'Landing',
       component: Landing
+    },
+    {
+      path: '/about',
+      name: 'About',
+      component: About
     },
     {
       path: '/upload',
@@ -61,9 +69,19 @@ export default new Router({
       component: UploadPodcast
     },
     {
+      path: '/review/podcast',
+      name: 'ReviewPodcast',
+      component: ReviewPodcast
+    },
+    {
       path: '/upload/soundeffect',
       name: 'uploadSoundEffect',
       component: UploadSoundEffect
+    },
+    {
+      path: '/review/soundeffect',
+      name: 'ReviewSoundEffect',
+      component: ReviewSoundEffect
     },
     {
       path: '/music/:id',

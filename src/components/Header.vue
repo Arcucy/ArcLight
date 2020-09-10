@@ -10,6 +10,9 @@
       <router-link :to="{ name: 'Songs' }" class="link text-link">
         Music
       </router-link>
+      <router-link :to="{ name: 'About' }" class="link text-link">
+        About
+      </router-link>
     </div>
     <Search class="search-bar"/>
     <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Login</v-btn>
