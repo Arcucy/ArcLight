@@ -82,7 +82,7 @@
             <template v-slot:selection="{ index, text }">
               <v-chip
                 v-if="index < 2"
-                color="deep-purple accent-4"
+                color="#C2185B"
                 dark
                 label
                 small
