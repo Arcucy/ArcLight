@@ -293,7 +293,6 @@ export default {
           }
         }
         this.reviewSoundEffect(dataObj)
-
         this.$router.push({ name: 'ReviewSoundEffect', params: { data: { music: this.music, raw: this.musicContent, file: this.file } } })
       }
     },
