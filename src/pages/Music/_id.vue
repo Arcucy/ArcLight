@@ -213,7 +213,6 @@ export default {
       try {
       // 根据 id 获取数据块对应的 Tag
         const musicInfo = await api.arweave.getTransactionDetail(id)
-        console.log('歌曲信息：', musicInfo)
         audio.artist = this.getTag(musicInfo, 'Author-Username')
         this.info.artist = audio.artist
         this.info.artistId = this.getTag(musicInfo, 'Author-Address')
