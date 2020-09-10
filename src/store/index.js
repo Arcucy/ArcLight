@@ -416,6 +416,9 @@ export default new Vuex.Store({
       singleTransaction.addTag('App-Name', 'arclight-test')
       singleTransaction.addTag('Unix-Time', Date.now())
       singleTransaction.addTag('Type', 'single-info')
+      singleTransaction.addTag('Title', data.single.title)
+      singleTransaction.addTag('Genre', data.single.genre)
+      singleTransaction.addTag('Price', data.single.price)
       singleTransaction.addTag('Author-Address', address)
       singleTransaction.addTag('Author-Username', user.data)
 
