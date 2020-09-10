@@ -6,6 +6,7 @@
         <div class="songs-header">
           <h4>
             Singles Sellings
+            {{ single.addresses.length ? `(${single.list.length}/${single.addresses.length})` : '' }}
           </h4>
           <router-link :to="{ name: 'SongsSingles' }">
             All Sellings
@@ -16,9 +17,13 @@
           <singleCard
             id="single-card"
             class="single-card"
-            v-for="(item, index) in singles"
+            v-for="(item, index) in single.list"
             :key="index"
             :card="item"
+          />
+          <loadCard
+            v-if="single.loading || single.addresses.length === 0"
+            :message="!single.loading && single.addresses.length === 0 ? 'No data' : ''"
           />
         </scrollXBox>
       </div>
@@ -27,6 +32,7 @@
         <div class="songs-header">
           <h4>
             Albums Sellings
+            {{ album.addresses.length ? `(${album.list.length}/${album.addresses.length})` : '' }}
           </h4>
           <router-link :to="{ name: 'SongsAlbums' }">
             All Sellings
@@ -37,9 +43,13 @@
           <albumCard
             id="albums-card"
             class="album-card"
-            v-for="(item, index) in singles"
+            v-for="(item, index) in album.list"
             :key="index"
             :card="item"
+          />
+          <loadCard
+            v-if="album.loading || album.addresses.length === 0"
+            :message="!album.loading && album.addresses.length === 0 ? 'No data' : ''"
           />
         </scrollXBox>
       </div>
@@ -50,11 +60,14 @@
 </template>
 
 <script>
+import api from '@/api/api'
+
 import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import categoryNav from '@/components/CategoryNav'
 import scrollXBox from '@/components/ScrollXBox'
+import loadCard from '@/components/Song/loadCard'
 
 export default {
   components: {
@@ -62,86 +75,46 @@ export default {
     singleCard,
     albumCard,
     categoryNav,
-    scrollXBox
+    scrollXBox,
+    loadCard
   },
   data () {
     return {
-      singles: [
-        {
-          title: 'RED',
-          artist: 'Taylor Swift',
-          price: 4.3,
-          time: '2020-09-01 10:22'
-        },
-        {
-          title: 'ALL OFF',
-          artist: 'ONE',
-          price: 5.2,
-          time: '2020-08-31 12:32'
-        },
-        {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2020-08-31 10:22'
-        },
-        {
-          title: 'RELOADED',
-          artist: '鹿晗',
-          price: 10.1,
-          time: '2020-08-30 10:22'
-        },
-        {
-          title: 'B v S soundtrack',
-          artist: 'Warner Brosaaaaa',
-          price: 0,
-          time: '2020-08-23 10:22'
-        },
-        {
-          title: '东风破',
-          artist: '周杰伦',
-          price: 14.6,
-          time: '2020-08-01 10:22'
-        },
-        {
-          title: 'YOUTH BLOOD',
-          artist: 'JINDER',
-          price: 10.1,
-          time: '2020-07-01 10:22'
-        },
-        {
-          title: 'THE SEVENTH SEVENTH',
-          artist: '张靓颖',
-          price: 10.1,
-          time: '2019-06-01 10:22'
-        },
-        {
-          title: 'RED',
-          artist: 'Tayl',
-          price: 8888,
-          time: '2020-05-01 10:22'
-        },
-        {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2000-08-31 10:22'
-        }
-      ]
+      singleAddresses: [],
+      single: {
+        list: [],
+        addresses: [],
+        loading: true
+      },
+      album: {
+        list: [],
+        addresses: [],
+        loading: true
+      }
     }
   },
   created () {
   },
   mounted () {
     document.title = 'Browse All Seling Music - ArcLight'
-    // 假数据
-    const singles = []
-    for (let i = 0; i < 3; i++) {
-      singles.push(...this.singles)
-    }
-    this.singles = singles
+    this.getAllAudioList('single', this.single)
+    this.getAllAudioList('album', this.album)
   },
   methods: {
+    async getAllAudioList (type, aObject) {
+      try {
+        const res = await api.arweave.getAllAudioList(type)
+        aObject.addresses = res
+        await api.arweave.getAudioInfoByTxids(res, (item, index) => {
+          console.log('单曲：', index, item)
+          aObject.list.push(item)
+        })
+      } catch (e) {
+        console.error(`[Failed to get ${type} list]`, e)
+        this.$message.error(`Failed to get ${type} list`)
+      }
+      aObject.loading = false
+    }
   }
 }
 </script>

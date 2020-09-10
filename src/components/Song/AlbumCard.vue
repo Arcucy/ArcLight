@@ -3,7 +3,7 @@
     <div class="card">
       <v-img
         class="card-img"
-        src="https://picsum.photos/510/300?random"
+        :src="cover"
         alt="cover"
         aspect-ratio="1"
       >
@@ -17,7 +17,7 @@
         {{ card.title }}
       </p>
       <p class="card-artist">
-        by {{ card.artist }}
+        by {{ card.authorUsername }}
       </p>
       <p v-if="card.price != 0" class="card-price">
         pay {{ card.price }} AR
@@ -26,7 +26,7 @@
         free
       </p>
       <p class="card-time">
-        {{ card.time }}
+        {{ card.unixTime }}
       </p>
     </div>
     <div class="record">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import api from '@/api/api'
 
 export default {
   components: {
@@ -45,6 +46,16 @@ export default {
       type: Object,
       required: true
     }
+  },
+  data () {
+    return {
+      cover: 'Loading'
+    }
+  },
+  async mounted () {
+    if (this.card && this.card.coverTxid) {
+      if (this.cover === 'Loading') this.cover = await api.arweave.getCover(this.card.coverTxid)
+    } else this.cover = ''
   }
 }
 </script>
