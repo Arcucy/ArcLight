@@ -15,18 +15,26 @@
           </span>
         </a>
       </div>
-      <!-- Player -->
-      <aplayer v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
-      <!-- Loading -->
-      <div v-if="loading" class="music-loading">
-        <v-progress-linear
-          :indeterminate="!pct"
-          v-model="pct"
-          color="#E56D9B"
-        />
-        <p>
-          Music loading...
-        </p>
+      <div class="music-playerbox">
+        <div v-if="!loading && info.genre" class="music-playerbox-tag">
+          {{ info.genre }}
+        </div>
+        <div v-if="loading && pct" class="music-playerbox-tag">
+          {{ pct }}%
+        </div>
+        <!-- Player -->
+        <aplayer v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+        <!-- Loading -->
+        <div v-if="loading" class="music-loading">
+          <v-progress-linear
+            :indeterminate="!pct"
+            v-model="pct"
+            color="#E56D9B"
+          />
+          <p>
+            Music loading...
+          </p>
+        </div>
       </div>
       <!-- Download -->
       <div v-if="owned" class="music-download">
@@ -141,7 +149,8 @@ export default {
         name: '',
         artist: '',
         artistId: '',
-        desp: ''
+        desp: '',
+        genre: ''
       },
       artist: {
         id: '',
@@ -216,6 +225,7 @@ export default {
         audio.artist = this.getTag(musicInfo, 'Author-Username')
         this.info.artist = audio.artist
         this.info.artistId = this.getTag(musicInfo, 'Author-Address')
+        this.info.genre = this.getTag(musicInfo, 'Genre')
         this.getArtist(this.info.artistId)
         // 根据 id 获取数据内容
         const single = JSON.parse(decode.uint8ArrayToString(musicInfo.data))
@@ -347,9 +357,38 @@ export default {
     }
   }
 
+  &-playerbox {
+    height: 162px;
+    margin: 0 auto;
+    max-width: 588px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    &-tag {
+      min-width: 60px;
+      height: 30px;
+      padding: 0 5px;
+      margin-left: 5px;
+      background: #F9C1D7;
+      border-radius: 2px 2px 0px 0px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #E56D9B;
+      line-height: 30px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+      word-break: break-all;
+    }
+  }
+
   &-player {
     max-width: 588px;
-    margin: 96px auto 0;
+    width: 100%;
+    margin: 0;
+    // margin: 96px auto 0;
     border-radius: 5px;
     background: #7e7e7e4d;
     box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
@@ -402,8 +441,9 @@ export default {
 
   &-loading {
     max-width: 588px;
+    width: 100%;
     height: 66px;
-    margin: 96px auto 0;
+    // margin: 96px auto 0;
     border-radius: 5px;
     background: #7e7e7e4d;
     box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
