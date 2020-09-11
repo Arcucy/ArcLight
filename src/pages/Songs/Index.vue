@@ -80,7 +80,6 @@ export default {
   },
   data () {
     return {
-      singleAddresses: [],
       single: {
         list: [],
         addresses: [],
@@ -106,7 +105,6 @@ export default {
         const res = await api.arweave.getAllAudioList(type)
         aObject.addresses = res
         await api.arweave.getAudioInfoByTxids(res, (item, index) => {
-          console.log('单曲：', index, item)
           aObject.list.push(item)
         })
       } catch (e) {
