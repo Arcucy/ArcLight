@@ -186,10 +186,10 @@ export default {
         this.info.cover = await this.getCover(albumData.cover)
         // 获取作者信息
         this.getArtist(this.info.artistId)
-        console.log('专辑信息：', this.info, tags, albumData)
+        // console.log('专辑信息：', this.info, tags, albumData)
       } catch (e) {
-        console.error('[Failed to get music information]', e)
-        this.$message.error('Failed to get music information')
+        console.error('[Failed to get album information]', e)
+        this.$message.error('Failed to get album information')
       }
       this.loading = false
     },
