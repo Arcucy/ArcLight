@@ -50,6 +50,7 @@
           <loadCard
             v-if="album.loading || album.addresses.length === 0"
             :message="!album.loading && album.addresses.length === 0 ? 'No data' : ''"
+            width="188px"
           />
         </scrollXBox>
       </div>

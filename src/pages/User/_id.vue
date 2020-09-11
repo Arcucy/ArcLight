@@ -45,7 +45,7 @@
             :key="index"
             :card="item"
           />
-          <loadCard v-if="album.loading" />
+          <loadCard v-if="album.loading" width="188px" />
         </scrollXBox>
       </div>
       <!-- Favourite Singers -->
