@@ -15,6 +15,7 @@ import Upload from '@/pages/Upload/Index.vue'
 import UploadSingle from '@/pages/Upload/Single.vue'
 import ReviewSingle from '@/pages/Upload/ReviewSingle.vue'
 import UploadAlbum from '@/pages/Upload/Album.vue'
+import ReviewAlbum from '@/pages/Upload/ReviewAlbum.vue'
 import UploadPodcast from '@/pages/Upload/Podcast.vue'
 import ReviewPodcast from '@/pages/Upload/ReviewPodcast.vue'
 import UploadSoundEffect from '@/pages/Upload/SoundEffect.vue'
@@ -62,6 +63,11 @@ export default new Router({
       path: '/upload/album',
       name: 'uploadAlbum',
       component: UploadAlbum
+    },
+    {
+      path: '/review/album',
+      name: 'ReviewAlbum',
+      component: ReviewAlbum
     },
     {
       path: '/upload/podcast',
