@@ -3,10 +3,11 @@
     <div class="user">
       <userInfo class="user-info" :user="user" />
       <!-- Singles Sellings -->
-      <div class="songs">
+      <div v-if="single.loading || single.addresses.length > 0" class="songs">
         <div class="songs-header">
           <h4>
             Singles Sellings
+            {{ single.addresses.length ? `(${single.list.length}/${single.addresses.length})` : '' }}
           </h4>
           <a>
             All Sellings
@@ -17,17 +18,19 @@
           <singleCard
             id="single-card"
             class="single-card"
-            v-for="(item, index) in singles"
+            v-for="(item, index) in single.list"
             :key="index"
             :card="item"
           />
+          <loadCard v-if="single.loading" />
         </scrollXBox>
       </div>
       <!-- Albums Sellings -->
-      <div class="songs">
+      <div v-if="album.loading || album.addresses.length > 0" class="songs">
         <div class="songs-header">
           <h4>
             Albums Sellings
+            {{ album.addresses.length ? `(${album.list.length}/${album.addresses.length})` : '' }}
           </h4>
           <a>
             All Sellings
@@ -38,10 +41,11 @@
           <albumCard
             id="albums-card"
             class="album-card"
-            v-for="(item, index) in singles"
+            v-for="(item, index) in album.list"
             :key="index"
             :card="item"
           />
+          <loadCard v-if="album.loading" />
         </scrollXBox>
       </div>
       <!-- Favourite Singers -->
@@ -70,13 +74,16 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+import api from '@/api/api'
+
 import spaceLayout from '@/components/Layout/Space'
 import userInfo from '@/components/User/UserInfo'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import scrollXBox from '@/components/ScrollXBox'
 import userCard from '@/components/User/UserCard'
-import { mapActions, mapState } from 'vuex'
+import loadCard from '@/components/Song/loadCard'
 
 export default {
   components: {
@@ -85,72 +92,11 @@ export default {
     singleCard,
     albumCard,
     scrollXBox,
-    userCard
+    userCard,
+    loadCard
   },
   data () {
     return {
-      singles: [
-        {
-          title: 'RED',
-          artist: 'Taylor Swift',
-          price: 4.3,
-          time: '2020-09-01 10:22'
-        },
-        {
-          title: 'ALL OFF',
-          artist: 'ONE',
-          price: 5.2,
-          time: '2020-08-31 12:32'
-        },
-        {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2020-08-31 10:22'
-        },
-        {
-          title: 'RELOADED',
-          artist: '鹿晗',
-          price: 10.1,
-          time: '2020-08-30 10:22'
-        },
-        {
-          title: 'B v S soundtrack',
-          artist: 'Warner Brosaaaaa',
-          price: 0,
-          time: '2020-08-23 10:22'
-        },
-        {
-          title: '东风破',
-          artist: '周杰伦',
-          price: 14.6,
-          time: '2020-08-01 10:22'
-        },
-        {
-          title: 'YOUTH BLOOD',
-          artist: 'JINDER',
-          price: 10.1,
-          time: '2020-07-01 10:22'
-        },
-        {
-          title: 'THE SEVENTH SEVENTH',
-          artist: '张靓颖',
-          price: 10.1,
-          time: '2019-06-01 10:22'
-        },
-        {
-          title: 'RED',
-          artist: 'Tayl',
-          price: 8888,
-          time: '2020-05-01 10:22'
-        },
-        {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2000-08-31 10:22'
-        }
-      ],
       followers: [
         {
           avatar: 'https://picsum.photos/510/300?random',
@@ -184,11 +130,18 @@ export default {
           avatar: 'https://picsum.photos/510/300?random',
           nickname: 'Little Sound'
         }
-      ]
+      ],
+      single: {
+        list: [],
+        addresses: [],
+        loading: true
+      },
+      album: {
+        list: [],
+        addresses: [],
+        loading: true
+      }
     }
-  },
-  methods: {
-    ...mapActions(['setUserPage', 'setIsMe'])
   },
   computed: {
     ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType', 'userPage']),
@@ -222,11 +175,30 @@ export default {
     }
 
     // 假数据 循环 变多
-    const followers = []
-    for (let i = 0; i < 3; i++) {
-      followers.push(...this.followers)
+    // const followers = []
+    // for (let i = 0; i < 3; i++) {
+    //   followers.push(...this.followers)
+    // }
+    // this.followers = followers
+    this.getAllAudioList('single', this.single)
+    this.getAllAudioList('album', this.album)
+  },
+  methods: {
+    ...mapActions(['setUserPage', 'setIsMe']),
+    async getAllAudioList (type, aObject) {
+      try {
+        const res = await api.arweave.getUserAudioList(this.$route.params.id, type)
+        aObject.addresses = res
+        await api.arweave.getAudioInfoByTxids(res, (item, index) => {
+          aObject.list.push(item)
+        })
+      } catch (e) {
+        console.error(`[Failed to get ${type} list]`, e)
+        this.$message.error(`Failed to get ${type} list`)
+      }
+      console.log(aObject)
+      aObject.loading = false
     }
-    this.followers = followers
   }
 }
 </script>
