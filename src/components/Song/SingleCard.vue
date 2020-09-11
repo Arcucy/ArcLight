@@ -16,9 +16,9 @@
       <p class="card-title">
         {{ card.title }}
       </p>
-      <p class="card-artist">
+      <router-link class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
         by {{ card.authorUsername }}
-      </p>
+      </router-link>
       <p v-if="card.price != 0" class="card-price">
         pay {{ card.price }} AR
       </p>
@@ -81,11 +81,12 @@ a {
 .card {
   width: 128px;
   .content {
-    margin-top: 4px;
+    margin: 4px 0 0;
     font-size: 14px;
     font-weight: 400;
     color: #FFFFFF;
     line-height: 20px;
+    text-align: left;
   }
 
   .word-limit {
@@ -111,7 +112,7 @@ a {
   }
 
   &-title {
-    margin-top: 10px;
+    margin: 10px 0 0;
     font-size: 14px;
     font-weight: 500;
     color: #FFFFFF;
@@ -122,6 +123,9 @@ a {
   &-artist {
     .content();
     .word-limit();
+    &:hover {
+      color: #E56D9B;
+    }
   }
 
   &-price {
@@ -133,7 +137,7 @@ a {
   }
 
   &-time {
-    margin-top: 8px;
+    margin: 8px 0 0;
     font-size: 12px;
     font-weight: 400;
     color: #B2B2B2;

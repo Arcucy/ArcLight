@@ -50,6 +50,7 @@
           <loadCard
             v-if="album.loading || album.addresses.length === 0"
             :message="!album.loading && album.addresses.length === 0 ? 'No data' : ''"
+            width="188px"
           />
         </scrollXBox>
       </div>
@@ -80,7 +81,6 @@ export default {
   },
   data () {
     return {
-      singleAddresses: [],
       single: {
         list: [],
         addresses: [],
@@ -106,7 +106,6 @@ export default {
         const res = await api.arweave.getAllAudioList(type)
         aObject.addresses = res
         await api.arweave.getAudioInfoByTxids(res, (item, index) => {
-          console.log('单曲：', index, item)
           aObject.list.push(item)
         })
       } catch (e) {

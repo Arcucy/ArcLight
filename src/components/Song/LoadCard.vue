@@ -19,7 +19,7 @@ export default {
     },
     height: {
       type: String,
-      default: '263px'
+      default: '231px'
     },
     message: {
       type: String,
