@@ -138,7 +138,7 @@ export default {
       this.submitBtnLoading = true
       this.uploadAlbum({
         img: { data: this.albumCoverRaw, type: this.albumCoverType },
-        music: { data: this.$route.params.data, type: this.albumMusicType },
+        music: { data: this.$route.params.data },
         key: this.keyFileContent,
         album: this.albumInfo
       })
@@ -166,7 +166,6 @@ export default {
     async getList () {
       const dataList = []
       await this.getMusic()
-      console.log(this.urlArray)
       for (let i = 0; i < this.urlArray.length; i++) {
         const audio = {
           title: this.data.music[i].title,
@@ -189,7 +188,6 @@ export default {
     }
 
     this.getList().then(urls => {
-      console.log(urls)
       this.musicIsReady = true
       this.musicList = urls
     })

@@ -249,7 +249,7 @@ export default {
   },
   methods: {
     ...mapActions(['uploadAlbumCoverFile', 'reviewAlbum']),
-    submit () {
+    async submit () {
       this.submitBtnLoading = true
 
       if (this.albumCover === '') {
@@ -325,13 +325,7 @@ export default {
         let aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
         console.log('Content-Type:', audioType[aext])
-
-        const reader = new FileReader()
-        reader.readAsArrayBuffer(this.fileList[i].music)
-        reader.onload = (e) => {
-          this.music.push({ data: e.target.result, title: this.fileList[i].title, price: this.fileList[i].price, type: audioType[aext] })
-          musicList.push(this.fileList[i].music)
-        }
+        musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
       }
 
       this.price = this.price * 0.8
@@ -355,7 +349,18 @@ export default {
       }
 
       this.reviewAlbum(dataObj)
+      console.log(this.music.length)
       this.$router.push({ name: 'ReviewAlbum', params: { data: { music: this.music, file: musicList } } })
+    },
+    getMusicList (obj, type) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(obj.music)
+        reader.onload = (e) => {
+          this.music.push({ data: e.target.result, title: obj.title, price: obj.price, type: type })
+          resolve(obj.music)
+        }
+      })
     },
     doneImageUpload () {
       this.albumCover = this.albumCoverFile
