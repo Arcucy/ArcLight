@@ -95,9 +95,7 @@
           {{ artist.username }}
         </router-link>
       </div>
-      <p class="music-desp">
-        {{ info.desp }}
-      </p>
+      <p class="music-desp" v-html="info.desp" />
     </div>
     <!-- Pay Dialog -->
     <v-dialog
