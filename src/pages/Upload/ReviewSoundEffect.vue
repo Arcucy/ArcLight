@@ -104,19 +104,19 @@ export default {
       duration: '',
       priceWidth: 0,
       audio: '',
-      submitBtnLoading: false,
       failSnackbar: false,
-      failMessage: ''
+      failMessage: '',
+      submitBtnLoading: false
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo'])
+    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo', 'soundEffectUploadComplete'])
   },
   methods: {
-    ...mapActions(['uploadsoundEffect']),
+    ...mapActions(['uploadSoundEffect']),
     submit () {
       this.submitBtnLoading = true
-      this.uploadsoundEffect({
+      this.uploadSoundEffect({
         img: { data: this.soundEffectCoverRaw, type: this.soundEffectCoverType },
         music: { data: this.$route.params.data, type: this.soundEffectMusicType },
         key: this.keyFileContent,

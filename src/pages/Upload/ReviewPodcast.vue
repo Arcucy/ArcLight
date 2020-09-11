@@ -34,7 +34,6 @@
               {{ username }}
             </div>
             <div class="podcast-desp">
-              {{ podcastInfo.desp }}
               <p v-html="podcastInfo.desp"></p>
             </div>
           </div>
@@ -120,10 +119,10 @@ export default {
     ...mapState(['keyFileContent', 'username', 'podcastCoverFile', 'podcastCoverRaw', 'podcastCoverType', 'podcastMusicFile', 'podcastMusicRaw', 'podcastMusicType', 'podcastInfo'])
   },
   methods: {
-    ...mapActions(['uploadSingle']),
+    ...mapActions(['uploadPodcast']),
     submit () {
       this.submitBtnLoading = true
-      this.uploadSingle({
+      this.uploadPodcast({
         img: { data: this.podcastCoverRaw, type: this.podcastCoverType },
         music: { data: this.$route.params.data, type: this.podcastMusicType },
         key: this.keyFileContent,
