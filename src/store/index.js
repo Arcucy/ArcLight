@@ -399,7 +399,6 @@ export default new Vuex.Store({
 
       // Upload Music
       const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
-      console.log(musicReady)
       musicTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Music Transaction Created Failed: ', err))
 
       // Add tag 添加标签
@@ -546,6 +545,8 @@ export default new Vuex.Store({
         musicTransaction.addTag('Type', 'album-music')
         musicTransaction.addTag('Track-Number', i + 1)
         musicTransaction.addTag('Title', musicFileList[i].title)
+        musicTransaction.addTag('Album-Title', data.album.title)
+        musicTransaction.addTag('Album-Desp', data.album.desp)
         musicTransaction.addTag('Author-Address', address)
         musicTransaction.addTag('Author-Username', user.data)
 
@@ -636,6 +637,7 @@ export default new Vuex.Store({
       commit('setAlbumUploadComplete', true)
     },
     async uploadPodcast ({ commit }, data) {
+      console.log(data)
       let imgTransaction = ''
       let programTransaction = ''
       let podcastTransaction = ''
@@ -674,7 +676,6 @@ export default new Vuex.Store({
 
       // Upload Program
       const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
-      console.log(musicReady)
       programTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Program Transaction Created Failed: ', err))
 
       // Add tag 添加标签
@@ -707,6 +708,7 @@ export default new Vuex.Store({
 
       // Create Podcast info
       const podcastInfo = {
+        podcast: data.podcast.podcast,
         title: data.podcast.title,
         desp: data.podcast.desp,
         category: data.podcast.category,
@@ -723,7 +725,7 @@ export default new Vuex.Store({
       podcastTransaction.addTag('App-Name', 'arclight-test')
       podcastTransaction.addTag('Unix-Time', Date.now())
       podcastTransaction.addTag('Type', 'podcast-info')
-      podcastTransaction.addTag('Podcast', data.podcast.title)
+      podcastTransaction.addTag('Podcast', data.podcast.podcast)
       podcastTransaction.addTag('Title', data.podcast.title)
       podcastTransaction.addTag('Category', data.podcast.category)
       podcastTransaction.addTag('Price', data.podcast.price)
@@ -811,7 +813,6 @@ export default new Vuex.Store({
 
       // Upload Audio
       const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
-      console.log(musicReady)
       audioTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Music Transaction Created Failed: ', err))
 
       // Add tag 添加标签
@@ -840,11 +841,10 @@ export default new Vuex.Store({
 
       // Create SoundEffect info
       const soundEffectInfo = {
-        title: data.soundeffect.title,
-        desp: data.soundeffect.desp,
-        genre: data.soundeffect.genre,
-        price: data.soundeffect.price,
-        duration: data.soundeffect.duration,
+        title: data.soundEffect.title,
+        desp: data.soundEffect.desp,
+        price: data.soundEffect.price,
+        duration: data.soundEffect.duration,
         cover: imgTransaction.id,
         audio: audioTransaction.id
       }
@@ -856,8 +856,8 @@ export default new Vuex.Store({
       soundEffectTransaction.addTag('App-Name', 'arclight-test')
       soundEffectTransaction.addTag('Unix-Time', Date.now())
       soundEffectTransaction.addTag('Type', 'soundeffect-info')
-      soundEffectTransaction.addTag('Title', data.soundeffect.title)
-      soundEffectTransaction.addTag('Price', data.soundeffect.price)
+      soundEffectTransaction.addTag('Title', data.soundEffect.title)
+      soundEffectTransaction.addTag('Price', data.soundEffect.price)
       soundEffectTransaction.addTag('Author-Address', address)
       soundEffectTransaction.addTag('Author-Username', user.data)
 
