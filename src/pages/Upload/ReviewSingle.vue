@@ -31,7 +31,7 @@
               {{ username }}
             </div>
             <div class="single-desp">
-              {{ singleInfo.desp }}
+              <p v-html="singleInfo.desp"></p>
             </div>
           </div>
         </div>
