@@ -35,6 +35,7 @@
             </div>
             <div class="podcast-desp">
               {{ podcastInfo.desp }}
+              <p v-html="podcastInfo.desp"></p>
             </div>
           </div>
         </div>

@@ -288,7 +288,7 @@ export default {
         return
       }
 
-      const newCategory = this.category.split('(').pop().trim()
+      const newCategory = this.category.split('(')[0].trim()
 
       let imgType = {
         png: 'image/png',
@@ -313,6 +313,13 @@ export default {
       reader.onload = async (e) => {
         this.music = e.target.result
         this.musicContent = this.file
+
+        this.podcastDesp = this.podcastDesp.replace(/\\n/g, '<br>')
+        this.podcastDesp = this.podcastDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
+        this.podcastDesp = this.podcastDesp.replace(/(<img src=.*(\/)?>)/, '')
+        this.podcastDesp = this.podcastDesp.replace(/<audio>.*<\/audio>/, '')
+        this.podcastDesp = '<p>' + this.podcastDesp + '</p>'
+
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext], read: this.file },

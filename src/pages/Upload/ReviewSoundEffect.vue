@@ -28,7 +28,7 @@
               {{ username }}
             </div>
             <div class="soundeffect-desp">
-              {{ soundEffectInfo.desp }}
+              <p v-html="soundEffectInfo.desp"></p>
             </div>
           </div>
         </div>

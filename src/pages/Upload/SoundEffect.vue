@@ -283,6 +283,13 @@ export default {
       reader.onload = async (e) => {
         this.music = e.target.result
         this.musicContent = this.file
+
+        this.soundeffectDesp = this.soundeffectDesp.replace(/\\n/g, '<br>')
+        this.soundeffectDesp = this.soundeffectDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
+        this.soundeffectDesp = this.soundeffectDesp.replace(/(<img src=.*(\/)?>)/, '')
+        this.soundeffectDesp = this.soundeffectDesp.replace(/<audio>.*<\/audio>/, '')
+        this.soundeffectDesp = '<p>' + this.soundeffectDesp + '</p>'
+
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext], read: this.file },
