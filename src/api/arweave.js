@@ -261,6 +261,60 @@ let arweave = {
   },
 
   /**
+   * Get User Audio Release List
+   * 获取用户发行的音频列表
+   * @param {String} address  - 用户的钱包地址
+   * @param {String} type     - 音频类型（single, album, podcast, soundEffect）
+   * @param {String} style    -【可选】筛选歌曲风格（需要注意的是部分音频类型下没有区分歌曲风格）
+   */
+  getUserAudioList (address, type, style) {
+    return new Promise((resolve, reject) => {
+      // 筛选音频类型
+      const typeString = AUDIO_TYPE[type]
+      if (!typeString) throw new Error(`${type} is the wrong type`)
+      // 筛选歌曲风格
+      const ordinary = {
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'Author-Address',
+          expr2: address
+        },
+        expr2: {
+          op: 'equals',
+          expr1: 'Type',
+          expr2: typeString
+        }
+      }
+      let hasTypedSearch = style ? {
+        op: 'and', // 使用相等运算符
+        expr1: ordinary,
+        expr2: {
+          op: 'equals',
+          expr1: 'Genre',
+          expr2: style
+        }
+      } : ordinary
+
+      ar.arql({
+        op: 'and', // 使用 AND 运算符
+        expr1: {
+          op: 'equals', // 使用 相等 运算符
+          expr1: 'App-Name', // 特指 App-Name 标签
+          expr2: APP_NAME // 特指值为 arclight-test (测试网)
+        },
+        expr2: hasTypedSearch
+      }).then(ids => {
+        if (ids.length === 0) {
+          resolve([])
+        } else {
+          resolve(ids)
+        }
+      })
+    })
+  },
+
+  /**
    * 根据给定的交易 ID 列表获取歌曲信息列表
    * @param {Number} txids 交易 ID 列表
    * @param {Function} callback (item, index) 如果需要实时的逐条获取列表，请使用这个回调，如果需要在所有的查询完成后获取，则直接接收返回值。
