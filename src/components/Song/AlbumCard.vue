@@ -1,38 +1,40 @@
 <template>
-  <div class="card-bg">
-    <div class="card">
-      <v-img
-        class="card-img"
-        :src="cover"
-        alt="cover"
-        aspect-ratio="1"
-      >
-        <template v-slot:placeholder>
-          <div class="card-img-loading">
-            <v-progress-circular indeterminate color="#E56D9B" />
-          </div>
-        </template>
-      </v-img>
-      <p class="card-title">
-        {{ card.title }}
-      </p>
-      <router-link class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
-        by {{ card.authorUsername }}
-      </router-link>
-      <p v-if="card.price != 0" class="card-price">
-        pay {{ card.price }} AR
-      </p>
-      <p v-else class="card-price free-song">
-        Free
-      </p>
-      <p class="card-time">
-        {{ card.unixTime }}
-      </p>
+  <router-link :to="{ name: 'Album', params: { id: card.txid } }" v-ripple>
+    <div class="card-bg">
+      <div class="card">
+        <v-img
+          class="card-img"
+          :src="cover"
+          alt="cover"
+          aspect-ratio="1"
+        >
+          <template v-slot:placeholder>
+            <div class="card-img-loading">
+              <v-progress-circular indeterminate color="#E56D9B" />
+            </div>
+          </template>
+        </v-img>
+        <p class="card-title">
+          {{ card.title }}
+        </p>
+        <router-link class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
+          by {{ card.authorUsername }}
+        </router-link>
+        <p v-if="card.price != 0" class="card-price">
+          pay {{ card.price }} AR
+        </p>
+        <p v-else class="card-price free-song">
+          Free
+        </p>
+        <p class="card-time">
+          {{ card.unixTime }}
+        </p>
+      </div>
+      <div class="record">
+        <img src="@/assets/image/record.png" alt="record">
+      </div>
     </div>
-    <div class="record">
-      <img src="@/assets/image/record.png" alt="record">
-    </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
@@ -63,6 +65,10 @@ export default {
 <style lang="less" scoped>
 p {
   text-align: left;
+}
+a {
+  text-decoration: none;
+  color: white;
 }
 .card-bg {
   display: flex;

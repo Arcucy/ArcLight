@@ -1,0 +1,480 @@
+<template>
+  <spaceLayout>
+    <div class="album">
+      <!-- Back Button -->
+      <div class="album-header">
+        <a @click="$router.go(-1)">
+          <v-icon>mdi-chevron-left</v-icon>
+          <span class="header-title">
+            <span class="header-title-text">
+              Album
+            </span>
+            <span class="header-title-back">
+              Back
+            </span>
+          </span>
+        </a>
+      </div>
+      <albumInfo :album="info" />
+      <div class="album-box">
+        <!-- left -->
+        <div class="album-box-col">
+          <h4 class="music-title">
+            Music list
+          </h4>
+          <router-link
+            v-for="(music, index) in info.list"
+            :key="index"
+            :to="{ name: 'Music', params: { id: music.id } }"
+          >
+            <div class="music" v-ripple>
+              <div class="music-left">
+                <h3>
+                  {{ music.title }}
+                </h3>
+                <p>
+                  by {{ info.artist }}
+                </p>
+              </div>
+              <div v-if="music.unlock" class="music-download">
+                <v-icon>mdi-download</v-icon>
+              </div>
+              <div v-else class="music-download download-lock">
+                <v-icon>mdi-download-lock</v-icon>
+              </div>
+            </div>
+          </router-link>
+        </div>
+        <!-- right -->
+        <div class="album-box-col">
+          <!-- Download -->
+          <div v-if="owned" class="album-download">
+            <v-btn
+              block
+              large
+              light
+              outlined
+              rounded
+              color="#E56D9B"
+              :height="44"
+            >
+              DOWNLOAD
+            </v-btn>
+          </div>
+          <!-- Buy -->
+          <div v-else class="album-buy">
+            <h4>
+              Buy 「{{ info.name }}」
+            </h4>
+            <div class="album-buy-label">
+              <div class="album-buy-label-discount">
+                80%
+              </div>
+              <div class="album-buy-label-price">
+                <p class="album-buy-label-price-original">
+                  AR$: {{ originalPrice }}
+                </p>
+                <p class="album-buy-label-price-now">
+                  AR$: {{ price }}
+                </p>
+              </div>
+              <v-btn
+                large
+                light
+                outlined
+                rounded
+                color="#E56D9B"
+                :height="44"
+                @click.stop="buyClick"
+              >
+                BUY
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Pay Dialog -->
+    <v-dialog
+      v-model="showDialog"
+      width="360"
+    >
+      <v-card dark>
+        <div class="pay">
+          <h3 class="pay-title">
+            Payment of 「{{ info.name }}」
+          </h3>
+          <div class="pay-icon">
+            <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
+          </div>
+          <p class="pay-intro">
+            Succeed to unlock the album！
+          </p>
+
+          <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
+            BACK TO ALBUM PLAYER
+            <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
+          </v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+  </spaceLayout>
+</template>
+
+<script>
+import api from '@/api/api'
+import decode from '@/util/decode'
+
+import spaceLayout from '@/components/Layout/Space'
+import albumInfo from '@/components/Album/AlbumInfo'
+// import miniAvatar from '@/components/User/MiniAvatar'
+
+export default {
+  components: {
+    spaceLayout,
+    albumInfo
+  },
+  data () {
+    return {
+      info: {
+        name: '',
+        cover: 'Loading',
+        artist: '',
+        authorAddress: '',
+        desp: '',
+        genre: '',
+        unixTime: 0,
+        list: []
+      },
+      artist: {
+        id: '',
+        avatar: 'loading',
+        username: 'Artist loading...'
+      },
+      loading: true,
+      price: 4.99,
+      originalPrice: 6.99,
+      owned: false,
+      showDialog: false
+    }
+  },
+  mounted () {
+    this.getAlbum(this.$route.params.id)
+  },
+  methods: {
+    buyClick () {
+      // 这里并没有真的付款代码，而是直接将参数设定为付款成功的状态。
+      this.showDialog = true
+      this.owned = true
+    },
+    async getAlbum (id) {
+      this.loading = true
+      try {
+        // 获取数据
+        const transaction = await api.arweave.getTransactionDetail(id)
+        const tags = await api.arweave.getTagsByTransaction(transaction)
+        const albumData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        // 赋值
+        this.info.artist = tags['Author-Username']
+        this.info.authorAddress = tags['Author-Address']
+        this.info.genre = tags['Genre']
+        this.info.unixTime = Number(tags['Unix-Time'])
+        this.info.name = albumData.title
+        this.info.desp = albumData.desp
+        this.info.list = albumData.music
+        // 获取封面
+        this.info.cover = await this.getCover(albumData.cover)
+        // 获取作者信息
+        this.getArtist(this.info.artistId)
+        console.log('专辑信息：', this.info, tags, albumData)
+      } catch (e) {
+        console.error('[Failed to get music information]', e)
+        this.$message.error('Failed to get music information')
+      }
+      this.loading = false
+    },
+    async getArtist (id) {
+      this.artist.id = id
+      try {
+        const user = await api.arweave.getIdFromAddress(id)
+        if (user) this.artist.username = user.data
+        else {
+          this.artist.username = 'unknown'
+          this.$message.error('Failed to get author information')
+        }
+      } catch (e) {
+        console.error('[Failed to get author information]', e)
+        this.$message.error('Failed to get author information')
+      }
+      try {
+        const avatar = await api.arweave.getAvatarFromAddress(id)
+        this.artist.avatar = avatar || ''
+      } catch (e) {
+        console.error('[Failed to get author avatar]', e)
+        this.$message.error('Failed to get author avatar')
+        this.artist.avatar = ''
+      }
+    },
+    async getCover (id) {
+      try {
+        const cover = await api.arweave.getCover(id)
+        return cover
+      } catch (e) {
+        console.error('[Failed to get cover]', e)
+        this.$message.error('Failed to get cover')
+        return ''
+      }
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.word-limit {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.album {
+  margin: 48px auto 20px;
+  max-width: 1240px;
+  width: 100%;
+  padding: 0 20px;
+
+  &-header {
+    text-align: left;
+    a {
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      font-size: 20px;
+      font-weight: 500;
+      color: #E56D9B;
+      line-height: 25px;
+
+      &:hover {
+        i {
+          transform: translateX(-5px);
+        }
+        .header-title {
+          &-text {
+            transform: translateY(-25px);
+            white-space: nowrap;
+          }
+          &-back {
+            transform: translateY(-25px);
+          }
+        }
+      }
+
+      i {
+        color: #E56D9B;
+      }
+
+      .header-title {
+        overflow: hidden;
+        height: 25px;
+        display: inline-flex;
+        flex-direction: column;
+        &-text {
+          margin: 0;
+        }
+        &-back {
+          margin: 0;
+        }
+      }
+    }
+  }
+  &-box {
+    margin-top: 40px;
+    display: flex;
+    &-col {
+      flex: 1;
+      margin-left: 40px;
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+  &-download {
+    margin: 48px auto 0;
+    max-width: 240px;
+    p {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: #E56D9B;
+      line-height: 20px;
+      margin: 0 0 8px;
+    }
+  }
+  &-buy {
+    margin: 15px 0 0;
+    h4 {
+      text-align: left;
+      font-size: 18px;
+      font-weight: 500;
+      color: white;
+      line-height: 14px;
+      margin: 0 0 20px;
+    }
+    &-label {
+      display: flex;
+      &-discount {
+        margin: 0 10px 0 0;
+        font-size: 20px;
+        font-weight: 400;
+        height: 40px;
+        background: #348e39bd;
+        backdrop-filter: blur(2px);
+        border-radius: 2px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        color: #AED581;
+        padding: 5px 20px;
+      }
+      &-price {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        &-original {
+          text-align: left;
+          font-size: 12px;
+          font-weight: 400;
+          color: #B2B2B2;
+          line-height: 14px;
+          margin: 0 0 5px;
+          text-decoration: line-through;
+        }
+        &-now {
+          text-align: left;
+          margin: 0;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          color: #E56D9B;
+        }
+      }
+      button {
+        width: 200px;
+      }
+    }
+  }
+
+  .music-title {
+    text-align: left;
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+    line-height: 14px;
+    margin: 15px 0 5px;
+  }
+
+  .music {
+    display: flex;
+    border-bottom: 1px solid #B2B2B2;
+    height: 80px;
+    &-left {
+      flex: 1;
+      h3 {
+        text-align: left;
+        margin: 15px 0 4px;
+        font-size: 16px;
+        font-weight: 500;
+        color: white;
+        line-height: 22px;
+        .word-limit();
+      }
+      p {
+        text-align: left;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 400;
+        color: #B2B2B2;
+        line-height: 20px;
+        .word-limit();
+      }
+    }
+    &-download {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      i {
+        color: white;
+        font-size: 30px;
+      }
+      &.download-lock {
+        cursor: no-drop;
+        i {
+          color: #B2B2B2;
+        }
+      }
+    }
+  }
+}
+
+.pay {
+  padding: 24px;
+  &-title {
+    text-align: left;
+    font-size: 20px;
+    font-weight: 500;
+    color: white;
+    line-height: 28px;
+    margin: 0 0 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
+  }
+  &-icon {
+    text-align: center;
+    margin-bottom: 16px;
+    img {
+      width: 128px;
+      height: 128px;
+      min-width: 128px;
+      min-height: 128px;
+    }
+  }
+  &-intro {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    line-height: 22px;
+    margin: 0 0 54px;
+  }
+  &-button {
+    &-icon {
+      font-size: 16px;
+    }
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .album-box {
+    flex-direction: column-reverse;
+    &-col {
+      margin: 0 0 40px;
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .album-buy-label button {
+    width: 120px;
+  }
+}
+</style>
