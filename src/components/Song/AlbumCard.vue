@@ -27,7 +27,7 @@
           Free
         </p>
         <p class="card-time">
-          {{ card.unixTime }}
+          {{ time }}
         </p>
       </div>
       <div class="record">
@@ -39,6 +39,7 @@
 
 <script>
 import api from '@/api/api'
+import { isNDaysAgo } from '@/util/momentFun'
 
 export default {
   components: {
@@ -52,6 +53,12 @@ export default {
   data () {
     return {
       cover: 'Loading'
+    }
+  },
+  computed: {
+    time () {
+      const time = this.$moment(this.card.unixTime)
+      return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
     }
   },
   async mounted () {
