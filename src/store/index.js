@@ -566,7 +566,7 @@ export default new Vuex.Store({
         console.log('Await confirmation on post for #' + (i + 1))
         const musicRes = await ar.transactions.post(musicTransaction)
         console.log(musicTransaction.id + ': ' + musicRes)
-        musicList.push({ id: musicTransaction.id, title: musicFileList[i].title })
+        musicList.push({ id: musicTransaction.id, title: musicFileList[i].title, price: musicFileList[i].price })
       }
 
       // Create single info
