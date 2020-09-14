@@ -34,6 +34,7 @@
 
 <script>
 import api from '@/api/api'
+import { isNDaysAgo } from '@/util/momentFun'
 
 export default {
   components: {
@@ -52,20 +53,13 @@ export default {
   computed: {
     time () {
       const time = this.$moment(this.card.unixTime)
-      return this.isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
+      return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
     }
   },
   async mounted () {
     if (this.card && this.card.coverTxid) {
       if (this.cover === 'Loading') this.cover = await api.arweave.getCover(this.card.coverTxid)
     } else this.cover = ''
-  },
-  methods: {
-    isNDaysAgo (n, time) {
-      const nowTime = this.$moment().subtract(n, 'days').format('YYYY-MM-DD')
-      const timeFormat = this.$moment(time).format('YYYY-MM-DD')
-      return this.$moment(nowTime).isAfter(timeFormat)
-    }
   }
 }
 </script>
