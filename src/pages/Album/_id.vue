@@ -25,7 +25,7 @@
           <router-link
             v-for="(music, index) in info.list"
             :key="index"
-            :to="{ name: 'Music', params: { id: music.id } }"
+            :to="{ name: 'Music', params: { id: $route.params.id }, query: { album: index + 1 } }"
           >
             <div class="music" v-ripple>
               <div class="music-left">

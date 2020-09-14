@@ -197,7 +197,7 @@ export default {
     }
   },
   mounted () {
-    this.getInfo(this.$route.params.id)
+    this.getMusicInfo(this.$route.params.id)
   },
   destroyed () {
     // 释放 webkitURL
@@ -209,7 +209,8 @@ export default {
       this.showDialog = true
       this.owned = true
     },
-    async getInfo (id) {
+    /** 获取单曲音乐 */
+    async getSingleMusic (id) {
       this.loading = true
       const audio = {
         title: '',
@@ -240,6 +241,62 @@ export default {
         this.$message.error('Failed to get music information')
       }
       this.loading = false
+    },
+    /** 获取专辑音乐 */
+    async getMusicInfo (id, index) {
+      this.loading = true
+      try {
+        const transaction = await api.arweave.getTransactionDetail(id)
+        const tags = await api.arweave.getTagsByTransaction(transaction)
+        const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
+
+        switch (tags.Type) {
+          case 'single-info':
+            await this.initSingle(tags, data)
+            break
+          case 'album-info':
+            await this.initAlbum(tags, data, this.$route.query.album)
+            break
+        }
+      } catch (e) {
+        console.error('[Failed to get music information]', e)
+        this.$message.error('Failed to get music information')
+      }
+      this.loading = false
+    },
+    async initSingle (tags, data) {
+      const audio = {}
+      audio.artist = tags['Author-Username']
+      this.info.artist = tags['Author-Username']
+      this.info.artistId = tags['Author-Address']
+      this.info.genre = tags['Genre']
+      this.getArtist(tags['Author-Address'])
+      // 歌曲名称
+      audio.title = data.title
+      this.info.name = data.title
+      this.info.desp = data.desp
+      // 获取封面和音频
+      audio.pic = await this.getCover(data.cover)
+      audio.src = await this.getMusic(data.music)
+      this.audio = audio
+    },
+    async initAlbum (tags, data, albumNum = 1) {
+      const index = albumNum - 1
+      const audio = {}
+      audio.artist = tags['Author-Username']
+      this.info.artist = tags['Author-Username']
+      this.info.artistId = tags['Author-Address']
+      this.info.genre = tags['Genre']
+      this.getArtist(tags['Author-Address'])
+      // 根据 id 获取数据内容
+      // 歌曲名称
+      audio.title = data.music[index].title
+      this.info.name = data.music[index].title
+      this.info.desp = data.desp
+      // 获取封面和音频
+      audio.pic = await this.getCover(data.cover)
+      audio.src = await this.getMusic(data.music[index].id)
+      this.audio = audio
     },
     getMusic (id) {
       return new Promise(async (resolve, reject) => {
