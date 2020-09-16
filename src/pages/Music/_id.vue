@@ -197,7 +197,7 @@ export default {
     }
   },
   mounted () {
-    this.getInfo(this.$route.params.id)
+    this.getMusicInfo(this.$route.params.id)
   },
   destroyed () {
     // 释放 webkitURL
@@ -209,39 +209,109 @@ export default {
       this.showDialog = true
       this.owned = true
     },
-    async getInfo (id) {
+    /** 获取音乐信息 */
+    async getMusicInfo (id) {
       this.loading = true
-      const audio = {
-        title: '',
-        artist: '',
-        src: null,
-        pic: null
-      }
       try {
-      // 根据 id 获取数据块对应的 Tag
-        const musicInfo = await api.arweave.getTransactionDetail(id)
-        audio.artist = this.getTag(musicInfo, 'Author-Username')
-        this.info.artist = audio.artist
-        this.info.artistId = this.getTag(musicInfo, 'Author-Address')
-        this.info.genre = this.getTag(musicInfo, 'Genre')
-        this.getArtist(this.info.artistId)
-        // 根据 id 获取数据内容
-        const single = JSON.parse(decode.uint8ArrayToString(musicInfo.data))
-        // 歌曲名称
-        audio.title = single.title
-        this.info.name = single.title
-        this.info.desp = single.desp
-        // 获取封面和音频
-        audio.pic = await this.getCover(single.cover)
-        audio.src = await this.getMusic(single.music)
-        this.audio = audio
+        const transaction = await api.arweave.getTransactionDetail(id)
+        const tags = await api.arweave.getTagsByTransaction(transaction)
+        const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        // 根据类型进行初始化
+        switch (tags.Type) {
+          case 'single-info': // 单曲
+            await this.initSingle(tags, data)
+            break
+          case 'album-info': // 专辑
+            await this.initAlbum(tags, data, this.$route.query.album)
+            break
+          case 'podcast-info': // 播客
+            await this.initPodcast(tags, data)
+            break
+          case 'soundeffect-info':
+            await this.initSoundeffect(tags, data)
+            break
+          default:
+            console.error('[Wrong txid] tags / data:', tags, data)
+            this.$message.error('Wrong txid')
+            this.$router.replace({ name: 'Landing' })
+            return
+        }
       } catch (e) {
         console.error('[Failed to get music information]', e)
         this.$message.error('Failed to get music information')
       }
       this.loading = false
     },
-    getMusic (id) {
+    /** 初始化单曲 */
+    async initSingle (tags, data) {
+      const audio = {}
+      // 作者信息
+      this.initArtist(audio, tags)
+      // 标题、简介、类型
+      audio.title = data.title
+      this.info.name = data.title
+      this.info.desp = data.desp
+      this.info.genre = tags['Genre']
+      // 获取封面和音频
+      audio.pic = await this.getCover(data.cover)
+      audio.src = await this.getAudio(data.music)
+      this.audio = audio
+    },
+    /** 初始化专辑 */
+    async initAlbum (tags, data, albumNum = 1) {
+      const index = albumNum - 1
+      const audio = {}
+      // 作者信息
+      this.initArtist(audio, tags)
+      // 标题、简介、类型
+      audio.title = data.music[index].title
+      this.info.name = data.music[index].title
+      this.info.desp = data.desp
+      this.info.genre = tags['Genre']
+      // 获取封面和音频
+      audio.pic = await this.getCover(data.cover)
+      audio.src = await this.getAudio(data.music[index].id)
+      this.audio = audio
+    },
+    /** 初始化播客 */
+    async initPodcast (tags, data) {
+      const audio = {}
+      // 作者信息
+      this.initArtist(audio, tags)
+      // 标题、简介
+      audio.title = data.title
+      this.info.name = data.title
+      this.info.desp = data.desp
+      this.info.genre = tags['Category']
+      // 获取封面和音频
+      audio.pic = await this.getCover(data.cover)
+      audio.src = await this.getAudio(data.program)
+
+      this.audio = audio
+    },
+    /** 初始化音效 */
+    async initSoundeffect (tags, data) {
+      const audio = {}
+      // 作者信息
+      this.initArtist(audio, tags)
+      // 标题、简介
+      audio.title = data.title
+      this.info.name = data.title
+      this.info.desp = data.desp
+      // 获取封面和音频
+      audio.pic = await this.getCover(data.cover)
+      audio.src = await this.getAudio(data.audio)
+
+      this.audio = audio
+    },
+    /** 初始化作者信息 */
+    initArtist (audio, tags) {
+      audio.artist = tags['Author-Username']
+      this.info.artist = tags['Author-Username']
+      this.info.artistId = tags['Author-Address']
+      this.getArtist(tags['Author-Address'], audio)
+    },
+    getAudio (id) {
       return new Promise(async (resolve, reject) => {
         try {
           const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
@@ -259,12 +329,15 @@ export default {
         }
       })
     },
-    async getArtist (id) {
+    async getArtist (id, audio) {
       this.artist.id = id
       try {
         const user = await api.arweave.getIdFromAddress(id)
-        if (user) this.artist.username = user.data
-        else {
+        if (user) {
+          this.artist.username = user.data
+          this.info.artist = user.data
+          if (audio) audio.artist = user.data
+        } else {
           this.artist.username = 'unknown'
           this.$message.error('Failed to get author information')
         }
