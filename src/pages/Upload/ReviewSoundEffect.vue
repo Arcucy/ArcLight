@@ -63,7 +63,33 @@
             <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
           </div>
         </div>
-        <v-btn color="#E56D9B" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
+        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
+        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="() => {$router.push({ name: 'Songs' })}">Done</v-btn>
+        <div class="upload-status" v-if="submitBtnLoading">
+          <div class="upload-status-cover" v-if="uploadCoverPct !== 100">
+            <div class="upload-title">Uploading Cover...</div>
+            <v-progress-linear
+              :buffer-value="coverPct"
+              v-model="coverPct"
+              :value="coverPct"
+              stream
+              color="#3B8CFF"
+            ></v-progress-linear>
+          </div>
+          <div class="upload-status-music" v-if="uploadMusicPct !== 100">
+            <div class="upload-title">Uploading Music...</div>
+            <v-progress-linear
+              :buffer-value="musicPct"
+              v-model="musicPct"
+              :value="musicPct"
+              stream
+              color="#FF7A7A"
+            ></v-progress-linear>
+          </div>
+        </div>
+        <div v-if="uploadDone" >
+          <div class="upload-title">Upload Successful!</div>
+        </div>
       </div>
       <v-snackbar
         v-model="failSnackbar"
@@ -106,16 +132,49 @@ export default {
       audio: '',
       failSnackbar: false,
       failMessage: '',
-      submitBtnLoading: false
+      submitBtnLoading: false,
+      coverPct: 0,
+      musicPct: 0,
+      uploadDone: false
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo', 'soundEffectUploadComplete'])
+    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo', 'uploadCoverPct', 'uploadMusicPct', 'soundEffectUploadComplete'])
+  },
+  watch: {
+    soundEffectUploadComplete (val) {
+      console.log(val)
+      this.submitBtnLoading = !val
+      setTimeout(() => {
+        this.$router.push({ name: 'Songs' })
+      }, 4000)
+    },
+    uploadCoverPct (val) {
+      console.log(val)
+      this.coverPct = val
+    },
+    uploadMusicPct (val) {
+      console.log(val)
+      this.musicPct = val
+    },
+    coverPct (val) {
+      this.coverPct = val
+    },
+    musicPct (val) {
+      if (val === 100) {
+        this.submitBtnLoading = false
+        this.uploadDone = true
+      }
+      this.musicPct = val
+    }
   },
   methods: {
     ...mapActions(['uploadSoundEffect']),
     submit () {
       this.submitBtnLoading = true
+      this.uploadDone = false
+      this.musicPct = 0
+      this.coverPct = 0
       this.uploadSoundEffect({
         img: { data: this.soundEffectCoverRaw, type: this.soundEffectCoverType },
         music: { data: this.$route.params.data, type: this.soundEffectMusicType },
@@ -135,6 +194,10 @@ export default {
     }
   },
   mounted () {
+    this.musicPct = 0
+    this.coverPct = 0
+    this.uploadDone = false
+
     if (!this.soundEffectInfo) {
       this.failMessage = 'Unknown Error Occurred'
       this.failSnackbar = true
@@ -251,7 +314,7 @@ export default {
 .cover {
   width: 250px;
   height: 250px;
-  border-radius: 25px;
+  border-radius: 10px;
   margin-right: 20px;
 }
 
@@ -281,6 +344,18 @@ export default {
 .submit-btn {
   width: 100px;
   color: white;
+}
+
+.upload-status {
+  margin-top: 16px;
+}
+
+.upload-title {
+  color: white;
+  font-weight: 500;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  line-height: 30px;
 }
 
 /deep/ .v-input__slot {
