@@ -12,7 +12,7 @@ let ar = Arweave.init({
   host: 'arweave.net',
   port: 443,
   protocol: 'https',
-  timeout: 20000,
+  timeout: 40000,
   logging: false
 })
 
@@ -71,6 +71,7 @@ export default new Vuex.Store({
     soundEffectInfo: '',
     soundEffectObj: '',
     uploadCoverPct: 0,
+    uploadMusicNumber: 0,
     uploadMusicPct: 0,
     singleMuiscFile: '',
     singleMuiscRaw: '',
@@ -230,6 +231,9 @@ export default new Vuex.Store({
     setUploadCoverPct (state, pct) {
       state.uploadCoverPct = pct
     },
+    setUploadMusicNumber (state, number) {
+      state.uploadMusicNumber = number
+    },
     setUploadMusicPct (state, pct) {
       state.uploadMusicPct = pct
     },
@@ -361,6 +365,10 @@ export default new Vuex.Store({
       commit('setSoundEffectObj', data)
     },
     async uploadSingle ({ commit }, data) {
+      commit('setSingleUploadComplete', false)
+      commit('setUploadCoverPct', 0)
+      commit('setUploadMusicPct', 0)
+
       let imgTransaction = ''
       let musicTransaction = ''
       let singleTransaction = ''
@@ -395,7 +403,7 @@ export default new Vuex.Store({
       console.log(imgTransaction.id)
 
       const imgRes = await ar.transactions.post(imgTransaction)
-      console.log(imgTransaction.id + ': ' + imgRes)
+      console.log(imgTransaction.id + ': ', imgRes)
 
       // Upload Music
       const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
@@ -423,7 +431,7 @@ export default new Vuex.Store({
       console.log(musicTransaction.id)
 
       const musicRes = await ar.transactions.post(musicTransaction)
-      console.log(musicTransaction.id + ': ' + musicRes)
+      console.log(musicTransaction.id + ': ', musicRes)
 
       // Create single info
       const singleInfo = {
@@ -458,7 +466,7 @@ export default new Vuex.Store({
       }
 
       const singleRes = await ar.transactions.post(singleTransaction)
-      console.log(singleTransaction.id + ': ' + singleRes)
+      console.log(singleTransaction.id + ': ', singleRes)
 
       // Create post info
       let postInfo = await API.arweave.getPostFromAddress(address)
@@ -487,13 +495,16 @@ export default new Vuex.Store({
       }
 
       const postInfoRes = await ar.transactions.post(postInfoTransaction)
-      console.log(postInfoTransaction.id + ': ' + postInfoRes)
+      console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setSingleLink', singleTransaction.id)
       commit('setSingleUploadComplete', true)
     },
     async uploadAlbum ({ commit }, data) {
-      console.log(data)
+      commit('setAlbumUploadComplete', false)
+      commit('setUploadCoverPct', 0)
+      commit('setUploadMusicPct', 0)
+      commit('setUploadMusicNumber', 0)
       let imgTransaction = ''
       let musicTransaction = ''
       let albumTransaction = ''
@@ -528,7 +539,7 @@ export default new Vuex.Store({
       console.log(imgTransaction.id)
 
       const imgRes = await ar.transactions.post(imgTransaction)
-      console.log(imgTransaction.id + ': ' + imgRes)
+      console.log(imgTransaction.id + ': ', imgRes)
 
       // // Upload Music
       let musicList = []
@@ -555,6 +566,7 @@ export default new Vuex.Store({
 
         while (!musicUploader.isComplete) {
           await musicUploader.uploadChunk()
+          commit('setUploadMusicNumber', i + 1)
           commit('setUploadMusicPct', musicUploader.pctComplete)
           console.log(`${musicUploader.pctComplete}% complete, ${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
         }
@@ -565,7 +577,7 @@ export default new Vuex.Store({
 
         console.log('Await confirmation on post for #' + (i + 1))
         const musicRes = await ar.transactions.post(musicTransaction)
-        console.log(musicTransaction.id + ': ' + musicRes)
+        console.log(musicTransaction.id + ': ', musicRes)
         musicList.push({ id: musicTransaction.id, title: musicFileList[i].title, price: musicFileList[i].price })
       }
 
@@ -603,7 +615,7 @@ export default new Vuex.Store({
       }
 
       const singleRes = await ar.transactions.post(albumTransaction)
-      console.log(albumTransaction.id + ': ' + singleRes)
+      console.log(albumTransaction.id + ': ', singleRes)
 
       // Create post info
       let postInfo = await API.arweave.getPostFromAddress(address)
@@ -632,11 +644,14 @@ export default new Vuex.Store({
       }
 
       const postInfoRes = await ar.transactions.post(postInfoTransaction)
-      console.log(postInfoTransaction.id + ': ' + postInfoRes)
+      console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setAlbumUploadComplete', true)
     },
     async uploadPodcast ({ commit }, data) {
+      commit('setPodcastUploadComplete', false)
+      commit('setUploadCoverPct', 0)
+      commit('setUploadMusicPct', 0)
       console.log(data)
       let imgTransaction = ''
       let programTransaction = ''
@@ -672,7 +687,7 @@ export default new Vuex.Store({
       console.log(imgTransaction.id)
 
       const imgRes = await ar.transactions.post(imgTransaction)
-      console.log(imgTransaction.id + ': ' + imgRes)
+      console.log(imgTransaction.id + ': ', imgRes)
 
       // Upload Program
       const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
@@ -704,7 +719,7 @@ export default new Vuex.Store({
       console.log(programTransaction.id)
 
       const musicRes = await ar.transactions.post(programTransaction)
-      console.log(programTransaction.id + ': ' + musicRes)
+      console.log(programTransaction.id + ': ', musicRes)
 
       // Create Podcast info
       const podcastInfo = {
@@ -741,7 +756,7 @@ export default new Vuex.Store({
       }
 
       const singleRes = await ar.transactions.post(podcastTransaction)
-      console.log(podcastTransaction.id + ': ' + singleRes)
+      console.log(podcastTransaction.id + ': ', singleRes)
 
       // Create post info
       let postInfo = await API.arweave.getPostFromAddress(address)
@@ -770,11 +785,14 @@ export default new Vuex.Store({
       }
 
       const postInfoRes = await ar.transactions.post(postInfoTransaction)
-      console.log(postInfoTransaction.id + ': ' + postInfoRes)
+      console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setPodcastUploadComplete', true)
     },
     async uploadSoundEffect ({ commit }, data) {
+      commit('setSoundEffectUploadComplete', false)
+      commit('setUploadCoverPct', 0)
+      commit('setUploadMusicPct', 0)
       let imgTransaction = ''
       let audioTransaction = ''
       let soundEffectTransaction = ''
@@ -809,7 +827,7 @@ export default new Vuex.Store({
       console.log(imgTransaction.id)
 
       const imgRes = await ar.transactions.post(imgTransaction)
-      console.log(imgTransaction.id + ': ' + imgRes)
+      console.log(imgTransaction.id + ': ', imgRes)
 
       // Upload Audio
       const musicReady = encryptBuffer(Buffer.from(data.music.data.music))
@@ -837,7 +855,7 @@ export default new Vuex.Store({
       console.log(audioTransaction.id)
 
       const musicRes = await ar.transactions.post(audioTransaction)
-      console.log(audioTransaction.id + ': ' + musicRes)
+      console.log(audioTransaction.id + ': ', musicRes)
 
       // Create SoundEffect info
       const soundEffectInfo = {
@@ -870,7 +888,7 @@ export default new Vuex.Store({
       }
 
       const singleRes = await ar.transactions.post(soundEffectTransaction)
-      console.log(soundEffectTransaction.id + ': ' + singleRes)
+      console.log(soundEffectTransaction.id + ': ', singleRes)
 
       // Create post info
       let postInfo = await API.arweave.getPostFromAddress(address)
@@ -899,7 +917,7 @@ export default new Vuex.Store({
       }
 
       const postInfoRes = await ar.transactions.post(postInfoTransaction)
-      console.log(postInfoTransaction.id + ': ' + postInfoRes)
+      console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setSoundEffectUploadComplete', true)
     }
