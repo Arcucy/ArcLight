@@ -10,30 +10,32 @@
         </div>
         <div class="container">
           <div class="cover-title side-title">Sound Effect Cover</div>
-          <img-upload
-          :img-upload-done="imgUploadDone"
-          :update-type="'soundeffect'"
-          class="app-icon"
-          @doneImageUpload="doneImageUpload"
-          >
-            <div
-              slot="uploadButton"
-              class="user-avatar"
+          <div style="display: flex; align-items: flex-end;">
+            <img-upload
+            :img-upload-done="imgUploadDone"
+            :update-type="'soundeffect'"
+            class="app-icon"
+            @doneImageUpload="doneImageUpload"
             >
-              <div class="edit">
-                <v-icon color="#FFF">mdi-camera</v-icon>
-                Sound Effect Cover
-              </div>
-              <img
-                id="avatar"
-                v-if="soundEffectCover"
-                slot="description"
-                :src="soundEffectCover"
-                alt="avatar"
+              <div
+                slot="uploadButton"
+                class="user-avatar"
               >
-              <img v-else id="new-logo" src="../../assets/image/soundeffect.png" style="margin-top: 10px;"/>
-            </div>
-          </img-upload>
+                <div class="edit">
+                  <v-icon color="#FFF">mdi-camera</v-icon>
+                  Sound Effect Cover
+                </div>
+                <img
+                  id="avatar"
+                  v-if="soundEffectCover"
+                  slot="description"
+                  :src="soundEffectCover"
+                  alt="avatar"
+                >
+                <img v-else id="new-logo" src="../../assets/image/soundeffect.png" style="margin-top: 10px;"/>
+              </div>
+            </img-upload>
+          </div>
           <div class="name-title side-title">Sound Effect Name</div>
           <v-text-field
             v-model="soundeffectTitle"
@@ -215,7 +217,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['uploadSoundEffectCoverFile', 'reviewSoundEffect']),
+    ...mapActions(['setSoundEffectCoverFile', 'reviewSoundEffect']),
     submit () {
       this.submitBtnLoading = true
       if (this.soundEffectCover === '') {
