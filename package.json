@@ -21,7 +21,7 @@
     "element-ui": "^2.13.2",
     "hls.js": "^0.14.11",
     "moment": "^2.27.0",
-    "musicgenres-json": "^1.0.0",
+    "musicgenres-json": "^1.0.1",
     "vue": "^2.5.2",
     "vue-aplayer": "^1.6.1",
     "vue-router": "^3.0.1",

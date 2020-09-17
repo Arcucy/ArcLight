@@ -161,11 +161,9 @@ export default {
       this.uploadDone = true
     },
     uploadCoverPct (val) {
-      console.log(val)
       this.coverPct = val
     },
     uploadMusicPct (val) {
-      console.log(val)
       this.musicPct = val
     },
     coverPct (val) {

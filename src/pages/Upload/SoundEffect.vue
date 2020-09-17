@@ -204,17 +204,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectUploadComplete', 'soundEffectLink'])
-  },
-  watch: {
-    soundeffectUploadComplete (val) {
-      this.submitBtnLoading = false
-      this.soundeffectSnackbar = true
-
-      setTimeout(() => {
-        this.$router.push({ path: '/music/' + this.soundeffectLink })
-      }, 2000)
-    }
+    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectLink'])
   },
   methods: {
     ...mapActions(['setSoundEffectCoverFile', 'reviewSoundEffect']),
