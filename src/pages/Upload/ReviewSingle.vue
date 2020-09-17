@@ -146,28 +146,19 @@ export default {
   },
   watch: {
     singleUploadComplete (val) {
-      console.log(val)
       this.submitBtnLoading = !val
-      setTimeout(() => {
-        this.$router.push({ name: 'Songs' })
-      }, 4000)
+      this.uploadDone = true
     },
     uploadCoverPct (val) {
-      console.log(val)
       this.coverPct = val
     },
     uploadMusicPct (val) {
-      console.log(val)
       this.musicPct = val
     },
     coverPct (val) {
       this.coverPct = val
     },
     musicPct (val) {
-      if (val === 100) {
-        this.submitBtnLoading = false
-        this.uploadDone = true
-      }
       this.musicPct = val
     }
   },
