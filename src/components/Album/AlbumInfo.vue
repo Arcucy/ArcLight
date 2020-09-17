@@ -129,7 +129,7 @@ export default {
       .content();
       .word-limit();
       height: 30px;
-      background: #F9C1D7;
+      background-color: #FAE5ED;
       border-radius: 2px;
       display: inline-block;
       color: #E56D9B;

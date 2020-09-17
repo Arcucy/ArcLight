@@ -160,4 +160,24 @@ a {
     }
   }
 }
+
+@media screen and (max-width: 1200px) {
+  .card-img {
+    height: 128px;
+  }
+}
+@media screen and (max-width: 992px) {
+  .card-img {
+    height: 100px !important;
+    width: 100px !important;
+  }
+  .record {
+    min-width: 100px !important;
+    min-height: 100px !important;
+    height: 100px !important;
+    width: 100px !important;
+    margin-left: -80px !important;
+    margin-top: 0px !important;
+  }
+}
 </style>

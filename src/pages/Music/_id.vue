@@ -15,9 +15,20 @@
           </span>
         </a>
       </div>
-      <div v-if="!loading" class="music-info">
+      <div class="music-info">
         <div class="music-cover-container">
-          <img :src="cover">
+          <v-img
+            class="albuminfo-cover-img"
+            :src="info.cover"
+            alt="cover"
+            aspect-ratio="1"
+          >
+            <template v-slot:placeholder>
+              <div class="albuminfo-cover-img-loading">
+                <v-progress-circular indeterminate color="#E56D9B" />
+              </div>
+            </template>
+          </v-img>
         </div>
         <div class="music-info-container">
           <div class="music-title-container">
@@ -28,9 +39,14 @@
               {{ info.name }}
             </div>
           </div>
+          <div v-if="this.info.albumTitle" class="music-title-album">
+            <router-link :to="{ name: 'Album', params: { id: $route.params.id } }">
+              <v-icon color="#D85C8B">mdi-album</v-icon> {{ this.info.albumTitle }}
+            </router-link>
+          </div>
           <div class="music-title-artist">
             <router-link class="music-artist-username" :to="{ name: 'User', params: { id: artist.id } }">
-              {{ artist.username }}
+              <v-icon color="#D85C8B">mdi-account-music</v-icon>{{ artist.username }}
             </router-link>
           </div>
           <div class="music-title-desp">
@@ -175,13 +191,14 @@ export default {
     return {
       musicId: '',
       audio: '',
-      cover: '',
       info: {
-        name: '',
+        name: 'Title loading...',
         artist: '',
         artistId: '',
         desp: '',
-        genre: ''
+        genre: 'Await Data...',
+        cover: '',
+        albumTitle: ''
       },
       artist: {
         id: '',
@@ -290,12 +307,13 @@ export default {
       this.info.genre = tags['Genre']
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
+      this.info.cover = audio.pic
       audio.src = await this.getAudio(data.music)
-      this.cover = audio.pic
       this.audio = audio
     },
     /** 初始化专辑 */
     async initAlbum (tags, data, albumNum = 1) {
+      this.info.albumTitle = data.title
       const index = albumNum - 1
       const audio = {}
       // 作者信息
@@ -307,6 +325,7 @@ export default {
       this.info.genre = tags['Genre']
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
+      this.info.cover = audio.pic
       audio.src = await this.getAudio(data.music[index].id)
       this.audio = audio
     },
@@ -322,8 +341,8 @@ export default {
       this.info.genre = tags['Category']
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
+      this.info.cover = audio.pic
       audio.src = await this.getAudio(data.program)
-
       this.audio = audio
     },
     /** 初始化音效 */
@@ -337,8 +356,8 @@ export default {
       this.info.desp = data.desp
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
+      this.info.cover = audio.pic
       audio.src = await this.getAudio(data.audio)
-
       this.audio = audio
     },
     /** 初始化作者信息 */
@@ -637,25 +656,50 @@ export default {
 
 .music-info {
   display: flex;
-  margin: 40px auto;
-  max-width: 1040px;
   width: 100%;
-  padding: 0 20px;
+  margin-top: 20px;
   &-container {
     margin-left: 20px;
   }
 }
 
-.music-cover-container > img {
-  height: 250px;
-  width: 250px;
-  border-radius: 10px;
+.albuminfo-cover {
+  display: flex;
+  width: 280px;
+  min-width: 280px;
+  margin-right: 20px;
+  &-img {
+    border-radius:5px;
+    width: 250px;
+    height: 250px;
+    background: #252525;
+    &-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 .music-title {
   &-container {
     display: flex;
     align-items: center;
+  }
+  &-album {
+    margin-top: 10px;
+    text-align: left;
+    color: white;
+    font-size: 20px;
+    a {
+      text-decoration: none;
+      color: white;
+      &:hover {
+        color: #D85C8B;
+      }
+    }
   }
   &-genre {
     margin-right: 8px;
@@ -667,7 +711,7 @@ export default {
   }
   &-text {
     color: white;
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -676,23 +720,28 @@ export default {
     word-break: break-all;
   }
 
-  &-artist > a {
+  &-artist a {
     text-decoration: none;
     margin-top: 10px;
-    font-size: 24px;
-    color: #E56D9B;
+    font-size: 20px;
+    color: #FFF;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
-    padding-bottom: 5px;
+    line-height: 20px;
     overflow: hidden;
     word-break: break-all;
     text-align: left;
+    i {
+      margin-right: 10px;
+    }
+  }
+  &-desp {
+    margin-top: 16px;
   }
   &-desp > span {
-    margin-top: 10px;
     color: white;
-    font-size: 20px;
+    font-size: 16px;
     text-align: left;
   }
 }
@@ -748,5 +797,64 @@ export default {
     transform: translateY(0px);
     opacity: 1;
   }
+}
+
+@media screen and (max-width: 1200px) {
+
+}
+@media screen and (max-width: 992px) {
+}
+@media screen and (max-width: 768px) {
+  .music-info {
+    display: block;
+    &-container {
+      margin-top: 16px;
+      margin-left: 0px;
+    }
+  }
+  .music-title {
+    &-genre {
+      padding: 5px 10px 5px !important;
+      font-size: 14px !important;
+      border-radius: 5px !important;
+    }
+    &-text {
+      font-size: 20px !important;
+    }
+    &-artist {
+      .music-artist-username {
+        margin-top: 2px;
+        font-size: 16px !important;
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+    &-album {
+      margin-top: 2px;
+      a {
+        font-size: 16px !important;
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+    &-desp {
+      margin-top: 2px;
+      span {
+        font-size: 14px !important;
+      }
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .albuminfo-cover-img {
+    height: 100%;
+    max-height: 250px;
+    width: 100%;
+    max-width: 250px;
+  }
+}
+@media screen and (max-width: 480px) {
 }
 </style>
