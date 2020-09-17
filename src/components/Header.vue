@@ -2,7 +2,7 @@
   <div class="header" :class="frosted && 'frosted'">
     <div class="link-container">
       <router-link :to="{ name: 'Landing' }" class="link">
-        <img src="../assets/logo.png" style="height: 3rem">
+        <img src="../assets/logo.png">
       </router-link>
       <router-link :to="{ name: 'Landing' }" class="link text-link">
         ArcLight
@@ -14,8 +14,16 @@
         About
       </router-link>
     </div>
+    <div class="mobile-nav mobile-search-bar">
+      <v-btn icon color="white">
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+    </div>
     <Search class="search-bar"/>
     <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Login</v-btn>
+    <v-btn v-if="isLoggedIn" class="mobile-nav mobile-upload" fab dark x-small color="#E56D9B" @click="uploadMusic">
+      <v-icon dark>mdi-upload</v-icon>
+    </v-btn>
     <v-btn
       v-if="isLoggedIn"
       class="upload"
@@ -30,8 +38,24 @@
       </v-avatar>
       Upload Music
     </v-btn>
-    <v-menu v-if="isLoggedIn" offset-y>
+
+    <v-menu v-if="isLoggedIn" offset-y dark class="user-menu">
       <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="mobile-nav mobile-user"
+          dark
+          fab
+          x-small
+          color="#FFF"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <miniAvatar
+            :size="30"
+            v-if="userAvatar"
+            :src="userAvatar"
+          />
+        </v-btn>
         <v-btn
           depressed
           class="user"
@@ -63,11 +87,26 @@
         </v-list-item>
       </v-list>
     </v-menu>
+
+    <v-btn
+      v-if="!isLoggedIn"
+      fab
+      dark
+      x-small
+      color="#E56D9B"
+      class="mobile-nav mobile-sign"
+      @click="show = true"
+      :outlined="loginBtnLoading"
+      :loading="loginBtnLoading"
+    >
+      <v-icon dark>mdi-login</v-icon>
+    </v-btn>
+
     <v-dialog
       v-model="show"
       max-width="290"
     >
-      <v-card>
+      <v-card style="width: 50vw">
         <v-card-title class="headline">Upload your key</v-card-title>
         <v-file-input
           v-model="file"
@@ -81,6 +120,7 @@
           color="#E56D9B"
           v-model="writeCookie"
           label="Save Key for this Session for 7 days"
+          style="padding:0 20px;"
         >
         </v-checkbox>
         <v-card-actions>
@@ -148,12 +188,14 @@
 import { mapActions, mapState } from 'vuex'
 
 import Search from './Search.vue'
+import miniAvatar from '@/components/User/MiniAvatar'
 
 import { clearCookie, getCookie, setCookie } from '../util/cookie'
 
 export default {
   components: {
-    Search
+    Search,
+    miniAvatar
   },
   data () {
     return {
@@ -262,6 +304,10 @@ export default {
 
 <style lang="less" scoped>
 
+.mobile-nav {
+  display: none;
+}
+
 .header {
   padding: 20px 0 0;
   display: flex;
@@ -303,6 +349,9 @@ export default {
 .link {
   margin-left: .75rem;
   font-size: 1.2rem;
+  img {
+    height: 3rem;
+  }
 }
 
 .text-link {
@@ -390,5 +439,85 @@ export default {
       caret-color: #E56D9B !important;
     }
   }
+}
+
+@media screen and (max-width: 1200px) {
+  .link {
+    font-size: 20px;
+    img {
+      height: 2rem;
+    }
+  }
+  .upload {
+    padding: 0 10px !important;
+    height: 38px !important;
+    font-size: 12px;
+    /deep/ i {
+      font-size: 18px !important;
+    }
+  }
+  .user {
+    padding: 0 10px !important;
+    height: 38px !important;
+    font-size: 12px;
+  }
+  .search-bar {
+    display: none;
+  }
+
+  .mobile-search-bar {
+    display: block;
+    margin-right: 10px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .link {
+    font-size: 16px;
+  }
+  .upload {
+    display: none;
+  }
+  .mobile-upload {
+    display: block;
+    margin-right: 16px;
+  }
+  .user {
+    display: none;
+  }
+  .mobile-user {
+    display: block;
+    margin-right: .75rem;
+  }
+  .sign {
+    display: none;
+  }
+  .mobile-sign {
+    display: block;
+    margin-right: .75rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+
+}
+
+@media screen and (max-width: 480px) {
+  .link {
+    font-size: 15px;
+    img {
+      height: 1.8rem;
+    }
+  }
+  .link-container {
+    margin-left: 8px;
+    margin-top: 5px;
+  }
+}
+</style>
+
+<style lang="less">
+/deep/ .theme--light .v-list {
+  background-color: #333;
 }
 </style>

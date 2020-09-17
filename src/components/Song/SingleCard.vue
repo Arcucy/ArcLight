@@ -139,4 +139,22 @@ a {
     .word-limit();
   }
 }
+
+@media screen and (max-width: 1200px) {
+  .card-img {
+    height: 128px;
+  }
+}
+@media screen and (max-width: 992px) {
+  .card-img {
+    height: 100px;
+    width: 100px;
+  }
+}
+@media screen and (max-width: 768px) {
+}
+@media screen and (max-width: 640px) {
+}
+@media screen and (max-width: 480px) {
+}
 </style>

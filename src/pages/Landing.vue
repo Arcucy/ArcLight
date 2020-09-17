@@ -193,20 +193,30 @@ export default {
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 640px) {
   #title {
     font-size: 4rem;
     letter-spacing: 1rem;
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 480px) {
   #title {
     font-size: 2rem;
     letter-spacing: 0.5rem;
   }
   #subtitle span {
     font-size: 16px;
+  }
+  .start-btn {
+    height: 28px !important;
+    padding: 2 5px !important;
+    font-size: 10px;
+  }
+  .about-btn {
+    height: 28px !important;
+    padding: 2 5px !important;
+    font-size: 10px;
   }
 }
 </style>

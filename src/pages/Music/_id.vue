@@ -656,10 +656,8 @@ export default {
 
 .music-info {
   display: flex;
-  margin: 40px auto;
-  max-width: 1040px;
   width: 100%;
-  padding: 0 20px;
+  margin-top: 20px;
   &-container {
     margin-left: 20px;
   }
@@ -730,7 +728,7 @@ export default {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
-    padding-bottom: 5px;
+    line-height: 20px;
     overflow: hidden;
     word-break: break-all;
     text-align: left;
@@ -799,5 +797,64 @@ export default {
     transform: translateY(0px);
     opacity: 1;
   }
+}
+
+@media screen and (max-width: 1200px) {
+
+}
+@media screen and (max-width: 992px) {
+}
+@media screen and (max-width: 768px) {
+  .music-info {
+    display: block;
+    &-container {
+      margin-top: 16px;
+      margin-left: 0px;
+    }
+  }
+  .music-title {
+    &-genre {
+      padding: 5px 10px 5px !important;
+      font-size: 14px !important;
+      border-radius: 5px !important;
+    }
+    &-text {
+      font-size: 20px !important;
+    }
+    &-artist {
+      .music-artist-username {
+        margin-top: 2px;
+        font-size: 16px !important;
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+    &-album {
+      margin-top: 2px;
+      a {
+        font-size: 16px !important;
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+    &-desp {
+      margin-top: 2px;
+      span {
+        font-size: 14px !important;
+      }
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .albuminfo-cover-img {
+    height: 100%;
+    max-height: 250px;
+    width: 100%;
+    max-width: 250px;
+  }
+}
+@media screen and (max-width: 480px) {
 }
 </style>
