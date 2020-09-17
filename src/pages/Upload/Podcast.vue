@@ -217,17 +217,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['podcastCoverFile', 'isLoggedIn', 'keyFileContent', 'podcastUploadComplete', 'podcastLink'])
-  },
-  watch: {
-    podcastUploadComplete (val) {
-      this.submitBtnLoading = false
-      this.podcastSnackbar = true
-
-      setTimeout(() => {
-        this.$router.push({ path: '/music/' + this.podcastLink })
-      }, 2000)
-    }
+    ...mapState(['podcastCoverFile', 'isLoggedIn', 'keyFileContent', 'podcastLink'])
   },
   methods: {
     ...mapActions(['uploadPodcastCoverFile', 'reviewPodcast']),

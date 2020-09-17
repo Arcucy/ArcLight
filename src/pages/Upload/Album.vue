@@ -235,17 +235,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'isLoggedIn', 'keyFileContent', 'albumUploadComplete', 'albumLink'])
-  },
-  watch: {
-    albumUploadComplete (val) {
-      this.submitBtnLoading = false
-      this.albumSnackbar = true
-
-      setTimeout(() => {
-        this.$router.push({ path: '/music/' + this.albumLink })
-      }, 2000)
-    }
+    ...mapState(['albumCoverFile', 'isLoggedIn', 'keyFileContent', 'albumLink'])
   },
   methods: {
     ...mapActions(['uploadAlbumCoverFile', 'reviewAlbum']),

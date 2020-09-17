@@ -207,17 +207,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleUploadComplete', 'singleLink'])
-  },
-  watch: {
-    singleUploadComplete (val) {
-      this.submitBtnLoading = false
-      this.singleSnackbar = true
-
-      setTimeout(() => {
-        this.$router.push({ path: '/music/' + this.singleLink })
-      }, 2000)
-    }
+    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleLink'])
   },
   methods: {
     ...mapActions(['uploadSingleCoverFile', 'reviewSingle']),
