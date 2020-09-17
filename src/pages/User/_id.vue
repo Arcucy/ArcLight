@@ -190,11 +190,14 @@ export default {
         const res = await api.arweave.getUserAudioList(this.$route.params.id, type)
         aObject.addresses = res
         await api.arweave.getAudioInfoByTxids(res, (item, index) => {
-          aObject.list.push(item)
+          if (item) aObject.list.push(item)
         })
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
         this.$message.error(`Failed to get ${type} list`)
+      }
+      if (aObject.addresses.length !== aObject.list.length) {
+        this.$message(`Expecting fetching data for ${aObject.addresses.length}, but got only ${aObject.list.length}`)
       }
       console.log(aObject)
       aObject.loading = false

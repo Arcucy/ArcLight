@@ -322,7 +322,12 @@ let arweave = {
   async getAudioInfoByTxids (txids, callback) {
     const infoList = []
     for (let i = 0; i < txids.length; i++) {
-      const transaction = await this.getTransactionDetail(txids[i])
+      let transaction
+      try {
+        transaction = await this.getTransactionDetail(txids[i])
+      } catch (e) {
+        console.error(txids[i], e)
+      }
       let audioInfo = null
       if (transaction) {
         const tags = this.getTagsByTransaction(transaction)
