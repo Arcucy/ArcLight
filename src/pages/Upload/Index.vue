@@ -76,7 +76,7 @@ export default {
   mounted () {
     const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!c || !this.isLoggedIn) {
+      if (!this.isLoggedIn || c) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 
