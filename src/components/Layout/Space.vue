@@ -55,7 +55,7 @@ export default {
 
 .notice {
   color: rgb(177, 177, 177);
-  margin: 100px auto 50px;
+  margin: 50px auto 50px;
   text-align: center;
   animation-name: fadeInOpacity;
   animation-iteration-count: 1;

@@ -15,10 +15,30 @@
           </span>
         </a>
       </div>
-      <div class="music-playerbox">
-        <div v-if="!loading && info.genre" class="music-playerbox-tag">
-          {{ info.genre }}
+      <div v-if="!loading" class="music-info">
+        <div class="music-cover-container">
+          <img :src="cover">
         </div>
+        <div class="music-info-container">
+          <div class="music-title-container">
+            <div class="music-title-genre">
+              {{ info.genre }}
+            </div>
+            <div class="music-title-text">
+              {{ info.name }}
+            </div>
+          </div>
+          <div class="music-title-artist">
+            <router-link class="music-artist-username" :to="{ name: 'User', params: { id: artist.id } }">
+              {{ artist.username }}
+            </router-link>
+          </div>
+          <div class="music-title-desp">
+            <span v-html="info.desp" class="desp-text"></span>
+          </div>
+        </div>
+      </div>
+      <div class="music-playerbox">
         <div v-if="loading && pct" class="music-playerbox-tag">
           {{ pct }}%
         </div>
@@ -52,10 +72,11 @@
       </div>
       <!-- Buy -->
       <div v-else class="music-download">
-        <p>
+        <p v-if="artist.username !== username">
           Sale for {{ price }} AR
         </p>
         <v-btn
+          v-if="artist.username !== username"
           block
           large
           light
@@ -66,6 +87,19 @@
           @click.stop="buyClick"
         >
           BUY
+        </v-btn>
+        <v-btn
+          v-else
+          block
+          large
+          light
+          outlined
+          rounded
+          color="#E56D9B"
+          :height="44"
+          @click.stop="downloadSource"
+        >
+          Download
         </v-btn>
       </div>
       <!-- Payed Users -->
@@ -84,8 +118,6 @@
           </div>
         </div>
       </div>
-      <!-- Title -->
-      <div id="title">{{ info.name }}</div>
       <!-- Artist -->
       <div class="music-artist">
         <router-link :to="{ name: 'User', params: { id: artist.id } }">
@@ -95,7 +127,6 @@
           {{ artist.username }}
         </router-link>
       </div>
-      <p class="music-desp" v-html="info.desp" />
     </div>
     <!-- Pay Dialog -->
     <v-dialog
@@ -133,6 +164,7 @@ import mp3 from '@/assets/music/FlowerDance.mp3'
 import album from '@/assets/music/FlowerDance.jpg'
 import api from '@/api/api'
 import decode from '@/util/decode'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -143,6 +175,7 @@ export default {
     return {
       musicId: '',
       audio: '',
+      cover: '',
       info: {
         name: '',
         artist: '',
@@ -195,6 +228,9 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapState(['username'])
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
@@ -255,6 +291,7 @@ export default {
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       audio.src = await this.getAudio(data.music)
+      this.cover = audio.pic
       this.audio = audio
     },
     /** 初始化专辑 */
@@ -370,6 +407,9 @@ export default {
         let newKey = tags[i].get('name', { decode: true, string: true })
         if (newKey === key) return tags[i].get('value', { decode: true, string: true })
       }
+    },
+    downloadSource () {
+
     }
   }
 }
@@ -429,7 +469,7 @@ export default {
   }
 
   &-playerbox {
-    height: 162px;
+    height: 120px;
     margin: 0 auto;
     max-width: 588px;
     display: flex;
@@ -595,6 +635,68 @@ export default {
   }
 }
 
+.music-info {
+  display: flex;
+  margin: 40px auto;
+  max-width: 1040px;
+  width: 100%;
+  padding: 0 20px;
+  &-container {
+    margin-left: 20px;
+  }
+}
+
+.music-cover-container > img {
+  height: 250px;
+  width: 250px;
+  border-radius: 10px;
+}
+
+.music-title {
+  &-container {
+    display: flex;
+    align-items: center;
+  }
+  &-genre {
+    margin-right: 8px;
+    padding: 8px 16px 8px;
+    background-color: #FAE5ED;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #D85C8B;
+  }
+  &-text {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
+  }
+
+  &-artist > a {
+    text-decoration: none;
+    margin-top: 10px;
+    font-size: 24px;
+    color: #E56D9B;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    padding-bottom: 5px;
+    overflow: hidden;
+    word-break: break-all;
+    text-align: left;
+  }
+  &-desp > span {
+    margin-top: 10px;
+    color: white;
+    font-size: 20px;
+    text-align: left;
+  }
+}
+
 .pay {
   padding: 24px;
   &-title {
@@ -635,27 +737,6 @@ export default {
   }
 }
 
-#title {
-  font-family: "lato", sans-serif;
-  color: #FFF;
-  margin-top: 90px;
-  font-weight: 300;
-  font-size: 120px;
-  text-align: center;
-  background: -webkit-linear-gradient(white, #dbdde0, #38495a);
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation-duration: 6s;
-  animation-timing-function: ease-in-out;
-  animation-name: animTitle;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-  word-break: break-all;
-  transition: all 0.3s;
-}
-
 @keyframes animTitle {
   0% {
     transform: translateY(-26px);
@@ -666,34 +747,6 @@ export default {
   100% {
     transform: translateY(0px);
     opacity: 1;
-  }
-}
-
-@media screen and (max-width: 1200px) {
-  #title {
-    font-size: 97px;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  #title {
-    font-size: 74px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  #title {
-    font-size: 60px;
-  }
-}
-@media screen and (max-width: 640px) {
-  #title {
-    font-size: 44px;
-  }
-}
-@media screen and (max-width: 480px) {
-  #title {
-    font-size: 27px;
   }
 }
 </style>
