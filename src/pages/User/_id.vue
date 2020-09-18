@@ -147,33 +147,42 @@ export default {
     ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType', 'userPage']),
     user () {
       let introduction = ''
-      if (this.isMe) {
-        if (this.userIntroduction === '') {
-          introduction = 'No Introduction Yet'
-        } else {
-          introduction = this.userIntroduction
-        }
-        return { nickname: this.username, avatar: this.userAvatar, introduction: introduction, type: this.userType }
+      if (this.userPage.introduction === '') {
+        introduction = 'No Introduction Yet'
       } else {
-        if (this.userPage.introduction === '') {
-          introduction = 'No Introduction Yet'
-        } else {
-          introduction = this.userPage.introduction
-        }
-        return { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
+        introduction = this.userPage.introduction
       }
+      return { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
+    }
+  },
+  watch: {
+    async $route (val) {
+      window.location.reload()
+      await this.setUserPage({ wallet: val.params.id })
+      let introduction = ''
+      if (this.userPage.introduction === '') {
+        introduction = 'No Introduction Yet'
+      } else {
+        introduction = this.userPage.introduction
+      }
+      this.user = { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
+    },
+    username (val) {
+      if (this.wallet === this.$route.params.id) {
+        console.log('isMe')
+        this.setIsMe(true)
+        document.title = val + '\'s Profile - ArcLight'
+      } else {
+        document.title = this.userPage.nickname + '\'s Profile - ArcLight'
+      }
+    },
+    userPage (val) {
+      document.title = val.nickname + '\'s Profile - ArcLight'
     }
   },
   mounted () {
     this.setUserPage({ wallet: this.$route.params.id })
-    if (this.wallet === this.$route.params.id) {
-      console.log('isMe')
-      this.setIsMe(true)
-      document.title = this.username + '\'s Profile - ArcLight'
-    } else {
-      document.title = this.userPage.nickname + '\'s Profile - ArcLight'
-    }
-
+    document.title = 'Profile - ArcLight'
     // 假数据 循环 变多
     // const followers = []
     // for (let i = 0; i < 3; i++) {
