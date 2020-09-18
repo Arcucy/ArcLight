@@ -125,13 +125,13 @@ export default {
     }
   }
   &-list {
-    margin: 0 20px 0;
-    display: flex;
+    margin: 16px 20px 32px;
     overflow: hidden;
-    flex-wrap: wrap;
-    .single-card {
-      margin: 16px 16px 32px 0;
-    }
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(128px,1fr));
+    grid-gap: 48px 16px;
+    justify-content: space-between;
+    min-height: 510px;
   }
   &-pagination {
     margin: 16px 20px 0;
@@ -143,6 +143,12 @@ export default {
   height: 100%;
   .come-down {
     flex: 1;
+  }
+}
+@media screen and (max-width: 992px) {
+  .songs-list {
+    grid-template-columns: repeat(auto-fill,minmax(100px,1fr));
+    min-height: 454px;
   }
 }
 </style>
