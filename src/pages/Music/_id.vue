@@ -176,8 +176,6 @@
 import spaceLayout from '@/components/Layout/Space'
 import miniAvatar from '@/components/User/MiniAvatar'
 
-import mp3 from '@/assets/music/FlowerDance.mp3'
-import album from '@/assets/music/FlowerDance.jpg'
 import api from '@/api/api'
 import decode from '@/util/decode'
 import { mapState } from 'vuex'
@@ -210,14 +208,6 @@ export default {
       owned: false,
       showDialog: false,
       loading: true,
-      audioList: {
-        flowerdance: {
-          name: 'Flower Dance',
-          artist: 'DJ OKAWARI',
-          url: mp3,
-          cover: album
-        }
-      },
       users: [
         {
           avatar: 'https://picsum.photos/510/300?random'
@@ -375,7 +365,7 @@ export default {
           const reader = new FileReader()
           reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
           reader.onload = (event) => {
-            const url = window.webkitURL.createObjectURL(new Blob([event.target.result]))
+            const url = window.webkitURL.createObjectURL(new Blob([event.target.result], { type: music.type }))
             resolve(url)
           }
         } catch (e) {
@@ -640,6 +630,9 @@ export default {
       color: white;
       line-height: 20px;
       margin: 8px 0 0;
+      &:hover {
+        color: #E56D9B;
+      }
     }
   }
 

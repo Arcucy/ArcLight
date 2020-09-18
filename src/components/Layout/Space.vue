@@ -44,7 +44,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #0000;
+  background: #0000 !important;
 }
 .slot-shell {
   margin-top: 73px;
