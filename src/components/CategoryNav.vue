@@ -71,4 +71,21 @@ export default {
     }
   }
 }
+@media screen and (max-width: 640px) {
+  .nav {
+    margin-top: 40px;
+    a {
+      margin: 0 0 0 40px;
+      font-size: 20px;
+    }
+  }
+}
+@media screen and (max-width: 480px) {
+  .nav {
+    a {
+      margin: 0 0 0 20px;
+      font-size: 16px;
+    }
+  }
+}
 </style>

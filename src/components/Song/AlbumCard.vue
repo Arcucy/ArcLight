@@ -81,7 +81,7 @@ a {
   display: flex;
   width: 188px;
   .record {
-    width: 1200px;
+    width: 120px;
     min-width: 120px;
     height: 120px;
     min-height: 120px;
@@ -160,24 +160,24 @@ a {
     }
   }
 }
-
-@media screen and (max-width: 1200px) {
-  .card-img {
-    height: 128px;
-  }
-}
 @media screen and (max-width: 992px) {
-  .card-img {
-    height: 100px !important;
-    width: 100px !important;
-  }
-  .record {
-    min-width: 100px !important;
-    min-height: 100px !important;
-    height: 100px !important;
-    width: 100px !important;
-    margin-left: -80px !important;
-    margin-top: 0px !important;
+  .card-bg {
+      width: 146px;
+    .card{
+      width: 100px;
+      &-img {
+        height: 100px;
+        width: 100px;
+      }
+    }
+    .record {
+      min-width: 92px;
+      min-height: 92px;
+      height: 92px;
+      width: 92px;
+      margin-left: -46px;
+      margin-top: 4px;
+    }
   }
 }
 </style>
