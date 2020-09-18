@@ -349,6 +349,7 @@ export default {
 .link {
   margin-left: .75rem;
   font-size: 1.2rem;
+  color: white;
   img {
     height: 3rem;
   }

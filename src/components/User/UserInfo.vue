@@ -38,6 +38,9 @@ export default {
     introduction () {
       return this.user.introduction
     }
+  },
+  created () {
+    console.log(this.user)
   }
 }
 </script>
