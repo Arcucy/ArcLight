@@ -500,7 +500,9 @@ export default {
 }
 
 @media screen and (max-width: 640px) {
-
+  .link-container {
+    margin-left: 0.5rem;
+  }
 }
 
 @media screen and (max-width: 480px) {

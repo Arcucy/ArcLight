@@ -7,9 +7,12 @@
       {{ nickname }}
     </h1>
     <P class="userinfo-introduction" v-html="introduction" />
-    <v-btn small class="userinfo-btn" outlined light>
+    <v-btn small class="userinfo-btn" outlined light @click="edit">
       <v-icon left>mdi-pencil</v-icon>
       EDIT PROFILE
+    </v-btn>
+    <v-btn x-small fab class="mobile mobile-userinfo-btn" color="#FFF" outlined light @click="edit">
+      <v-icon>mdi-pencil</v-icon>
     </v-btn>
   </div>
 </template>
@@ -27,7 +30,6 @@ export default {
       required: true
     }
   },
-
   computed: {
     avatar () {
       return this.user.avatar
@@ -39,6 +41,10 @@ export default {
       return this.user.introduction
     }
   },
+  methods: {
+    edit () {
+    }
+  },
   created () {
     console.log(this.user)
   }
@@ -46,6 +52,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.mobile {
+  display: none;
+}
 .userinfo {
   display: flex;
   flex-direction: column;
@@ -88,5 +97,27 @@ export default {
     top: 159px;
   }
 }
-
+@media screen and (max-width: 992px) {
+  .userinfo-btn {
+    display: none;
+  }
+  .mobile-userinfo-btn {
+    display: block;
+    color: white;
+    position: absolute;
+    right: 20px;
+    top: 159px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .userinfo {
+    &-nickname {
+      margin: 16px 40px 0px;
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+}
+@media screen and (max-width: 480px) {
+}
 </style>
