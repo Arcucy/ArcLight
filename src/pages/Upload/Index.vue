@@ -197,4 +197,19 @@ export default {
     transform: scale(1.2);
   }
 }
+@media screen and (max-width: 768px) {
+  .upload-selection-container {
+    margin-top: 20px;
+  }
+  .selection-container {
+    flex-direction: column;
+  }
+  .upload-cover {
+    margin-bottom: 10px;
+  }
+}
+@media screen and (max-width: 640px) {
+}
+@media screen and (max-width: 480px) {
+}
 </style>
