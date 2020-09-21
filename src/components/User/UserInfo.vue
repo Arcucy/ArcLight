@@ -43,6 +43,7 @@ export default {
   },
   methods: {
     edit () {
+      this.$router.push({ name: 'Edit' })
     }
   },
   created () {
