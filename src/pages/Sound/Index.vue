@@ -9,7 +9,6 @@
         </div>
         <div class="songs-list">
           <getAudioInfo
-            class="single-card"
             v-for="(item, index) in paginatedAddressList"
             :key="index"
             :txid="item"
@@ -19,7 +18,6 @@
             </template>
           </getAudioInfo>
           <loadCard
-            class="single-card"
             v-if="loading || addressList.length === 0"
             :message="!loading && addressList.length === 0 ? 'No data' : ''"
           />
@@ -35,7 +33,7 @@
         </div>
       </div>
       <div class="come-down" />
-      <categoryNav v-model="tab" />
+      <categoryNav />
     </div>
   </spaceLayout>
 </template>
@@ -59,7 +57,6 @@ export default {
   },
   data () {
     return {
-      tab: 'song',
       loading: true,
       addressList: [],
       page: 1, // 页码
@@ -149,6 +146,7 @@ export default {
   .songs-list {
     grid-template-columns: repeat(auto-fill,minmax(100px,1fr));
     min-height: 454px;
+    grid-gap: 20px 16px;
   }
 }
 </style>
