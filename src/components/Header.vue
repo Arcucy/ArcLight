@@ -104,7 +104,7 @@
 
     <v-dialog
       v-model="show"
-      max-width="290"
+      max-width="340"
     >
       <v-card style="width: 50vw">
         <v-card-title class="headline">Upload your key</v-card-title>
