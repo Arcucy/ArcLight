@@ -10,6 +10,7 @@ import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
 import User from '@/pages/User/_id'
+import Edit from '@/pages/User/Edit.vue'
 import Library from '@/pages/Library'
 
 import Upload from '@/pages/Upload/Index.vue'
@@ -137,6 +138,11 @@ export default new Router({
       name: 'User',
       component: User,
       props: true
+    },
+    {
+      path: '/user/edit',
+      name: 'Edit',
+      component: Edit
     },
     {
       path: '/library',
