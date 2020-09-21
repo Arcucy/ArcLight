@@ -1,6 +1,6 @@
 <template>
-  <router-link :to="{ name: 'Album', params: { id: card.txid } }" v-ripple>
-    <div class="card-bg">
+  <router-link class="card-link" :to="{ name: 'Album', params: { id: card.txid } }">
+    <div class="card-bg" v-ripple>
       <div class="card">
         <v-img
           class="card-img"
@@ -17,9 +17,12 @@
         <p class="card-title">
           {{ card.title }}
         </p>
-        <router-link class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
+        <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
           by {{ card.authorUsername }}
         </router-link>
+        <a v-else class="card-artist">
+          {{ card.authorUsername }}
+        </a>
         <p v-if="card.price != 0" class="card-price">
           pay {{ card.price }} AR
         </p>
@@ -57,14 +60,26 @@ export default {
   },
   computed: {
     time () {
+      if (!this.card) return '--:--:--'
       const time = this.$moment(this.card.unixTime)
       return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
     }
   },
+  watch: {
+    card (val) {
+      if (val) this.getCover()
+      else this.cover = ''
+    }
+  },
   async mounted () {
-    if (this.card && this.card.coverTxid) {
-      if (this.cover === 'Loading') this.cover = await api.arweave.getCover(this.card.coverTxid)
-    } else this.cover = ''
+    this.getCover()
+  },
+  methods: {
+    async getCover () {
+      if (this.card && this.card.coverTxid) {
+        this.cover = await api.arweave.getCover(this.card.coverTxid)
+      } else this.cover = ''
+    }
   }
 }
 </script>
@@ -77,11 +92,16 @@ a {
   text-decoration: none;
   color: white;
 }
+.card-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .card-bg {
   display: flex;
   width: 188px;
   .record {
-    width: 1200px;
+    width: 120px;
     min-width: 120px;
     height: 120px;
     min-height: 120px;
@@ -160,24 +180,24 @@ a {
     }
   }
 }
-
-@media screen and (max-width: 1200px) {
-  .card-img {
-    height: 128px;
-  }
-}
 @media screen and (max-width: 992px) {
-  .card-img {
-    height: 100px !important;
-    width: 100px !important;
-  }
-  .record {
-    min-width: 100px !important;
-    min-height: 100px !important;
-    height: 100px !important;
-    width: 100px !important;
-    margin-left: -80px !important;
-    margin-top: 0px !important;
+  .card-bg {
+      width: 146px;
+    .card{
+      width: 100px;
+      &-img {
+        height: 100px;
+        width: 100px;
+      }
+    }
+    .record {
+      min-width: 92px;
+      min-height: 92px;
+      height: 92px;
+      width: 92px;
+      margin-left: -46px;
+      margin-top: 4px;
+    }
   }
 }
 </style>
