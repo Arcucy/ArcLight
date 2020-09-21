@@ -64,6 +64,9 @@
             the price you required is right, after all the process is done and validated, the music source file will be able to deliver to the customers. And you will recieve the transaction as well.
           </p>
         </div>
+        <div class="about-subtitle">
+          <span class="pink-text">Thank you for choosing ArcLight!</span>
+        </div>
       </div>
     </spaceLayout>
   </div>
