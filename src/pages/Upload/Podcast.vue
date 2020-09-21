@@ -182,8 +182,6 @@ import podcastSelect from '@/components/PodcastCategorySelect.vue'
 
 import podcastDefault from '@/assets/image/podcast.png'
 
-import { getCookie } from '@/util/cookie'
-
 export default {
   components: {
     imgUpload,
@@ -351,9 +349,8 @@ export default {
   mounted () {
     document.title = 'Upload a new Podcast - ArcLight'
 
-    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
+      if (!this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 

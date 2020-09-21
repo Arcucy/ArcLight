@@ -172,8 +172,6 @@ import spaceLayout from '@/components/Layout/Space.vue'
 
 import soundeffectDefault from '@/assets/image/soundeffect.png'
 
-import { getCookie } from '@/util/cookie'
-
 export default {
   components: {
     imgUpload,
@@ -320,10 +318,8 @@ export default {
   },
   mounted () {
     document.title = 'Upload a new Sound Effect - ArcLight'
-
-    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
+      if (!this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 
