@@ -200,8 +200,6 @@ import genreSelect from '@/components/GenreSelect.vue'
 
 import albumDefault from '@/assets/image/album.png'
 
-import { getCookie } from '@/util/cookie'
-
 export default {
   components: {
     imgUpload,
@@ -382,10 +380,8 @@ export default {
   },
   mounted () {
     document.title = 'Upload a new Album - ArcLight'
-
-    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
+      if (!this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 

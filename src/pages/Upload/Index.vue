@@ -52,8 +52,6 @@ import albumImg from '@/assets/image/album.png'
 import podcastImg from '@/assets/image/podcast.png'
 import soundEffectImg from '@/assets/image/soundeffect.png'
 
-import { getCookie } from '@/util/cookie'
-
 export default {
   components: {
     spaceLayout
@@ -74,9 +72,8 @@ export default {
     ...mapState(['isLoggedIn'])
   },
   mounted () {
-    const c = getCookie('arclight_userkey')
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
+      if (!this.isLoggedIn) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 
@@ -199,5 +196,20 @@ export default {
   100% {
     transform: scale(1.2);
   }
+}
+@media screen and (max-width: 768px) {
+  .upload-selection-container {
+    margin-top: 20px;
+  }
+  .selection-container {
+    flex-direction: column;
+  }
+  .upload-cover {
+    margin-bottom: 10px;
+  }
+}
+@media screen and (max-width: 640px) {
+}
+@media screen and (max-width: 480px) {
 }
 </style>
