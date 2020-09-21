@@ -7,7 +7,7 @@
       {{ nickname }}
     </h1>
     <P class="userinfo-introduction" v-html="introduction" />
-    <v-btn small class="userinfo-btn" outlined light @click="edit">
+    <v-btn small class="userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon left>mdi-pencil</v-icon>
       EDIT PROFILE
     </v-btn>

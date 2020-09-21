@@ -168,6 +168,13 @@ export default {
   &-img {
     margin-bottom: 16px;
   }
+  a {
+    text-decoration: none;
+    color: #E56D9B;
+    &:hover {
+      font-weight: 800;
+    }
+  }
 }
 
 .username {
@@ -180,6 +187,13 @@ export default {
     overflow: hidden;
     word-break: break-all;
     margin-bottom: 16px;
+  }
+  a {
+    text-decoration: none;
+    color: #E56D9B;
+    &:hover {
+      font-weight: 800;
+    }
   }
 }
 
