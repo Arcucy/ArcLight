@@ -147,12 +147,24 @@ export default {
     margin-top: 5px;
     color: white;
     display: flex;
+    h4 {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+      word-break: break-all;
+    }
   }
   &-website {
     margin-top: 10px;
     a {
       text-decoration: none;
       color: #EC4E6F;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+      word-break: break-all;
     }
   }
   &-resource {
