@@ -330,7 +330,6 @@ export default new Vuex.Store({
         const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
         if (avatar) {
           userPage.avatar = avatar
-          console.log(userPage)
           commit('setUserPage', userPage)
           commit('setUserPageLoading', false)
         }
@@ -1088,6 +1087,9 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+    },
+    async paymentForItem ({ commit }, data) {
+      console.log(data)
     }
   }
 })
