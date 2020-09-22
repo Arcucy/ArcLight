@@ -73,21 +73,23 @@
         </div>
       </div>
       <!-- Download -->
-      <div v-if="owned" class="music-download">
-        <v-btn
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-        >
-          DOWNLOAD
-        </v-btn>
+      <div v-if="owned && !loading" class="music-download">
+        <a :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
+          <v-btn
+            block
+            large
+            light
+            outlined
+            rounded
+            color="#E56D9B"
+            :height="44"
+          >
+            Download
+          </v-btn>
+        </a>
       </div>
       <!-- Buy -->
-      <div v-else class="music-download">
+      <div v-else-if="!loading" class="music-download">
         <p v-if="artist.username !== username">
           Sale for {{ price }} AR
         </p>
@@ -104,19 +106,20 @@
         >
           BUY
         </v-btn>
-        <v-btn
-          v-else
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-          @click.stop="downloadSource"
-        >
-          Download
-        </v-btn>
+        <a v-else :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
+          <v-btn
+            block
+            large
+            light
+            outlined
+            rounded
+            color="#E56D9B"
+            :height="44"
+            @click.stop="downloadSource"
+          >
+            Download
+          </v-btn>
+        </a>
       </div>
       <!-- Payed Users -->
       <div class="music-sold">
@@ -361,6 +364,7 @@ export default {
       return new Promise(async (resolve, reject) => {
         try {
           const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+          this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
           const reader = new FileReader()
           reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
