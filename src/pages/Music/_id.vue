@@ -32,7 +32,7 @@
         </div>
         <div class="music-info-container">
           <div class="music-title-container">
-            <div class="music-title-genre">
+            <div v-if="type !== 'soundeffect-info'" class="music-title-genre">
               {{ info.genre }}
             </div>
             <div class="music-title-text">
@@ -90,8 +90,11 @@
       </div>
       <!-- Buy -->
       <div v-else-if="!loading" class="music-download">
-        <p v-if="artist.username !== username">
+        <p v-if="artist.username !== username && price">
           Sale for {{ price }} AR
+        </p>
+        <p v-else-if="artist.username !== username" class="free-text">
+          Free
         </p>
         <v-btn
           v-if="artist.username !== username"
@@ -190,6 +193,7 @@ export default {
   },
   data () {
     return {
+      type: '',
       musicId: '',
       audio: '',
       info: {
@@ -207,7 +211,7 @@ export default {
         username: 'Artist loading...'
       },
       pct: 0,
-      price: 4.3,
+      price: 0,
       owned: false,
       showDialog: false,
       loading: true,
@@ -262,6 +266,7 @@ export default {
         const transaction = await api.arweave.getTransactionDetail(id)
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        this.type = tags.Type
         // 根据类型进行初始化
         switch (tags.Type) {
           case 'single-info': // 单曲
@@ -298,6 +303,7 @@ export default {
       this.info.name = data.title
       this.info.desp = data.desp
       this.info.genre = tags['Genre']
+      this.price = data.price
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
@@ -316,6 +322,7 @@ export default {
       this.info.name = data.music[index].title
       this.info.desp = data.desp
       this.info.genre = tags['Genre']
+      this.price = data.music[index].price
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
@@ -347,6 +354,7 @@ export default {
       audio.title = data.title
       this.info.name = data.title
       this.info.desp = data.desp
+      this.price = data.price
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
@@ -580,7 +588,7 @@ export default {
   }
 
   &-download {
-    margin: 48px auto 0;
+    margin: 30px auto 0;
     max-width: 240px;
     p {
       text-align: center;
@@ -589,6 +597,9 @@ export default {
       color: #E56D9B;
       line-height: 20px;
       margin: 0 0 8px;
+    }
+    .free-text {
+      color: #66BB6A;
     }
   }
   &-sold {
