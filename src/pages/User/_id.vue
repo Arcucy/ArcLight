@@ -294,27 +294,40 @@ export default {
     }
   }
 }
+
 @media screen and (max-width: 992px) {
-  .single-card {
-    margin-right: 6px !important;
-  }
-  .album-card {
-    margin-right: 30px !important;
+  .user {
+    .songs {
+      .single-card {
+        margin-right: 16px;
+      }
+      .album-card {
+        margin-right: 30px;
+      }
+    }
   }
 }
 @media screen and (max-width: 768px) {
-  .single-card {
-    margin-right: 0px !important;
-  }
-  .album-card {
-    margin-right: 12px !important;
+  .user {
+    .songs {
+      .single-card {
+        margin-right: 12px;
+      }
+      .album-card {
+        margin-right: 20px;
+      }
+    }
   }
 }
 @media screen and (max-width: 640px) {
 }
 @media screen and (max-width: 480px) {
-  .album-card {
-    margin-right: -15px !important;
+  .user {
+    .songs {
+      .album-card {
+        margin-right: 16px;
+      }
+    }
   }
 }
 </style>
