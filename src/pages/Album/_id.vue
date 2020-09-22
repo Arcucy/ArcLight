@@ -30,7 +30,7 @@
             <div class="music" v-ripple>
               <div class="music-left">
                 <h3>
-                  {{ music.title }}
+                  #{{ index+1 }} {{ music.title }}
                 </h3>
                 <p>
                   by {{ info.artist }}
