@@ -6,12 +6,32 @@
     <h1 class="userinfo-nickname">
       {{ nickname }}
     </h1>
+    <div v-if="location" class="userinfo-location">
+      <v-icon color="#DDD">mdi-map-marker</v-icon>
+      <h4>
+        {{ location }}
+      </h4>
+    </div>
+    <div v-if="website" class="userinfo-website">
+      <a :href="website" target="_blank">{{ website }}</a>
+    </div>
+    <div class="userinfo-resource">
+        <a v-if="neteaseId" :href="'https://music.163.com/#/user/home?id=' + neteaseId" target="_blank">
+          <img :src="neteaseLogo" class="id-logo" />
+        </a>
+        <a v-if="soundcloudId" :href="'https://soundcloud.com/' + soundcloudId" target="_blank">
+          <img :src="soundcloudLogo" class="id-logo" />
+        </a>
+        <a v-if="bandcampId" :href="'https://' + bandcampId + '.bandcamp.com'" target="_blank">
+          <img :src="bandcampLogo" class="id-logo" />
+        </a>
+    </div>
     <P class="userinfo-introduction" v-html="introduction" />
-    <v-btn small class="userinfo-btn" color="#FFF" outlined light @click="edit">
+    <v-btn v-if="isMe" small class="userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon left>mdi-pencil</v-icon>
       EDIT PROFILE
     </v-btn>
-    <v-btn x-small fab class="mobile mobile-userinfo-btn" color="#FFF" outlined light @click="edit">
+    <v-btn v-if="isMe" x-small fab class="mobile mobile-userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon>mdi-pencil</v-icon>
     </v-btn>
   </div>
@@ -19,6 +39,11 @@
 
 <script>
 import avatar from '@/components/User/Avatar'
+
+import neteaseLogo from '@/assets/image/neteasecloudmusic.png'
+import soundcloudLogo from '@/assets/image/soundcloud.png'
+import bandcampLogo from '@/assets/image/bandcamp.png'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -30,7 +55,15 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      neteaseLogo: neteaseLogo,
+      soundcloudLogo: soundcloudLogo,
+      bandcampLogo: bandcampLogo
+    }
+  },
   computed: {
+    ...mapState(['isMe']),
     avatar () {
       return this.user.avatar
     },
@@ -39,6 +72,26 @@ export default {
     },
     introduction () {
       return this.user.introduction
+    },
+    location () {
+      return this.user.location
+    },
+    website () {
+      return this.user.website
+    },
+    neteaseId () {
+      return this.user.neteaseId
+    },
+    soundcloudId () {
+      return this.user.soundcloudId
+    },
+    bandcampId () {
+      return this.user.bandcampId
+    }
+  },
+  watch: {
+    user (val) {
+      console.log('updated', val)
     }
   },
   methods: {
@@ -82,13 +135,32 @@ export default {
     word-break: break-all;
   }
   &-introduction {
-    margin: 23px 0 0;
+    margin: 16px 0 0;
     text-align: left;
     font-size: 16px;
     font-weight: 400;
     color: white;
     line-height: 22px;
     max-width: 720px;
+  }
+  &-location {
+    margin-top: 5px;
+    color: white;
+    display: flex;
+  }
+  &-website {
+    margin-top: 10px;
+    a {
+      text-decoration: none;
+      color: #EC4E6F;
+    }
+  }
+  &-resource {
+    margin-top: 16px;
+    .id-logo {
+      height: 25px;
+      margin-right: 10px;
+    }
   }
   &-btn {
     position: relative;

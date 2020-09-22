@@ -142,34 +142,30 @@ let arweave = {
           resolve(res)
         }
 
-        // If the user has multiple records, use for go through
-        // 如果用户有多个记录，使用 for 循环遍历
-        for (let i = 0; i < ids.length; i++) {
-          const id = ids[i]
+        const id = ids[0]
 
-          // Get transaction detial
-          // 获取交易明细
-          this.getTransactionDetail(id).then(transaction => {
-            // Go through for each id to find the tag
-            // 遍历每个id来找到标签
-            transaction.get('tags').forEach(tag => {
-              let key = tag.get('name', { decode: true, string: true })
-              let value = tag.get('value', { decode: true, string: true })
-              if (key === 'Type') {
-                res.type = value
-              }
-            })
-
-            // Get the encoded data from transaction
-            // 从交易中获取编码数据
-            this.getTransactionDataDecodedString(id).then(data => {
-              res.data = data
-              // resolve data on finish
-              // 完成时返回数据
-              resolve(res)
-            })
+        // Get transaction detial
+        // 获取交易明细
+        this.getTransactionDetail(id).then(transaction => {
+          // Go through for each id to find the tag
+          // 遍历每个id来找到标签
+          transaction.get('tags').forEach(tag => {
+            let key = tag.get('name', { decode: true, string: true })
+            let value = tag.get('value', { decode: true, string: true })
+            if (key === 'Type') {
+              res.type = value
+            }
           })
-        }
+
+          // Get the encoded data from transaction
+          // 从交易中获取编码数据
+          this.getTransactionDataDecodedString(id).then(data => {
+            res.data = data
+            // resolve data on finish
+            // 完成时返回数据
+            resolve(res)
+          })
+        })
       })
     })
   },
@@ -396,6 +392,246 @@ let arweave = {
         if (callback) callback()
         const data = decryptBuffer(Buffer.from(res.data))
         resolve({ data: data, type: res.headers['content-type'] })
+      })
+    })
+  },
+
+  /**
+   * Get user's location settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getLocationFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight-test'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-location'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's website settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getWebsiteFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight-test'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-website'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's introduction settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getIntroFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight-test'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-introduction'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's netease id settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getNeteaseIdFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight-test'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-neteaseid'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's soundcloud id settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getSoundCloudIdFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight-test'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-soundcloudid'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's Bandcamp Id settings from given address
+   * @param {String} address  - 用户的钱包地址s 
+   */
+  getBandCampFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: 'arclight-test'
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-bandcampid'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        let detail = await this.getTransactionDetail(ids[0])
+        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
       })
     })
   },

@@ -140,20 +140,22 @@ export default {
         list: [],
         addresses: [],
         loading: true
+      },
+      user: {
+        nickname: '',
+        avatar: 'undefined',
+        introduction: '',
+        location: '',
+        website: '',
+        neteaseId: '',
+        soundcloudId: '',
+        bandcampId: '',
+        type: ''
       }
     }
   },
   computed: {
-    ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType', 'userPage']),
-    user () {
-      let introduction = ''
-      if (this.userPage.introduction === '') {
-        introduction = 'No Introduction Yet'
-      } else {
-        introduction = this.userPage.introduction
-      }
-      return { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
-    }
+    ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType', 'userPage'])
   },
   watch: {
     async $route (val) {
@@ -178,9 +180,27 @@ export default {
     },
     userPage (val) {
       document.title = val.nickname + '\'s Profile - ArcLight'
+      let introduction = ''
+      if (this.userPage.introduction === false) {
+        introduction = 'No Introduction Yet'
+      } else {
+        introduction = this.userPage.introduction
+      }
+      this.user = {
+        nickname: this.userPage.nickname,
+        avatar: this.userPage.avatar,
+        introduction: introduction,
+        location: this.userPage.location,
+        website: this.userPage.website,
+        neteaseId: this.userPage.neteaseId,
+        soundcloudId: this.userPage.soundcloudId,
+        bandcampId: this.userPage.bandcampId,
+        type: this.userPage.type
+      }
     }
   },
   mounted () {
+    console.log('User: ', this.$route.params.id)
     this.setUserPage({ wallet: this.$route.params.id })
     document.title = 'Profile - ArcLight'
     // 假数据 循环 变多

@@ -302,10 +302,27 @@ export default new Vuex.Store({
       let userPage = {
         nickname: '',
         avatar: '',
+        location: '',
         introduction: '',
+        website: '',
+        neteaseId: '',
+        soundcloudId: '',
+        bandcampId: '',
         type: ''
       }
 
+      const location = await API.arweave.getLocationFromAddress(data.wallet)
+      userPage.location = location
+      const website = await API.arweave.getWebsiteFromAddress(data.wallet)
+      userPage.website = website
+      const introduction = await API.arweave.getIntroFromAddress(data.wallet)
+      userPage.introduction = introduction
+      const neteaseId = await API.arweave.getNeteaseIdFromAddress(data.wallet)
+      userPage.neteaseId = neteaseId
+      const soundcloudId = await API.arweave.getSoundCloudIdFromAddress(data.wallet)
+      userPage.soundcloudId = soundcloudId
+      const bandcampId = await API.arweave.getBandCampFromAddress(data.wallet)
+      userPage.bandcampId = bandcampId
       const user = await API.arweave.getIdFromAddress(data.wallet)
       userPage.nickname = user.data
       userPage.type = user.type
@@ -313,6 +330,7 @@ export default new Vuex.Store({
         const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
         if (avatar) {
           userPage.avatar = avatar
+          console.log(userPage)
           commit('setUserPage', userPage)
           commit('setUserPageLoading', false)
         }
@@ -920,6 +938,156 @@ export default new Vuex.Store({
       console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setSoundEffectUploadComplete', true)
+    },
+    async updateLocation ({ commit }, data) {
+      console.log('Update location to user profile')
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      let transaction = ''
+
+      transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', Date.now())
+      transaction.addTag('Type', 'profile-location')
+      transaction.addTag('Username', user.data)
+
+      await ar.transactions.sign(transaction, data.key)
+      let uploader = await ar.transactions.getUploader(transaction)
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk()
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+      }
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
+    },
+    async updateWebsite ({ commit }, data) {
+      console.log('Update website to user profile')
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      let transaction = ''
+
+      transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', Date.now())
+      transaction.addTag('Type', 'profile-website')
+      transaction.addTag('Username', user.data)
+
+      await ar.transactions.sign(transaction, data.key)
+      let uploader = await ar.transactions.getUploader(transaction)
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk()
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+      }
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
+    },
+    async updateIntro ({ commit }, data) {
+      console.log('Update introduction to user profile')
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      let transaction = ''
+
+      transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', Date.now())
+      transaction.addTag('Type', 'profile-introduction')
+      transaction.addTag('Username', user.data)
+
+      await ar.transactions.sign(transaction, data.key)
+      let uploader = await ar.transactions.getUploader(transaction)
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk()
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+      }
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
+    },
+    async updateNeteaseId ({ commit }, data) {
+      console.log('Update netease id to user profile')
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      let transaction = ''
+
+      transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', Date.now())
+      transaction.addTag('Type', 'profile-neteaseid')
+      transaction.addTag('Username', user.data)
+
+      await ar.transactions.sign(transaction, data.key)
+      let uploader = await ar.transactions.getUploader(transaction)
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk()
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+      }
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
+    },
+    async updateSoundCloudId ({ commit }, data) {
+      console.log('Update soundcloud id to user profile')
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      let transaction = ''
+
+      transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', Date.now())
+      transaction.addTag('Type', 'profile-soundcloudid')
+      transaction.addTag('Username', user.data)
+
+      await ar.transactions.sign(transaction, data.key)
+      let uploader = await ar.transactions.getUploader(transaction)
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk()
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+      }
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
+    },
+    async updateBandcampId ({ commit }, data) {
+      console.log('Update bandcamp id to user profile')
+      const address = await API.arweave.getAddress(data.key)
+      const user = await API.arweave.getIdFromAddress(address)
+
+      let transaction = ''
+
+      transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', Date.now())
+      transaction.addTag('Type', 'profile-bandcampid')
+      transaction.addTag('Username', user.data)
+
+      await ar.transactions.sign(transaction, data.key)
+      let uploader = await ar.transactions.getUploader(transaction)
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk()
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+      }
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
     }
   }
 })
