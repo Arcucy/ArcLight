@@ -215,7 +215,7 @@ export default {
     const priceString = this.singleInfo.price + ''
     let length = priceString.length
     if (length < 4) length = 4
-    this.priceWidth = length * 10 + 30
+    this.priceWidth = length * 10 + 50
   }
 }
 </script>
