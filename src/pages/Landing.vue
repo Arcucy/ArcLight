@@ -56,7 +56,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 91%;
+  top: 89%;
   left: 0;
   right: 0;
   font-size: 25px;
