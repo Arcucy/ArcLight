@@ -90,25 +90,7 @@
       </div>
       <!-- Buy -->
       <div v-else-if="!loading" class="music-download">
-        <p v-if="artist.username !== username && price">
-          Sale for {{ price }} AR
-        </p>
-        <p v-else-if="artist.username !== username" class="free-text">
-          Free
-        </p>
-        <v-btn
-          v-if="artist.username !== username"
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-          @click.stop="buyClick"
-        >
-          BUY
-        </v-btn>
+        <payment v-if="artist.username !== username && price" :artist="artist" :price="price" />
         <a v-else :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
             block
@@ -181,6 +163,7 @@
 
 import spaceLayout from '@/components/Layout/Space'
 import miniAvatar from '@/components/User/MiniAvatar'
+import payment from '@/components/Payment'
 
 import api from '@/api/api'
 import decode from '@/util/decode'
@@ -188,6 +171,7 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
+    payment,
     spaceLayout,
     miniAvatar
   },
@@ -254,11 +238,6 @@ export default {
     if (this.audio && this.audio.url) window.webkitURL.revokeObjectURL(this.audio.url)
   },
   methods: {
-    buyClick () {
-      // 这里并没有真的付款代码，而是直接将参数设定为付款成功的状态。
-      this.showDialog = true
-      this.owned = true
-    },
     /** 获取音乐信息 */
     async getMusicInfo (id) {
       this.loading = true
