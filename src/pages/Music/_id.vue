@@ -90,7 +90,13 @@
       </div>
       <!-- Buy -->
       <div v-else-if="!loading" class="music-download">
-        <payment v-if="artist.username !== username && price" :artist="artist" :price="price" />
+        <payment
+          v-if="artist.id !== wallet && price"
+          :artist="artist"
+          :price="price"
+          :item="info"
+          :type="type"
+        />
         <a v-else :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
             block
@@ -187,7 +193,8 @@ export default {
         desp: '',
         genre: 'Await Data...',
         cover: '',
-        albumTitle: ''
+        albumTitle: '',
+        id: ''
       },
       artist: {
         id: '',
@@ -228,7 +235,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['username'])
+    ...mapState(['wallet'])
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
@@ -283,6 +290,7 @@ export default {
       this.info.desp = data.desp
       this.info.genre = tags['Genre']
       this.price = data.price
+      this.info.id = data.music
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
@@ -302,6 +310,7 @@ export default {
       this.info.desp = data.desp
       this.info.genre = tags['Genre']
       this.price = data.music[index].price
+      this.info.id = data.music[index].id
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
@@ -318,6 +327,7 @@ export default {
       this.info.name = data.title
       this.info.desp = data.desp
       this.info.genre = tags['Category']
+      this.info.id = data.program
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
@@ -334,6 +344,7 @@ export default {
       this.info.name = data.title
       this.info.desp = data.desp
       this.price = data.price
+      this.info.id = data.audio
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
