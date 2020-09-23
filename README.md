@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="https://i.loli.net/2020/09/23/EA8VOibWDB5lhLo.png" />
+   <img src="https://i.loli.net/2020/09/23/ieb1oOS5C9WAdpL.png" />
 </p>
 <h1 align="center">ArcLight</h1>
 <p align="center">An Arweave Music and Podcast Distribution App for users to publish, listen and pay to the encrypted music</p>
