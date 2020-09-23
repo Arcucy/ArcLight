@@ -351,7 +351,7 @@ export default {
   font-size: 1.2rem;
   color: white;
   img {
-    height: 3rem;
+    height: 2.2rem;
   }
 }
 
