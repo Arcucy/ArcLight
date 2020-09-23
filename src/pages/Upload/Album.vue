@@ -283,7 +283,7 @@ export default {
       }
 
       for (let i = 0; i < this.fileList.length; i++) {
-        if (!this.fileList[i]) {
+        if (!this.fileList[i].music) {
           this.failMessage = 'You must select sources of music file for two album release'
           this.failSnackbar = true
           this.submitBtnLoading = false
@@ -309,17 +309,22 @@ export default {
 
       let musicList = []
 
-      for (let i = 0; i < this.fileList.length; i++) {
-        if (this.price === 0) {
-          this.price = this.price + parseInt(this.fileList[i].price)
+      if (this.price === 0) {
+        for (let i = 0; i < this.fileList.length; i++) {
+          console.log(this.fileList[i].price)
+          this.price = this.price + parseFloat(this.fileList[i].price)
+          console.log(this.price)
         }
+        this.price = this.price * 0.8
+      }
+
+      for (let i = 0; i < this.fileList.length; i++) {
         let aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
         console.log('Content-Type:', audioType[aext])
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
       }
 
-      this.price = this.price * 0.8
       this.albumDesp = this.albumDesp.replace(/\\n/g, '<br>')
       this.albumDesp = this.albumDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
       this.albumDesp = this.albumDesp.replace(/(<img src=.*(\/)?>)/, '')
@@ -340,7 +345,6 @@ export default {
       }
 
       this.reviewAlbum(dataObj)
-      console.log(this.music.length)
       this.$router.push({ name: 'ReviewAlbum', params: { data: { music: this.music, file: musicList } } })
     },
     getMusicList (obj, type) {
