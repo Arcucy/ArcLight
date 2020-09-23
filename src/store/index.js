@@ -1109,6 +1109,12 @@ export default new Vuex.Store({
       }, data.key)
 
       transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Type', 'Purchase')
+      transaction.addTag('Purchase-Type', data.type)
+      if (data.type === 'album-info') {
+        transaction.addTag('Album-Id', data.album)
+        transaction.addTag('Track-Number', data.trackNumber)
+      }
       transaction.addTag('Unix-Time', now)
       transaction.addTag('Target', data.target)
       transaction.addTag('Source', data.source)
