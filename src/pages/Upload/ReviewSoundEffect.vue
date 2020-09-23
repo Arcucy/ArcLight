@@ -120,6 +120,8 @@
 import spaceLayout from '@/components/Layout/Space.vue'
 import { mapActions, mapState } from 'vuex'
 
+import StringUtil from '@/util/string'
+
 export default {
   components: {
     spaceLayout
@@ -206,10 +208,10 @@ export default {
       this.audio = audio
     })
 
-    this.price = this.soundEffectInfo.price + ' AR'
+    this.price = StringUtil.toPlainString(this.soundEffectInfo.price) + ' AR'
     this.duration = this.soundEffectInfo.duration
 
-    const priceString = this.soundEffectInfo.price + ''
+    const priceString = StringUtil.toPlainString(this.soundEffectInfo.price) + ''
     let length = priceString.length
     if (length < 4) length = 4
     this.priceWidth = length * 10 + 50
