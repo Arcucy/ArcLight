@@ -279,7 +279,7 @@ export default {
         this.soundeffectDesp = this.soundeffectDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
         this.soundeffectDesp = this.soundeffectDesp.replace(/(<img src=.*(\/)?>)/, '')
         this.soundeffectDesp = this.soundeffectDesp.replace(/<audio>.*<\/audio>/, '')
-        this.soundeffectDesp = '<p>' + this.soundeffectDesp + '</p>'
+        this.soundeffectDesp = this.soundeffectDesp
 
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
