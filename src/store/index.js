@@ -302,6 +302,7 @@ export default new Vuex.Store({
       commit('setUsername', '')
       commit('setUserAvatar', '')
       commit('setIsLoggedIn', false)
+      commit('setWallet', '')
     },
     setIsMe ({ commit }, status) {
       commit('setIsMe', status)

@@ -5,7 +5,7 @@
         <p v-if="artist.id !== wallet && price">
           Sale for {{ price }} AR
         </p>
-        <p v-else-if="artist.id !== wallet" class="free-text">
+        <p v-else class="free-text">
           Free
         </p>
         <v-btn
@@ -146,6 +146,10 @@ export default {
     type: {
       type: String,
       default: ''
+    },
+    wallet: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -167,7 +171,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['wallet', 'username', 'paymentId', 'purchaseComplete'])
+    ...mapState(['username', 'paymentId', 'purchaseComplete'])
   },
   watch: {
     showWallet (val) {
