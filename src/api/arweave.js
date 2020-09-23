@@ -710,6 +710,18 @@ let arweave = {
     return ar.ar.winstonToAr(winston)
   },
 
+  getBalance (key) {
+    return new Promise((resolve, reject) => {
+      ar.wallets.jwkToAddress(key).then(address => {
+        ar.wallets.getBalance(address).then((balance) => {
+          resolve(ar.ar.winstonToAr(balance))
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    })
+  },
+
   /**
    * Publish a single based on the given address and key file   
    * 根据给定的钱包地址和密钥文件发布音乐（单曲）

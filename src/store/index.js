@@ -81,7 +81,9 @@ export default new Vuex.Store({
     singleUploadComplete: false,
     singleLink: '',
     singleInfo: '',
-    singleObj: ''
+    singleObj: '',
+    purchaseComplete: false,
+    paymentId: ''
   },
   mutations: {
     setIsLoggedIn (state, status) {
@@ -263,6 +265,12 @@ export default new Vuex.Store({
     },
     setSingleObj (state, obj) {
       state.singleObj = obj
+    },
+    setPurchaseComplete (state, status) {
+      state.purchaseComplete = status
+    },
+    setPaymentId (state, id) {
+      state.paymentId = id
     }
   },
   getters: {
@@ -1088,8 +1096,33 @@ export default new Vuex.Store({
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
     },
-    async paymentForItem ({ commit }, data) {
+    async purchaseForItem ({ commit }, data) {
+      commit('setPurchaseComplete', false)
       console.log(data)
+
+      const now = Date.now()
+      let transaction = ''
+
+      transaction = await ar.createTransaction({
+        target: data.target,
+        quantity: ar.ar.arToWinston(data.price + '')
+      }, data.key)
+
+      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('Unix-Time', now)
+      transaction.addTag('Target', data.target)
+      transaction.addTag('Source', data.source)
+      transaction.addTag('Price', data.price)
+      transaction.addTag('Item', data.item)
+
+      console.log(transaction)
+      await ar.transactions.sign(transaction, data.key)
+
+      const res = await ar.transactions.post(transaction)
+      console.log(transaction.id + ': ', res)
+
+      commit('setPaymentId', transaction.id)
+      commit('setPurchaseComplete', true)
     }
   }
 })
