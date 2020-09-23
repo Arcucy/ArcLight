@@ -1,3 +1,6 @@
+<p align="center">
+   <img src="https://i.loli.net/2020/09/23/EA8VOibWDB5lhLo.png" />
+</p>
 <h1 align="center">ArcLight</h1>
 <p align="center">An Arweave Music and Podcast Distribution App for users to publish, listen and pay to the encrypted music</p>
 <p align="center"><a href="https://arweave.net/DdjCHM9GiWxQ7NnRQq_jJ7Ib4kOe8tlSchdu4nGbVWw">Live Permaweb</a> for ArcLight</p>

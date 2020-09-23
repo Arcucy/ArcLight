@@ -696,15 +696,18 @@ let arweave = {
   },
 
   /**
-   * 获取上传给定大小的文件需要支付多少 AR
+   * 获取上传给定大小的文件需要支付多少 Winston。
+   * 注意：在展示时请使用 winstonToAr 转换为 AR 在显示，在运算时，请保持在 Winston 单位运算，以保证精确。
    * @param {*} byte 
    */
   async getUploadPrice (byte) {
     const res = await Axios.get(`${arweaveHost}/price/${Number(byte)}`)
-    if (res && res.data) {
-      return ar.ar.winstonToAr(res.data)
-    }
-    return 0
+    if (res && res.data) return res.data
+    else return 0
+  },
+
+  winstonToAr (winston) {
+    return ar.ar.winstonToAr(winston)
   },
 
   /**
