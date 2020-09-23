@@ -310,7 +310,9 @@ export default {
       let musicList = []
 
       for (let i = 0; i < this.fileList.length; i++) {
-        this.price = this.price + parseInt(this.fileList[i].price)
+        if (this.price === 0) {
+          this.price = this.price + parseInt(this.fileList[i].price)
+        }
         let aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
         console.log('Content-Type:', audioType[aext])

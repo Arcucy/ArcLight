@@ -2,10 +2,10 @@
   <div class="payment-container">
     <div class="music">
       <div class="music-download">
-        <p v-if="artist.username !== username && price">
+        <p v-if="artist.id !== wallet && price">
           Sale for {{ price }} AR
         </p>
-        <p v-else-if="artist.username !== username" class="free-text">
+        <p v-else-if="artist.id !== wallet" class="free-text">
           Free
         </p>
         <v-btn
@@ -29,7 +29,7 @@
     >
       <v-card dark class="wallet">
         <h3 class="payment-title">
-          Payment of 「Test Music」
+          Payment of 「{{ item.name }}」
         </h3>
         <div class="file-input-area" id="file-input-area">
           <v-icon v-if="!file" >mdi-plus</v-icon>
@@ -51,7 +51,7 @@
     >
       <v-card dark class="confirm">
         <h3 class="confirm-title">
-          Payment of 「Test Music」
+          Payment of 「{{ item.name }}」
         </h3>
         <p class="payment-content">
           Please carefully review the following information about your order,
@@ -138,6 +138,14 @@ export default {
     artist: {
       type: Object,
       default: () => {}
+    },
+    item: {
+      type: Object,
+      default: () => {}
+    },
+    type: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -219,7 +227,6 @@ export default {
   methods: {
     ...mapActions(['purchaseForItem']),
     buyClick () {
-      console.log(this.username)
       this.showWallet = true
     },
     async step2 () {
@@ -234,7 +241,7 @@ export default {
     },
     step3 () {
       this.paymentConfirm = true
-      this.purchaseForItem({ target: this.address, source: this.wallet, price: this.price, item: 'hAT85Lu9sVnEFTAi2R8AQWzkKvjsI_UsKiPr-xZGoic', key: this.keyFileContent })
+      this.purchaseForItem({ target: this.artist.id, source: this.wallet, price: this.price, item: this.item.id, key: this.keyFileContent, type: this.type })
     },
     addClass (elem, className) {
       elem.classList.add(className)
