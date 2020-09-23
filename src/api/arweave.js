@@ -696,6 +696,18 @@ let arweave = {
   },
 
   /**
+   * 获取上传给定大小的文件需要支付多少 AR
+   * @param {*} byte 
+   */
+  async getUploadPrice (byte) {
+    const res = await Axios.get(`${arweaveHost}/price/${Number(byte)}`)
+    if (res && res.data) {
+      return ar.ar.winstonToAr(res.data)
+    }
+    return 0
+  },
+
+  /**
    * Publish a single based on the given address and key file   
    * 根据给定的钱包地址和密钥文件发布音乐（单曲）
    * @param {String} address              - 用户的钱包地址
