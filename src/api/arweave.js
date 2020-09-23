@@ -396,6 +396,46 @@ let arweave = {
     })
   },
 
+  getPurchasedItems (address, type) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'App-Name',
+              expr2: 'arclight-test'
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Purchase-Type',
+            expr2: type
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids)
+      })
+    })
+  },
+
   /**
    * Get user's location settings from given address
    * @param {String} address  - 用户的钱包地址 
