@@ -215,6 +215,14 @@ export default {
     let length = priceString.length
     if (length < 4) length = 4
     this.priceWidth = length * 10 + 50
+
+    window.onbeforeunload = function (e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = 'You sure you want to leave?'
+      }
+      return 'You sure you want to leave?'
+    }
   }
 }
 </script>

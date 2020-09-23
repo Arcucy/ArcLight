@@ -243,6 +243,13 @@ export default {
     if (this.userPage.bandcampId) {
       this.bandcampId = this.userPage.bandcampId
     }
+    window.onbeforeunload = function (e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = 'You sure you want to leave?'
+      }
+      return 'You sure you want to leave?'
+    }
   }
 }
 </script>

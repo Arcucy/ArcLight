@@ -209,6 +209,12 @@ export default {
   computed: {
     ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleLink'])
   },
+  watch: {
+    $router (val) {
+      console.log(val)
+      alert('You sure you want to leave?')
+    }
+  },
   methods: {
     ...mapActions(['uploadSingleCoverFile', 'reviewSingle']),
     submit () {
@@ -339,6 +345,13 @@ export default {
         }, 3000)
       }
     }, 3000)
+    window.onbeforeunload = function (e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = 'You sure you want to leave?'
+      }
+      return 'You sure you want to leave?'
+    }
   }
 }
 </script>
