@@ -73,7 +73,7 @@
             </div>
           </div>
         </div>
-        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
+        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
         <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="() => {$router.push({ name: 'Songs' })}">Done</v-btn>
         <div class="upload-status" v-if="submitBtnLoading">
           <div class="upload-status-cover" v-if="uploadCoverPct !== 100">
@@ -121,18 +121,27 @@
           </v-btn>
         </template>
       </v-snackbar>
+      <uploadPriceReceipt
+        v-model="showDialog"
+        :bill="bill"
+        @confirm="submit"
+      />
     </div>
   </spaceLayout>
 </template>
 
 <script>
+import api from '@/api/api'
+import stringUtil from '@/util/string'
+import { mapActions, mapState } from 'vuex'
 
 import spaceLayout from '@/components/Layout/Space.vue'
-import { mapActions, mapState } from 'vuex'
+import uploadPriceReceipt from '@/components/uploadPriceReceipt'
 
 export default {
   components: {
-    spaceLayout
+    spaceLayout,
+    uploadPriceReceipt
   },
   data () {
     return {
@@ -149,7 +158,9 @@ export default {
       musicIsReady: false,
       coverPct: 0,
       musicPct: 0,
-      uploadDone: false
+      uploadDone: false,
+      bill: {},
+      showDialog: false
     }
   },
   computed: {
@@ -176,6 +187,7 @@ export default {
   methods: {
     ...mapActions(['uploadAlbum']),
     submit () {
+      if (this.submitBtnLoading) return
       this.submitBtnLoading = true
       this.uploadDone = false
       this.musicPct = 0
@@ -220,6 +232,53 @@ export default {
         dataList.push(audio)
       }
       return dataList
+    },
+    /**
+     * 获取上传歌曲所需的费用。
+     * 注意：这个方法利用了 Object 的一种特性实现了并发的异步请求，返回的数据一开始会是空的，在请求完成后会发生改变，
+     * 并通过 Vue 的响应式页面更新来实现数据的展示。
+     */
+    getUploadPrice () {
+      const bill = {
+        audioPrice: 0,
+        coverPrice: 0,
+        infoPrice: 0
+      }
+      api.arweave.getUploadPrice(this.albumCoverFile.size).then(res => { bill.coverPrice = res })
+      api.arweave.getUploadPrice(stringUtil.lengthInUtf8Bytes(this.createInfoJsonString(this.albumInfo))).then(res => { bill.infoPrice = res })
+      /** 分别获取上传每首歌的价格，最后在求和得出总价 */
+      const audioPriceList = []
+      this.$route.params.data.file.forEach((file, index) => {
+        audioPriceList.push(0)
+        api.arweave.getUploadPrice(file.size).then(res => {
+          audioPriceList[index] = res
+          // 这个 if 在判断每首歌的价格是不是都拿到了。
+          if (audioPriceList.every(ap => ap)) {
+            bill.audioPrice = audioPriceList.reduce((total, num) => total + num)
+          }
+        })
+      })
+      return bill
+    },
+    createInfoJsonString (info) {
+      const music = []
+      this.$route.params.data.music.forEach(item => {
+        music.push({
+          id: '-'.repeat(43),
+          title: item.title,
+          price: item.price
+        })
+      })
+      const strJson = JSON.stringify({
+        title: info.title,
+        desp: info.desp,
+        genre: info.genre,
+        price: info.price,
+        duration: info.duration,
+        cover: '-'.repeat(43),
+        music
+      })
+      return strJson
     }
   },
   mounted () {
@@ -233,7 +292,10 @@ export default {
       this.failSnackbar = true
 
       this.$router.push({ name: 'Upload' })
+      return
     }
+
+    this.bill = this.getUploadPrice()
 
     this.getList().then(urls => {
       this.musicIsReady = true
