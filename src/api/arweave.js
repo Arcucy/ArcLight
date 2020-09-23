@@ -402,7 +402,7 @@ let arweave = {
         op: 'and',
         expr1: {
           op: 'equals',
-          expr1: 'from',
+          expr1: 'Source',
           expr2: address
         },
         expr2: {
