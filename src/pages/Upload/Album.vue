@@ -322,7 +322,7 @@ export default {
       this.albumDesp = this.albumDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
       this.albumDesp = this.albumDesp.replace(/(<img src=.*(\/)?>)/, '')
       this.albumDesp = this.albumDesp.replace(/<audio>.*<\/audio>/, '')
-      this.albumDesp = '<p>' + this.albumDesp + '</p>'
+      this.albumDesp = this.albumDesp
 
       const dataObj = {
         img: { data: this.fileRaw, type: imgType[ext] },

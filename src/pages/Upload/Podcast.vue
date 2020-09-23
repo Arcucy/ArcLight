@@ -307,7 +307,7 @@ export default {
         this.podcastDesp = this.podcastDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
         this.podcastDesp = this.podcastDesp.replace(/(<img src=.*(\/)?>)/, '')
         this.podcastDesp = this.podcastDesp.replace(/<audio>.*<\/audio>/, '')
-        this.podcastDesp = '<p>' + this.podcastDesp + '</p>'
+        this.podcastDesp = this.podcastDesp
 
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
