@@ -24,18 +24,12 @@ import UploadSoundEffect from '@/pages/Upload/SoundEffect.vue'
 import ReviewSoundEffect from '@/pages/Upload/ReviewSoundEffect.vue'
 import Sound from '@/pages/Sound/Index'
 import Podcast from '@/pages/Podcast/Index'
-import Test from '@/pages/Upload/Test.vue'
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'hash',
   routes: [
-    {
-      path: '/test',
-      name: 'Test',
-      component: Test
-    },
     {
       path: '/',
       name: 'Landing',
