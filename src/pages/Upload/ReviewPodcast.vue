@@ -69,7 +69,7 @@
             <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
           </div>
         </div>
-        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">Submit</v-btn>
+        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
         <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="() => {$router.push({ name: 'Songs' })}">Done</v-btn>
         <div class="upload-status" v-if="submitBtnLoading">
           <div class="upload-status-cover" v-if="uploadCoverPct !== 100">
@@ -117,20 +117,27 @@
           </v-btn>
         </template>
       </v-snackbar>
+      <uploadPriceReceipt
+        v-model="showDialog"
+        :bill="bill"
+        @confirm="submit"
+      />
     </div>
   </spaceLayout>
 </template>
 
 <script>
-
-import spaceLayout from '@/components/Layout/Space.vue'
+import api from '@/api/api'
+import stringUtil from '@/util/string'
 import { mapActions, mapState } from 'vuex'
 
-import StringUtil from '@/util/string'
+import spaceLayout from '@/components/Layout/Space.vue'
+import uploadPriceReceipt from '@/components/uploadPriceReceipt'
 
 export default {
   components: {
-    spaceLayout
+    spaceLayout,
+    uploadPriceReceipt
   },
   data () {
     return {
@@ -143,7 +150,9 @@ export default {
       failMessage: '',
       coverPct: 0,
       musicPct: 0,
-      uploadDone: false
+      uploadDone: false,
+      bill: {},
+      showDialog: false
     }
   },
   computed: {
@@ -170,6 +179,7 @@ export default {
   methods: {
     ...mapActions(['uploadPodcast']),
     submit () {
+      if (this.submitBtnLoading) return
       this.submitBtnLoading = true
       this.uploadDone = false
       this.musicPct = 0
@@ -190,6 +200,35 @@ export default {
           resolve(url)
         }
       })
+    },
+    /**
+     * 获取上传歌曲所需的费用。
+     * 注意：这个方法利用了 Object 的一种特性实现了并发的异步请求，返回的数据一开始会是空的，在请求完成后会发生改变，
+     * 并通过 Vue 的响应式页面更新来实现数据的展示。
+     */
+    getUploadPrice () {
+      const bill = {
+        audioPrice: 0,
+        coverPrice: 0,
+        infoPrice: 0
+      }
+      api.arweave.getUploadPrice(this.$route.params.data.file.size).then(res => { bill.audioPrice = res })
+      api.arweave.getUploadPrice(this.podcastCoverFile.size).then(res => { bill.coverPrice = res })
+      api.arweave.getUploadPrice(stringUtil.lengthInUtf8Bytes(this.createInfoJsonString(this.podcastInfo))).then(res => { bill.infoPrice = res })
+      return bill
+    },
+    createInfoJsonString (info) {
+      const strJson = JSON.stringify({
+        podcast: info.podcast,
+        title: info.title,
+        desp: info.desp,
+        category: info.category,
+        price: info.price,
+        duration: info.duration,
+        cover: '-'.repeat(43),
+        program: '-'.repeat(43)
+      })
+      return strJson
     }
   },
   mounted () {
@@ -202,7 +241,10 @@ export default {
       this.failSnackbar = true
 
       this.$router.push({ name: 'Upload' })
+      return
     }
+
+    this.bill = this.getUploadPrice()
 
     this.getMusic().then(url => {
       const audio = {
@@ -214,10 +256,10 @@ export default {
       this.audio = audio
     })
 
-    this.price = StringUtil.toPlainString(this.podcastInfo.price) + ' AR'
+    this.price = stringUtil.toPlainString(this.podcastInfo.price) + ' AR'
     this.duration = this.podcastInfo.duration
 
-    const priceString = StringUtil.toPlainString(this.podcastInfo.price) + ''
+    const priceString = stringUtil.toPlainString(this.podcastInfo.price) + ''
     let length = priceString.length
     if (length < 4) length = 4
     this.priceWidth = length * 10 + 50
