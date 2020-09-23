@@ -252,10 +252,10 @@ export default {
       this.audio = audio
     })
 
-    this.price = this.singleInfo.price + ' AR'
+    this.price = stringUtil.toPlainString(this.singleInfo.price) + ' AR'
     this.duration = this.singleInfo.duration
 
-    const priceString = this.singleInfo.price + ''
+    const priceString = stringUtil.toPlainString(this.singleInfo.price) + ''
     let length = priceString.length
     if (length < 4) length = 4
     this.priceWidth = length * 10 + 50

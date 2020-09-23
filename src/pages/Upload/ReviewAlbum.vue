@@ -302,10 +302,10 @@ export default {
       this.musicList = urls
     })
 
-    this.price = this.albumInfo.price + ' AR'
+    this.price = stringUtil.toPlainString(this.albumInfo.price) + ' AR'
     this.duration = this.albumInfo.duration
 
-    const priceString = this.albumInfo.price + ''
+    const priceString = stringUtil.toPlainString(this.albumInfo.price) + ''
     let length = priceString.length
     if (length < 4) length = 4
     this.priceWidth = length * 10 + 50
