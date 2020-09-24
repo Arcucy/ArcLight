@@ -176,9 +176,12 @@ export default {
   watch: {
     showWallet (val) {
       if (val) {
+        console.log('again')
         setTimeout(() => {
           let fileInput = document.getElementById('file-input')
           let droparea = document.getElementById('file-input-area')
+
+          console.log(fileInput.files)
 
           fileInput.addEventListener('dragenter', () => {
             this.addClass(droparea, 'is-active')
@@ -201,6 +204,7 @@ export default {
           })
 
           fileInput.addEventListener('change', () => {
+            console.log('changed!')
             this.disAllowStep2 = true
             this.file = fileInput.files[0]
             this.fileName = this.file.name
@@ -226,6 +230,9 @@ export default {
         this.showConfirm = false
         this.showDialog = true
       }
+    },
+    file (val) {
+      console.log(val)
     }
   },
   methods: {
@@ -256,13 +263,17 @@ export default {
     outsideReset () {
       let fileInput = document.getElementById('file-input')
       let droparea = document.getElementById('file-input-area')
+      fileInput.removeEventListener('dragenter', () => {})
+      fileInput.removeEventListener('click', () => {})
+      fileInput.removeEventListener('focus', () => {})
+      fileInput.removeEventListener('dragleave', () => {})
+      fileInput.removeEventListener('blur', () => {})
+      fileInput.removeEventListener('drop', () => {})
+      fileInput.removeEventListener('change', () => {})
       if (fileInput) {
         this.removeClass(droparea, 'is-active')
       }
 
-      this.file = null
-      this.fileName = ''
-      this.disAllowStep2 = true
       this.showWallet = false
       this.showConfirm = false
       this.showDialog = false
