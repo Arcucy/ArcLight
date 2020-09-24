@@ -216,7 +216,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(['podcastCoverFile', 'isLoggedIn', 'keyFileContent', 'podcastLink'])
+    ...mapState(['podcastCoverFile', 'isLoggedIn', 'keyFileContent', 'podcastLink', 'userType'])
+  },
+  watch: {
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = 'You must have a username in order to upload'
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }
   },
   methods: {
     ...mapActions(['uploadPodcastCoverFile', 'reviewPodcast']),
@@ -347,6 +359,14 @@ export default {
     }
   },
   mounted () {
+    if (this.userType === 'guest') {
+      this.failSnackbar = true
+      this.failMessage = 'You must have a username in order to upload'
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
     document.title = 'Upload a new Podcast - ArcLight'
 
     setTimeout(() => {

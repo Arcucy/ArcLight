@@ -207,12 +207,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleLink'])
+    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType'])
   },
   watch: {
     $router (val) {
       console.log(val)
       alert('You sure you want to leave?')
+    },
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = 'You must have a username in order to upload'
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
     }
   },
   methods: {
@@ -334,6 +344,14 @@ export default {
     }
   },
   mounted () {
+    if (this.userType) {
+      this.failSnackbar = true
+      this.failMessage = 'You must have a username in order to upload'
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
     document.title = 'Upload a new Single - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {

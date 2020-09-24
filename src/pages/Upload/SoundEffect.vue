@@ -203,7 +203,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectLink'])
+    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectLink', 'userType'])
+  },
+  watch: {
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = 'You must have a username in order to upload'
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }
   },
   methods: {
     ...mapActions(['setSoundEffectCoverFile', 'reviewSoundEffect']),
@@ -317,6 +329,14 @@ export default {
     }
   },
   mounted () {
+    if (this.userType === 'guest') {
+      this.failSnackbar = true
+      this.failMessage = 'You must have a username in order to upload'
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
     document.title = 'Upload a new Sound Effect - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {

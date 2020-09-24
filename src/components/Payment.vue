@@ -241,6 +241,12 @@ export default {
       this.showWallet = true
     },
     async step2 () {
+      if (!this.username) {
+        this.failSnackbar = true
+        this.failMessage = 'Please Login First'
+        this.showWallet = false
+        return
+      }
       const balance = await API.arweave.getBalance(this.keyFileContent)
       if (balance < this.price) {
         this.failSnackbar = true
@@ -254,7 +260,6 @@ export default {
       }
       this.showWallet = false
       this.showConfirm = true
-      console.log({ target: this.artist.id, source: this.wallet, price: this.price, item: this.itemId, key: this.keyFileContent, type: this.type })
     },
     step3 () {
       this.paymentConfirm = true
@@ -322,6 +327,7 @@ export default {
   }
   &-price {
     margin-bottom: 16px;
+    width: 100%;
   }
   .payment-content {
     margin-top: 24px;
