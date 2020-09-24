@@ -185,6 +185,19 @@ export default {
       this.showDialog = true
       this.owned = true
     },
+    async getItemStatus (address, itemAddress, price) {
+      const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
+      if (res2) {
+        const transaction = await api.arweave.getTransactionDetail(res2)
+        const tags = await api.arweave.getTagsByTransaction(transaction)
+        const type = tags['Purchase-Type']
+        if (type === 'album-full') {
+          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+          const ar = api.arweave.getArFromWinston(transaction.quantity)
+          if (ar === finalPrice) this.owned = true
+        }
+      }
+    },
     async getAlbum (id) {
       this.loading = true
       try {
@@ -214,6 +227,33 @@ export default {
         if (this.info.authorAddress === this.wallet) {
           this.info.list.forEach(item => {
             item.unlock = true
+          })
+        }
+        await this.getItemStatus(this.wallet, id, albumData.price)
+
+        if (this.owned) {
+          this.info.list.forEach(item => {
+            item.unlock = true
+          })
+        } else {
+          this.info.list.forEach(async (item, index) => {
+            const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, item.id, index)
+            if (res1) {
+              const transaction = await api.arweave.getTransactionDetail(res1)
+              const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
+              const ar = api.arweave.getArFromWinston(transaction.quantity)
+              if (ar === finalPrice) this.owned = true
+            } else {
+              const res2 = await api.arweave.getItemPurchaseStatus(this.wallet, item.id)
+              const transaction = await api.arweave.getTransactionDetail(res2)
+              const tags = await api.arweave.getTagsByTransaction(transaction)
+              const type = tags['Purchase-Type']
+              if (type === 'album-full') {
+                const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
+                const ar = api.arweave.getArFromWinston(transaction.quantity)
+                if (ar === finalPrice) this.owned = true
+              }
+            }
           })
         }
 

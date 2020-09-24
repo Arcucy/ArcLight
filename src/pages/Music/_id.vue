@@ -98,7 +98,7 @@
           :item="info"
           :type="type"
           :itemId="$route.params.id"
-          :trackNumber="$route.query.album"
+          :trackNumber="$route.query.album + ''"
         />
         <a v-if="artist.id === wallet || !price" :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
@@ -206,6 +206,7 @@ export default {
       },
       pct: 0,
       price: 0,
+      albumPrice: 0,
       owned: false,
       showDialog: false,
       loading: true,
@@ -262,7 +263,7 @@ export default {
           const tags = await api.arweave.getTagsByTransaction(transaction)
           const type = tags['Purchase-Type']
           if (type === 'album-full') {
-            const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+            const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
             const ar = api.arweave.getArFromWinston(transaction.quantity)
             if (ar === finalPrice) this.owned = true
           }
@@ -344,6 +345,7 @@ export default {
       this.info.genre = tags['Genre']
       this.price = data.music[index].price
       this.info.id = data.music[index].id
+      this.albumPrice = tags['Price']
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
