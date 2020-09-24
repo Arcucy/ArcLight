@@ -93,11 +93,12 @@
         <payment
           v-if="artist.id !== wallet && price"
           :artist="artist"
+          :wallet="wallet"
           :price="price"
           :item="info"
           :type="type"
         />
-        <a v-else :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
+        <a v-if="artist.id === wallet || !price" :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
             block
             large
