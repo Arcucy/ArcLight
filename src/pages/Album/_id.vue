@@ -37,7 +37,7 @@
                 </p>
               </div>
             </router-link>
-            <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="() => {downloadAudio(music, index)}">
+            <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="downloadAudio(music, index)">
               <v-progress-circular
                 v-if="music.downloadAwait"
                 indeterminate

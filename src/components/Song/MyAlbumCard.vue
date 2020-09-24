@@ -8,7 +8,7 @@
         aspect-ratio="1"
       >
         <template v-slot:placeholder>
-          <div class="card-img-loading">
+          <div class="card-cover-img-loading">
             <v-progress-circular indeterminate color="#E56D9B" />
           </div>
         </template>
@@ -22,8 +22,15 @@
         <p class="music-info-title">
           {{ card.title }}
         </p>
-        <p class="music-info-artist">
-          by {{ card.artist }}
+        <router-link
+          v-if="card.authorAddress"
+          class="music-info-artist"
+          :to="{ name: 'User', params: { id: card.authorAddress } }"
+        >
+          by {{ card.artist || 'Anonymity' }}
+        </router-link>
+        <p v-else class="music-info-artist">
+          {{ card.artist || '-----' }}
         </p>
       </div>
       <div class="download">
