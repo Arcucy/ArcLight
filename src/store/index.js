@@ -12,7 +12,7 @@ let ar = Arweave.init({
   host: 'arweave.net',
   port: 443,
   protocol: 'https',
-  timeout: 40000,
+  timeout: 10000,
   logging: false
 })
 
@@ -732,12 +732,8 @@ export default new Vuex.Store({
 
       while (!programUploader.isComplete) {
         await programUploader.uploadChunk()
-        if (programUploader.pctComplete > 98) {
-          return
-        } else {
-          commit('setUploadMusicPct', programUploader.pctComplete)
-          console.log(`${programUploader.pctComplete}% complete, ${programUploader.uploadedChunks}/${programUploader.totalChunks}`)
-        }
+        commit('setUploadMusicPct', programUploader.pctComplete)
+        console.log(`${programUploader.pctComplete}% complete, ${programUploader.uploadedChunks}/${programUploader.totalChunks}`)
       }
 
       commit('setSingleMusicId', programTransaction.id)
