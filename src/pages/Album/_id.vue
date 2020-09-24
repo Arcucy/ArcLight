@@ -88,7 +88,8 @@
                 :wallet="wallet"
                 :price="parseFloat(price)"
                 :item="info"
-                :type="'album-info'"
+                :itemId="$route.params.id"
+                :type="'album-full'"
               />
             </div>
           </div>
