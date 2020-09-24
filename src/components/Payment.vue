@@ -156,6 +156,10 @@ export default {
     itemId: {
       type: String,
       default: ''
+    },
+    trackNumber: {
+      type: String,
+      default: '0'
     }
   },
   data () {
@@ -262,8 +266,19 @@ export default {
       this.showConfirm = true
     },
     step3 () {
+      const data = {
+        target: this.artist.id,
+        source: this.wallet,
+        price: this.price,
+        item: this.itemId,
+        key: this.keyFileContent,
+        type: this.type
+      }
+      if (this.type === 'album-info') {
+        data.trackNumber = this.trackNumber
+      }
       this.paymentConfirm = true
-      this.purchaseForItem({ target: this.artist.id, source: this.wallet, price: this.price, item: this.itemId, key: this.keyFileContent, type: this.type })
+      this.purchaseForItem(data)
     },
     addClass (elem, className) {
       elem.classList.add(className)
