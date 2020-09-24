@@ -98,6 +98,7 @@
           :item="info"
           :type="type"
           :itemId="$route.params.id"
+          :trackNumber="$route.query.album"
         />
         <a v-if="artist.id === wallet || !price" :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
@@ -247,6 +248,35 @@ export default {
     if (this.audio && this.audio.url) window.webkitURL.revokeObjectURL(this.audio.url)
   },
   methods: {
+    async getItemStatus (address, itemAddress, price) {
+      if (this.type === 'album-info') {
+        const res1 = await api.arweave.getAlbumItemPurchaseStatus(address, itemAddress, this.$route.query.album)
+        if (res1) {
+          const transaction = await api.arweave.getTransactionDetail(res1)
+          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+          const ar = api.arweave.getArFromWinston(transaction.quantity)
+          if (ar === finalPrice) this.owned = true
+        } else {
+          const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
+          const transaction = await api.arweave.getTransactionDetail(res2)
+          const tags = await api.arweave.getTagsByTransaction(transaction)
+          const type = tags['Purchase-Type']
+          if (type === 'album-full') {
+            const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+            const ar = api.arweave.getArFromWinston(transaction.quantity)
+            if (ar === finalPrice) this.owned = true
+          }
+        }
+      } else {
+        const res3 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
+        if (res3) {
+          const transaction = await api.arweave.getTransactionDetail(res3)
+          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+          const ar = api.arweave.getArFromWinston(transaction.quantity)
+          if (ar === finalPrice) this.owned = true
+        }
+      }
+    },
     /** 获取音乐信息 */
     async getMusicInfo (id) {
       this.loading = true
@@ -275,6 +305,7 @@ export default {
             this.$router.replace({ name: 'Landing' })
             return
         }
+        this.getItemStatus(this.wallet, this.$route.params.id, this.price)
       } catch (e) {
         console.error('[Failed to get music information]', e)
         this.$message.error('Failed to get music information')
@@ -420,9 +451,6 @@ export default {
         let newKey = tags[i].get('name', { decode: true, string: true })
         if (newKey === key) return tags[i].get('value', { decode: true, string: true })
       }
-    },
-    downloadSource () {
-
     }
   }
 }

@@ -50,6 +50,22 @@ let arweave = {
   },
 
   /**
+   * 转换 AR 为 Winston
+   * @param {} ar   - AR 币值
+   */
+  getWinstonFromAr (arprice) {
+    return ar.ar.arToWinston(arprice)
+  },
+
+  /**
+   * 转换 Winston 为 AR
+   * @param {*} winston 
+   */
+  getArFromWinston (winston) {
+    return ar.ar.winstonToAr(winston)
+  },
+
+  /**
    * Get transaction detail entirely based on given txid   
    * 根据给定的 txid (交易ID) 获取完整的交易明细
    * @param {String} txid     - 交易编号
@@ -437,6 +453,104 @@ let arweave = {
           return
         }
         resolve(ids)
+      })
+    })
+  },
+
+  /**
+   * 获取用户购买物品的状态
+   * @param {*} address   - 用户钱包地址
+   * @param {*} item      - 购买物品地址
+   */
+  getItemPurchaseStatus (address, item) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Item',
+            expr2: item
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids[0])
+      })
+    })
+  },
+
+  /**
+   * 获取用户购买物品的状态
+   * @param {*} address   - 用户钱包地址
+   * @param {*} item      - 购买物品地址
+   */
+  getAlbumItemPurchaseStatus (address, item, trackNumber) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Item',
+              expr2: item
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Track-Number',
+              expr2: trackNumber
+            }
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids[0])
       })
     })
   },
