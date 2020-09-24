@@ -2,11 +2,11 @@
   <div class="payment-container">
     <div class="music">
       <div class="music-download">
-        <div v-if="$route.name === 'Music' || type !== 'album-info'">
-          <p v-if="artist.id !== wallet && price">
+        <div v-if="$route.name === 'Music' || type !== 'album-full'" class="music-download-price">
+          <p v-if="artist.id !== wallet && price" class="music-download-price-text">
             Sale for {{ price }} AR
           </p>
-          <p v-else class="free-text">
+          <p v-else class="free-text music-download-price-text">
             Free
           </p>
         </div>
@@ -254,6 +254,7 @@ export default {
       }
       this.showWallet = false
       this.showConfirm = true
+      console.log({ target: this.artist.id, source: this.wallet, price: this.price, item: this.itemId, key: this.keyFileContent, type: this.type })
     },
     step3 () {
       this.paymentConfirm = true
@@ -341,7 +342,7 @@ export default {
   text-align: left;
 }
 
-.file-input-area {
+#file-input-area {
   padding: 76px 24px 76px 24px;
   margin: 0 auto;
   height: 156px;
@@ -372,16 +373,18 @@ export default {
   &-download {
     margin: 0 auto 0;
     max-width: 240px;
-    p {
+    &-price {
+      p {
       text-align: center;
       font-size: 14px;
       font-weight: 500;
       color: #E56D9B;
       line-height: 20px;
       margin: 0 0 8px;
-    }
-    .free-text {
-      color: #66BB6A;
+      }
+      .free-text {
+        color: #66BB6A;
+      }
     }
   }
 }
