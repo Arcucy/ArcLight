@@ -1109,7 +1109,7 @@ export default new Vuex.Store({
       transaction.addTag('Type', 'Purchase') // 指定类型为 购买
       transaction.addTag('Purchase-Type', data.type) // 购买类型，比如什么 single-info 啦，album-info 啦
       if (data.type === 'album-info') { // 如果类型是购买专辑的话，执行下面的命令
-        transaction.addTag('Album-Id', data.album) // 专辑 ID
+        transaction.addTag('Album-Id', data.item) // 专辑 ID
         transaction.addTag('Track-Number', data.trackNumber) // 专辑内曲目编号
       }
       transaction.addTag('Unix-Time', now) // 时间是多少
