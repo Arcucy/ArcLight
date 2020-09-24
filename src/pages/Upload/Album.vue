@@ -234,7 +234,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'isLoggedIn', 'keyFileContent', 'albumLink'])
+    ...mapState(['albumCoverFile', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType'])
+  },
+  watch: {
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = 'You must have a username in order to upload'
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }
   },
   methods: {
     ...mapActions(['uploadAlbumCoverFile', 'reviewAlbum']),
@@ -383,6 +395,14 @@ export default {
     }
   },
   mounted () {
+    if (this.userType === 'guest') {
+      this.failSnackbar = true
+      this.failMessage = 'You must have a username in order to upload'
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
     document.title = 'Upload a new Album - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {

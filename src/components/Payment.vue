@@ -254,7 +254,6 @@ export default {
       }
       this.showWallet = false
       this.showConfirm = true
-      console.log({ target: this.artist.id, source: this.wallet, price: this.price, item: this.itemId, key: this.keyFileContent, type: this.type })
     },
     step3 () {
       this.paymentConfirm = true

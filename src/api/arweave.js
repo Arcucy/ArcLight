@@ -129,7 +129,7 @@ let arweave = {
         // Init a object to be resolved later
         // 初始化要稍后返回的对象
         const res = {
-          type: '',
+          type: 'User',
           data: ''
         }
 
