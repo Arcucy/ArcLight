@@ -2,12 +2,14 @@
   <div class="payment-container">
     <div class="music">
       <div class="music-download">
-        <p v-if="artist.id !== wallet && price">
-          Sale for {{ price }} AR
-        </p>
-        <p v-else class="free-text">
-          Free
-        </p>
+        <div v-if="$route.name === 'Music' || type !== 'album-info'">
+          <p v-if="artist.id !== wallet && price">
+            Sale for {{ price }} AR
+          </p>
+          <p v-else class="free-text">
+            Free
+          </p>
+        </div>
         <v-btn
           block
           large
@@ -167,6 +169,7 @@ export default {
       failMessage: '',
       fileName: '',
       keyFileContent: '',
+      paymentAddress: '',
       file: ''
     }
   },
@@ -176,12 +179,9 @@ export default {
   watch: {
     showWallet (val) {
       if (val) {
-        console.log('again')
         setTimeout(() => {
           let fileInput = document.getElementById('file-input')
           let droparea = document.getElementById('file-input-area')
-
-          console.log(fileInput.files)
 
           fileInput.addEventListener('dragenter', () => {
             this.addClass(droparea, 'is-active')
@@ -204,7 +204,6 @@ export default {
           })
 
           fileInput.addEventListener('change', () => {
-            console.log('changed!')
             this.disAllowStep2 = true
             this.file = fileInput.files[0]
             this.fileName = this.file.name
@@ -213,6 +212,7 @@ export default {
             reader.onload = async (e) => {
               try {
                 this.keyFileContent = JSON.parse(e.target.result)
+                this.paymentAddress = await API.arweave.getAddress(this.keyFileContent)
                 this.disAllowStep2 = false
               } catch (err) {
                 this.failSnackbar = true
@@ -224,15 +224,11 @@ export default {
       }
     },
     purchaseComplete (val) {
-      console.log(val)
       if (val) {
         this.paymentConfirm = false
         this.showConfirm = false
         this.showDialog = true
       }
-    },
-    file (val) {
-      console.log(val)
     }
   },
   methods: {
@@ -245,6 +241,11 @@ export default {
       if (balance < this.price) {
         this.failSnackbar = true
         this.failMessage = 'Insufficient funds, try another wallet'
+        return
+      }
+      if (this.artist.id === this.paymentAddress) {
+        this.failSnackbar = true
+        this.failMessage = 'You cannot pay to your self'
         return
       }
       this.showWallet = false
@@ -290,6 +291,7 @@ export default {
   mounted () {
     this.fee = this.toPlainString(this.fee)
     this.priceDisplay = this.toPlainString(this.price)
+    console.log(this.$route)
   }
 }
 </script>
@@ -365,7 +367,7 @@ export default {
 
 .music {
   &-download {
-    margin: 30px auto 0;
+    margin: 0 auto 0;
     max-width: 240px;
     p {
       text-align: center;
