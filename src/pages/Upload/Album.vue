@@ -311,9 +311,7 @@ export default {
 
       if (this.price === 0) {
         for (let i = 0; i < this.fileList.length; i++) {
-          console.log(this.fileList[i].price)
           this.price = this.price + parseFloat(this.fileList[i].price)
-          console.log(this.price)
         }
         this.price = this.price * 0.8
       }
