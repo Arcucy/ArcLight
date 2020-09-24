@@ -241,6 +241,12 @@ export default {
       this.showWallet = true
     },
     async step2 () {
+      if (!this.username) {
+        this.failSnackbar = true
+        this.failMessage = 'Please Login First'
+        this.showWallet = false
+        return
+      }
       const balance = await API.arweave.getBalance(this.keyFileContent)
       if (balance < this.price) {
         this.failSnackbar = true
@@ -321,6 +327,7 @@ export default {
   }
   &-price {
     margin-bottom: 16px;
+    width: 100%;
   }
   .payment-content {
     margin-top: 24px;
