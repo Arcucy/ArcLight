@@ -152,6 +152,10 @@ export default {
     wallet: {
       type: String,
       default: ''
+    },
+    itemId: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -253,7 +257,7 @@ export default {
     },
     step3 () {
       this.paymentConfirm = true
-      this.purchaseForItem({ target: this.artist.id, source: this.wallet, price: this.price, item: this.item.id, key: this.keyFileContent, type: this.type })
+      this.purchaseForItem({ target: this.artist.id, source: this.wallet, price: this.price, item: this.itemId, key: this.keyFileContent, type: this.type })
     },
     addClass (elem, className) {
       elem.classList.add(className)
