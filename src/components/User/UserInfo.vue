@@ -89,18 +89,10 @@ export default {
       return this.user.bandcampId
     }
   },
-  watch: {
-    user (val) {
-      console.log('updated', val)
-    }
-  },
   methods: {
     edit () {
       this.$router.push({ name: 'Edit' })
     }
-  },
-  created () {
-    console.log(this.user)
   }
 }
 </script>

@@ -171,7 +171,6 @@ export default {
     },
     username (val) {
       if (this.wallet === this.$route.params.id) {
-        console.log('isMe')
         this.setIsMe(true)
         document.title = val + '\'s Profile - ArcLight'
       } else {
@@ -228,7 +227,6 @@ export default {
       if (aObject.addresses.length !== aObject.list.length) {
         this.$message(`Expecting fetching data for ${aObject.addresses.length}, but got only ${aObject.list.length}`)
       }
-      console.log(aObject)
       aObject.loading = false
     }
   }

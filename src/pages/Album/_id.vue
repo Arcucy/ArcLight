@@ -1,6 +1,6 @@
 <template>
   <spaceLayout>
-    <div class="album">
+    <div class="album" id="album">
       <!-- Back Button -->
       <div class="album-header">
         <a @click="$router.go(-1)">
@@ -22,12 +22,12 @@
           <h4 class="music-title">
             Music list
           </h4>
-          <router-link
+          <div class="music"
             v-for="(music, index) in info.list"
             :key="index"
-            :to="{ name: 'Music', params: { id: $route.params.id }, query: { album: index + 1 } }"
+            v-ripple
           >
-            <div class="music" v-ripple>
+            <router-link :to="{ name: 'Music', params: { id: $route.params.id }, query: { album: index + 1 } }">
               <div class="music-left">
                 <h3>
                   #{{ index+1 }} {{ music.title }}
@@ -36,19 +36,24 @@
                   by {{ info.artist }}
                 </p>
               </div>
-              <div v-if="music.unlock" class="music-download">
-                <v-icon>mdi-download</v-icon>
-              </div>
-              <div v-else class="music-download download-lock">
-                <v-icon>mdi-download-lock</v-icon>
-              </div>
+            </router-link>
+            <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="() => {downloadAudio(music, index)}">
+              <v-progress-circular
+                v-if="music.downloadAwait"
+                indeterminate
+                color="#E56D9B"
+              ></v-progress-circular>
+              <v-icon v-else>mdi-download</v-icon>
             </div>
-          </router-link>
+            <div v-else class="music-download download-lock">
+              <v-icon>mdi-download-lock</v-icon>
+            </div>
+          </div>
         </div>
         <!-- right -->
         <div class="album-box-col">
           <!-- Download -->
-          <div v-if="owned" class="album-download">
+          <div v-if="!loading && (owned || info.authorAddress === wallet)" class="album-download">
             <v-btn
               block
               large
@@ -68,7 +73,7 @@
             </h4>
             <div class="album-buy-label">
               <div class="album-buy-label-discount">
-                80%
+                -20%
               </div>
               <div class="album-buy-label-price">
                 <p class="album-buy-label-price-original">
@@ -78,17 +83,13 @@
                   AR$: {{ price }}
                 </p>
               </div>
-              <v-btn
-                large
-                light
-                outlined
-                rounded
-                color="#E56D9B"
-                :height="44"
-                @click.stop="buyClick"
-              >
-                BUY
-              </v-btn>
+              <payment
+                :artist="{ id: info.authorAddress, username: info.artist }"
+                :wallet="wallet"
+                :price="parseFloat(price)"
+                :item="info"
+                :type="'album-info'"
+              />
             </div>
           </div>
         </div>
@@ -127,12 +128,14 @@ import decode from '@/util/decode'
 
 import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
-// import miniAvatar from '@/components/User/MiniAvatar'
+import payment from '@/components/Payment'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     spaceLayout,
-    albumInfo
+    albumInfo,
+    payment
   },
   data () {
     return {
@@ -151,15 +154,29 @@ export default {
         avatar: 'loading',
         username: 'Artist loading...'
       },
+      audio: [],
       loading: true,
-      price: 4.99,
-      originalPrice: 6.99,
+      price: 0,
+      originalPrice: 0,
       owned: false,
-      showDialog: false
+      showDialog: false,
+      downloadAwait: false
     }
+  },
+  computed: {
+    ...mapState(['wallet'])
   },
   mounted () {
     this.getAlbum(this.$route.params.id)
+  },
+  watch: {
+    wallet (val) {
+      if (this.info.authorAddress === val) {
+        this.info.list.forEach(item => {
+          item.unlock = true
+        })
+      }
+    }
   },
   methods: {
     buyClick () {
@@ -182,10 +199,27 @@ export default {
         this.info.name = albumData.title
         this.info.desp = albumData.desp
         this.info.list = albumData.music
+        this.price = albumData.price.toFixed(12)
+        this.info.list.forEach(item => {
+          if (item.price) {
+            this.originalPrice = this.originalPrice + parseFloat(item.price)
+          }
+        })
+        this.originalPrice = this.originalPrice.toFixed(12)
+        this.info.list = this.info.list.map(item => {
+          return { ...item, downloadAwait: false }
+        })
+
+        if (this.info.authorAddress === this.wallet) {
+          this.info.list.forEach(item => {
+            item.unlock = true
+          })
+        }
+
         // 获取封面
         this.info.cover = await this.getCover(albumData.cover)
         // 获取作者信息
-        this.getArtist(this.info.artistId)
+        this.getArtist(this.info.authorAddress)
         // console.log('专辑信息：', this.info, tags, albumData)
       } catch (e) {
         console.error('[Failed to get album information]', e)
@@ -224,6 +258,49 @@ export default {
         this.$message.error('Failed to get cover')
         return ''
       }
+    },
+    getAudio (id) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+          this.musicType = music.type
+          // 挂载音频到一个 URL，并指定给 audio.pic
+          const reader = new FileReader()
+          reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
+          reader.onload = (event) => {
+            const url = window.webkitURL.createObjectURL(new Blob([event.target.result], { type: music.type }))
+            resolve({ src: url, type: music.type })
+          }
+        } catch (e) {
+          console.error('[Failed to get audio data]', e)
+          this.$message.error('Failed to get audio data')
+          resolve('')
+        }
+      })
+    },
+    async downloadAudio (music, index) {
+      this.info.list[index].downloadAwait = true
+      const res = await this.getAudio(music.id)
+
+      const getExt = {
+        'audio/mp3': 'mp3',
+        'audio/flac': 'flac',
+        'audio/wav': 'wav',
+        'audio/ogg': 'ogg'
+      }
+
+      this.audio[index] = ({ src: res.src, name: music.title + ' - ' + this.artist.username + '.' + getExt[res.type] })
+      const div = document.getElementById('album')
+      const a = document.createElement('a')
+      a.href = this.audio[index].src
+      a.download = this.audio[index].name
+      a.id = 'audio' + index
+      div.appendChild(a)
+      const downloadA = document.getElementById('audio' + index)
+      downloadA.click()
+      this.info.list[index].downloadAwait = false
+      window.URL.revokeObjectURL(res.src)
+      div.removeChild(a)
     }
   }
 }
@@ -384,8 +461,10 @@ a {
     display: flex;
     border-bottom: 1px solid #B2B2B2;
     height: 80px;
-    &-left {
+    a {
       flex: 1;
+    }
+    &-left {
       h3 {
         text-align: left;
         margin: 15px 0 4px;

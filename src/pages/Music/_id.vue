@@ -94,9 +94,10 @@
           v-if="artist.id !== wallet && price"
           :artist="artist"
           :wallet="wallet"
-          :price="price"
+          :price="parseFloat(price)"
           :item="info"
           :type="type"
+          :itemId="$route.params.id"
         />
         <a v-if="artist.id === wallet || !price" :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
@@ -742,6 +743,7 @@ export default {
     color: white;
     font-size: 16px;
     text-align: left;
+    display: block;
   }
 }
 
