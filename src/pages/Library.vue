@@ -9,14 +9,21 @@
           <h4>Singles</h4>
           <div class="single-list">
             <mySingleCard
-              v-for="(item, index) in singles"
+              v-for="(txid, index) in paginatedAddressList"
               :key="index"
-              :card="item"
+              :txid="txid"
             />
+            <div v-if="loading || addressList.length === 0" class="list-loading">
+              <v-progress-circular v-if="loading" indeterminate color="#E56D9B" />
+              <p v-else>
+                No data
+              </p>
+            </div>
           </div>
           <v-pagination
-            v-model="singlePage"
-            :length="20"
+            v-if="maxPage > 1"
+            v-model="page"
+            :length="maxPage"
             :total-visible="10"
             color="#E56D9B"
             dark
@@ -45,6 +52,9 @@
 </template>
 
 <script>
+import api from '@/api/api'
+import { mapState } from 'vuex'
+
 import spaceLayout from '@/components/Layout/Space'
 import mySingleCard from '@/components/Song/MySingleCard'
 import myAlbumCard from '@/components/Song/MyAlbumCard'
@@ -57,6 +67,13 @@ export default {
   },
   data () {
     return {
+      // 参数
+      loading: true,
+      addressList: [],
+      page: 1, // 页码
+      pagesize: 8, // 每页数量
+      flash: false,
+      // 旧的
       singlePage: 1,
       albumPage: 1,
       singles: [
@@ -110,6 +127,46 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapState(['wallet']),
+    paginatedAddressList () {
+      if (this.flash) return []
+      return this.addressList.slice((this.page - 1) * this.pagesize, this.page * this.pagesize)
+    },
+    maxPage () {
+      return Math.ceil(this.addressList.length / this.pagesize)
+    }
+  },
+  watch: {
+    wallet (val) {
+      if (val) this.getList('single')
+    },
+    page () {
+      this.flash = true
+      setTimeout(() => { this.flash = false })
+    }
+  },
+  mounted () {
+    if (this.wallet) this.getList('single')
+  },
+  methods: {
+    async getList (type) {
+      this.loading = true
+      try {
+        const res = await api.arweave.getPurchasedItems(this.wallet, type)
+        // const res2 = []
+        // for (let i = 0; i < 33; i++) {
+        //   res2.push(...res)
+        // }
+        // this.addressList = res2 || []
+        this.addressList = res || []
+      } catch (e) {
+        console.log(`[Failed to get ${type} list] wallet:`, this.wallet, e)
+        this.$message.error(`Failed to get ${type} list`)
+      }
+      this.loading = false
+    }
   }
 }
 </script>
@@ -144,6 +201,23 @@ export default {
 
   .single-list {
     margin-bottom: 40px;
+    min-height: 632px;
+    .list-loading {
+      min-height: 72px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius:5px;
+      background: #ffffff0d;
+      p {
+          margin: 0 0 0 10px;
+        padding: 0;
+        font-size: 16px;
+        font-weight: 500;
+        color: white;
+        line-height: 22px;
+      }
+    }
   }
 }
 
