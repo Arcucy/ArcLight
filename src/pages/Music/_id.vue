@@ -94,7 +94,7 @@
           v-if="artist.id !== wallet && price"
           :artist="artist"
           :wallet="wallet"
-          :price="price"
+          :price="parseFloat(price)"
           :item="info"
           :type="type"
         />
@@ -742,6 +742,7 @@ export default {
     color: white;
     font-size: 16px;
     text-align: left;
+    display: block;
   }
 }
 
