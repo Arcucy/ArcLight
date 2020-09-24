@@ -389,7 +389,6 @@ let arweave = {
         responseType: 'arraybuffer',
         onDownloadProgress
       }).then(res => {
-        if (callback) callback()
         const data = decryptBuffer(Buffer.from(res.data))
         resolve({ data: data, type: res.headers['content-type'] })
       })
