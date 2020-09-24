@@ -396,14 +396,20 @@ let arweave = {
     })
   },
 
+  /**
+   * 获取已购买的音频
+   * @param {String} address 用户的钱包地址
+   * @param {String} type 音频类型
+   */
   getPurchasedItems (address, type) {
+    const typeString = AUDIO_TYPE[type]
     return new Promise((resolve, reject) => {
       ar.arql({
         op: 'and',
         expr1: {
           op: 'equals',
-          expr1: 'Source',
-          expr2: address
+          expr1: 'App-Name',
+          expr2: APP_NAME
         },
         expr2: {
           op: 'and',
@@ -411,8 +417,8 @@ let arweave = {
             op: 'and',
             expr1: {
               op: 'equals',
-              expr1: 'App-Name',
-              expr2: 'arclight-test'
+              expr1: 'Source',
+              expr2: address
             },
             expr2: {
               op: 'equals',
@@ -423,12 +429,12 @@ let arweave = {
           expr2: {
             op: 'equals',
             expr1: 'Purchase-Type',
-            expr2: type
+            expr2: typeString
           }
         }
       }).then(async ids => {
         if (ids.length === 0) {
-          resolve(false)
+          resolve([])
           return
         }
         resolve(ids)
@@ -454,7 +460,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight-test'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
@@ -494,7 +500,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight-test'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
@@ -534,7 +540,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight-test'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
@@ -574,7 +580,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight-test'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
@@ -614,7 +620,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight-test'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
@@ -654,7 +660,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight-test'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
