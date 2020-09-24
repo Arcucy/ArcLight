@@ -1105,18 +1105,18 @@ export default new Vuex.Store({
         quantity: ar.ar.arToWinston(data.price + '')
       }, data.key)
 
-      transaction.addTag('App-Name', 'arclight-test')
-      transaction.addTag('Type', 'Purchase')
-      transaction.addTag('Purchase-Type', data.type)
-      if (data.type === 'album-info') {
-        transaction.addTag('Album-Id', data.album)
-        transaction.addTag('Track-Number', data.trackNumber)
+      transaction.addTag('App-Name', 'arclight-test') // 指定 App-Name 为 测试网
+      transaction.addTag('Type', 'Purchase') // 指定类型为 购买
+      transaction.addTag('Purchase-Type', data.type) // 购买类型，比如什么 single-info 啦，album-info 啦
+      if (data.type === 'album-info') { // 如果类型是购买专辑的话，执行下面的命令
+        transaction.addTag('Album-Id', data.album) // 专辑 ID
+        transaction.addTag('Track-Number', data.trackNumber) // 专辑内曲目编号
       }
-      transaction.addTag('Unix-Time', now)
-      transaction.addTag('Target', data.target)
-      transaction.addTag('Source', data.source)
-      transaction.addTag('Price', data.price)
-      transaction.addTag('Item', data.item)
+      transaction.addTag('Unix-Time', now) // 时间是多少
+      transaction.addTag('Target', data.target) // 付款给谁
+      transaction.addTag('Source', data.source) // 谁买的
+      transaction.addTag('Price', data.price) // 物品价格
+      transaction.addTag('Item', data.item) // 购买物品 ID
 
       console.log(transaction)
       await ar.transactions.sign(transaction, data.key)
