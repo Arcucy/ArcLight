@@ -291,7 +291,6 @@ export default {
   mounted () {
     this.fee = this.toPlainString(this.fee)
     this.priceDisplay = this.toPlainString(this.price)
-    console.log(this.$route)
   }
 }
 </script>
