@@ -83,7 +83,7 @@ import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import scrollXBox from '@/components/ScrollXBox'
 import userCard from '@/components/User/UserCard'
-import loadCard from '@/components/Song/loadCard'
+import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {

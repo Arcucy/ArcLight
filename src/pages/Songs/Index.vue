@@ -68,7 +68,7 @@ import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import categoryNav from '@/components/CategoryNav'
 import scrollXBox from '@/components/ScrollXBox'
-import loadCard from '@/components/Song/loadCard'
+import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {

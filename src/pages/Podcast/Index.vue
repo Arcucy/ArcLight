@@ -45,7 +45,7 @@ import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
 import categoryNav from '@/components/CategoryNav'
 import getAudioInfo from '@/components/Song/GetAudioInfo'
-import loadCard from '@/components/Song/loadCard'
+import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {
