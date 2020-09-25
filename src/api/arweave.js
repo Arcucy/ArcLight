@@ -30,6 +30,20 @@ const AUDIO_TYPE = {
   soundEffect: 'soundeffect-info'
 }
 
+const AUDIO_ICON = {
+  'single-info': 'mdi-music-circle',
+  'album-info': 'mdi-album',
+  'podcast-info': 'mdi-podcast',
+  'soundeffect-info': 'mdi-waveform'
+}
+
+const REVERSED_AUDIO_TYPE = {
+  'single-info': 'Single',
+  'album-info': 'Album',
+  'podcast-info': 'Podcast',
+  'soundeffect-info': 'Sound Effect'
+}
+
 const APP_NAME = 'arclight-test'
 
 let arweave = {
@@ -552,6 +566,137 @@ let arweave = {
         }
         resolve(ids[0])
       })
+    })
+  },
+
+  querySearch (val) {
+    return new Promise(async (resolve, reject) => {
+      let res = []
+      let data = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      console.log(data)
+      for (let i = 0; i < data.length; i++) {
+        const tx = await this.getTransactionDetail(data[i])
+        const tags = await this.getTagsByTransaction(tx)
+        const type = REVERSED_AUDIO_TYPE[tags['Type']]
+        const icon = AUDIO_ICON[tags['Type']]
+        res.push({ searchType: 'Music', id: data[i], title: tags['Title'], artist: tags['Author-Username'], type: type, icon: icon })
+      }
+      resolve(res)
+    })
+  },
+
+  queryTxSearch (val) {
+    return new Promise(async (resolve, reject) => {
+      if (typeof (val) === 'string' && val.length === 43) {
+        let res = []
+        let singleRes = await ar.arql({
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.single
+          }
+        })
+
+        singleRes = singleRes.map(item => {
+          return { searchType: 'Tx', id: item, type: 'Single', icon: 'mdi-music-circle' }
+        })
+
+        let albumRes = await ar.arql({
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.album
+          }
+        })
+
+        albumRes = albumRes.map(item => {
+          return { searchType: 'Tx', id: item, type: 'Album', icon: 'mdi-album' }
+        })
+
+        let podcastRes = await ar.arql({
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.podcast
+          }
+        })
+
+        podcastRes = podcastRes.map(item => {
+          return { searchType: 'Tx', id: item, type: 'Podcast', icon: 'mdi-podcast' }
+        })
+
+        let soundEffectRes = await ar.arql({
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.soundEffect
+          }
+        })
+
+        soundEffectRes = soundEffectRes.map(item => {
+          return { searchType: 'Tx', id: item, type: 'Sound Effect', icon: 'mdi-waveform' }
+        })
+        
+        res = res.concat(singleRes).concat(albumRes).concat(podcastRes).concat(soundEffectRes)
+        resolve(res)
+      } else {
+        resolve([])
+      }
+    })
+  },
+
+  getAllInfo (arr, type, icon) {
+    return new Promise(async (resolve, reject) => {
+      let res = []
+      for (let i = 0; i < arr.length; i++) {
+        const tx = await this.getTransactionDetail(arr[i].id)
+        const tags = await this.getTagsByTransaction(tx)
+        res.push({ id: arr[i].id, title: tags['Title'], artist: tags['Author-Username'] })
+      }
     })
   },
 

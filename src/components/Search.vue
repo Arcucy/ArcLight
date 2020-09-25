@@ -1,109 +1,107 @@
 <template>
   <div data-app="true">
     <v-autocomplete
-      v-model="select"
+      v-model="select.id"
       :loading="loading"
       :items="items"
       :search-input.sync="search"
-      cache-items
+      item-text="name"
+      item-value="name"
       class="mx-4 autocomplete"
       flat
-      hide-no-data
       hide-details
+      hide-no-data
       label="Search address / user / music"
       solo-inverted
       background-color="#333333"
     >
+      <template v-slot:item="data">
+        <template v-if="typeof (data.item) !== 'object'">
+          <v-list-item-content v-text="data.item.id"></v-list-item-content>
+        </template>
+        <template v-else-if="data.item.searchType === 'Tx'">
+          <v-list-item-icon style="margin-right: 10px;">
+            <v-icon large color="#E56D9B">{{data.item.icon}}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <a @click="goResult(data.item.id, data.item.type)">
+            <v-list-item-title v-html="data.item.id"></v-list-item-title>
+            <v-list-item-subtitle v-html="data.item.type" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
+            </a>
+          </v-list-item-content>
+        </template>
+        <template v-else-if="data.item.searchType === 'Music'">
+          <v-list-item-icon style="margin-right: 10px;">
+            <v-icon large color="#E56D9B">{{data.item.icon}}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <a @click="goResult(data.item.id, data.item.type)">
+            <v-list-item-title v-html="data.item.title"></v-list-item-title>
+            <v-list-item-subtitle v-html="'by ' + data.item.artist" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
+            </a>
+          </v-list-item-content>
+        </template>
+      </template>
     </v-autocomplete>
   </div>
 </template>
 
 <script>
+import api from '@/api/api'
+
 export default {
   data () {
     return {
       loading: false,
       items: [],
       search: null,
-      select: null,
-      states: [
-        'Alabama',
-        'Alaska',
-        'American Samoa',
-        'Arizona',
-        'Arkansas',
-        'California',
-        'Colorado',
-        'Connecticut',
-        'Delaware',
-        'District of Columbia',
-        'Federated States of Micronesia',
-        'Florida',
-        'Georgia',
-        'Guam',
-        'Hawaii',
-        'Idaho',
-        'Illinois',
-        'Indiana',
-        'Iowa',
-        'Kansas',
-        'Kentucky',
-        'Louisiana',
-        'Maine',
-        'Marshall Islands',
-        'Maryland',
-        'Massachusetts',
-        'Michigan',
-        'Minnesota',
-        'Mississippi',
-        'Missouri',
-        'Montana',
-        'Nebraska',
-        'Nevada',
-        'New Hampshire',
-        'New Jersey',
-        'New Mexico',
-        'New York',
-        'North Carolina',
-        'North Dakota',
-        'Northern Mariana Islands',
-        'Ohio',
-        'Oklahoma',
-        'Oregon',
-        'Palau',
-        'Pennsylvania',
-        'Puerto Rico',
-        'Rhode Island',
-        'South Carolina',
-        'South Dakota',
-        'Tennessee',
-        'Texas',
-        'Utah',
-        'Vermont',
-        'Virgin Island',
-        'Virginia',
-        'Washington',
-        'West Virginia',
-        'Wisconsin',
-        'Wyoming'
-      ]
+      select: [],
+      option: []
     }
   },
   watch: {
     search (val) {
       val && val !== this.select && this.querySelections(val)
+    },
+    select (val) {
+      console.log(val)
     }
   },
   methods: {
-    querySelections (v) {
+    async querySelections (v) {
       this.loading = true
-      // Simulated ajax query
-      setTimeout(() => {
-        this.items = this.states.filter(e => {
-          return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+
+      let res = await api.arweave.queryTxSearch(v)
+      if (res.length !== 0) {
+        res.forEach(item => {
+          this.option.push(item)
         })
-        this.loading = false
-      }, 500)
+      } else {
+        res = await api.arweave.querySearch(v)
+        if (res) {
+          res.forEach(item => {
+            this.option.push(item)
+          })
+        }
+      }
+
+      if (res.length !== 0) {
+        this.search = ''
+      }
+
+      this.items = this.option.filter(e => {
+        return (JSON.stringify(e) || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+      })
+
+      this.loading = false
+      return this.items
+    },
+    goResult (id, type) {
+      if (type === 'Album') {
+        this.$router.push({ path: '/album/' + id })
+      } else if (type !== 'User') {
+        this.$router.push({ path: '/music/' + id })
+      }
     }
   }
 }
