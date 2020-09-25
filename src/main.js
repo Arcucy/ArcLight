@@ -4,12 +4,24 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from '@/store/index.js'
-import Buefy from 'buefy'
-import 'buefy/dist/buefy.css'
-import APlayer from '@moefe/vue-aplayer'
+import Aplayer from 'vue-aplayer'
 
-Vue.use(Buefy)
-Vue.use(APlayer)
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
+import moment from 'moment'
+moment.locale('en-US')
+
+Vue.use(Vuetify)
+Vue.use(ElementUI)
+Vue.component('aplayer', Aplayer)
+
+Vue.prototype.$message = ElementUI.Message
+Vue.prototype.$notify = ElementUI.Notification
+Vue.prototype.$moment = moment
 
 Vue.config.productionTip = false
 
@@ -18,6 +30,7 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: { App },
+  vuetify: new Vuetify(),
+  components: { App, Aplayer },
   template: '<App/>'
 })
