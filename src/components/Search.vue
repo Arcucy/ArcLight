@@ -83,7 +83,6 @@ export default {
   methods: {
     async querySelections (v) {
       this.loading = true
-      let res = []
 
       if (typeof (v) === 'string' && v.length === 43) {
         let tx = await api.arweave.getTransactionDetail(v)
@@ -91,31 +90,15 @@ export default {
         if (tx) {
           const tags = await api.arweave.getTagsByTransaction(tx)
           const data = JSON.parse(decode.uint8ArrayToString(tx.data))
-          console.log(tags)
-          console.log(data)
-          res.push({ searchType: 'Tx', id: tx.id, title: data.title, artist: tags['Author-Username'], type: this.REVERSED_AUDIO_TYPE[tags['Type']], icon: this.AUDIO_ICON[tags['Type']] })
+          this.items.push({ searchType: 'Tx', id: tx.id, title: data.title, artist: tags['Author-Username'], type: this.REVERSED_AUDIO_TYPE[tags['Type']], icon: this.AUDIO_ICON[tags['Type']] })
         }
+      } else {
+        api.arweave.breakOnCall = true
+        api.arweave.querySearch(v, result => {
+          this.loading = true
+          this.items.push(result)
+        })
       }
-
-      // {
-      //   res = await api.arweave.querySearch(v)
-      //   if (res) {
-      //     res.forEach(item => {
-      //       this.option.push(item)
-      //     })
-      //   }
-      // }
-
-      // if (res.length !== 0) {
-      //   this.search = ''
-      // }
-      this.items = res
-
-      // this.items = this.option.filter(e => {
-      //   return (JSON.stringify(e) || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
-      // })
-
-      console.log('查询结果：', this.items)
 
       this.loading = false
     },

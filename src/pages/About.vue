@@ -56,7 +56,7 @@
         <div class="about-content">
           <p id="p1" class="about-p">
             When customers paying the AR to your account, we will generate a receipt transaction to the customer side, including the UNIX timestamp information, the price paid to you,
-            the target music or album custom bought, and your address. All the information will be saved into the receipt transaction with encryption.
+            the target music or album custom bought, and your address. All the information will be saved into the receipt transaction.
           </p>
           <p id="p2" class="about-p">
             We will look back for the transactions for users, in order to prevent unauthorized official sign to the transactions, check the timestamp is correct to the payment, check the price and
