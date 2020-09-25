@@ -5,7 +5,7 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Singles Sellings
+            New Singles Sellings
           </h4>
           <router-link :to="{ name: 'SongsSingles' }">
             All Sellings
@@ -30,7 +30,7 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Albums Sellings
+            New Albums Sellings
           </h4>
           <router-link :to="{ name: 'SongsAlbums' }">
             All Sellings
@@ -106,7 +106,6 @@ export default {
     document.title = 'Browse All Seling Music - ArcLight'
     this.getAllAudioList('single', this.single)
     this.getAllAudioList('album', this.album)
-    window.vueTest = this
   },
   methods: {
     async getAllAudioList (type, aObject) {
@@ -154,7 +153,7 @@ export default {
       // 失败处理：删掉这个卡片，并请求一个新的。
       aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
       const addresse = aObject.addresses.shift()
-      this.getInfoByTxid(aObject, addresse)
+      if (addresse) this.getInfoByTxid(aObject, addresse)
     }
   }
 }
