@@ -1105,12 +1105,17 @@ export default new Vuex.Store({
         quantity: ar.ar.arToWinston(data.price + '')
       }, data.key)
 
+      let albumType = data.type
+      if (data.type === 'album-full') data.type = 'album-info'
+
       transaction.addTag('App-Name', 'arclight-test') // 指定 App-Name 为 测试网
       transaction.addTag('Type', 'Purchase') // 指定类型为 购买
       transaction.addTag('Purchase-Type', data.type) // 购买类型，比如什么 single-info 啦，album-info 啦
-      if (data.type === 'album-info') { // 如果类型是购买专辑的话，执行下面的命令
-        transaction.addTag('Album-Id', data.item) // 专辑 ID
+      if (albumType === 'album-info') { // 如果类型是购买专辑的话，执行下面的命令
+        transaction.addTag('Album-Type', 'one')
         transaction.addTag('Track-Number', data.trackNumber) // 专辑内曲目编号
+      } else if (albumType === 'album-full') {
+        transaction.addTag('Album-Type', 'full')
       }
       transaction.addTag('Unix-Time', now) // 时间是多少
       transaction.addTag('Target', data.target) // 付款给谁
