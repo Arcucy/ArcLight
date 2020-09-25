@@ -3,7 +3,7 @@
     <div class="card" v-ripple>
       <div class="card-cover">
         <v-img
-          v-if="!errorMessage"
+          v-if="!errorMessage || loading"
           class="card-cover-img"
           :src="cover"
           alt="cover"
@@ -18,16 +18,22 @@
         <div v-else class="card-cover-error">
           <v-icon color="#ff5252">mdi-alert-circle-outline</v-icon>
         </div>
+        <div v-if="!isSingle" class="card-cover-record">
+          <img src="@/assets/image/record.png" alt="record">
+        </div>
       </div>
       <div class="card-right">
         <div v-if="errorMessage" class="music-info">
-          <p class="music-info-title music-error">
+          <p class="music-info-title" :class="!loading && 'music-error'">
             {{ errorMessage }}
           </p>
         </div>
         <div v-else class="music-info">
           <p class="music-info-title">
-            {{ card.title || 'Loading...' }}
+            {{ title || 'Loading...' }}
+            <span v-if="!loading && audioType === 'album-info' && isSingle">
+              From: {{ card.title }}
+            </span>
           </p>
           <p
             v-if="card.authorAddress"
@@ -39,7 +45,7 @@
             {{ card.authorUsername || 'Artist loading...' }}
           </p>
         </div>
-        <router-link v-if="!errorMessage && !loading" to="">
+        <router-link v-if="canDownload" to="">
           <div v-if="!downloadLoading" class="download" @click="downloadAudio">
             <v-icon>mdi-download</v-icon>
           </div>
@@ -79,14 +85,36 @@ export default {
       loading: true,
       downloadLoading: false,
       card: {},
+      audioType: '',
+      album: {
+        single: false,
+        index: 0
+      },
       cover: '',
       infoTxid: '',
-      pct: 0
+      pct: 0,
+      timerIndex: null
     }
   },
   computed: {
     routerTo () {
-      return this.infoTxid && !this.errorMessage ? { name: 'Music', params: { id: this.infoTxid } } : ''
+      if (this.infoTxid && !this.errorMessage) {
+        const query = this.audioType === 'album-info' ? { album: this.album.index + 1 } : {}
+        return this.isSingle ? { name: 'Music', params: { id: this.infoTxid }, query } : { name: 'Album', params: { id: this.infoTxid } }
+      }
+      return ''
+    },
+    canDownload () {
+      return !this.errorMessage && !this.loading && this.isSingle
+    },
+    isSingle () {
+      return this.audioType === 'album-info' ? this.album.single : true
+    },
+    title () {
+      if (this.audioType === 'album-info' && this.isSingle) {
+        return this.card.music ? this.card.music[this.album.index].title : ''
+      }
+      return this.card.title
     }
   },
   watch: {
@@ -101,12 +129,22 @@ export default {
   mounted () {
     if (this.txid) this.get()
   },
+  destroyed () {
+    // 卡片或者页面被销毁时清除定时器
+    if (this.timerIndex) clearTimeout(this.timerIndex)
+  },
   methods: {
     async get () {
       this.loading = true
       // 获取购买记录的 tags
       const history = await this.getPurchaseHistory(this.txid)
+      console.log('history:', history)
       if (history) {
+        this.audioType = history['Purchase-Type']
+        if (this.audioType === 'album-info') {
+          this.album.single = history['Album-Type'] === 'one'
+          this.album.index = Number(history['Track-Number'] - 1 || 0)
+        }
         // 根据 tags 中歌曲信息的 txid 获取到歌曲信息
         this.infoTxid = history['Item']
         const info = await this.getInfo(this.infoTxid)
@@ -114,9 +152,12 @@ export default {
           this.card = info
           // 获取封面
           this.getCover()
+          this.errorMessage = ''
         }
+        this.loading = false
+      } else if (history !== false) {
+        this.loading = false
       }
-      this.loading = false
     },
     async getPurchaseHistory (txid) {
       try {
@@ -128,8 +169,15 @@ export default {
           this.errorMessage = 'Can\'t find purchase record'
         }
       } catch (e) {
-        console.error('[Unable to get purchase record] txid: ', txid, e)
-        this.errorMessage = 'Unable to get purchase record'
+        if (e.type === 'TX_PENDING') {
+          this.errorMessage = 'Transaction pending, please wait'
+          // 如果交易待确认会自动重试
+          this.timerIndex = setTimeout(() => { this.get() }, 2000)
+          return false
+        } else {
+          console.error('[Unable to get purchase record] txid: ', txid, e.type, e)
+          this.errorMessage = 'Unable to get purchase record'
+        }
       }
       return null
     },
@@ -139,20 +187,31 @@ export default {
         if (transaction) {
           const tags = api.arweave.getTagsByTransaction(transaction)
           const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
-          return {
+          const res = {
             txid: this.txid,
             authorAddress: tags['Author-Address'],
             authorUsername: tags['Author-Username'],
             title: audioData.title,
             price: audioData.price,
-            coverTxid: audioData.cover,
-            audioTxid: audioData.music || audioData.program || audioData.audio
+            coverTxid: audioData.cover
+          }
+          if (this.audioType === 'album-info') {
+            return {
+              ...res,
+              audioTxid: audioData.music[this.album.index].id,
+              music: audioData.music
+            }
+          } else {
+            return {
+              ...res,
+              audioTxid: audioData.music || audioData.program || audioData.audio
+            }
           }
         } else {
           this.errorMessage = 'Can\'t find this single'
         }
       } catch (e) {
-        console.error('[Unable to get single information] info txid:', this.infoTxid, e.message)
+        console.error('[Unable to get single information] info txid:', this.infoTxid, e)
         this.errorMessage = 'Unable to get single information'
       }
     },
@@ -193,11 +252,11 @@ export default {
         'audio/ogg': 'ogg'
       }
 
-      const { title, authorUsername } = this.card
+      const { authorUsername } = this.card
       const div = document.getElementById('app')
       const a = document.createElement('a')
       a.href = audio.src
-      a.download = title + ' - ' + authorUsername + '.' + getExt[audio.type]
+      a.download = this.title + ' - ' + authorUsername + '.' + getExt[audio.type]
       a.id = 'audio' + this.audioTxid
       div.appendChild(a)
       const downloadA = document.getElementById('audio' + this.audioTxid)
@@ -235,7 +294,8 @@ a {
   min-height: 72px;
   cursor: pointer;
   &-cover {
-    width: 64px;
+    display: flex;
+    min-width: 64px;
     margin-right: 8px;
     &-img {
       border-radius:5px;
@@ -262,6 +322,21 @@ a {
         font-size: 40px;
       }
     }
+    &-record {
+      width: 60px;
+      height: 60px;
+      min-height: 60px;
+      min-height: 60px;
+      margin-left: -30px;
+      margin-top: 2px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        min-height: 100%;
+      }
+    }
   }
 
   &-right {
@@ -277,6 +352,10 @@ a {
         color: white;
         line-height: 22px;
         .word-limit();
+        span {
+          font-size: 14px;
+          color: #B2B2B2;
+        }
         &.music-error {
           color: #ff5252;
         }
