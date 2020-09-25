@@ -32,6 +32,7 @@ export default new Vuex.Store({
     userType: '',
     userAvatar: '',
     userIntroduction: '',
+    userNoBalanceFailure: false,
     isMe: false,
     userPage: {
       avatar: 'loading'
@@ -117,6 +118,12 @@ export default new Vuex.Store({
     },
     setUserIntroduction (state, intro) {
       state.userIntroduction = intro
+    },
+    setUserNoBalanceFailure (state, status) {
+      state.userNoBalanceFailure = status
+    },
+    setUserAccountFailure (state, status) {
+      state.userAccountFailure = status
     },
     setIsMe (state, status) {
       state.isMe = status
@@ -284,9 +291,17 @@ export default new Vuex.Store({
       commit('setKeyFileName', data.name)
       commit('setKeyFileContent', data.content)
 
+      const balance = await API.arweave.getBalance(data.content)
+      if (parseFloat(balance) <= 0) {
+        commit('setUserNoBalanceFailure', true)
+        return
+      }
+
       API.arweave.getAddress(data.content).then(res => {
         commit('setWallet', res)
+        console.log(res)
         API.arweave.getIdFromAddress(res).then(res2 => {
+          console.log(res2)
           commit('setUsername', res2.data)
           commit('setUserType', res2.type)
           commit('setIsLoggedIn', true)
@@ -297,6 +312,11 @@ export default new Vuex.Store({
               }
             })
           }
+        }).catch(() => {
+          commit('setUserAccountFailure', true)
+          commit('setUsername', 'guest')
+          commit('setUserType', 'Guest')
+          commit('setIsLoggedIn', true)
         })
       })
     },
@@ -335,7 +355,12 @@ export default new Vuex.Store({
       userPage.soundcloudId = soundcloudId
       const bandcampId = await API.arweave.getBandCampFromAddress(data.wallet)
       userPage.bandcampId = bandcampId
-      const user = await API.arweave.getIdFromAddress(data.wallet)
+      const user = await API.arweave.getIdFromAddress(data.wallet).catch(() => {
+        userPage.avatar = ''
+        userPage.introduction = 'Account Invalid'
+        commit('setUserPage', userPage)
+        commit('setUserPageLoading', false)
+      })
       userPage.nickname = user.data
       userPage.type = user.type
       if (user.type !== 'guest') {

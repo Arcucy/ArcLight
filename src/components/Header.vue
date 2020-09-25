@@ -180,7 +180,7 @@
       timeout="3000"
       top="top"
     >
-      File Read Failed, Try again
+      {{ failMessage }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -223,6 +223,7 @@ export default {
       needUpload: false,
       snackbar: false,
       failSnackbar: false,
+      failMessage: '',
       menuItems: [
         { title: 'My Profile', path: '/user/' },
         { title: 'My Library', path: '/library' },
@@ -234,11 +235,24 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet'])
+    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
   },
   watch: {
     wallet (val) {
       this.menuItems[0].path = '/user/' + val
+    },
+    userNoBalanceFailure (val) {
+      if (val) {
+        this.loginBtnLoading = false
+        this.failSnackbar = true
+        this.failMessage = 'Account has no balance, try another one'
+      }
+    },
+    userAccountFailure (val) {
+      if (val) {
+        this.failSnackbar = true
+        this.failMessage = 'Account has errored transactions, check your balance'
+      }
     }
   },
   mounted () {
@@ -296,6 +310,7 @@ export default {
           }
         } catch (err) {
           this.failSnackbar = true
+          this.failMessage = 'File Read Failed, Try again'
         }
       }
       this.menuItems[0].path = '/user/' + this.wallet

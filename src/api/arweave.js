@@ -195,9 +195,9 @@ let arweave = {
             // resolve data on finish
             // 完成时返回数据
             resolve(res)
-          })
-        })
-      })
+          }).catch(err => reject(err))
+        }).catch(() => reject(new Error('Account has errored transactions, check your balance')))
+      }).catch(err => reject(err))
     })
   },
 
