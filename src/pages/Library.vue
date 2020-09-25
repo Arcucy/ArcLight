@@ -123,15 +123,9 @@ export default {
       this.loading = true
       try {
         let res = await api.arweave.getPurchasedItems(this.wallet, type)
-        // const res2 = []
-        // for (let i = 0; i < 33; i++) {
-        //   res2.push(...res)
-        // }
-        // this.addressList = res2 || []
         this.addressList = res || []
-        console.log('交易列表：', this.addressList)
       } catch (e) {
-        console.log(`[Failed to get ${type} list] wallet:`, this.wallet, e)
+        console.error(`[Failed to get ${type} list] wallet:`, this.wallet, e)
         this.$message.error(`Failed to get ${type} list`)
       }
       this.loading = false

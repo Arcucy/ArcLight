@@ -138,7 +138,6 @@ export default {
       this.loading = true
       // 获取购买记录的 tags
       const history = await this.getPurchaseHistory(this.txid)
-      console.log('history:', history)
       if (history) {
         this.audioType = history['Purchase-Type']
         if (this.audioType === 'album-info') {

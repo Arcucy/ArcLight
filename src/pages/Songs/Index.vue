@@ -5,15 +5,14 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Singles Sellings
-            {{ single.addresses.length ? `(${single.list.length}/${single.addresses.length})` : '' }}
+            New Singles Sellings
           </h4>
           <router-link :to="{ name: 'SongsSingles' }">
             All Sellings
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
-        <scrollXBox class="songs-list" list-id="single" card-id="single-card">
+        <scrollXBox class="songs-list" list-id="single" card-id="single-card" :list-update="single.list">
           <singleCard
             id="single-card"
             class="single-card"
@@ -22,8 +21,8 @@
             :card="item"
           />
           <loadCard
-            v-if="single.loading || single.addresses.length === 0"
-            :message="!single.loading && single.addresses.length === 0 ? 'No data' : ''"
+            v-if="single.loading || single.list.length === 0"
+            :message="!single.loading && single.list.length === 0 ? 'No data' : ''"
           />
         </scrollXBox>
       </div>
@@ -31,15 +30,14 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Albums Sellings
-            {{ album.addresses.length ? `(${album.list.length}/${album.addresses.length})` : '' }}
+            New Albums Sellings
           </h4>
           <router-link :to="{ name: 'SongsAlbums' }">
             All Sellings
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
-        <scrollXBox class="songs-list" list-id="albums" card-id="albums-card">
+        <scrollXBox class="songs-list" list-id="albums" card-id="albums-card" :list-update="album.list">
           <albumCard
             id="albums-card"
             class="album-card"
@@ -48,8 +46,8 @@
             :card="item"
           />
           <loadCard
-            v-if="album.loading || album.addresses.length === 0"
-            :message="!album.loading && album.addresses.length === 0 ? 'No data' : ''"
+            v-if="album.loading || album.list.length === 0"
+            :message="!album.loading && album.list.length === 0 ? 'No data' : ''"
             width="188px"
           />
         </scrollXBox>
@@ -62,6 +60,7 @@
 
 <script>
 import api from '@/api/api'
+import decode from '@/util/decode'
 
 import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
@@ -84,12 +83,20 @@ export default {
       single: {
         list: [],
         addresses: [],
-        loading: true
+        loading: true,
+        size: 16
       },
       album: {
         list: [],
         addresses: [],
-        loading: true
+        loading: true,
+        size: 10
+      },
+      loadingCard: {
+        txid: '',
+        title: 'Loading...',
+        price: '0000',
+        authorUsername: 'Artist loading...'
       }
     }
   },
@@ -105,17 +112,48 @@ export default {
       try {
         const res = await api.arweave.getAllAudioList(type)
         aObject.addresses = res
-        await api.arweave.getAudioInfoByTxids(res, (item, index) => {
-          if (item) aObject.list.push(item)
-        })
+        for (let i = 0; aObject.addresses.length !== 0 && i < aObject.size; i++) {
+          this.getInfoByTxid(aObject, aObject.addresses.shift())
+        }
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
         this.$message.error(`Failed to get ${type} list`)
       }
-      if (aObject.addresses.length !== aObject.list.length) {
-        this.$message(`Expecting fetching data for ${aObject.addresses.length}, but got only ${aObject.list.length}`)
-      }
       aObject.loading = false
+    },
+    async getInfoByTxid (aObject, txid) {
+      // 添加对应的卡片并进入加载状态
+      aObject.list.push({...this.loadingCard, txid: txid})
+      try {
+        const transaction = await api.arweave.getTransactionDetail(txid)
+        if (transaction) {
+          const tags = api.arweave.getTagsByTransaction(transaction)
+          const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+          // 给 txid 相同的卡片赋予获取到的信息
+          const cardIndex = aObject.list.findIndex(item => item.txid === txid)
+          this.$set(aObject.list, cardIndex, {
+            txid,
+            authorAddress: tags['Author-Address'],
+            authorUsername: tags['Author-Username'],
+            type: tags.Type,
+            unixTime: Number(tags['Unix-Time']),
+            title: audioData.title,
+            desp: audioData.desp,
+            price: audioData.price,
+            duration: audioData.duration,
+            coverTxid: audioData.cover,
+            musicTxid: audioData.music
+          })
+          // 成功的结束
+          return
+        }
+      } catch (e) {
+        console.error(txid, e)
+      }
+      // 失败处理：删掉这个卡片，并请求一个新的。
+      aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
+      const addresse = aObject.addresses.shift()
+      if (addresse) this.getInfoByTxid(aObject, addresse)
     }
   }
 }
