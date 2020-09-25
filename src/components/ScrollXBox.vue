@@ -2,8 +2,8 @@
   <div class="scroll-box">
     <!-- Left Button -->
     <div
-      v-if="button.scrollLeft"
       class="scroll scroll-left"
+      :class="!button.scrollLeft && 'scroll-disable'"
       @click="scrollLeft(listId, cardId)"
     >
       <v-icon>mdi-chevron-left</v-icon>
@@ -14,8 +14,8 @@
     </div>
     <!-- Right Button -->
     <div
-      v-if="button.scrollRight"
       class="scroll scroll-right"
+      :class="!button.scrollRight && 'scroll-disable'"
       @click="scrollRight(listId, cardId)"
     >
       <v-icon>mdi-chevron-right</v-icon>
@@ -39,7 +39,11 @@ export default {
     },
     speed: {
       type: Number,
-      default: 80
+      default: 15
+    },
+    listUpdate: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -53,13 +57,16 @@ export default {
   created () {
     // 侦测页面变化，变化后更新翻页按钮状态。
     this.$nextTick(() => {
-      this.scrollButtonUpdate(this.listId, this.button)
+      this.scrollButtonUpdate()
       const list = document.getElementById(this.listId)
       window.addEventListener('resize', this.scrollButtonUpdate)
       list.addEventListener('scroll', this.scrollButtonUpdate)
     })
   },
   watch: {
+    listUpdate () {
+      this.scrollButtonUpdate()
+    }
   },
   // 取消侦测器
   destroyed () {
@@ -87,11 +94,11 @@ export default {
     },
     /** 向左滚动 */
     scrollLeft (id, cardId) {
-      this.singleGo(id, cardId, false)
+      if (this.button.scrollLeft) this.singleGo(id, cardId, false)
     },
     /** 向右滚动 */
     scrollRight (id, cardId) {
-      this.singleGo(id, cardId, true)
+      if (this.button.scrollRight) this.singleGo(id, cardId, true)
     },
     /** 滚动 */
     singleGo (id, cardId, direction) {
@@ -112,20 +119,25 @@ export default {
     /** 平滑滚动 */
     smoothScroll (element, scroll) {
       // 决定运动方向
-      const speed = element.scrollLeft < scroll ? this.speed : -this.speed
+      const realSpeed = Math.round(element.clientWidth / this.speed)
+      const speed = element.scrollLeft < scroll ? realSpeed : -realSpeed
+      // 最大限位
+      const maxSroll = element.scrollWidth - element.clientWidth
       // 持续滚动，直到抵达目标位置。
+      let newScroll = false
+      let arrive
       const IntervalId = setInterval(() => {
-        const newScroll = element.scrollLeft + speed
-        element.scrollLeft = newScroll
-        // 检查是否抵达目的
-        let arrive
-        if (speed > 0) arrive = element.scrollLeft >= scroll
-        else arrive = element.scrollLeft <= scroll
         // 如果抵达目的地，或者触碰边缘，则停止。
-        if (arrive || element.scrollLeft !== newScroll) {
+        if (newScroll !== false && arrive) {
           element.scrollLeft = scroll
           clearInterval(IntervalId)
+          this.scrollButtonUpdate()
         }
+        newScroll = element.scrollLeft + speed
+        element.scrollLeft = newScroll
+        // 检查是否抵达目的
+        if (speed > 0) arrive = element.scrollLeft >= scroll || element.scrollLeft >= maxSroll
+        else arrive = element.scrollLeft <= scroll || element.scrollLeft <= 0
       }, 10)
     }
   }
@@ -157,6 +169,21 @@ export default {
     bottom: 50%;
     z-index: 1;
     transition: all 0.1s ease-in;
+
+    &.scroll-disable {
+      color: #B2B2B2;
+      cursor: no-drop;
+      i {
+        color: #B2B2B2;
+      }
+      &:hover {
+        transform: scale(1);
+        i {
+          color: #B2B2B2;
+          text-shadow: 1px 4px 10px black;
+        }
+      }
+    }
 
     &:hover {
       transform: scale(1.5);
