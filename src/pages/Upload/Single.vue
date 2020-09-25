@@ -344,7 +344,7 @@ export default {
     }
   },
   mounted () {
-    if (this.userType) {
+    if (this.userType === 'guest') {
       this.failSnackbar = true
       this.failMessage = 'You must have a username in order to upload'
 
