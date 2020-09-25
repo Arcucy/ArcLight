@@ -6,7 +6,16 @@
       </h4>
       <div class="library-box">
         <div class="library-box-col">
-          <h4>Singles</h4>
+          <h4>
+            <span
+              v-for="(item, index) in tabs"
+              :class="(tab || defaultTab) === item.type && 'active'"
+              :key="index"
+              @click="tab = item.type"
+            >
+              {{ item.label }}
+            </span>
+          </h4>
           <div class="single-list">
             <mySingleCard
               v-for="(txid, index) in paginatedAddressList"
@@ -29,23 +38,6 @@
             dark
           />
         </div>
-        <div class="library-box-col">
-          <h4>Album</h4>
-          <div class="single-list">
-            <myAlbumCard
-              v-for="(item, index) in singles"
-              :key="index"
-              :card="item"
-            />
-          </div>
-          <v-pagination
-            v-model="albumPage"
-            :length="20"
-            :total-visible="10"
-            color="#E56D9B"
-            dark
-          />
-        </div>
       </div>
     </div>
   </spaceLayout>
@@ -57,73 +49,38 @@ import { mapState } from 'vuex'
 
 import spaceLayout from '@/components/Layout/Space'
 import mySingleCard from '@/components/Song/MySingleCard'
-import myAlbumCard from '@/components/Song/MyAlbumCard'
 
 export default {
   components: {
     spaceLayout,
-    mySingleCard,
-    myAlbumCard
+    mySingleCard
   },
   data () {
     return {
       // 参数
       loading: true,
       addressList: [],
-      page: 1, // 页码
+      page: this.$route.query.page || 1, // 页码
       pagesize: 8, // 每页数量
       flash: false,
-      // 旧的
-      singlePage: 1,
-      albumPage: 1,
-      singles: [
+      tab: this.$route.query.tab || '',
+      defaultTab: 'single',
+      tabs: [
         {
-          title: 'RED',
-          artist: 'Taylor Swift',
-          price: 4.3,
-          time: '2020-09-01 10:22'
+          label: 'Single',
+          type: 'single'
         },
         {
-          title: 'ALL OFF',
-          artist: 'ONE',
-          price: 5.2,
-          time: '2020-08-31 12:32'
+          label: 'Album',
+          type: 'album'
         },
         {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2020-08-31 10:22'
+          label: 'Sound',
+          type: 'soundEffect'
         },
         {
-          title: 'RELOADED',
-          artist: '鹿晗',
-          price: 10.1,
-          time: '2020-08-30 10:22'
-        },
-        {
-          title: 'B v S soundtrack',
-          artist: 'Warner Brosaaaaa',
-          price: 4.3,
-          time: '2020-08-23 10:22'
-        },
-        {
-          title: '东风破',
-          artist: '周杰伦',
-          price: 14.6,
-          time: '2020-08-01 10:22'
-        },
-        {
-          title: 'YOUTH BLOOD',
-          artist: 'JINDER',
-          price: 10.1,
-          time: '2020-07-01 10:22'
-        },
-        {
-          title: 'THE SEVENTH SEVENTH',
-          artist: '张靓颖',
-          price: 10.1,
-          time: '2019-06-01 10:22'
+          label: 'Podcast',
+          type: 'podcast'
         }
       ]
     }
@@ -140,32 +97,51 @@ export default {
   },
   watch: {
     wallet (val) {
-      if (val) this.getList('single')
+      if (val) this.getList(this.tab || this.defaultTab)
+      else {
+        this.addressList = []
+        this.page = 1
+      }
     },
-    page () {
+    page (val) {
       this.flash = true
       setTimeout(() => { this.flash = false })
+      this.updateQuery('page', val)
+    },
+    tab (val) {
+      this.addressList = []
+      this.page = 1
+      this.updateQuery('tab', val)
+      if (this.wallet) this.getList(val || this.defaultTab)
     }
   },
   mounted () {
-    if (this.wallet) this.getList('single')
+    if (this.wallet) this.getList(this.tab || this.defaultTab)
   },
   methods: {
     async getList (type) {
       this.loading = true
       try {
-        const res = await api.arweave.getPurchasedItems(this.wallet, type)
+        let res = await api.arweave.getPurchasedItems(this.wallet, type)
         // const res2 = []
         // for (let i = 0; i < 33; i++) {
         //   res2.push(...res)
         // }
         // this.addressList = res2 || []
         this.addressList = res || []
+        console.log('交易列表：', this.addressList)
       } catch (e) {
         console.log(`[Failed to get ${type} list] wallet:`, this.wallet, e)
         this.$message.error(`Failed to get ${type} list`)
       }
       this.loading = false
+    },
+    updateQuery (key, val) {
+      const query = { ...this.$route.query }
+      if (query[key] !== val) {
+        query[key] = val
+        this.$router.replace({ query })
+      }
     }
   }
 }
@@ -192,10 +168,6 @@ export default {
 
     &-col {
       flex: 1;
-
-      &:first-child {
-        margin-right: 48px;
-      }
     }
   }
 
@@ -224,9 +196,20 @@ export default {
 .library-box-col {
   h4 {
     font-size: 16px;
-    color: white;
     text-align: left;
     margin-bottom: 16px;
+    span {
+      cursor: pointer;
+      color: #848484;
+      margin-right: 20px;
+      display: inline-block;
+      &:hover {
+        color: #B2B2B2;
+      }
+      &.active {
+        color: white;
+      }
+    }
   }
 }
 </style>
