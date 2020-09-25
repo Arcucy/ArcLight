@@ -83,7 +83,7 @@
               v-model="musicPct"
               :value="musicPct"
               stream
-              color="#FF7A7A"
+              color="#FF3B6C"
             ></v-progress-linear>
           </div>
         </div>
