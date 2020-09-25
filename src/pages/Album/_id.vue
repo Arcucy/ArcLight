@@ -186,7 +186,6 @@ export default {
     },
     async price (val) {
       if (this.wallet) {
-        console.log('double check')
         await this.getItemStatus(this.wallet, this.$route.params.id, val)
         if (this.owned) {
           this.info.list.forEach(item => {
@@ -204,16 +203,13 @@ export default {
     },
     async getItemStatus (address, itemAddress, price) {
       const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
-      console.log(res2)
       if (res2) {
         const transaction = await api.arweave.getTransactionDetail(res2)
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const type = tags['Purchase-Type']
         if (type === 'album-full') {
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
-          console.log(finalPrice)
           const ar = api.arweave.getArFromWinston(transaction.quantity)
-          console.log(ar)
           if (ar === finalPrice) this.owned = true
         }
       }
@@ -269,7 +265,8 @@ export default {
             item.unlock = true
           })
         } else if (this.wallet) {
-          this.info.list.forEach(async (item, index) => {
+          for (let index = 0; index < this.info.list.length; index++) {
+            const item = this.info.list[index]
             const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, id, index + 1 + '')
             if (res1) {
               const transaction = await api.arweave.getTransactionDetail(res1)
@@ -277,25 +274,20 @@ export default {
               const ar = api.arweave.getArFromWinston(transaction.quantity)
               if (ar === finalPrice) item.unlock = true
 
-              this.count++
-
               const winstonPriceSingle = api.arweave.getWinstonFromAr(parseFloat(item.price))
               const winstonPriceAlbum = api.arweave.getWinstonFromAr(parseFloat(this.price))
               let newAlbumPrice = winstonPriceAlbum / 0.8
               newAlbumPrice = (newAlbumPrice - parseInt(winstonPriceSingle)) * 0.8
               this.price = api.arweave.getArFromWinston(newAlbumPrice)
             }
-          })
-          if (this.count === this.info.list.length) {
-            this.owned = true
           }
+          this.owned = this.info.list.every(item => item.unlock === true)
         }
 
         // 获取封面
         this.info.cover = await this.getCover(albumData.cover)
         // 获取作者信息
         this.getArtist(this.info.authorAddress)
-        // console.log('专辑信息：', this.info, tags, albumData)
       } catch (e) {
         this.$message.error('Failed to get album information')
       }
