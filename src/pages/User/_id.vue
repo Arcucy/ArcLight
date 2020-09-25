@@ -46,6 +46,50 @@
           <loadCard v-if="album.loading" width="188px" />
         </scrollXBox>
       </div>
+      <!-- Sound Sellings -->
+      <div v-if="sound.loading || sound.list.length > 0" class="songs">
+        <div class="songs-header">
+          <h4>
+            New Sound Sellings
+          </h4>
+          <a>
+            All Sellings
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
+          </a>
+        </div>
+        <scrollXBox list-id="sound" card-id="sound-card" :list-update="sound.list">
+          <albumCard
+            id="sound-card"
+            class="single-card"
+            v-for="(item, index) in sound.list"
+            :key="index"
+            :card="item"
+          />
+          <loadCard v-if="sound.loading" width="188px" />
+        </scrollXBox>
+      </div>
+      <!-- Podcast Sellings -->
+      <div v-if="podcast.loading || podcast.list.length > 0" class="songs">
+        <div class="songs-header">
+          <h4>
+            New Podcast Sellings
+          </h4>
+          <a>
+            All Sellings
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
+          </a>
+        </div>
+        <scrollXBox list-id="podcast" card-id="podcast-card" :list-update="podcast.list">
+          <albumCard
+            id="podcast-card"
+            class="single-card"
+            v-for="(item, index) in podcast.list"
+            :key="index"
+            :card="item"
+          />
+          <loadCard v-if="podcast.loading" width="188px" />
+        </scrollXBox>
+      </div>
       <!-- Favourite Singers -->
       <!-- <div class="songs">
         <div class="songs-header">
@@ -103,6 +147,18 @@ export default {
         size: 16
       },
       album: {
+        list: [],
+        addresses: [],
+        loading: true,
+        size: 10
+      },
+      sound: {
+        list: [],
+        addresses: [],
+        loading: true,
+        size: 10
+      },
+      podcast: {
         list: [],
         addresses: [],
         loading: true,
@@ -185,14 +241,16 @@ export default {
     }
     this.setUserPage({ wallet: this.$route.params.id })
     document.title = 'Profile - ArcLight'
-    this.getAllAudioList('single', this.single)
-    this.getAllAudioList('album', this.album)
+    this.getUserAudioList('single', this.single)
+    this.getUserAudioList('album', this.album)
+    this.getUserAudioList('soundEffect', this.sound)
+    this.getUserAudioList('podcast', this.podcast)
   },
   methods: {
     ...mapActions(['setUserPage', 'setIsMe']),
-    async getAllAudioList (type, aObject) {
+    async getUserAudioList (type, aObject) {
       try {
-        const res = await api.arweave.getAllAudioList(type)
+        const res = await api.arweave.getUserAudioList(this.$route.params.id, type)
         aObject.addresses = res
         for (let i = 0; aObject.addresses.length !== 0 && i < aObject.size; i++) {
           this.getInfoByTxid(aObject, aObject.addresses.shift())
