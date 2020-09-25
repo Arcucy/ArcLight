@@ -167,6 +167,9 @@ export default {
       } else {
         introduction = this.userPage.introduction
       }
+      introduction = introduction.replace(/<br>/gm, '\\n')
+      introduction = introduction.replace(/<[^>]*>/gmu, '')
+      introduction = introduction.replace(/\\n/gmu, '<br>')
       this.user = { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
     },
     username (val) {
@@ -185,6 +188,11 @@ export default {
       } else {
         introduction = this.userPage.introduction
       }
+
+      introduction = introduction.replace(/<br>/gm, '\\n')
+      introduction = introduction.replace(/<[^>]*>/gmu, '')
+      introduction = introduction.replace(/\\n/gmu, '<br>')
+
       this.user = {
         nickname: this.userPage.nickname,
         avatar: this.userPage.avatar,
