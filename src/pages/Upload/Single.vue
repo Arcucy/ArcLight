@@ -71,6 +71,7 @@
             prepend-inner-icon="mdi-cash-multiple"
           ></v-text-field>
           <v-file-input
+            class="finput"
             v-model="file"
             color="#FFF"
             chips
@@ -496,6 +497,16 @@ export default {
         color: white;
         font-weight: 900;
         margin-right: 5px;
+      }
+    }
+  }
+}
+
+.finput {
+  /deep/ .v-input__control {
+    .v-input__slot {
+      fieldset {
+        color: rgba(254, 118, 164, 0.7) !important;
       }
     }
   }

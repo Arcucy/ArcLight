@@ -462,7 +462,7 @@ export default {
 
 .submit-btn {
   width: 100px;
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-input__slot {

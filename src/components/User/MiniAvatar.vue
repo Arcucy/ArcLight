@@ -46,8 +46,8 @@ export default {
 .avatar {
   background: #252525;
   &-img {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     background: #252525;
     &-loading {
       display: flex;
