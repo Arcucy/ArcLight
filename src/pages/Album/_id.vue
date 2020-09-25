@@ -171,11 +171,27 @@ export default {
     this.getAlbum(this.$route.params.id)
   },
   watch: {
-    wallet (val) {
+    async wallet (val) {
       if (this.info.authorAddress === val) {
         this.info.list.forEach(item => {
           item.unlock = true
         })
+      } else {
+        this.info.list.forEach(item => {
+          item.unlock = false
+        })
+        this.getAlbum(this.$route.params.id)
+      }
+    },
+    async price (val) {
+      if (this.wallet) {
+        console.log('double check')
+        await this.getItemStatus(this.wallet, this.$route.params.id, val)
+        if (this.owned) {
+          this.info.list.forEach(item => {
+            item.unlock = true
+          })
+        }
       }
     }
   },
@@ -187,16 +203,30 @@ export default {
     },
     async getItemStatus (address, itemAddress, price) {
       const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
+      console.log(res2)
       if (res2) {
         const transaction = await api.arweave.getTransactionDetail(res2)
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const type = tags['Purchase-Type']
         if (type === 'album-full') {
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+          console.log(finalPrice)
           const ar = api.arweave.getArFromWinston(transaction.quantity)
+          console.log(ar)
           if (ar === finalPrice) this.owned = true
         }
       }
+    },
+    async getIndividualStatus (address, itemAddress, price) {
+      this.info.list.forEach(async (item, index) => {
+        const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, itemAddress, index + 1 + '')
+        if (res1) {
+          const transaction = await api.arweave.getTransactionDetail(res1)
+          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
+          const ar = api.arweave.getArFromWinston(transaction.quantity)
+          if (ar === finalPrice) item.unlock = true
+        }
+      })
     },
     async getAlbum (id) {
       this.loading = true
@@ -216,9 +246,10 @@ export default {
         this.price = albumData.price.toFixed(12)
         this.info.list.forEach(item => {
           if (item.price) {
-            this.originalPrice = this.originalPrice + parseFloat(item.price)
+            this.originalPrice = parseFloat(this.originalPrice) + parseFloat(item.price)
           }
         })
+
         this.originalPrice = this.originalPrice.toFixed(12)
         this.info.list = this.info.list.map(item => {
           return { ...item, downloadAwait: false }
@@ -229,30 +260,27 @@ export default {
             item.unlock = true
           })
         }
-        await this.getItemStatus(this.wallet, id, albumData.price)
+        if (this.wallet) {
+          await this.getItemStatus(this.wallet, id, albumData.price)
+        }
 
         if (this.owned) {
           this.info.list.forEach(item => {
             item.unlock = true
           })
-        } else {
+        } else if (this.wallet) {
           this.info.list.forEach(async (item, index) => {
-            const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, item.id, index)
+            const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, id, index + 1 + '')
             if (res1) {
               const transaction = await api.arweave.getTransactionDetail(res1)
               const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
               const ar = api.arweave.getArFromWinston(transaction.quantity)
-              if (ar === finalPrice) this.owned = true
-            } else {
-              const res2 = await api.arweave.getItemPurchaseStatus(this.wallet, item.id)
-              const transaction = await api.arweave.getTransactionDetail(res2)
-              const tags = await api.arweave.getTagsByTransaction(transaction)
-              const type = tags['Purchase-Type']
-              if (type === 'album-full') {
-                const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
-                const ar = api.arweave.getArFromWinston(transaction.quantity)
-                if (ar === finalPrice) this.owned = true
-              }
+              if (ar === finalPrice) item.unlock = true
+              const winstonPriceSingle = api.arweave.getWinstonFromAr(parseFloat(item.price))
+              const winstonPriceAlbum = api.arweave.getWinstonFromAr(parseFloat(this.price))
+              let newAlbumPrice = winstonPriceAlbum / 0.8
+              newAlbumPrice = (newAlbumPrice - parseInt(winstonPriceSingle)) * 0.8
+              this.price = api.arweave.getArFromWinston(newAlbumPrice)
             }
           })
         }
