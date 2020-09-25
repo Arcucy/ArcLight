@@ -299,9 +299,7 @@ export default new Vuex.Store({
 
       API.arweave.getAddress(data.content).then(res => {
         commit('setWallet', res)
-        console.log(res)
         API.arweave.getIdFromAddress(res).then(res2 => {
-          console.log(res2)
           commit('setUsername', res2.data)
           commit('setUserType', res2.type)
           commit('setIsLoggedIn', true)

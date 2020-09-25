@@ -287,10 +287,8 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
+        this.soundeffectDesp = this.soundeffectDesp.replace(/<.*>/gmu, '')
         this.soundeffectDesp = this.soundeffectDesp.replace(/\\n/g, '<br>')
-        this.soundeffectDesp = this.soundeffectDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
-        this.soundeffectDesp = this.soundeffectDesp.replace(/(<img src=.*(\/)?>)/, '')
-        this.soundeffectDesp = this.soundeffectDesp.replace(/<audio>.*<\/audio>/, '')
         this.soundeffectDesp = this.soundeffectDesp
 
         const dataObj = {
