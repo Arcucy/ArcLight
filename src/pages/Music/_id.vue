@@ -321,10 +321,12 @@ export default {
       // 标题、简介、类型
       audio.title = data.title
       this.info.name = data.title
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
-      this.info.desp = this.info.desp.replace(/<br>/gm, '\\n')
-      this.info.desp = this.info.desp.replace(/<[^>]*>/gmu, '')
-      this.info.desp = this.info.desp.replace(/\\n/gmu, '<br>')
       this.info.genre = tags['Genre']
       this.price = data.price
       this.info.id = data.music
@@ -344,10 +346,12 @@ export default {
       // 标题、简介、类型
       audio.title = data.music[index].title
       this.info.name = data.music[index].title
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
-      this.info.desp = this.info.desp.replace(/<br>/gm, '\\n')
-      this.info.desp = this.info.desp.replace(/<[^>]*>/gmu, '')
-      this.info.desp = this.info.desp.replace(/\\n/gmu, '<br>')
       this.info.genre = tags['Genre']
       this.price = data.music[index].price
       this.info.id = data.music[index].id
@@ -366,10 +370,12 @@ export default {
       // 标题、简介
       audio.title = data.title
       this.info.name = data.title
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
-      this.info.desp = this.info.desp.replace(/<br>/gm, '\\n')
-      this.info.desp = this.info.desp.replace(/<[^>]*>/gmu, '')
-      this.info.desp = this.info.desp.replace(/\\n/gmu, '<br>')
       this.info.genre = tags['Category']
       this.price = data.price
       this.info.id = data.program
@@ -387,10 +393,12 @@ export default {
       // 标题、简介
       audio.title = data.title
       this.info.name = data.title
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
-      this.info.desp = this.info.desp.replace(/<br>/gm, '\\n')
-      this.info.desp = this.info.desp.replace(/<[^>]*>/gmu, '')
-      this.info.desp = this.info.desp.replace(/\\n/gmu, '<br>')
       this.price = data.price
       this.info.id = data.audio
       // 获取封面和音频

@@ -1,7 +1,7 @@
 <template>
   <spaceLayout>
     <div class="user">
-      <userInfo class="user-info" :user="user" />
+      <userInfo class="user-info" :id="$route.params.id" />
       <!-- Singles Sellings -->
       <div v-if="single.loading || single.addresses.length > 0" class="songs">
         <div class="songs-header">
@@ -155,22 +155,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType', 'userPage'])
+    ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType'])
   },
   watch: {
     async $route (val) {
       window.location.reload()
-      await this.setUserPage({ wallet: val.params.id })
-      let introduction = ''
-      if (this.userPage.introduction === '') {
-        introduction = 'No Introduction Yet'
-      } else {
-        introduction = this.userPage.introduction
-      }
-      introduction = introduction.replace(/<br>/gm, '\\n')
-      introduction = introduction.replace(/<[^>]*>/gmu, '')
-      introduction = introduction.replace(/\\n/gmu, '<br>')
-      this.user = { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
     },
     username (val) {
       if (this.wallet === this.$route.params.id) {
@@ -179,38 +168,12 @@ export default {
       } else {
         document.title = this.userPage.nickname + '\'s Profile - ArcLight'
       }
-    },
-    userPage (val) {
-      document.title = val.nickname + '\'s Profile - ArcLight'
-      let introduction = ''
-      if (this.userPage.introduction === false) {
-        introduction = 'No Introduction Yet'
-      } else {
-        introduction = this.userPage.introduction
-      }
-
-      introduction = introduction.replace(/<br>/gm, '\\n')
-      introduction = introduction.replace(/<[^>]*>/gmu, '')
-      introduction = introduction.replace(/\\n/gmu, '<br>')
-
-      this.user = {
-        nickname: this.userPage.nickname,
-        avatar: this.userPage.avatar,
-        introduction: introduction,
-        location: this.userPage.location,
-        website: this.userPage.website,
-        neteaseId: this.userPage.neteaseId,
-        soundcloudId: this.userPage.soundcloudId,
-        bandcampId: this.userPage.bandcampId,
-        type: this.userPage.type
-      }
     }
   },
   mounted () {
     if (this.wallet === this.$route.params.id) {
       this.setIsMe(true)
     }
-    this.setUserPage({ wallet: this.$route.params.id })
     document.title = 'Profile - ArcLight'
     // 假数据 循环 变多
     // const followers = []
@@ -220,9 +183,10 @@ export default {
     // this.followers = followers
     this.getAllAudioList('single', this.single)
     this.getAllAudioList('album', this.album)
+    window.vueTest = this
   },
   methods: {
-    ...mapActions(['setUserPage', 'setIsMe']),
+    ...mapActions(['setIsMe']),
     async getAllAudioList (type, aObject) {
       try {
         const res = await api.arweave.getUserAudioList(this.$route.params.id, type)

@@ -45,21 +45,34 @@ import soundcloudLogo from '@/assets/image/soundcloud.png'
 import bandcampLogo from '@/assets/image/bandcamp.png'
 import { mapState } from 'vuex'
 
+import API from '@/api/api'
+
 export default {
   components: {
     avatar
   },
   props: {
-    user: {
-      type: Object,
-      required: true
+    id: {
+      type: String,
+      default: ''
     }
   },
   data () {
     return {
       neteaseLogo: neteaseLogo,
       soundcloudLogo: soundcloudLogo,
-      bandcampLogo: bandcampLogo
+      bandcampLogo: bandcampLogo,
+      user: {
+        avatar: 'loading',
+        location: '',
+        website: '',
+        introduction: '',
+        neteaseId: '',
+        soundcloudId: '',
+        bandcampId: '',
+        nickname: '',
+        type: ''
+      }
     }
   },
   computed: {
@@ -89,9 +102,55 @@ export default {
       return this.user.bandcampId
     }
   },
+  mounted () {
+    this.getUserInfo()
+  },
   methods: {
     edit () {
       this.$router.push({ name: 'Edit' })
+    },
+    async getUserInfo () {
+      API.arweave.getLocationFromAddress(this.id).then(location => {
+        this.user.location = location
+      })
+      API.arweave.getWebsiteFromAddress(this.id).then(website => {
+        this.user.website = website
+      })
+      API.arweave.getIntroFromAddress(this.id).then(introduction => {
+        this.user.introduction = introduction
+      })
+      API.arweave.getNeteaseIdFromAddress(this.id).then(neteaseId => {
+        this.user.neteaseId = neteaseId
+      })
+      API.arweave.getSoundCloudIdFromAddress(this.id).then(soundcloudId => {
+        this.user.soundcloudId = soundcloudId
+      })
+      API.arweave.getBandCampFromAddress(this.id).then(bandcampId => {
+        this.user.bandcampId = bandcampId
+      })
+      API.arweave.getIdFromAddress(this.id).catch(() => {
+        this.user.avatar = ''
+        this.user.introduction = 'Account Invalid'
+      }).then(async user => {
+        this.user.nickname = user.data
+        this.user.type = user.type
+
+        if (user.type !== 'guest') {
+          const avatar = await API.arweave.getAvatarFromAddress(this.id)
+          if (avatar) {
+            this.user.avatar = avatar
+          } else {
+            this.user.avatar = ''
+          }
+        } else {
+          const avatar = await API.arweave.getAvatarFromAddress(this.id)
+          if (avatar) {
+            this.user.avatar = avatar
+          } else {
+            this.user.avatar = ''
+          }
+        }
+      })
     }
   }
 }

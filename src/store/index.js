@@ -34,9 +34,6 @@ export default new Vuex.Store({
     userIntroduction: '',
     userNoBalanceFailure: false,
     isMe: false,
-    userPage: {
-      avatar: 'loading'
-    },
     userPageLoading: true,
     singleCoverFile: '',
     singleCoverRaw: '',
@@ -127,9 +124,6 @@ export default new Vuex.Store({
     },
     setIsMe (state, status) {
       state.isMe = status
-    },
-    setUserPage (state, data) {
-      state.userPage = data
     },
     setUserPageLoading (state, status) {
       state.userPageLoading = status
@@ -327,63 +321,6 @@ export default new Vuex.Store({
     },
     setIsMe ({ commit }, status) {
       commit('setIsMe', status)
-    },
-    async setUserPage ({ commit }, data) {
-      let userPage = {
-        nickname: '',
-        avatar: '',
-        location: '',
-        introduction: '',
-        website: '',
-        neteaseId: '',
-        soundcloudId: '',
-        bandcampId: '',
-        type: ''
-      }
-
-      const location = await API.arweave.getLocationFromAddress(data.wallet)
-      userPage.location = location
-      const website = await API.arweave.getWebsiteFromAddress(data.wallet)
-      userPage.website = website
-      const introduction = await API.arweave.getIntroFromAddress(data.wallet)
-      userPage.introduction = introduction
-      const neteaseId = await API.arweave.getNeteaseIdFromAddress(data.wallet)
-      userPage.neteaseId = neteaseId
-      const soundcloudId = await API.arweave.getSoundCloudIdFromAddress(data.wallet)
-      userPage.soundcloudId = soundcloudId
-      const bandcampId = await API.arweave.getBandCampFromAddress(data.wallet)
-      userPage.bandcampId = bandcampId
-      const user = await API.arweave.getIdFromAddress(data.wallet).catch(() => {
-        userPage.avatar = ''
-        userPage.introduction = 'Account Invalid'
-        commit('setUserPage', userPage)
-        commit('setUserPageLoading', false)
-      })
-      userPage.nickname = user.data
-      userPage.type = user.type
-      if (user.type !== 'guest') {
-        const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
-        if (avatar) {
-          userPage.avatar = avatar
-          commit('setUserPage', userPage)
-          commit('setUserPageLoading', false)
-        } else {
-          userPage.avatar = ''
-          commit('setUserPage', userPage)
-          commit('setUserPageLoading', false)
-        }
-      } else {
-        const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
-        if (avatar) {
-          userPage.avatar = avatar
-          commit('setUserPage', userPage)
-          commit('setUserPageLoading', false)
-        } else {
-          userPage.avatar = ''
-          commit('setUserPage', userPage)
-          commit('setUserPageLoading', false)
-        }
-      }
     },
     setSingleCoverFile ({ commit }, file) {
       commit('setSingleCoverFile', file)
