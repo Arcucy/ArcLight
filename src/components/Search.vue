@@ -1,7 +1,7 @@
 <template>
   <div data-app="true">
     <v-autocomplete
-      v-model="select.id"
+      v-model="select"
       :loading="loading"
       :items="items"
       :search-input.sync="search"
@@ -14,6 +14,8 @@
       label="Search address / user / music"
       solo-inverted
       background-color="#333333"
+      color="primary"
+      @blur="reset"
     >
       <template v-slot:item="data">
         <template v-if="typeof (data.item) !== 'object'">
@@ -25,8 +27,8 @@
           </v-list-item-icon>
           <v-list-item-content>
             <a @click="goResult(data.item.id, data.item.type)">
-            <v-list-item-title v-html="data.item.id"></v-list-item-title>
-            <v-list-item-subtitle v-html="data.item.type" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
+              <v-list-item-title v-html="data.item.id"></v-list-item-title>
+              <v-list-item-subtitle v-html="data.item.type" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
             </a>
           </v-list-item-content>
         </template>
@@ -36,8 +38,8 @@
           </v-list-item-icon>
           <v-list-item-content>
             <a @click="goResult(data.item.id, data.item.type)">
-            <v-list-item-title v-html="data.item.title"></v-list-item-title>
-            <v-list-item-subtitle v-html="'by ' + data.item.artist" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
+              <v-list-item-title v-html="data.item.title"></v-list-item-title>
+              <v-list-item-subtitle v-html="'by ' + data.item.artist" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
             </a>
           </v-list-item-content>
         </template>
@@ -82,6 +84,7 @@ export default {
   },
   methods: {
     async querySelections (v) {
+      this.items = []
       this.loading = true
 
       if (typeof (v) === 'string' && v.length === 43) {
@@ -103,11 +106,17 @@ export default {
       this.loading = false
     },
     goResult (id, type) {
+      this.$emit('should-close', false)
       if (type === 'Album') {
         this.$router.push({ path: '/album/' + id })
       } else if (type !== 'User') {
         this.$router.push({ path: '/music/' + id })
       }
+    },
+    reset () {
+      this.items = []
+      this.loading = false
+      api.arweave.breakOnCall = true
     }
   }
 }
@@ -124,6 +133,15 @@ export default {
     &.primary--text {
       color: #E56D9B !important;
       caret-color: #E56D9B !important;
+    }
+  }
+
+  /deep/ .v-input__control {
+    background-color: rgba(51, 51, 51, 0.8) !important;
+    /deep/ .v-select__slot {
+      label {
+        color: #9F9F9F !important;
+      }
     }
   }
 }

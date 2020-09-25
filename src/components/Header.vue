@@ -15,7 +15,7 @@
       </router-link>
     </div>
     <div class="mobile-nav mobile-search-bar">
-      <v-btn icon color="white">
+      <v-btn icon color="white" @click="mobileDialog = true">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </div>
@@ -106,7 +106,7 @@
       v-model="show"
       max-width="340"
     >
-      <v-card style="width: 50vw">
+      <v-card>
         <v-card-title class="headline">Upload your key</v-card-title>
         <v-file-input
           v-model="file"
@@ -140,6 +140,19 @@
             Close
           </v-btn>
         </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="mobileDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+      <v-card dark>
+        <v-toolbar dark color="#E56D9B">
+          <v-btn icon dark @click="mobileDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title style="margin-right: 10px;">Search</v-toolbar-title>
+        </v-toolbar>
+        <v-list three-line subheader>
+          <Search @should-close="closeMobileDialog" class="mobile-search" />
+        </v-list>
       </v-card>
     </v-dialog>
     <v-snackbar
@@ -216,6 +229,7 @@ export default {
         { title: 'Sign Out', type: 'danger' }
       ],
       frosted: false,
+      mobileDialog: false,
       showPosition: 1
     }
   },
@@ -297,6 +311,9 @@ export default {
     },
     uploadMusic () {
       this.$router.push({ name: 'Upload' })
+    },
+    closeMobileDialog (status) {
+      this.mobileDialog = status
     }
   }
 }
@@ -377,6 +394,10 @@ export default {
 
 .search-bar {
   width: 50%;
+}
+
+.mobile-search {
+  margin-top: 16px;
 }
 
 .sign {
@@ -529,5 +550,13 @@ export default {
 <style lang="less">
 /deep/ .theme--light .v-list {
   background-color: #333;
+}
+
+@media screen and (max-width: 1200px) {
+  .v-application {
+    .v-menu__content {
+      max-height: 80vh !important;
+    }
+  }
 }
 </style>

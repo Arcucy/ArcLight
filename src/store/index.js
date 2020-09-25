@@ -8,6 +8,8 @@ import API from '../api/api'
 
 Vue.use(Vuex)
 
+const APP_NAME = 'arclight-test'
+
 let ar = Arweave.init({
   host: 'arweave.net',
   port: 443,
@@ -409,7 +411,7 @@ export default new Vuex.Store({
 
       // // Add tag 添加标签
       imgTransaction.addTag('Content-Type', data.img.type)
-      imgTransaction.addTag('App-Name', 'arclight-test')
+      imgTransaction.addTag('App-Name', APP_NAME)
       imgTransaction.addTag('Unix-Time', Date.now())
       imgTransaction.addTag('Type', 'single-cover')
       imgTransaction.addTag('Author-Address', address)
@@ -437,7 +439,7 @@ export default new Vuex.Store({
 
       // Add tag 添加标签
       musicTransaction.addTag('Content-Type', data.music.type)
-      musicTransaction.addTag('App-Name', 'arclight-test')
+      musicTransaction.addTag('App-Name', APP_NAME)
       musicTransaction.addTag('Unix-Time', Date.now())
       musicTransaction.addTag('Type', 'single-music')
       musicTransaction.addTag('Author-Address', address)
@@ -474,7 +476,7 @@ export default new Vuex.Store({
 
       singleTransaction = await ar.createTransaction({ data: JSON.stringify(singleInfo) }, data.key).catch(err => console.log('Single Transaction Created Failed: ', err))
 
-      singleTransaction.addTag('App-Name', 'arclight-test')
+      singleTransaction.addTag('App-Name', APP_NAME)
       singleTransaction.addTag('Unix-Time', Date.now())
       singleTransaction.addTag('Type', 'single-info')
       singleTransaction.addTag('Title', data.single.title)
@@ -506,7 +508,7 @@ export default new Vuex.Store({
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      postInfoTransaction.addTag('App-Name', 'arclight-test')
+      postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
       postInfoTransaction.addTag('Author-Address', address)
@@ -545,7 +547,7 @@ export default new Vuex.Store({
 
       // // Add tag 添加标签
       imgTransaction.addTag('Content-Type', data.img.type)
-      imgTransaction.addTag('App-Name', 'arclight-test')
+      imgTransaction.addTag('App-Name', APP_NAME)
       imgTransaction.addTag('Unix-Time', Date.now())
       imgTransaction.addTag('Type', 'album-cover')
       imgTransaction.addTag('Author-Address', address)
@@ -577,7 +579,7 @@ export default new Vuex.Store({
         musicTransaction = await ar.createTransaction({ data: musicReady }, data.key).catch(err => console.log('Music Transaction Created Failed: ', err))
         // Add tag 添加标签
         musicTransaction.addTag('Content-Type', musicFileList[i].type)
-        musicTransaction.addTag('App-Name', 'arclight-test')
+        musicTransaction.addTag('App-Name', APP_NAME)
         musicTransaction.addTag('Unix-Time', Date.now())
         musicTransaction.addTag('Type', 'album-music')
         musicTransaction.addTag('Track-Number', i + 1)
@@ -622,7 +624,7 @@ export default new Vuex.Store({
 
       albumTransaction = await ar.createTransaction({ data: JSON.stringify(albumInfo) }, data.key).catch(err => console.log('Album Transaction Created Failed: ', err))
 
-      albumTransaction.addTag('App-Name', 'arclight-test')
+      albumTransaction.addTag('App-Name', APP_NAME)
       albumTransaction.addTag('Unix-Time', Date.now())
       albumTransaction.addTag('Type', 'album-info')
       albumTransaction.addTag('Title', data.album.title)
@@ -655,7 +657,7 @@ export default new Vuex.Store({
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      postInfoTransaction.addTag('App-Name', 'arclight-test')
+      postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
       postInfoTransaction.addTag('Author-Address', address)
@@ -693,7 +695,7 @@ export default new Vuex.Store({
 
       // // Add tag 添加标签
       imgTransaction.addTag('Content-Type', data.img.type)
-      imgTransaction.addTag('App-Name', 'arclight-test')
+      imgTransaction.addTag('App-Name', APP_NAME)
       imgTransaction.addTag('Unix-Time', Date.now())
       imgTransaction.addTag('Type', 'podcast-cover')
       imgTransaction.addTag('Author-Address', address)
@@ -721,7 +723,7 @@ export default new Vuex.Store({
 
       // Add tag 添加标签
       programTransaction.addTag('Content-Type', data.music.type)
-      programTransaction.addTag('App-Name', 'arclight-test')
+      programTransaction.addTag('App-Name', APP_NAME)
       programTransaction.addTag('Unix-Time', Date.now())
       programTransaction.addTag('Type', 'podcast-program')
       programTransaction.addTag('Author-Address', address)
@@ -759,7 +761,7 @@ export default new Vuex.Store({
 
       podcastTransaction = await ar.createTransaction({ data: JSON.stringify(podcastInfo) }, data.key).catch(err => console.log('Podcast Transaction Created Failed: ', err))
 
-      podcastTransaction.addTag('App-Name', 'arclight-test')
+      podcastTransaction.addTag('App-Name', APP_NAME)
       podcastTransaction.addTag('Unix-Time', Date.now())
       podcastTransaction.addTag('Type', 'podcast-info')
       podcastTransaction.addTag('Podcast', data.podcast.podcast)
@@ -792,7 +794,7 @@ export default new Vuex.Store({
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      postInfoTransaction.addTag('App-Name', 'arclight-test')
+      postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
       postInfoTransaction.addTag('Author-Address', address)
@@ -829,7 +831,7 @@ export default new Vuex.Store({
 
       // // Add tag 添加标签
       imgTransaction.addTag('Content-Type', data.img.type)
-      imgTransaction.addTag('App-Name', 'arclight-test')
+      imgTransaction.addTag('App-Name', APP_NAME)
       imgTransaction.addTag('Unix-Time', Date.now())
       imgTransaction.addTag('Type', 'soundeffect-cover')
       imgTransaction.addTag('Author-Address', address)
@@ -857,7 +859,7 @@ export default new Vuex.Store({
 
       // Add tag 添加标签
       audioTransaction.addTag('Content-Type', data.music.type)
-      audioTransaction.addTag('App-Name', 'arclight-test')
+      audioTransaction.addTag('App-Name', APP_NAME)
       audioTransaction.addTag('Unix-Time', Date.now())
       audioTransaction.addTag('Type', 'soundeffect-audio')
       audioTransaction.addTag('Author-Address', address)
@@ -893,7 +895,7 @@ export default new Vuex.Store({
 
       soundEffectTransaction = await ar.createTransaction({ data: JSON.stringify(soundEffectInfo) }, data.key).catch(err => console.log('Single Transaction Created Failed: ', err))
 
-      soundEffectTransaction.addTag('App-Name', 'arclight-test')
+      soundEffectTransaction.addTag('App-Name', APP_NAME)
       soundEffectTransaction.addTag('Unix-Time', Date.now())
       soundEffectTransaction.addTag('Type', 'soundeffect-info')
       soundEffectTransaction.addTag('Title', data.soundEffect.title)
@@ -924,7 +926,7 @@ export default new Vuex.Store({
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      postInfoTransaction.addTag('App-Name', 'arclight-test')
+      postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
       postInfoTransaction.addTag('Author-Address', address)
@@ -952,7 +954,7 @@ export default new Vuex.Store({
 
       transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('App-Name', APP_NAME)
       transaction.addTag('Unix-Time', Date.now())
       transaction.addTag('Type', 'profile-location')
       transaction.addTag('Username', user.data)
@@ -977,7 +979,7 @@ export default new Vuex.Store({
 
       transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('App-Name', APP_NAME)
       transaction.addTag('Unix-Time', Date.now())
       transaction.addTag('Type', 'profile-website')
       transaction.addTag('Username', user.data)
@@ -1002,7 +1004,7 @@ export default new Vuex.Store({
 
       transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('App-Name', APP_NAME)
       transaction.addTag('Unix-Time', Date.now())
       transaction.addTag('Type', 'profile-introduction')
       transaction.addTag('Username', user.data)
@@ -1027,7 +1029,7 @@ export default new Vuex.Store({
 
       transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('App-Name', APP_NAME)
       transaction.addTag('Unix-Time', Date.now())
       transaction.addTag('Type', 'profile-neteaseid')
       transaction.addTag('Username', user.data)
@@ -1052,7 +1054,7 @@ export default new Vuex.Store({
 
       transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('App-Name', APP_NAME)
       transaction.addTag('Unix-Time', Date.now())
       transaction.addTag('Type', 'profile-soundcloudid')
       transaction.addTag('Username', user.data)
@@ -1077,7 +1079,7 @@ export default new Vuex.Store({
 
       transaction = await ar.createTransaction({ data: data.value }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      transaction.addTag('App-Name', 'arclight-test')
+      transaction.addTag('App-Name', APP_NAME)
       transaction.addTag('Unix-Time', Date.now())
       transaction.addTag('Type', 'profile-bandcampid')
       transaction.addTag('Username', user.data)
@@ -1108,7 +1110,7 @@ export default new Vuex.Store({
       let albumType = data.type
       if (data.type === 'album-full') data.type = 'album-info'
 
-      transaction.addTag('App-Name', 'arclight-test') // 指定 App-Name 为 测试网
+      transaction.addTag('App-Name', APP_NAME) // 指定 App-Name 为 测试网
       transaction.addTag('Type', 'Purchase') // 指定类型为 购买
       transaction.addTag('Purchase-Type', data.type) // 购买类型，比如什么 single-info 啦，album-info 啦
       if (albumType === 'album-info') { // 如果类型是购买专辑的话，执行下面的命令

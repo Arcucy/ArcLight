@@ -574,12 +574,20 @@ let arweave = {
     return new Promise(async (resolve, reject) => {
       this.breakOnCall = false
       let res = []
-      let data = await ar.arql({
+      let singleData = await ar.arql({
         op: 'and',
         expr1: {
-          op: 'equals',
-          expr1: 'App-Name',
-          expr2: APP_NAME
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.single
+          }
         },
         expr2: {
           op: 'or',
@@ -595,6 +603,95 @@ let arweave = {
           }
         }
       })
+      let albumData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.album
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let podcastData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.podcast
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let soundeffectData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.soundEffect
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let data = []
+      data = data.concat(singleData).concat(albumData).concat(podcastData).concat(soundeffectData)
       for (let i = 0; i < data.length; i++) {
         if (this.breakOnCall) {
           break
