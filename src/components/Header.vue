@@ -73,7 +73,7 @@
               style="margin-right: 0.3rem;"
             >
           </v-avatar>
-          {{ username }}
+          <p class="username">{{ username }}</p>
         </v-btn>
       </template>
       <v-list>
@@ -392,6 +392,13 @@ export default {
   margin-right: 2rem;
   /deep/ .v-btn__content {
     color: white;
+    max-width: 200px;
+    .username {
+      margin: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 }
 

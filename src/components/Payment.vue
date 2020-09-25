@@ -251,6 +251,26 @@ export default {
         this.showWallet = false
         return
       }
+
+      if (this.type === 'album-info') {
+        const trackStatus = await API.arweave.getAlbumItemPurchaseStatus(this.wallet, this.itemId, this.trackNumber)
+        if (trackStatus) {
+          this.failSnackbar = true
+          this.failMessage = 'You have already bought this song'
+          this.showWallet = false
+          return
+        }
+      } else {
+        const status = await API.arweave.getItemPurchaseStatus(this.wallet, this.itemId)
+        if (status) {
+          this.failSnackbar = true
+          this.failMessage = 'You have already bought this song'
+          if (this.type === 'album-full') this.failMessage = 'You have already bought this album'
+          this.showWallet = false
+          return
+        }
+      }
+
       const balance = await API.arweave.getBalance(this.keyFileContent)
       if (balance < this.price) {
         this.failSnackbar = true

@@ -161,7 +161,7 @@ export default {
       originalPrice: 0,
       owned: false,
       showDialog: false,
-      downloadAwait: false
+      count: 0
     }
   },
   computed: {
@@ -169,6 +169,7 @@ export default {
   },
   mounted () {
     this.getAlbum(this.$route.params.id)
+    this.count = 0
   },
   watch: {
     async wallet (val) {
@@ -263,7 +264,6 @@ export default {
         if (this.wallet) {
           await this.getItemStatus(this.wallet, id, albumData.price)
         }
-
         if (this.owned) {
           this.info.list.forEach(item => {
             item.unlock = true
@@ -276,6 +276,9 @@ export default {
               const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
               const ar = api.arweave.getArFromWinston(transaction.quantity)
               if (ar === finalPrice) item.unlock = true
+
+              this.count++
+
               const winstonPriceSingle = api.arweave.getWinstonFromAr(parseFloat(item.price))
               const winstonPriceAlbum = api.arweave.getWinstonFromAr(parseFloat(this.price))
               let newAlbumPrice = winstonPriceAlbum / 0.8
@@ -283,6 +286,9 @@ export default {
               this.price = api.arweave.getArFromWinston(newAlbumPrice)
             }
           })
+          if (this.count === this.info.list.length) {
+            this.owned = true
+          }
         }
 
         // 获取封面
@@ -291,7 +297,6 @@ export default {
         this.getArtist(this.info.authorAddress)
         // console.log('专辑信息：', this.info, tags, albumData)
       } catch (e) {
-        console.error('[Failed to get album information]', e)
         this.$message.error('Failed to get album information')
       }
       this.loading = false
