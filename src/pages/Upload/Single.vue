@@ -474,19 +474,19 @@ export default {
 }
 
 /deep/ .v-text-field__slot > input {
-  color: white;
+  color: white !important;
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: white;
+    color: white !important;
     opacity: 1; /* Firefox */
   }
 }
 
 /deep/ .v-text-field__slot > textarea {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field__slot > label {
-  color: white;
+  color: white !important;
 }
 
 .price {
@@ -504,7 +504,7 @@ export default {
 }
 
 /deep/ .v-icon--link {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-select__selection {
@@ -512,20 +512,20 @@ export default {
 }
 
 /deep/ .v-select__slot > label {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-input__icon > i {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field--is-booted {
   color: #E56D9B;
-  border-color: white;
+  border-color: white !important;
 }
 
 /deep/ .v-file-input__text.v-file-input__text--placeholder {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
