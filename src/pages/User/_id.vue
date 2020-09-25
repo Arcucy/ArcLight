@@ -199,7 +199,9 @@ export default {
     }
   },
   mounted () {
-    console.log('User: ', this.$route.params.id)
+    if (this.wallet === this.$route.params.id) {
+      this.setIsMe(true)
+    }
     this.setUserPage({ wallet: this.$route.params.id })
     document.title = 'Profile - ArcLight'
     // 假数据 循环 变多

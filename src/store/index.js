@@ -305,6 +305,7 @@ export default new Vuex.Store({
       commit('setUserAvatar', '')
       commit('setIsLoggedIn', false)
       commit('setWallet', '')
+      commit('setIsMe', false)
     },
     setIsMe ({ commit }, status) {
       commit('setIsMe', status)
@@ -341,6 +342,21 @@ export default new Vuex.Store({
         const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
         if (avatar) {
           userPage.avatar = avatar
+          commit('setUserPage', userPage)
+          commit('setUserPageLoading', false)
+        } else {
+          userPage.avatar = ''
+          commit('setUserPage', userPage)
+          commit('setUserPageLoading', false)
+        }
+      } else {
+        const avatar = await API.arweave.getAvatarFromAddress(data.wallet)
+        if (avatar) {
+          userPage.avatar = avatar
+          commit('setUserPage', userPage)
+          commit('setUserPageLoading', false)
+        } else {
+          userPage.avatar = ''
           commit('setUserPage', userPage)
           commit('setUserPageLoading', false)
         }
