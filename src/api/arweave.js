@@ -47,6 +47,7 @@ const REVERSED_AUDIO_TYPE = {
 const APP_NAME = 'arclight-test'
 
 let arweave = {
+  breakOnCall: false,
 
   /**
    * Get user address based on key file content input   
@@ -569,8 +570,9 @@ let arweave = {
     })
   },
 
-  querySearch (val) {
+  querySearch (val, callback) {
     return new Promise(async (resolve, reject) => {
+      this.breakOnCall = false
       let res = []
       let data = await ar.arql({
         op: 'and',
@@ -593,13 +595,21 @@ let arweave = {
           }
         }
       })
-      console.log(data)
       for (let i = 0; i < data.length; i++) {
+        if (this.breakOnCall) {
+          break
+        }
         const tx = await this.getTransactionDetail(data[i])
         const tags = await this.getTagsByTransaction(tx)
         const type = REVERSED_AUDIO_TYPE[tags['Type']]
         const icon = AUDIO_ICON[tags['Type']]
-        res.push({ searchType: 'Music', id: data[i], title: tags['Title'], artist: tags['Author-Username'], type: type, icon: icon })
+
+        const id = data[i]
+        const title = tags['Title']
+        const artist = tags['Author-Username']
+        const final = { searchType: 'Music', id: id, title: title, artist: artist, type: type, icon: icon }
+        if (icon !== undefined) callback(final)
+        else continue
       }
       resolve(res)
     })
