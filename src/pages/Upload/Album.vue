@@ -455,7 +455,7 @@ export default {
   font-weight: 600;
   display: block;
   text-align: left;
-  color: white;
+  color: white !important;
   margin-bottom: 16px;
 }
 
@@ -579,8 +579,12 @@ export default {
 }
 
 .finput {
-  /deep/ .v-input__control .v-input__slot fieldset {
-    color: rgba(254, 118, 164, 0.7) !important;
+  /deep/ .v-input__control {
+    .v-input__slot {
+      fieldset {
+        color: rgba(254, 118, 164, 0.7) !important;
+      }
+    }
   }
 }
 

@@ -336,7 +336,7 @@ export default {
 .submit-btn {
   text-align: left;
   button {
-    color: white;
+    color: white !important;
   }
 }
 

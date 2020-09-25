@@ -23,7 +23,7 @@
       width="300"
       class="img-upload-modal br10"
     >
-      <v-card>
+      <v-card class="img-upload-card">
         <v-card-title class="headline" style="text-align: center; display: block; margin-top: 10px;">
           <p class="modal-header-title" style="margin-bottom: 0px;">Edit Cover</p>
         </v-card-title>
@@ -332,11 +332,11 @@ export default {
   height: 100%;
 }
 
-.v-card {
+.img-upload-card {
   background-color: white;
-  align-items: center;
-  justify-content: center;
-  display: flex;
+  align-items: center !important;
+  justify-content: center !important;
+  display: flex !important;
   flex-direction: column;
 }
 

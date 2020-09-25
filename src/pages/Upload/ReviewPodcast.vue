@@ -413,7 +413,7 @@ export default {
 
 .submit-btn {
   width: 100px;
-  color: white;
+  color: white !important;
 }
 
 .upload-status {
