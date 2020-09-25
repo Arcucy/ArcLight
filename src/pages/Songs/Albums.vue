@@ -44,7 +44,7 @@ import api from '@/api/api'
 import spaceLayout from '@/components/Layout/Space'
 import albumCard from '@/components/Song/AlbumCard'
 import getAudioInfo from '@/components/Song/GetAudioInfo'
-import loadCard from '@/components/Song/loadCard'
+import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {
