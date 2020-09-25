@@ -40,9 +40,13 @@
             <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="downloadAudio(music, index)">
               <v-progress-circular
                 v-if="music.downloadAwait"
-                indeterminate
+                :indeterminate="!pct"
+                v-model="pct"
+                rotate="-90"
                 color="#E56D9B"
-              ></v-progress-circular>
+              >
+                {{ pct || '' }}
+              </v-progress-circular>
               <v-icon v-else>mdi-download</v-icon>
             </div>
             <div v-else class="music-download download-lock">
@@ -161,7 +165,8 @@ export default {
       originalPrice: 0,
       owned: false,
       showDialog: false,
-      count: 0
+      count: 0,
+      pct: 0
     }
   },
   computed: {
@@ -364,9 +369,12 @@ export default {
       div.appendChild(a)
       const downloadA = document.getElementById('audio' + index)
       downloadA.click()
-      this.info.list[index].downloadAwait = false
       window.URL.revokeObjectURL(res.src)
       div.removeChild(a)
+      setTimeout(() => {
+        this.info.list[index].downloadAwait = false
+        this.pct = 0
+      }, 1000)
     }
   }
 }
