@@ -244,6 +244,11 @@ export default {
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
         this.info.desp = albumData.desp
+
+        this.info.desp = this.info.desp.replace(/<br>/gm, '\\n')
+        this.info.desp = this.info.desp.replace(/<[^>]*>/gmu, '')
+        this.info.desp = this.info.desp.replace(/\\n/gmu, '<br>')
+
         this.info.list = albumData.music
         this.price = albumData.price.toFixed(12)
         this.info.list.forEach(item => {
