@@ -328,10 +328,8 @@ export default {
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
       }
 
+      this.albumDesp = this.albumDesp.replace(/<.*>/gmu, '')
       this.albumDesp = this.albumDesp.replace(/\\n/g, '<br>')
-      this.albumDesp = this.albumDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
-      this.albumDesp = this.albumDesp.replace(/(<img src=.*(\/)?>)/, '')
-      this.albumDesp = this.albumDesp.replace(/<audio>.*<\/audio>/, '')
       this.albumDesp = this.albumDesp
 
       const dataObj = {

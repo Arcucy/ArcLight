@@ -301,10 +301,8 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
+        this.singleDesp = this.singleDesp.replace(/<.*>/gmu, '')
         this.singleDesp = this.singleDesp.replace(/\\n/g, '<br>')
-        this.singleDesp = this.singleDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
-        this.singleDesp = this.singleDesp.replace(/(<img src=.*(\/)?>)/, '')
-        this.singleDesp = this.singleDesp.replace(/<audio>.*<\/audio>/, '')
         this.singleDesp = this.singleDesp
 
         const dataObj = {
