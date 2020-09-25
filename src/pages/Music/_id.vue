@@ -362,6 +362,7 @@ export default {
       this.info.name = data.title
       this.info.desp = data.desp
       this.info.genre = tags['Category']
+      this.price = data.price
       this.info.id = data.program
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
