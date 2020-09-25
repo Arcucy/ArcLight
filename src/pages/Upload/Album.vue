@@ -118,14 +118,7 @@
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-          <div class="name-desp side-title">Album Price</div>
-          <v-text-field
-            v-model="price"
-            class="price"
-            solo
-            label="Prepend"
-            prepend-inner-icon="mdi-cash-multiple"
-          ></v-text-field>
+          <div class="name-desp side-title">Album Price will always be 80% of your total price for each song</div>
           <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
         </div>
       </div>
