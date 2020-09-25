@@ -3,18 +3,17 @@
     <div class="user">
       <userInfo class="user-info" :user="user" />
       <!-- Singles Sellings -->
-      <div v-if="single.loading || single.addresses.length > 0" class="songs">
+      <div v-if="single.loading || single.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
-            Singles Sellings
-            {{ single.addresses.length ? `(${single.list.length}/${single.addresses.length})` : '' }}
+            New Singles Sellings
           </h4>
           <a>
             All Sellings
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </a>
         </div>
-        <scrollXBox list-id="single" card-id="single-card">
+        <scrollXBox list-id="single" card-id="single-card" :list-update="single.list">
           <singleCard
             id="single-card"
             class="single-card"
@@ -26,18 +25,17 @@
         </scrollXBox>
       </div>
       <!-- Albums Sellings -->
-      <div v-if="album.loading || album.addresses.length > 0" class="songs">
+      <div v-if="album.loading || album.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
-            Albums Sellings
-            {{ album.addresses.length ? `(${album.list.length}/${album.addresses.length})` : '' }}
+            New Albums Sellings
           </h4>
           <a>
             All Sellings
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </a>
         </div>
-        <scrollXBox list-id="albums" card-id="albums-card">
+        <scrollXBox list-id="albums" card-id="albums-card" :list-update="album.list">
           <albumCard
             id="albums-card"
             class="album-card"
@@ -49,7 +47,7 @@
         </scrollXBox>
       </div>
       <!-- Favourite Singers -->
-      <div class="songs">
+      <!-- <div class="songs">
         <div class="songs-header">
           <h4>
             Favourite Singers
@@ -68,14 +66,15 @@
             :user="follower"
           />
         </scrollXBox>
-      </div>
+      </div> -->
     </div>
   </spaceLayout>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
 import api from '@/api/api'
+import decode from '@/util/decode'
+import { mapActions, mapState } from 'vuex'
 
 import spaceLayout from '@/components/Layout/Space'
 import userInfo from '@/components/User/UserInfo'
@@ -97,49 +96,17 @@ export default {
   },
   data () {
     return {
-      followers: [
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Taylor Swift'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'TRXYE'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'TIKKA'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Lady Gaga'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: '李知恩'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Ariana Grande'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Aril Lavigne Lavigne Lavigne Lavigne'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Little Sound'
-        }
-      ],
       single: {
         list: [],
         addresses: [],
-        loading: true
+        loading: true,
+        size: 16
       },
       album: {
         list: [],
         addresses: [],
-        loading: true
+        loading: true,
+        size: 10
       },
       user: {
         nickname: '',
@@ -151,6 +118,12 @@ export default {
         soundcloudId: '',
         bandcampId: '',
         type: ''
+      },
+      loadingCard: {
+        txid: '',
+        title: 'Loading...',
+        price: '0000',
+        authorUsername: 'Artist loading...'
       }
     }
   },
@@ -212,12 +185,6 @@ export default {
     }
     this.setUserPage({ wallet: this.$route.params.id })
     document.title = 'Profile - ArcLight'
-    // 假数据 循环 变多
-    // const followers = []
-    // for (let i = 0; i < 3; i++) {
-    //   followers.push(...this.followers)
-    // }
-    // this.followers = followers
     this.getAllAudioList('single', this.single)
     this.getAllAudioList('album', this.album)
   },
@@ -225,19 +192,50 @@ export default {
     ...mapActions(['setUserPage', 'setIsMe']),
     async getAllAudioList (type, aObject) {
       try {
-        const res = await api.arweave.getUserAudioList(this.$route.params.id, type)
+        const res = await api.arweave.getAllAudioList(type)
         aObject.addresses = res
-        await api.arweave.getAudioInfoByTxids(res, (item, index) => {
-          if (item) aObject.list.push(item)
-        })
+        for (let i = 0; aObject.addresses.length !== 0 && i < aObject.size; i++) {
+          this.getInfoByTxid(aObject, aObject.addresses.shift())
+        }
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
         this.$message.error(`Failed to get ${type} list`)
       }
-      if (aObject.addresses.length !== aObject.list.length) {
-        this.$message(`Expecting fetching data for ${aObject.addresses.length}, but got only ${aObject.list.length}`)
-      }
       aObject.loading = false
+    },
+    async getInfoByTxid (aObject, txid) {
+      // 添加对应的卡片并进入加载状态
+      aObject.list.push({...this.loadingCard, txid: txid})
+      try {
+        const transaction = await api.arweave.getTransactionDetail(txid)
+        if (transaction) {
+          const tags = api.arweave.getTagsByTransaction(transaction)
+          const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+          // 给 txid 相同的卡片赋予获取到的信息
+          const cardIndex = aObject.list.findIndex(item => item.txid === txid)
+          this.$set(aObject.list, cardIndex, {
+            txid,
+            authorAddress: tags['Author-Address'],
+            authorUsername: tags['Author-Username'],
+            type: tags.Type,
+            unixTime: Number(tags['Unix-Time']),
+            title: audioData.title,
+            desp: audioData.desp,
+            price: audioData.price,
+            duration: audioData.duration,
+            coverTxid: audioData.cover,
+            musicTxid: audioData.music
+          })
+          // 成功的结束
+          return
+        }
+      } catch (e) {
+        console.error(txid, e)
+      }
+      // 失败处理：删掉这个卡片，并请求一个新的。
+      aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
+      const addresse = aObject.addresses.shift()
+      if (addresse) this.getInfoByTxid(aObject, addresse)
     }
   }
 }
