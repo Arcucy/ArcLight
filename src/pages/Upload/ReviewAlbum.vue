@@ -282,6 +282,7 @@ export default {
     }
   },
   mounted () {
+    document.title = 'Review Your Upload - ArcLight'
     this.musicPct = 0
     this.coverPct = 0
     this.uploadDone = false

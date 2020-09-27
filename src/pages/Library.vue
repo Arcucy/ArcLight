@@ -117,6 +117,7 @@ export default {
   },
   mounted () {
     if (this.wallet) this.getList(this.tab || this.defaultTab)
+    document.title = 'My Library - ArcLight'
   },
   methods: {
     async getList (type) {

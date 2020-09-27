@@ -265,6 +265,8 @@ export default {
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
 
+        document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+
         albumData.desp = albumData.desp.replace(/<br>/gm, '\\n')
         albumData.desp = albumData.desp.replace(/<[^>]*>/gmu, '')
         albumData.desp = albumData.desp.replace(/\\n/gmu, '<br>')
