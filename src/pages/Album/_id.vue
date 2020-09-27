@@ -57,7 +57,7 @@
         <!-- right -->
         <div class="album-box-col">
           <!-- Download -->
-          <div v-if="!loading && (owned || info.authorAddress === wallet)" class="album-download">
+          <div v-if="!downloading && !loading && (owned || info.authorAddress === wallet)" class="album-download">
             <v-btn
               block
               large
@@ -66,10 +66,20 @@
               rounded
               color="#E56D9B"
               :height="44"
+              @click="downloadAlbum"
             >
               DOWNLOAD
             </v-btn>
           </div>
+          <v-progress-linear
+            v-else-if="downloading"
+            v-model="albumPct"
+            color="#E56D9B"
+            height="50"
+            style="border-radius: 999px; color: white;"
+          >
+            <strong>{{ Math.ceil(albumPct) }}%</strong>
+          </v-progress-linear>
           <!-- Buy -->
           <div v-else class="album-buy">
             <h4>
@@ -131,10 +141,14 @@
 import api from '@/api/api'
 import decode from '@/util/decode'
 
+import JSZip from 'jszip'
+
 import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
 import { mapState } from 'vuex'
+
+let zip = new JSZip()
 
 export default {
   components: {
@@ -166,11 +180,18 @@ export default {
       owned: false,
       showDialog: false,
       count: 0,
-      pct: 0
+      downloading: false,
+      pct: 0,
+      singlePct: 0,
+      tempPct: 0,
+      fenduanPct: 0
     }
   },
   computed: {
-    ...mapState(['wallet'])
+    ...mapState(['wallet']),
+    albumPct () {
+      return Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
+    }
   },
   mounted () {
     this.getAlbum(this.$route.params.id)
@@ -412,6 +433,67 @@ export default {
         this.info.list[index].downloadAwait = false
         this.pct = 0
       }, 1000)
+    },
+    getMusicRaw (item) {
+      return new Promise(async (resolve, reject) => {
+        const music = await api.arweave.getMusic(item.id, pct => {
+          this.singlePct = pct
+        })
+        this.tempPct += 100
+        this.musicType = music.type
+        const getExt = {
+          'audio/mp3': 'mp3',
+          'audio/flac': 'flac',
+          'audio/wav': 'wav',
+          'audio/ogg': 'ogg'
+        }
+        // 挂载音频到一个 URL，并指定给 audio.pic
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
+        reader.onload = (event) => {
+          console.log('getting data for: ', item.title + ' by ' + this.info.artist + '.' + getExt[music.type] + ' with ' + music.src)
+          resolve({ data: event.target.result, type: music.type })
+        }
+      })
+    },
+    async downloadAlbum () {
+      this.albumPct = 0
+      this.downloading = true
+      let urlArray = []
+      this.fenduanPct = 100 / this.info.list.length / 100
+
+      for (let i = 0; i < this.info.list.length; i++) {
+        const id = this.info.list[i].id
+        const title = this.info.list[i].title
+        const getExt = {
+          'audio/mp3': 'mp3',
+          'audio/flac': 'flac',
+          'audio/wav': 'wav',
+          'audio/ogg': 'ogg'
+        }
+        console.log('get url for:', title + ' by ' + this.info.artist)
+        const data = await this.getMusicRaw({ id: id, title: title })
+        console.log(data)
+        zip.file(title + ' by ' + this.info.artist + '.' + getExt[data.type], new Blob([data.data], { type: data.type }))
+      }
+      zip.generateAsync({ type: 'blob' }).then((blob) => {
+        console.log(blob)
+        let url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
+        const div = document.getElementById('album')
+        const a = document.createElement('a')
+        a.href = url
+        a.download = this.info.name + ' by ' + this.info.artist + '.zip'
+        a.id = 'zip'
+        div.appendChild(a)
+        const downloadA = document.getElementById('zip')
+        downloadA.click()
+        div.removeChild(a)
+        this.downloading = false
+        window.URL.revokeObjectURL(url)
+        urlArray.forEach(item => {
+          window.URL.revokeObjectURL(item.src)
+        })
+      })
     }
   }
 }
