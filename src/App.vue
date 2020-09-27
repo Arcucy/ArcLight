@@ -1,12 +1,30 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="routerAlive">
     <router-view/>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      routerAlive: true
+    }
+  },
+  provide () {
+    return {
+      routerRefresh: this.routerRefresh
+    }
+  },
+  methods: {
+    routerRefresh () {
+      this.routerAlive = false
+      this.$nextTick(() => {
+        this.routerAlive = true
+      })
+    }
+  }
 }
 </script>
 
