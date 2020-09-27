@@ -136,37 +136,34 @@ export default new Router({
     },
     {
       path: '/user/:id',
-      name: 'User',
       component: User,
-      props: true,
-      redirect: '/user/:id/',
       children: [
         {
-          path: '/user/:id/',
-          name: 'UserIndex',
+          path: '',
+          name: 'User',
           component: UserIndex,
           props: true
         },
         {
-          path: '/user/:id/single',
+          path: 'single',
           name: 'UserSingle',
           component: UserSingle,
           props: true
         },
         {
-          path: '/user/:id/album',
+          path: 'album',
           name: 'UserAlbum',
           component: UserAlbum,
           props: true
         },
         {
-          path: '/user/:id/sound',
+          path: 'sound',
           name: 'UserSound',
           component: UserSound,
           props: true
         },
         {
-          path: '/user/:id/podcast',
+          path: 'podcast',
           name: 'UserPodcast',
           component: UserPodcast,
           props: true

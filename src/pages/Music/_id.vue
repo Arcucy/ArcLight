@@ -117,7 +117,7 @@
         </a>
       </div>
       <!-- Payed Users -->
-      <div class="music-sold">
+      <!-- <div class="music-sold">
         <p class="music-sold-title">
           These users have already bought this song.
         </p>
@@ -131,7 +131,7 @@
             <miniAvatar :size="38" :src="user.avatar" />
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- Artist -->
       <div class="music-artist">
         <router-link :to="{ name: 'User', params: { id: artist.id } }">

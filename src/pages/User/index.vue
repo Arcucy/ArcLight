@@ -163,9 +163,6 @@ export default {
     ...mapState(['wallet', 'isMe', 'username', 'userAvatar', 'userIntroduction', 'userType'])
   },
   watch: {
-    async $route (val) {
-      window.location.reload()
-    },
     username (val) {
       if (this.wallet === this.$route.params.id) {
         this.setIsMe(true)
