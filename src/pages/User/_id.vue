@@ -15,6 +15,12 @@ export default {
   components: {
     spaceLayout,
     userInfo
+  },
+  inject: ['routerRefresh'],
+  watch: {
+    $route (val, oldVal) {
+      if (val.params.id !== oldVal.params.id) this.routerRefresh()
+    }
   }
 }
 </script>
