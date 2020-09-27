@@ -236,22 +236,22 @@ export default {
         this.paymentConfirm = false
         this.showConfirm = false
         this.showDialog = true
+        this.$emit('purchase-complete', true)
       }
     }
   },
   methods: {
     ...mapActions(['purchaseForItem']),
     buyClick () {
-      this.showWallet = true
-    },
-    async step2 () {
       if (!this.username) {
         this.failSnackbar = true
         this.failMessage = 'Please Login First'
         this.showWallet = false
         return
       }
-
+      this.showWallet = true
+    },
+    async step2 () {
       if (this.type === 'album-info') {
         const trackStatus = await API.arweave.getAlbumItemPurchaseStatus(this.wallet, this.itemId, this.trackNumber)
         if (trackStatus) {
