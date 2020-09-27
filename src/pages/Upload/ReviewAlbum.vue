@@ -126,6 +126,25 @@
         :bill="bill"
         @confirm="submit"
       />
+      <v-dialog
+        v-model="showUpload"
+        width="360"
+        @click:outside="outsideReset"
+      >
+        <v-card dark class="upload-notice">
+          <h3 class="upload-notice-title">
+            Upload Pending
+          </h3>
+          <p class="upload-notice-content">
+            Your artwork has been uploaded to Arweave Permaweb Storage. Your work may not be available soon after you uploaded,
+            It will need a short time of mining for miners to help you save to next block.
+            Be patient, your wonderful will be forever stored!
+          </p>
+          <v-btn class="confirm-button" depressed color="#E56D9B" :disabled="disAllowStep2" block @click="showUpload = false">
+            Confirm
+          </v-btn>
+        </v-card>
+      </v-dialog>
     </div>
   </spaceLayout>
 </template>
@@ -160,7 +179,8 @@ export default {
       musicPct: 0,
       uploadDone: false,
       bill: {},
-      showDialog: false
+      showDialog: false,
+      showUpload: false
     }
   },
   computed: {
@@ -168,6 +188,7 @@ export default {
   },
   watch: {
     albumUploadComplete (val) {
+      this.showUpload = true
       this.submitBtnLoading = !val
       this.uploadDone = true
     },
@@ -561,6 +582,23 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
   line-height: 30px;
+}
+
+.upload-notice {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .upload-notice-content {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+}
+
+.upload-notice-title {
+  margin-bottom: 24px;
+  text-align: left;
 }
 
 @media screen and (max-width: 1200px) {
