@@ -117,6 +117,9 @@ export default {
         this.user.website = website
       })
       API.arweave.getIntroFromAddress(this.id).then(introduction => {
+        if (!introduction) {
+          introduction = 'No Introduction Yet'
+        }
         this.user.introduction = introduction
       })
       API.arweave.getNeteaseIdFromAddress(this.id).then(neteaseId => {
