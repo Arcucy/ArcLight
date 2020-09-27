@@ -10,7 +10,6 @@
       class="mx-4 autocomplete"
       flat
       hide-details
-      hide-no-data
       label="Search address / user / music"
       solo-inverted
       background-color="#333333"
