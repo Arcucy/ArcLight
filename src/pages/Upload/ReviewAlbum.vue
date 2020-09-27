@@ -68,7 +68,7 @@
               #{{ index + 1 }} {{ music.title }}
               </div>
               <div class="player">
-                <aplayer id="ap" :music="music" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
+                <aplayer id="ap" :music="music" :lrcType="0" class="music-player" theme="#E56D9B" />
               </div>
             </div>
           </div>
@@ -485,6 +485,10 @@ export default {
   margin-top: 16px;
 }
 
+.music-player {
+  width: 300px;
+}
+
 .player-container {
   display: flex;
   align-items: center;
@@ -501,5 +505,58 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
   line-height: 30px;
+}
+
+@media screen and (max-width: 1200px) {
+  .album-container {
+    flex-direction: column;
+    .info-container {
+      .album-title-container {
+        width: 100%;
+        margin-top: 16px;
+        flex-direction: column;
+        text-align: left;
+        justify-content: flex-start;
+        align-items: baseline;
+      }
+      .album-title {
+        margin-top: 10px;
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        word-break: break-all;
+      }
+    }
+    .album-artist {
+      font-size: 18px;
+    }
+    .album-desp {
+      p {
+        font-size: 14px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 10;
+        overflow: hidden;
+        word-break: break-all;
+      }
+    }
+  }
+  .other {
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .music-player {
+    width: 90vw;
+  }
+
+  .player-container {
+    align-items: baseline;
+    flex-direction: column;
+  }
 }
 </style>
