@@ -235,7 +235,6 @@ export default {
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
-    document.title = 'Music Loading... - ArcLight'
   },
   watch: {
     $route (val) {
@@ -343,7 +342,8 @@ export default {
       audio.src = await this.getAudio(data.music)
       this.audio = audio
 
-      document.title = this.info.name + ' by ' + this.info.artist + 'ArcLight'
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化专辑 */
     async initAlbum (tags, data, albumNum = 1) {
@@ -371,7 +371,8 @@ export default {
       audio.src = await this.getAudio(data.music[index].id)
       this.audio = audio
 
-      document.title = this.info.name + ' by ' + this.info.artist + 'ArcLight'
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化播客 */
     async initPodcast (tags, data) {
@@ -396,7 +397,8 @@ export default {
       audio.src = await this.getAudio(data.program)
       this.audio = audio
 
-      document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + 'ArcLight'
+      document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${data.podcast} \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化音效 */
     async initSoundeffect (tags, data) {
@@ -420,7 +422,8 @@ export default {
       audio.src = await this.getAudio(data.audio)
       this.audio = audio
 
-      document.title = this.info.name + ' by ' + this.info.artist + 'ArcLight'
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化作者信息 */
     initArtist (audio, tags) {
