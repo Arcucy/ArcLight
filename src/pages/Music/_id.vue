@@ -76,7 +76,7 @@
         </div>
       </div>
       <!-- Download -->
-      <div v-if="owned && !loading" class="music-download">
+      <div v-if="(owned || artist.id === wallet || !price) && !loading" class="music-download">
         <a :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
           <v-btn
             block
@@ -104,33 +104,6 @@
           :itemId="$route.params.id"
           :trackNumber="$route.query.album + ''"
         />
-        <a v-if="artist.id === wallet || !price" :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
-          <v-btn
-            block
-            large
-            light
-            outlined
-            rounded
-            color="#E56D9B"
-            :height="44"
-            @click.stop="downloadSource"
-          >
-            Download
-          </v-btn>
-        </a>
-        <v-btn
-          v-if="awaitConfirm"
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-          @click.stop="downloadSource"
-        >
-          Download
-        </v-btn>
       </div>
       <!-- Payed Users -->
       <!-- <div class="music-sold">
