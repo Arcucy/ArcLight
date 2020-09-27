@@ -21,6 +21,7 @@
     "cropperjs": "^1.5.7",
     "element-ui": "^2.13.2",
     "hls.js": "^0.14.11",
+    "jszip": "^3.5.0",
     "moment": "^2.27.0",
     "musicgenres-json": "^1.0.1",
     "vue": "^2.5.2",
