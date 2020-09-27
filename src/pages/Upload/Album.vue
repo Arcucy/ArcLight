@@ -291,6 +291,20 @@ export default {
         return
       }
 
+      let shouldReturn = false
+      for (let i = 0; i < this.fileList.length; i++) {
+        const item = this.fileList[i]
+        if (isNaN(parseFloat(item.price))) {
+          this.failMessage = 'The price must be numbers'
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          shouldReturn = true
+          break
+        }
+      }
+      if (shouldReturn) return
+
+      console.log('passed')
       if (isNaN(parseFloat(this.price))) {
         this.failMessage = 'The price must be numbers'
         this.failSnackbar = true
