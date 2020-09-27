@@ -198,6 +198,27 @@ export default {
           })
         }
       }
+    },
+    $route (val) {
+      this.count = 0
+      this.owned = false
+      this.info = {
+        name: '',
+        cover: 'Loading',
+        artist: '',
+        authorAddress: '',
+        desp: '',
+        genre: '',
+        unixTime: 0,
+        list: []
+      }
+      this.artist = {
+        id: '',
+        avatar: 'loading',
+        username: 'Artist loading...'
+      }
+      this.audio = []
+      this.getAlbum(this.$route.params.id)
     }
   },
   methods: {

@@ -18,6 +18,7 @@
       <div class="music-info">
         <div class="music-cover-container">
           <v-img
+            v-if="imgShoudLoad"
             class="albuminfo-cover-img"
             :src="info.cover"
             alt="cover"
@@ -59,7 +60,7 @@
           {{ pct }}%
         </div>
         <!-- Player -->
-        <aplayer v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+        <aplayer v-if="audio !== '' && !loading" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
         <!-- Loading -->
         <div v-if="loading" class="music-loading">
           <v-progress-linear
@@ -189,13 +190,14 @@ export default {
       type: '',
       musicId: '',
       audio: '',
+      imgShoudLoad: true,
       info: {
         name: 'Title loading...',
         artist: '',
         artistId: '',
         desp: '',
         genre: 'Await Data...',
-        cover: '',
+        cover: 'undefined',
         albumTitle: '',
         id: ''
       },
@@ -243,6 +245,20 @@ export default {
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
+  },
+  watch: {
+    $route (val) {
+      this.loading = true
+      this.imgShoudLoad = false
+      this.audio = {}
+      this.info.cover = 'undefined'
+      this.pct = 0
+      this.owned = false
+      setTimeout(() => {
+        this.imgShoudLoad = true
+      })
+      this.getMusicInfo(this.$route.params.id)
+    }
   },
   destroyed () {
     // 释放 webkitURL
@@ -769,6 +785,10 @@ export default {
     -webkit-line-clamp: 1;
     overflow: hidden;
     word-break: break-all;
+  }
+
+  &-artist {
+    width: fit-content;
   }
 
   &-artist a {
