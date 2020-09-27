@@ -5,6 +5,8 @@
       :loading="loading"
       :items="items"
       :search-input.sync="search"
+      item-text="title"
+      item-value="id"
       no-filter
       return-object
       class="mx-4 autocomplete"
