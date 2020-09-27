@@ -36,6 +36,7 @@
       <loadCard
         v-if="loading || addressList.length === 0"
         :message="!loading && addressList.length === 0 ? 'No data' : ''"
+        width="188px"
       />
     </div>
     <div v-if="maxPage > 1" class="songs-pagination">
