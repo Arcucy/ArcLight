@@ -129,7 +129,6 @@
       <v-dialog
         v-model="showUpload"
         width="360"
-        @click:outside="outsideReset"
       >
         <v-card dark class="upload-notice">
           <h3 class="upload-notice-title">
