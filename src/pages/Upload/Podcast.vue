@@ -40,8 +40,11 @@
             label="Solo"
             placeholder="Enter Your Podcast Title..."
             solo
+            dark
             color="#FFF"
             style="margin-top: 16px;"
+            counter
+            maxlength="100"
           ></v-text-field>
           <div class="name-title side-title">Program Title</div>
           <v-text-field
@@ -49,15 +52,21 @@
             label="Solo"
             placeholder="Enter Your Program Title..."
             solo
+            dark
             color="#FFF"
             style="margin-top: 16px;"
+            counter
+            maxlength="100"
           ></v-text-field>
           <div class="name-desp side-title">Description</div>
           <v-textarea
             v-model="podcastDesp"
             solo
+            dark
             name="input-7-4"
             label="Your podcast Description..."
+            counter
+            maxlength="1000"
           ></v-textarea>
           <div class="name-desp side-title">Category</div>
           <podcastSelect v-model="category" style="margin-bottom: 16px;" />
@@ -75,8 +84,9 @@
             class="price"
             id="price"
             solo
-            label="Prepend"
+            label="Price"
             prepend-inner-icon="mdi-cash-multiple"
+            maxlength="12"
           ></v-text-field>
           <v-file-input
             class="finput"
@@ -557,6 +567,7 @@ export default {
     .v-input__slot {
       fieldset {
         color: rgba(254, 118, 164, 0.7) !important;
+        border: 3px solid !important;
       }
     }
   }
@@ -587,7 +598,7 @@ export default {
   color: white !important;
 }
 
-/deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+/deep/ .v-text-field--solo>.v-input__control>.v-input__slot {
   background-color: rgba(51,51,51,0.8);
 }
 </style>

@@ -40,15 +40,21 @@
               label="Solo"
               placeholder="Enter Your Album Title..."
               solo
+              dark
               color="#FFF"
               style="margin-top: 16px;"
+              counter
+              maxlength="100"
             ></v-text-field>
           <div class="name-desp side-title">Description</div>
           <v-textarea
             v-model="albumDesp"
             solo
+            dark
             name="input-7-4"
             label="Your Album Description..."
+            counter
+            maxlength="1000"
           ></v-textarea>
           <div class="name-desp side-title">Genre</div>
           <genreSelect v-model="genre" style="margin-bottom: 16px;" />
@@ -67,8 +73,11 @@
               label="Solo"
               placeholder="Enter Your Music Title..."
               solo
+              dark
               color="#FFF"
               style="margin-top: 16px;"
+              counter
+              maxlength="100"
             ></v-text-field>
             <div class="finput-container">
               <v-file-input
@@ -111,8 +120,9 @@
               v-model="fileList[index].price"
               class="price"
               solo
-              label="Prepend"
+              label="Price"
               prepend-inner-icon="mdi-cash-multiple"
+              maxlength="12"
             ></v-text-field>
           </div>
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
@@ -598,7 +608,7 @@ export default {
   color: white !important;
 }
 
-/deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+/deep/ .v-text-field--solo>.v-input__control>.v-input__slot {
   background-color: rgba(51,51,51,0.8);
 }
 
@@ -607,6 +617,7 @@ export default {
     .v-input__slot {
       fieldset {
         color: rgba(254, 118, 164, 0.7) !important;
+        border: 3px solid !important;
       }
     }
   }
