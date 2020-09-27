@@ -3,6 +3,7 @@
     <!-- Cover -->
     <div class="albuminfo-cover">
       <v-img
+        v-if="imgShouldLoad"
         class="albuminfo-cover-img"
         :src="album.cover"
         alt="cover"
@@ -50,7 +51,19 @@ export default {
       required: true
     }
   },
-
+  data () {
+    return {
+      imgShouldLoad: true
+    }
+  },
+  watch: {
+    album () {
+      this.imgShouldLoad = false
+      setTimeout(() => {
+        this.imgShouldLoad = true
+      })
+    }
+  },
   computed: {
     time () {
       return this.album.unixTime ? this.$moment(this.album.unixTime).format('MMMDo HH:mm:ss') : '--:--:--'
