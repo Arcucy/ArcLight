@@ -217,7 +217,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['podcastCoverFile', 'isLoggedIn', 'keyFileContent', 'podcastLink', 'userType'])
+    ...mapState(['podcastCoverFile', 'podcastCoverRaw', 'podcastInfo', 'isLoggedIn', 'keyFileContent', 'podcastLink', 'userType'])
   },
   watch: {
     userType (val) {
@@ -267,6 +267,7 @@ export default {
         this.failMessage = 'Please select the category of your program (None for blank)'
         this.failSnackbar = true
         this.submitBtnLoading = false
+        return
       }
 
       if (!this.duration) {
@@ -358,6 +359,39 @@ export default {
     }
   },
   mounted () {
+    if (this.$route.params.file) {
+      this.file = this.$route.params.file
+      let audioType = {
+        mp3: 'audio/mp3',
+        flac: 'audio/flac',
+        wav: 'audio/wav',
+        ogg: 'audio/ogg'
+      }
+
+      let aext = this.file.name.split('.').pop()
+      console.log('Content-Type:', audioType[aext])
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(this.file)
+      reader.onload = async (e) => {
+        this.music = e.target.result
+        this.musicContent = this.file
+      }
+    }
+
+    if (this.podcastCoverRaw) {
+      this.podcastCover = this.podcastCoverRaw
+      this.fileRaw = this.podcastCoverRaw
+    }
+
+    if (this.podcastInfo) {
+      this.podcastTitle = this.podcastInfo.podcast
+      this.programTitle = this.podcastInfo.title
+      this.podcastDesp = this.podcastInfo.desp
+      this.category = this.podcastInfo.category
+      this.duration = this.podcastInfo.duration
+      this.price = this.podcastInfo.price
+    }
+
     if (this.userType === 'guest') {
       this.failSnackbar = true
       this.failMessage = 'You must have a username in order to upload'
