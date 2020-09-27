@@ -33,12 +33,14 @@
         </div>
         <div class="music-info-container">
           <div class="music-title-container">
-            <div v-if="type !== 'soundeffect-info'" class="music-title-genre">
+            <span v-if="type !== 'soundeffect-info'" class="music-title">
               {{ info.genre }}
-            </div>
-            <div class="music-title-text">
+            </span>
               {{ info.name }}
-            </div>
+          </div>
+          <div class="mobile mobile-music-title-container">
+            <span class="genre">{{ info.genre }}</span>
+            <span class="title">{{ info.name }}</span>
           </div>
           <div v-if="this.info.albumTitle" class="music-title-album">
             <router-link :to="{ name: 'Album', params: { id: $route.params.id } }">
@@ -90,8 +92,9 @@
         </a>
       </div>
       <!-- Buy -->
-      <div v-else-if="!loading" class="music-download">
+      <div v-else-if="!loading && !awaitConfirm" class="music-download">
         <payment
+          @purchase-complete="purchaseComplete"
           v-if="artist.id !== wallet && price"
           :artist="artist"
           :wallet="wallet"
@@ -115,6 +118,19 @@
             Download
           </v-btn>
         </a>
+        <v-btn
+          v-if="awaitConfirm"
+          block
+          large
+          light
+          outlined
+          rounded
+          color="#E56D9B"
+          :height="44"
+          @click.stop="downloadSource"
+        >
+          Download
+        </v-btn>
       </div>
       <!-- Payed Users -->
       <div class="music-sold">
@@ -191,6 +207,7 @@ export default {
       musicId: '',
       audio: '',
       imgShoudLoad: true,
+      awaitConfirm: false,
       info: {
         name: 'Title loading...',
         artist: '',
@@ -490,12 +507,20 @@ export default {
         let newKey = tags[i].get('name', { decode: true, string: true })
         if (newKey === key) return tags[i].get('value', { decode: true, string: true })
       }
+    },
+    purchaseComplete () {
+      this.awaitConfirm = true
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+
+.mobile {
+  display: none;
+}
+
 .music {
   margin: 48px auto 20px;
   max-width: 1240px;
@@ -754,6 +779,23 @@ export default {
   &-container {
     display: flex;
     align-items: center;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
+    span {
+      margin-right: 8px;
+      padding: 8px 16px 8px;
+      background-color: #FAE5ED;
+      border-radius: 10px;
+      font-weight: 700;
+      color: #D85C8B;
+      white-space: nowrap;
+    }
   }
   &-album {
     margin-top: 10px;
@@ -767,24 +809,6 @@ export default {
         color: #D85C8B;
       }
     }
-  }
-  &-genre {
-    margin-right: 8px;
-    padding: 8px 16px 8px;
-    background-color: #FAE5ED;
-    border-radius: 10px;
-    font-weight: 700;
-    color: #D85C8B;
-  }
-  &-text {
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    overflow: hidden;
-    word-break: break-all;
   }
 
   &-artist {
@@ -884,14 +908,49 @@ export default {
       margin-left: 0px;
     }
   }
-  .music-title {
-    &-genre {
-      padding: 5px 10px 5px !important;
-      font-size: 14px !important;
-      border-radius: 5px !important;
+
+  .mobile-music-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .genre {
+      margin-right: 8px;
+      padding: 5px 10px 5px;
+      background-color: #FAE5ED;
+      border-radius: 5px;
+      font-weight: 700;
+      color: #D85C8B;
+      font-size: 14px;
+      white-space: nowrap;
     }
-    &-text {
-      font-size: 20px !important;
+    .title {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      word-break: break-all;
+    }
+  }
+
+  .music-title {
+    display: none;
+    &-container {
+      display: none;
+      line-height: 30px;
+      font-size: 18px !important;
+      -webkit-line-clamp: 3;
+      margin-bottom: 10px;
+      text-align: left;
+      .music-title {
+        padding: 5px 10px 5px !important;
+        font-size: 14px !important;
+        border-radius: 5px !important;
+        font-size: 14px !important;
+      }
     }
     &-artist {
       .music-artist-username {
