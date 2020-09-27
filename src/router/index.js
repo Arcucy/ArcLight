@@ -9,7 +9,14 @@ import MusicMenu from '@/pages/Music.vue'
 import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
+
 import User from '@/pages/User/_id'
+import UserIndex from '@/pages/User/index'
+import UserSingle from '@/pages/User/Single'
+import UserAlbum from '@/pages/User/Album'
+import UserSound from '@/pages/User/Sound'
+import UserPodcast from '@/pages/User/Podcast'
+
 import Edit from '@/pages/User/Edit.vue'
 import Library from '@/pages/Library'
 
@@ -129,9 +136,39 @@ export default new Router({
     },
     {
       path: '/user/:id',
-      name: 'User',
       component: User,
-      props: true
+      children: [
+        {
+          path: '',
+          name: 'User',
+          component: UserIndex,
+          props: true
+        },
+        {
+          path: 'single',
+          name: 'UserSingle',
+          component: UserSingle,
+          props: true
+        },
+        {
+          path: 'album',
+          name: 'UserAlbum',
+          component: UserAlbum,
+          props: true
+        },
+        {
+          path: 'sound',
+          name: 'UserSound',
+          component: UserSound,
+          props: true
+        },
+        {
+          path: 'podcast',
+          name: 'UserPodcast',
+          component: UserPodcast,
+          props: true
+        }
+      ]
     },
     {
       path: '/user/edit',
