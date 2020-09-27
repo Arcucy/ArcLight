@@ -977,7 +977,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',

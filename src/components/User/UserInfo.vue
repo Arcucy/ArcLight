@@ -27,11 +27,11 @@
         </a>
     </div>
     <P class="userinfo-introduction" v-html="introduction" />
-    <v-btn v-if="isMe" small class="userinfo-btn" color="#FFF" outlined light @click="edit">
+    <v-btn v-if="isMyself" small class="userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon left>mdi-pencil</v-icon>
       EDIT PROFILE
     </v-btn>
-    <v-btn v-if="isMe" x-small fab class="mobile mobile-userinfo-btn" color="#FFF" outlined light @click="edit">
+    <v-btn v-if="isMyself" x-small fab class="mobile mobile-userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon>mdi-pencil</v-icon>
     </v-btn>
   </div>
@@ -59,6 +59,7 @@ export default {
   },
   data () {
     return {
+      isMyself: false,
       neteaseLogo: neteaseLogo,
       soundcloudLogo: soundcloudLogo,
       bandcampLogo: bandcampLogo,
@@ -76,7 +77,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isMe']),
+    ...mapState(['isMe', 'wallet']),
     avatar () {
       return this.user.avatar
     },
@@ -104,6 +105,16 @@ export default {
   },
   mounted () {
     this.getUserInfo()
+    if (this.id === this.wallet) {
+      this.isMyself = true
+    }
+  },
+  watch: {
+    wallet (val) {
+      if (this.id === val) {
+        this.isMyself = true
+      }
+    }
   },
   methods: {
     edit () {
@@ -119,6 +130,10 @@ export default {
       API.arweave.getIntroFromAddress(this.id).then(introduction => {
         if (!introduction) {
           introduction = 'No Introduction Yet'
+        } else {
+          introduction = introduction.replace(/<br>/gm, '\\n')
+          introduction = introduction.replace(/<[^>]*>/gmu, '')
+          introduction = introduction.replace(/\\n/gmu, '<br>')
         }
         this.user.introduction = introduction
       })

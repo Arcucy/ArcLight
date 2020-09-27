@@ -11,7 +11,7 @@
         <div class="container">
           <div class="avatar input-box">
             <span class="edit-title">Avatar</span>
-            <avatar class=avatar-img :src="userPage.avatar" :size="140" />
+            <avatar class="edit-avatar" :src="userAvatar" :size="140" />
             <span class="edit-content">Sorry, we don't provide any avatar storage option here<br>
             To change your avatar, please go to <a href="https://arweave.net/d9SXf_N32hAm3cygt1btmPC-7Dg460VhQEtW8I-cfvU">Arweave Avatar</a></span>
           </div>
@@ -127,10 +127,14 @@ import neteaseLogo from '@/assets/image/neteasecloudmusic.png'
 import soundcloudLogo from '@/assets/image/soundcloud.png'
 import bandcampLogo from '@/assets/image/bandcamp.png'
 
+import API from '@/api/api'
+
 export default {
   components: {
     spaceLayout,
     avatar
+  },
+  props: {
   },
   data () {
     return {
@@ -146,66 +150,60 @@ export default {
       bandcampLogo: bandcampLogo,
       submitBtnLoading: false,
       failSnackbar: false,
-      failMessage: ''
+      failMessage: '',
+      user: {
+        location: '',
+        website: '',
+        intro: '',
+        neteaseId: '',
+        soundcloudId: '',
+        bandcampId: ''
+      }
     }
   },
   computed: {
-    ...mapState(['userPage', 'username', 'keyFileContent']),
-    user () {
-      let introduction = ''
-      if (this.userPage.introduction === '') {
-        introduction = 'No Introduction Yet'
-      } else {
-        introduction = this.userPage.introduction
-      }
-      return { nickname: this.userPage.nickname, avatar: this.userPage.avatar, introduction: introduction, type: this.userPage.type }
-    }
+    ...mapState(['username', 'keyFileContent', 'wallet', 'userAvatar'])
   },
   watch: {
-    userPage (val) {
-      if (val.location) {
-        this.location = val.location
-      }
-      if (val.website) {
-        this.website = val.website
-      }
-      if (val.intro) {
-        this.intro = val.introduction
-      }
-      if (val.neteaseId) {
-        this.neteaseId = val.neteaseId
-      }
-      if (val.soundcloudId) {
-        this.soundcloudId = val.soundcloudId
-      }
-      if (val.bandcampId) {
-        this.bandcampId = val.bandcampId
+    wallet (val) {
+      if (!val) {
+        this.failSnackbar = true
+        this.failMessage = 'Please Login First'
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 2000)
       }
     }
   },
   methods: {
     ...mapActions(['updateLocation', 'updateWebsite', 'updateIntro', 'updateNeteaseId', 'updateSoundCloudId', 'updateBandcampId']),
     submit () {
-      if (this.location && this.location !== this.userPage.location) {
+      if (this.location && this.location !== this.user.location) {
         this.updateLocation({ key: this.keyFileContent, value: this.location })
       }
-      if (this.website && this.website !== this.userPage.website) {
-        if (/(https?:\/\/)?(www\.)[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_.~#?&//=]*)|(https?:\/\/)?(www\.)?(?!ww)[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_.~#?&//=]*)/.test(this.website)) {
+      if (this.website && this.website !== this.user.website) {
+        if (/^(https?:\/\/)?(www\.)[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_.~#?&//=]*)|(((\d+\.\d+\.\d+\.\d+))(:\d{0,5})?)|(https?:\/\/)?(www\.)?(?!ww)[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(this.website)) {
           this.updateWebsite({ key: this.keyFileContent, value: this.website })
         } else {
           this.failSnackbar = true
           this.failMessage = 'Invalid Website URL'
         }
       }
-      if (this.intro && this.intro !== this.userPage.introduction) {
+      if (this.intro && this.intro !== this.user.introduction) {
         if (this.intro.length < 1001) {
-          this.updateIntro({ key: this.keyFileContent, value: this.intro })
+          let intro = this.intro
+
+          intro = intro.replace(/<br>/gm, '\\n')
+          intro = intro.replace(/<[^>]*>/gmu, '')
+          intro = intro.replace(/\\n/gmu, '<br>')
+
+          this.updateIntro({ key: this.keyFileContent, value: intro })
         } else {
           this.failSnackbar = true
           this.failMessage = 'Introduction Length has 1000 characters limit'
         }
       }
-      if (this.neteaseId && this.neteaseId !== this.userPage.neteaseId) {
+      if (this.neteaseId && this.neteaseId !== this.user.neteaseId) {
         if (/\d+/.test(this.neteaseId)) {
           this.updateNeteaseId({ key: this.keyFileContent, value: this.neteaseId })
         } else {
@@ -213,36 +211,64 @@ export default {
           this.failMessage = 'Invalid Netease CloudMusic User ID'
         }
       }
-      if (this.soundcloudId && this.soundcloudId !== this.userPage.soundcloudId) {
+      if (this.soundcloudId && this.soundcloudId !== this.user.soundcloudId) {
         this.updateSoundCloudId({ key: this.keyFileContent, value: this.soundcloudId })
       }
-      if (this.bandcampId && this.bandcampId !== this.userPage.bandcampId) {
+      if (this.bandcampId && this.bandcampId !== this.user.bandcampId) {
         this.updateBandcampId({ key: this.keyFileContent, value: this.bandcampId })
       }
+    },
+    getUserInfo () {
+      API.arweave.getLocationFromAddress(this.wallet).then(location => {
+        if (location) {
+          this.user.location = location
+          this.location = location
+        }
+      })
+      API.arweave.getWebsiteFromAddress(this.wallet).then(website => {
+        if (website) {
+          this.user.website = website
+          this.website = website
+        }
+      })
+      API.arweave.getIntroFromAddress(this.wallet).then(introduction => {
+        if (introduction) {
+          this.user.introduction = introduction
+          this.intro = introduction
+        }
+      })
+      API.arweave.getNeteaseIdFromAddress(this.wallet).then(neteaseId => {
+        if (neteaseId) {
+          this.user.neteaseId = neteaseId
+          this.neteaseId = neteaseId
+        }
+      })
+      API.arweave.getSoundCloudIdFromAddress(this.wallet).then(soundcloudId => {
+        if (soundcloudId) {
+          this.user.soundcloudId = soundcloudId
+          this.soundcloudId = soundcloudId
+        }
+      })
+      API.arweave.getBandCampFromAddress(this.wallet).then(bandcampId => {
+        if (bandcampId) {
+          this.user.bandcampId = bandcampId
+          this.bandcampId = bandcampId
+        }
+      })
     }
   },
   created () {
     document.title = 'Edit Profile - ArcLight'
   },
   mounted () {
-    if (this.userPage.location) {
-      this.location = this.userPage.location
+    if (!this.wallet) {
+      this.failSnackbar = true
+      this.failMessage = 'Please Login First'
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 2000)
     }
-    if (this.userPage.website) {
-      this.website = this.userPage.website
-    }
-    if (this.userPage.introduction) {
-      this.intro = this.userPage.introduction
-    }
-    if (this.userPage.neteaseId) {
-      this.neteaseId = this.userPage.neteaseId
-    }
-    if (this.userPage.soundcloudId) {
-      this.soundcloudId = this.userPage.soundcloudId
-    }
-    if (this.userPage.bandcampId) {
-      this.bandcampId = this.userPage.bandcampId
-    }
+    this.getUserInfo()
     window.onbeforeunload = function (e) {
       e = e || window.event
       if (e) {
@@ -289,8 +315,8 @@ export default {
   }
 }
 
-.avatar {
-  &-img {
+.container {
+  .edit-avatar {
     margin-bottom: 16px;
   }
   a {
