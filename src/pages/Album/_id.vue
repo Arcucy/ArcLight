@@ -272,6 +272,14 @@ export default {
         this.info.desp = albumData.desp
         this.info.list = albumData.music
         this.price = albumData.price.toFixed(12)
+
+        if (this.price <= 0 && this.originalPrice <= 0) {
+          this.info.list.forEach(item => {
+            item.unlock = true
+          })
+          this.owned = true
+        }
+
         this.info.list.forEach(item => {
           if (item.price) {
             this.originalPrice = parseFloat(this.originalPrice) + parseFloat(item.price)
