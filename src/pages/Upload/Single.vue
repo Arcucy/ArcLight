@@ -208,7 +208,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType'])
+    ...mapState(['singleCoverFile', 'singleCoverRaw', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType', 'singleInfo'])
   },
   watch: {
     $router (val) {
@@ -255,6 +255,7 @@ export default {
         this.failMessage = 'Please select the genre of your music (None for blank)'
         this.failSnackbar = true
         this.submitBtnLoading = false
+        return
       }
 
       if (!this.duration) {
@@ -343,6 +344,38 @@ export default {
     }
   },
   mounted () {
+    if (this.$route.params.file) {
+      this.file = this.$route.params.file
+      let audioType = {
+        mp3: 'audio/mp3',
+        flac: 'audio/flac',
+        wav: 'audio/wav',
+        ogg: 'audio/ogg'
+      }
+
+      let aext = this.file.name.split('.').pop()
+      console.log('Content-Type:', audioType[aext])
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(this.file)
+      reader.onload = async (e) => {
+        this.music = e.target.result
+        this.musicContent = this.file
+      }
+    }
+
+    if (this.singleCoverRaw) {
+      this.singleCover = this.singleCoverRaw
+      this.fileRaw = this.singleCoverRaw
+    }
+
+    if (this.singleInfo) {
+      this.singleTitle = this.singleInfo.title
+      this.singleDesp = this.singleInfo.desp
+      this.genre = this.singleInfo.genre
+      this.duration = this.singleInfo.duration
+      this.price = this.singleInfo.price
+    }
+
     if (this.userType === 'guest') {
       this.failSnackbar = true
       this.failMessage = 'You must have a username in order to upload'

@@ -227,7 +227,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType'])
+    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType', 'albumInfo'])
   },
   watch: {
     userType (val) {
@@ -271,6 +271,7 @@ export default {
         this.failMessage = 'Please select the genre of your music (None for blank)'
         this.failSnackbar = true
         this.submitBtnLoading = false
+        return
       }
 
       if (!this.duration) {
@@ -386,6 +387,29 @@ export default {
     }
   },
   mounted () {
+    if (this.$route.params.file) {
+      console.log(this.$route.params.file)
+      this.$route.params.file.forEach((file, index) => {
+        this.fileList[index].music = file
+      })
+      this.$route.params.music.forEach((item, index) => {
+        this.fileList[index].title = item.title
+        this.fileList[index].price = item.price
+      })
+    }
+
+    if (this.albumCoverRaw) {
+      this.albumCover = this.albumCoverRaw
+      this.fileRaw = this.albumCoverRaw
+    }
+
+    if (this.albumInfo) {
+      this.albumTitle = this.albumInfo.title
+      this.albumDesp = this.albumInfo.desp
+      this.genre = this.albumInfo.genre
+      this.duration = this.albumInfo.duration
+    }
+
     if (this.userType === 'guest') {
       this.failSnackbar = true
       this.failMessage = 'You must have a username in order to upload'
