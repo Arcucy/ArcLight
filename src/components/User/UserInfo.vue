@@ -152,7 +152,11 @@ export default {
       }).then(async user => {
         this.user.nickname = user.data
         this.user.type = user.type
-
+        if (user.type === 'guest') {
+          document.title = 'Profile - ArcLight'
+        } else {
+          document.title = user.data + `'s Profile - ArcLight`
+        }
         if (user.type !== 'guest') {
           const avatar = await API.arweave.getAvatarFromAddress(this.id)
           if (avatar) {
