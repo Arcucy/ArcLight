@@ -3,7 +3,7 @@
     <div>
       <div class="album">
         <div class="upload-header">
-          <a @click="$router.go(-1)" class="back-link">
+          <a @click="$router.push({ name: 'uploadAlbum', params: $route.params.data })" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
             Back to Upload
           </a>

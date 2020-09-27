@@ -204,7 +204,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectLink', 'userType'])
+    ...mapState(['soundEffectCoverFile', 'soundEffectCoverRaw', 'isLoggedIn', 'keyFileContent', 'soundEffectLink', 'userType', 'soundEffectInfo'])
   },
   watch: {
     userType (val) {
@@ -328,6 +328,37 @@ export default {
     }
   },
   mounted () {
+    if (this.$route.params.file) {
+      this.file = this.$route.params.file
+      let audioType = {
+        mp3: 'audio/mp3',
+        flac: 'audio/flac',
+        wav: 'audio/wav',
+        ogg: 'audio/ogg'
+      }
+
+      let aext = this.file.name.split('.').pop()
+      console.log('Content-Type:', audioType[aext])
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(this.file)
+      reader.onload = async (e) => {
+        this.music = e.target.result
+        this.musicContent = this.file
+      }
+    }
+
+    if (this.soundEffectCoverRaw) {
+      this.soundEffectCover = this.soundEffectCoverRaw
+      this.fileRaw = this.soundEffectCoverRaw
+    }
+
+    if (this.soundEffectInfo) {
+      this.soundeffectTitle = this.soundEffectInfo.title
+      this.soundeffectDesp = this.soundEffectInfo.desp
+      this.duration = this.soundEffectInfo.duration
+      this.price = this.soundEffectInfo.price
+    }
+
     if (this.userType === 'guest') {
       this.failSnackbar = true
       this.failMessage = 'You must have a username in order to upload'
