@@ -168,15 +168,17 @@ export default {
         this.setIsMe(true)
         document.title = val + '\'s Profile - ArcLight'
       } else {
-        document.title = this.userPage.nickname + '\'s Profile - ArcLight'
+        document.title = 'Profile - ArcLight'
       }
     }
   },
   mounted () {
     if (this.wallet === this.$route.params.id) {
       this.setIsMe(true)
+      document.title = this.username + '\'s Profile - ArcLight'
+    } else {
+      document.title = 'Profile - ArcLight'
     }
-    document.title = 'Profile - ArcLight'
     this.getUserAudioList('single', this.single)
     this.getUserAudioList('album', this.album)
     this.getUserAudioList('soundEffect', this.sound)

@@ -341,6 +341,9 @@ export default {
       this.info.cover = audio.pic
       audio.src = await this.getAudio(data.music)
       this.audio = audio
+
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化专辑 */
     async initAlbum (tags, data, albumNum = 1) {
@@ -367,6 +370,9 @@ export default {
       this.info.cover = audio.pic
       audio.src = await this.getAudio(data.music[index].id)
       this.audio = audio
+
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化播客 */
     async initPodcast (tags, data) {
@@ -390,6 +396,9 @@ export default {
       this.info.cover = audio.pic
       audio.src = await this.getAudio(data.program)
       this.audio = audio
+
+      document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${data.podcast} \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化音效 */
     async initSoundeffect (tags, data) {
@@ -412,6 +421,9 @@ export default {
       this.info.cover = audio.pic
       audio.src = await this.getAudio(data.audio)
       this.audio = audio
+
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化作者信息 */
     initArtist (audio, tags) {
@@ -768,6 +780,8 @@ export default {
       font-weight: 700;
       color: #D85C8B;
       white-space: nowrap;
+      font-size: 16px;
+      display: inline-block;
     }
   }
   &-album {
