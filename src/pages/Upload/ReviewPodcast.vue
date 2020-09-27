@@ -473,7 +473,6 @@ export default {
 
 .music-player {
   max-width: 588px;
-  width: 100%;
   margin: 0;
   // margin: 96px auto 0;
   border-radius: 5px;
