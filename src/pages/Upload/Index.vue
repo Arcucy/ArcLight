@@ -202,7 +202,9 @@ export default {
     margin-top: 20px;
   }
   .selection-container {
+    padding: 0 10px 0;
     flex-direction: column;
+    align-items: center;
   }
   .upload-cover {
     margin-bottom: 10px;

@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="player">
-            <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" style="width: 300px" />
+            <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
           </div>
         </div>
         <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
@@ -316,6 +316,7 @@ export default {
   color: white;
   font-size: 20px;
   font-weight: 700;
+  width: fit-content;
 }
 
 .single-container {
@@ -428,4 +429,51 @@ export default {
   right: 0;
 }
 
+.music-player {
+  width: 300px
+}
+
+@media screen and (max-width: 1200px) {
+  .single-container {
+    flex-direction: column;
+    .single-title-container {
+      width: 100%;
+      margin-top: 16px;
+      flex-direction: column;
+      text-align: left;
+      justify-content: flex-start;
+      align-items: baseline;
+    }
+    .single-title {
+      margin-top: 10px;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      word-break: break-all;
+    }
+    .single-artist {
+      font-size: 18px;
+    }
+    .single-desp {
+      p {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 10;
+        overflow: hidden;
+        word-break: break-all;
+      }
+    }
+  }
+  .other {
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  .music-player {
+    width: 90vw;
+  }
+}
 </style>
