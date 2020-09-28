@@ -30,7 +30,7 @@
             <router-link :to="{ name: 'Music', params: { id: $route.params.id }, query: { album: index + 1 } }">
               <div class="music-left">
                 <h3>
-                  #{{ index+1 }} {{ music.title }}
+                  #{{ index+1 }} {{ music.title }} {{ pctArray[index] }}
                 </h3>
                 <p>
                   by {{ info.artist }}
@@ -40,12 +40,12 @@
             <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="downloadAudio(music, index)">
               <v-progress-circular
                 v-if="music.downloadAwait"
-                :indeterminate="!pct"
-                v-model="pct"
+                :indeterminate="!music.pct"
+                v-model="music.pct"
                 rotate="-90"
                 color="#E56D9B"
               >
-                {{ pct || '' }}
+                {{ music.pct || '' }}
               </v-progress-circular>
               <v-icon v-else>mdi-download</v-icon>
             </div>
@@ -185,6 +185,7 @@ export default {
       count: 0,
       downloading: false,
       pct: 0,
+      pctArray: [0, 0],
       singlePct: 0,
       tempPct: 0,
       fenduanPct: 0,
@@ -212,6 +213,7 @@ export default {
       } else {
         this.info.list.forEach(item => {
           item.unlock = false
+          this.owned = false
         })
         this.getAlbum(this.$route.params.id)
       }
@@ -312,6 +314,10 @@ export default {
         this.info.list = albumData.music
         this.price = albumData.price.toFixed(12)
 
+        this.info.list.forEach(item => {
+          item.pct = 0
+        })
+
         if (this.price <= 0 && this.originalPrice <= 0) {
           this.info.list.forEach(item => {
             item.unlock = true
@@ -403,10 +409,12 @@ export default {
         return ''
       }
     },
-    getAudio (id) {
+    getAudio (id, index) {
       return new Promise(async (resolve, reject) => {
         try {
-          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+          this.pctArray[index] = 0
+          console.log(index)
+          const music = await api.arweave.getMusic(id, pct => { this.info.list[index].pct = pct })
           this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
           const reader = new FileReader()
@@ -423,8 +431,9 @@ export default {
       })
     },
     async downloadAudio (music, index) {
+      this.info.list[index].pct = 0
       this.info.list[index].downloadAwait = true
-      const res = await this.getAudio(music.id)
+      const res = await this.getAudio(music.id, index)
 
       const getExt = {
         'audio/mp3': 'mp3',
