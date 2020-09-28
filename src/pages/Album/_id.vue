@@ -73,12 +73,15 @@
           </div>
           <v-progress-linear
             v-else-if="downloading"
+            :indeterminate="shouldWait"
             v-model="albumPct"
             color="#E56D9B"
-            height="50"
-            style="border-radius: 999px; color: white;"
+            height="44"
+            background-color="#303437"
+            style="border-radius: 999px; color: white; margin: 49px auto 0px;width: 240px;"
           >
-            <strong>{{ Math.ceil(albumPct) }}%</strong>
+            <strong v-if="!isNaN(parseInt(albumPctDisplay))"> {{ albumPctDisplay }}%</strong>
+            <strong v-else>{{ albumPctDisplay }}</strong>
           </v-progress-linear>
           <!-- Buy -->
           <div v-else class="album-buy">
@@ -161,10 +164,10 @@ export default {
       info: {
         name: '',
         cover: 'Loading',
-        artist: '',
+        artist: 'Artist loading...',
         authorAddress: '',
         desp: '',
-        genre: '',
+        genre: 'Await Data...',
         unixTime: 0,
         list: []
       },
@@ -184,13 +187,16 @@ export default {
       pct: 0,
       singlePct: 0,
       tempPct: 0,
-      fenduanPct: 0
+      fenduanPct: 0,
+      albumPctDisplay: '',
+      shouldWait: false
     }
   },
   computed: {
     ...mapState(['wallet']),
     albumPct () {
-      return Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
+      let res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
+      return res
     }
   },
   mounted () {
@@ -240,6 +246,14 @@ export default {
       }
       this.audio = []
       this.getAlbum(this.$route.params.id)
+    },
+    albumPct (val) {
+      this.albumPctDisplay = val
+      if (val === 100) {
+        this.albumPct = 0
+        this.albumPctDisplay = 'Zipping your files'
+        this.shouldWait = true
+      }
     }
   },
   methods: {
@@ -459,7 +473,9 @@ export default {
     },
     async downloadAlbum () {
       this.albumPct = 0
+      this.tempPct = 0
       this.downloading = true
+      this.shouldWait = false
       let urlArray = []
       this.fenduanPct = 100 / this.info.list.length / 100
 
