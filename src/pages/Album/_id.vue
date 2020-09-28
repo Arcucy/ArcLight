@@ -205,7 +205,10 @@ export default {
     this.count = 0
   },
   watch: {
-    async wallet (val) {
+    wallet (val) {
+      this.awaitConfirm = false
+      if (this.timerIndex) clearTimeout(this.timerIndex)
+
       if (this.info.authorAddress === val) {
         this.info.list.forEach(item => {
           item.unlock = true
@@ -215,7 +218,7 @@ export default {
           item.unlock = false
           this.owned = false
         })
-        this.getAlbum(this.$route.params.id)
+        if (!this.loading) this.getAlbum(this.$route.params.id)
       }
     },
     async price (val) {
@@ -247,6 +250,8 @@ export default {
         username: 'Artist loading...'
       }
       this.audio = []
+      this.awaitConfirm = false
+      if (this.timerIndex) clearTimeout(this.timerIndex)
       this.getAlbum(this.$route.params.id)
     },
     albumPct (val) {
@@ -265,17 +270,33 @@ export default {
       this.owned = true
     },
     async getItemStatus (address, itemAddress, price) {
-      const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
-      if (res2) {
-        const transaction = await api.arweave.getTransactionDetail(res2)
-        const tags = await api.arweave.getTagsByTransaction(transaction)
-        const type = tags['Album-Type']
-        if (type === 'full') {
-          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
-          const ar = api.arweave.getArFromWinston(transaction.quantity)
-          if (ar === finalPrice) this.owned = true
+      const getPaymentResult = async (txid) => {
+        try {
+          const transaction = await api.arweave.getTransactionDetail(txid)
+          const tags = await api.arweave.getTagsByTransaction(transaction)
+          const type = tags['Album-Type']
+          if (type === 'full') {
+            const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+            const ar = api.arweave.getArFromWinston(transaction.quantity)
+            console.log('判断是否相等 finalPrice:', finalPrice, 'Ar:', ar)
+            if (ar === finalPrice) this.owned = true
+          }
+          this.awaitConfirm = false
+        } catch (e) {
+          if (e.type === 'TX_PENDING') {
+            this.awaitConfirm = true
+            this.timerIndex = setTimeout(() => { getPaymentResult(txid) }, 2000)
+          } else {
+            console.error('[Purchase record query failed] type:', { ...e }.type, e)
+            this.$message.error(`Purchase record query failed, type: ${{ ...e }.type || 'Unknown'}`)
+            this.awaitConfirm = false
+          }
         }
       }
+
+      const res = await api.arweave.getAlbumPurchaseStatus(address, itemAddress)
+      if (res) await getPaymentResult(res)
+      else this.awaitConfirm = false
     },
     async getIndividualStatus (address, itemAddress, price) {
       this.info.list.forEach(async (item, index) => {
@@ -339,6 +360,7 @@ export default {
           this.info.list.forEach(item => {
             item.unlock = true
           })
+          this.owned = true
         }
         if (this.wallet) {
           await this.getItemStatus(this.wallet, id, albumData.price)
