@@ -62,7 +62,7 @@
         <div class="confirm-price">
           <div class="price-line">
             <span class="left-content">Music Price</span>
-            <h4>{{ price }} AR</h4>
+            <h4>{{ priceDisplay }} AR</h4>
           </div>
           <div class="price-line">
             <span class="left-content">Fee</span>
@@ -254,6 +254,7 @@ export default {
         return
       }
       this.showWallet = true
+      this.priceDisplay = this.price.toFixed(12).replace(/\.?0+$/, '')
     },
     async step2 () {
       if (this.type === 'album-info') {
@@ -265,7 +266,9 @@ export default {
           return
         }
       } else {
-        const status = await API.arweave.getItemPurchaseStatus(this.wallet, this.itemId)
+        let status
+        if (this.type === 'album-full') status = await API.arweave.getAlbumPurchaseStatus(this.wallet, this.itemId)
+        else status = await API.arweave.getItemPurchaseStatus(this.wallet, this.itemId)
         if (status) {
           this.failSnackbar = true
           this.failMessage = 'You have already bought this song'
