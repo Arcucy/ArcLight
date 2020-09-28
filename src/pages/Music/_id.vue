@@ -105,6 +105,19 @@
           :trackNumber="$route.query.album + ''"
         />
       </div>
+      <div v-if="awaitConfirm" class="music-await">
+        <div class="music-await-progress">
+          <v-progress-circular indeterminate color="#E56D9B" />
+        </div>
+        <div class="music-await-text">
+          <h4>
+            「Buy」please wait. . .
+          </h4>
+          <p>
+            Waiting for the transaction to be merged into a new block, this may take a few minutes. You can leave this page and do something else.
+          </p>
+        </div>
+      </div>
       <!-- Payed Users -->
       <!-- <div class="music-sold">
         <p class="music-sold-title">
@@ -202,32 +215,7 @@ export default {
       owned: false,
       showDialog: false,
       loading: true,
-      users: [
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        }
-      ]
+      timerIndex: null
     }
   },
   computed: {
@@ -253,36 +241,60 @@ export default {
   destroyed () {
     // 释放 webkitURL
     if (this.audio && this.audio.url) window.webkitURL.revokeObjectURL(this.audio.url)
+    // 卡片或者页面被销毁时清除定时器
+    if (this.timerIndex) clearTimeout(this.timerIndex)
   },
   methods: {
     async getItemStatus (address, itemAddress, price) {
       if (this.type === 'album-info') {
         const res1 = await api.arweave.getAlbumItemPurchaseStatus(address, itemAddress, this.$route.query.album)
         if (res1) {
-          const transaction = await api.arweave.getTransactionDetail(res1)
+          const transaction = await this.getBuyTransactionDetail(res1)
+          if (!transaction) return
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
           const ar = api.arweave.getArFromWinston(transaction.quantity)
+          this.awaitConfirm = false
           if (ar === finalPrice) this.owned = true
         } else {
           const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
-          const transaction = await api.arweave.getTransactionDetail(res2)
+          const transaction = await this.getBuyTransactionDetail(res2)
+          if (!transaction) return
           const tags = await api.arweave.getTagsByTransaction(transaction)
           const type = tags['Purchase-Type']
           if (type === 'album-full') {
             const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
             const ar = api.arweave.getArFromWinston(transaction.quantity)
+            this.awaitConfirm = false
             if (ar === finalPrice) this.owned = true
           }
         }
       } else {
         const res3 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
         if (res3) {
-          const transaction = await api.arweave.getTransactionDetail(res3)
+          const transaction = await this.getBuyTransactionDetail(res3)
+          if (!transaction) return
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
           const ar = api.arweave.getArFromWinston(transaction.quantity)
+          this.awaitConfirm = false
           if (ar === finalPrice) this.owned = true
         }
       }
+    },
+    async getBuyTransactionDetail (txid) {
+      let transaction
+      try {
+        transaction = await api.arweave.getTransactionDetail(txid)
+      } catch (e) {
+        if (e.type === 'TX_PENDING') {
+          this.awaitConfirm = true
+          this.timerIndex = setTimeout(() => { this.getItemStatus(this.wallet, this.$route.params.id, this.price) }, 2000)
+        } else {
+          console.error('[Purchase record query failed] type:', { ...e }.type, e)
+          this.$message.error(`Purchase record query failed, type: ${{ ...e }.type || 'Unknown'}`)
+          this.awaitConfirm = false
+        }
+      }
+      return transaction
     },
     /** 获取音乐信息 */
     async getMusicInfo (id) {
@@ -495,6 +507,7 @@ export default {
     },
     purchaseComplete () {
       this.awaitConfirm = true
+      this.getItemStatus(this.wallet, this.$route.params.id, this.price)
     }
   }
 }
@@ -671,6 +684,44 @@ export default {
       color: #66BB6A;
     }
   }
+
+  &-await {
+    margin: 30px auto 0;
+    max-width: 588px;
+    display: flex;
+    background: #7e7e7e4d;
+    box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 10px;
+    &-progress {
+      min-height: 66px;
+      min-width: 66px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 5px;
+    }
+    &-text {
+      text-align: left;
+      h4 {
+        text-align: left;
+        font-size: 16px;
+        color: white;
+        padding: 0;
+        margin: 0 0 10px;
+      }
+      p {
+        text-align: left;
+        font-size: 14px;
+        color: white;
+        padding: 0;
+        margin: 0 0 0 6px;
+      }
+    }
+  }
+
   &-sold {
     margin-top: 24px;
     &-title {
