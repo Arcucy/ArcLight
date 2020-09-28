@@ -84,6 +84,7 @@
             class="price"
             id="price"
             solo
+            type="number"
             label="Price"
             prepend-inner-icon="mdi-cash-multiple"
             maxlength="12"
@@ -287,8 +288,8 @@ export default {
         return
       }
 
-      if (this.duration === 'Off') {
-        this.duration = this.duration.replace('s', '')
+      if (this.duration !== 'Off') {
+        this.duration = (this.duration + '').replace('s', '')
         this.duration = parseInt(this.duration)
       } else {
         this.duration = 0
@@ -405,7 +406,11 @@ export default {
       this.programTitle = this.podcastInfo.title
       this.podcastDesp = this.podcastInfo.desp
       this.category = this.podcastInfo.category
-      this.duration = this.podcastInfo.duration
+      if (this.podcastInfo.duration !== 0) {
+        this.duration = this.podcastInfo.duration + 's'
+      } else {
+        this.duration = 'Off'
+      }
       this.price = this.podcastInfo.price
     }
 
@@ -559,6 +564,14 @@ export default {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;

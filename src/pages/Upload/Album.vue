@@ -121,6 +121,7 @@
               class="price"
               solo
               label="Price"
+              type="number"
               prepend-inner-icon="mdi-cash-multiple"
               maxlength="12"
             ></v-text-field>
@@ -291,8 +292,8 @@ export default {
         return
       }
 
-      if (this.duration === 'Off') {
-        this.duration = this.duration.replace('s', '')
+      if (this.duration !== 'Off') {
+        this.duration = (this.duration + '').replace('s', '')
         this.duration = parseInt(this.duration)
       } else {
         this.duration = 0
@@ -311,7 +312,6 @@ export default {
       }
       if (shouldReturn) return
 
-      console.log('passed')
       if (isNaN(parseFloat(this.price))) {
         this.failMessage = 'The price must be numbers'
         this.failSnackbar = true
@@ -322,6 +322,15 @@ export default {
       for (let i = 0; i < this.fileList.length; i++) {
         if (!this.fileList[i].music) {
           this.failMessage = 'You must select sources of music file for two album release'
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          return
+        }
+      }
+
+      for (let i = 0; i < this.fileList.length; i++) {
+        if (!this.fileList[i].title) {
+          this.failMessage = 'Your music must have titles'
           this.failSnackbar = true
           this.submitBtnLoading = false
           return
@@ -419,7 +428,6 @@ export default {
   },
   mounted () {
     if (this.$route.params.file) {
-      console.log(this.$route.params.file)
       this.$route.params.file.forEach((file, index) => {
         this.fileList[index].music = file
       })
@@ -438,7 +446,11 @@ export default {
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre
-      this.duration = this.albumInfo.duration
+      if (this.albumInfo.duration !== 0) {
+        this.duration = this.albumInfo.duration + 's'
+      } else {
+        this.duration = 'Off'
+      }
     }
 
     if (this.userType === 'guest') {
@@ -590,6 +602,14 @@ export default {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;

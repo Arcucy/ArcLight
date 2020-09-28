@@ -73,6 +73,7 @@
             class="price"
             id="price"
             solo
+            type="number"
             label="Price"
             maxlength="12"
             prepend-inner-icon="mdi-cash-multiple"
@@ -219,7 +220,6 @@ export default {
   },
   watch: {
     $router (val) {
-      console.log(val)
       alert('You sure you want to leave?')
     },
     userType (val) {
@@ -272,8 +272,8 @@ export default {
         return
       }
 
-      if (this.duration === 'Off') {
-        this.duration = this.duration.replace('s', '')
+      if (this.duration !== 'Off') {
+        this.duration = (this.duration + '').replace('s', '')
         this.duration = parseInt(this.duration)
       } else {
         this.duration = 0
@@ -386,7 +386,11 @@ export default {
       this.singleTitle = this.singleInfo.title
       this.singleDesp = this.singleInfo.desp
       this.genre = this.singleInfo.genre
-      this.duration = this.singleInfo.duration
+      if (this.singleInfo.duration !== 0) {
+        this.duration = this.singleInfo.duration + 's'
+      } else {
+        this.duration = 'Off'
+      }
       this.price = this.singleInfo.price
     }
 
@@ -539,6 +543,14 @@ export default {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;
