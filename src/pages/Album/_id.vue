@@ -463,12 +463,6 @@ export default {
         })
         this.tempPct += 100
         this.musicType = music.type
-        const getExt = {
-          'audio/mp3': 'mp3',
-          'audio/flac': 'flac',
-          'audio/wav': 'wav',
-          'audio/ogg': 'ogg'
-        }
         // 挂载音频到一个 URL，并指定给 audio.pic
         const reader = new FileReader()
         reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
