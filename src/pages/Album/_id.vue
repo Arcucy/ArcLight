@@ -71,6 +71,7 @@
               DOWNLOAD
             </v-btn>
           </div>
+          <!-- Download loading -->
           <v-progress-linear
             v-else-if="downloading"
             :indeterminate="shouldWait"
@@ -84,7 +85,7 @@
             <strong v-else>{{ albumPctDisplay }}</strong>
           </v-progress-linear>
           <!-- Buy -->
-          <div v-else class="album-buy">
+          <div v-else-if="!awaitConfirm" class="album-buy">
             <h4>
               Buy 「{{ info.name }}」
             </h4>
@@ -107,7 +108,22 @@
                 :item="info"
                 :itemId="$route.params.id"
                 :type="'album-full'"
+                @purchase-complete="purchaseComplete"
               />
+            </div>
+          </div>
+          <!-- Await confirm -->
+          <div v-if="awaitConfirm" class="album-await">
+            <div class="album-await-progress">
+              <v-progress-circular indeterminate color="#E56D9B" />
+            </div>
+            <div class="album-await-text">
+              <h4>
+                「Buy」please wait. . .
+              </h4>
+              <p>
+                Waiting for the transaction to be merged into a new block, this may take a few minutes. You can leave this page and do something else.
+              </p>
             </div>
           </div>
         </div>
@@ -190,7 +206,9 @@ export default {
       tempPct: 0,
       fenduanPct: 0,
       albumPctDisplay: '',
-      shouldWait: false
+      shouldWait: false,
+      awaitConfirm: false,
+      timerIndex: null
     }
   },
   computed: {
@@ -203,6 +221,10 @@ export default {
   mounted () {
     this.getAlbum(this.$route.params.id)
     this.count = 0
+  },
+  destroyed () {
+    // 卡片或者页面被销毁时清除定时器
+    if (this.timerIndex) clearTimeout(this.timerIndex)
   },
   watch: {
     wallet (val) {
@@ -223,7 +245,6 @@ export default {
     },
     async price (val) {
       if (this.wallet) {
-        await this.getItemStatus(this.wallet, this.$route.params.id, val)
         if (this.owned) {
           this.info.list.forEach(item => {
             item.unlock = true
@@ -264,11 +285,6 @@ export default {
     }
   },
   methods: {
-    buyClick () {
-      // 这里并没有真的付款代码，而是直接将参数设定为付款成功的状态。
-      this.showDialog = true
-      this.owned = true
-    },
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
@@ -363,13 +379,6 @@ export default {
           this.owned = true
         }
         if (this.wallet) {
-          await this.getItemStatus(this.wallet, id, albumData.price)
-        }
-        if (this.owned) {
-          this.info.list.forEach(item => {
-            item.unlock = true
-          })
-        } else if (this.wallet) {
           for (let index = 0; index < this.info.list.length; index++) {
             const item = this.info.list[index]
             const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, id, index + 1 + '')
@@ -387,6 +396,16 @@ export default {
             }
           }
           this.owned = this.info.list.every(item => item.unlock === true)
+          if (this.owned) this.awaitConfirm = false
+
+          // 检查整张专辑购买
+          const oldOwned = this.owned
+          await this.getItemStatus(this.wallet, id, this.price)
+          if (this.owned && !oldOwned) {
+            this.info.list.forEach(item => {
+              item.unlock = true
+            })
+          }
         }
 
         // 获取封面
@@ -530,6 +549,10 @@ export default {
           window.URL.revokeObjectURL(item.src)
         })
       })
+    },
+    purchaseComplete () {
+      this.awaitConfirm = true
+      this.getItemStatus(this.wallet, this.$route.params.id, this.price)
     }
   }
 }
@@ -673,6 +696,42 @@ a {
       }
       button {
         width: 200px;
+      }
+    }
+  }
+
+  &-await {
+    margin: 15px 0 0;
+    display: flex;
+    background: #7e7e7e4d;
+    box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 10px;
+    &-progress {
+      min-height: 66px;
+      min-width: 66px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 5px;
+    }
+    &-text {
+      text-align: left;
+      h4 {
+        text-align: left;
+        font-size: 16px;
+        color: white;
+        padding: 0;
+        margin: 0 0 10px;
+      }
+      p {
+        text-align: left;
+        font-size: 14px;
+        color: white;
+        padding: 0;
+        margin: 0 0 0 6px;
       }
     }
   }
