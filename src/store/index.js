@@ -314,7 +314,7 @@ export default new Vuex.Store({
     },
     logout ({ commit }) {
       commit('setUsername', '')
-      commit('setUserAvatar', '')
+      commit('setUserAvatar', undefined)
       commit('setIsLoggedIn', false)
       commit('setWallet', '')
       commit('setIsMe', false)
@@ -480,7 +480,7 @@ export default new Vuex.Store({
         postInfo = []
       }
 
-      postInfo.push({ 'single': singleTransaction.id, 'timestamp': Date.now() })
+      postInfo.push({ 'single': singleTransaction.id, genre: data.single.genre, 'timestamp': Date.now() })
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 

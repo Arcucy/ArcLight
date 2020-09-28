@@ -77,7 +77,7 @@
       </div>
       <!-- Download -->
       <div v-if="(owned || artist.id === wallet || !price) && !loading" class="music-download">
-        <a :href="audio.src" :download="info.name + ' - ' + info.artist" style="text-decoration: none;">
+        <a :href="audio.src" :download="info.name + ' - ' + info.artist + '.' + ext" style="text-decoration: none;">
           <v-btn
             block
             large
@@ -219,7 +219,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['wallet'])
+    ...mapState(['wallet']),
+    ext () {
+      const getExt = {
+        'audio/mp3': 'mp3',
+        'audio/flac': 'flac',
+        'audio/wav': 'wav',
+        'audio/ogg': 'ogg'
+      }
+      return getExt[this.musicType]
+    }
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
@@ -236,6 +245,14 @@ export default {
         this.imgShoudLoad = true
       })
       this.getMusicInfo(this.$route.params.id)
+    },
+    wallet (val) {
+      if (this.info.artistId === val) {
+        this.owned = true
+      } else {
+        this.owned = false
+        this.getItemStatus(val, this.$route.params.id, this.price)
+      }
     }
   },
   destroyed () {
@@ -246,6 +263,9 @@ export default {
   },
   methods: {
     async getItemStatus (address, itemAddress, price) {
+      if (!address) {
+        return
+      }
       if (this.type === 'album-info') {
         const res1 = await api.arweave.getAlbumItemPurchaseStatus(address, itemAddress, this.$route.query.album)
         if (res1) {
