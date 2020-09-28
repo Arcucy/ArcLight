@@ -51,7 +51,7 @@
                   Demo Duration
                 </div>
                 <v-text-field
-                  v-model="duration"
+                  v-model="durationDisplay"
                   solo
                   disabled
                   class="soundeffect-demo"
@@ -155,6 +155,7 @@ export default {
     return {
       price: '',
       duration: '',
+      durationDisplay: '',
       priceWidth: 0,
       audio: '',
       failSnackbar: false,
@@ -272,6 +273,7 @@ export default {
 
     this.price = stringUtil.toPlainString(this.soundEffectInfo.price) + ' AR'
     this.duration = this.soundEffectInfo.duration
+    this.durationDisplay = this.duration + 's'
 
     const priceString = stringUtil.toPlainString(this.soundEffectInfo.price) + ''
     let length = priceString.length

@@ -291,6 +291,13 @@ export default {
         return
       }
 
+      if (this.duration === 'Off') {
+        this.duration = this.duration.replace('s', '')
+        this.duration = parseInt(this.duration)
+      } else {
+        this.duration = 0
+      }
+
       let shouldReturn = false
       for (let i = 0; i < this.fileList.length; i++) {
         const item = this.fileList[i]

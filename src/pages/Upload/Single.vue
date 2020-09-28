@@ -272,6 +272,13 @@ export default {
         return
       }
 
+      if (this.duration === 'Off') {
+        this.duration = this.duration.replace('s', '')
+        this.duration = parseInt(this.duration)
+      } else {
+        this.duration = 0
+      }
+
       if (isNaN(parseFloat(this.price))) {
         this.failMessage = 'The price must be numbers'
         this.failSnackbar = true

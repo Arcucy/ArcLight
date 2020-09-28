@@ -54,7 +54,7 @@
                   Demo Duration
                 </div>
                 <v-text-field
-                  v-model="duration"
+                  v-model="durationDisplay"
                   solo
                   disabled
                   class="album-demo"
@@ -166,6 +166,7 @@ export default {
       data: '',
       price: '',
       duration: '',
+      durationDisplay: '',
       priceWidth: 0,
       audio: '',
       submitBtnLoading: false,
@@ -325,6 +326,7 @@ export default {
 
     this.price = stringUtil.toPlainString(this.albumInfo.price) + ' AR'
     this.duration = this.albumInfo.duration
+    this.durationDisplay = this.duration + 's'
 
     const priceString = stringUtil.toPlainString(this.albumInfo.price) + ''
     let length = priceString.length

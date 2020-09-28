@@ -54,7 +54,7 @@
                   Demo Duration
                 </div>
                 <v-text-field
-                  v-model="duration"
+                  v-model="durationDisplay"
                   solo
                   disabled
                   class="single-demo"
@@ -158,6 +158,7 @@ export default {
     return {
       price: '',
       duration: '',
+      durationDisplay: '',
       priceWidth: 0,
       audio: '',
       submitBtnLoading: false,
@@ -276,6 +277,7 @@ export default {
 
     this.price = stringUtil.toPlainString(this.singleInfo.price) + ' AR'
     this.duration = this.singleInfo.duration
+    this.durationDisplay = this.duration + 's'
 
     const priceString = stringUtil.toPlainString(this.singleInfo.price) + ''
     let length = priceString.length
