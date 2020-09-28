@@ -54,11 +54,11 @@
                   Demo Duration
                 </div>
                 <v-text-field
-                  v-model="duration"
+                  v-model="durationDisplay"
                   solo
                   disabled
                   class="single-demo"
-                  :style="`width: 54px;`"
+                  :style="`width: 110px;`"
                 ></v-text-field>
             </div>
           </div>
@@ -68,7 +68,8 @@
         </div>
         <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
         <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="() => {$router.push({ name: 'Songs' })}">Done</v-btn>
-        <div class="upload-status" v-if="submitBtnLoading">
+        <!-- <div class="upload-status" v-if="submitBtnLoading"> -->
+        <div class="upload-status">
           <div class="upload-status-cover" v-if="uploadCoverPct !== 100">
             <div class="upload-title">Uploading Cover...</div>
             <v-progress-linear
@@ -79,14 +80,18 @@
               color="#3B8CFF"
             ></v-progress-linear>
           </div>
-          <div class="upload-status-music" v-if="uploadMusicPct !== 100">
-            <div class="upload-title">Uploading Music...</div>
+          <div class="upload-status-music">
+          <!-- <div class="upload-status-music" v-if="uploadMusicPct !== 100"> -->
+            <div style="display: flex;">
+              <div class="upload-title" style="flex: 1">Uploading Music... {{ uploadMusicPct }}%</div>
+              <div class="upload-title">{{ uploadStatus }}</div>
+            </div>
             <v-progress-linear
               :buffer-value="musicPct"
               v-model="musicPct"
               :value="musicPct"
               stream
-              color="#FF3B6C"
+              color="#E56D9B"
             ></v-progress-linear>
           </div>
         </div>
@@ -132,7 +137,7 @@
             It will need a short time of mining for miners to help you save to next block.
             Be patient, your wonderful will be forever stored!
           </p>
-          <v-btn class="confirm-button" depressed color="#E56D9B" :disabled="disAllowStep2" block @click="showUpload = false">
+          <v-btn class="confirm-button" depressed color="#E56D9B" block @click="showUpload = false">
             Confirm
           </v-btn>
         </v-card>
@@ -158,6 +163,7 @@ export default {
     return {
       price: '',
       duration: '',
+      durationDisplay: '',
       priceWidth: 0,
       audio: '',
       submitBtnLoading: false,
@@ -172,7 +178,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicFile', 'singleMusicRaw', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete'])
+    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicFile', 'singleMusicRaw', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
   },
   watch: {
     singleUploadComplete (val) {
@@ -248,6 +254,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.singleInfo)
     document.title = 'Review Your Upload - ArcLight'
 
     this.coverPct = 0
@@ -276,6 +283,13 @@ export default {
 
     this.price = stringUtil.toPlainString(this.singleInfo.price) + ' AR'
     this.duration = this.singleInfo.duration
+    if (this.duration === -1) {
+      this.durationDisplay = 'Album Full'
+    } else if (this.duration === 0) {
+      this.durationDisplay = 'Off'
+    } else {
+      this.durationDisplay = this.duration + 's'
+    }
 
     const priceString = stringUtil.toPlainString(this.singleInfo.price) + ''
     let length = priceString.length

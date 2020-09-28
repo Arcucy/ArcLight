@@ -70,20 +70,14 @@
           ></v-textarea>
           <div class="name-desp side-title">Category</div>
           <podcastSelect v-model="category" style="margin-bottom: 16px;" />
-          <div class="name-desp side-title">Demo Duration</div>
-          <v-select
-            dark
-            v-model="duration"
-            :items="durationSelection"
-            label="Select Demo duration"
-            solo
-          ></v-select>
           <div class="name-desp side-title">Price</div>
           <v-text-field
             v-model="price"
             class="price"
             id="price"
             solo
+            dark
+            type="number"
             label="Price"
             prepend-inner-icon="mdi-cash-multiple"
             maxlength="12"
@@ -119,6 +113,17 @@
               </span>
             </template>
           </v-file-input>
+          <div class="name-desp side-title">Demo Duration</div>
+          <v-select
+            dark
+            :disabled="disableDuration"
+            color="#E56D9B"
+            v-model="duration"
+            :items="durationSelection"
+            :label="durationSelectStr"
+            :loading="disableDuration"
+            solo
+          ></v-select>
           <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
         </div>
       </div>
@@ -223,7 +228,11 @@ export default {
       podcastSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
-      durationSelection: ['10s', '30s', '60s', 'Off']
+      shouldLoad: true,
+      durationSelection: ['10s', '30s', '60s', 'Off', 'Allow Full'],
+      maxDuration: 0,
+      disableDuration: true,
+      durationSelectStr: 'Please Upload Your Artwork...'
     }
   },
   computed: {
@@ -238,6 +247,45 @@ export default {
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
         }, 3000)
+      }
+    },
+    file (val, oldVal) {
+      if (val && val !== oldVal && this.shouldLoad) {
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(val)
+        reader.onload = async (e) => {
+          const data = e.target.result
+          let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          let source
+
+          audioCtx.createBufferSource()
+          source = await audioCtx.decodeAudioData(data.slice())
+          let duration = source.duration
+          let index = 0
+          if (duration < 60 && duration >= 30) {
+            index = this.durationSelection.indexOf('60s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+            }
+          }
+          if (duration < 30 && duration >= 15) {
+            index = this.durationSelection.indexOf('30s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+            }
+          }
+          if (duration < 15) {
+            index = this.durationSelection.indexOf('30s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+            }
+          }
+          this.durationSelectStr = 'Select Demo duration'
+          this.disableDuration = false
+        }
       }
     }
   },
@@ -285,6 +333,15 @@ export default {
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
+      }
+
+      if (this.duration !== 'Off' && this.duration !== 'Allow Full') {
+        this.duration = (this.duration + '').replace('s', '')
+        this.duration = parseInt(this.duration)
+      } else if (this.duration === 'Allow Full') {
+        this.duration = -1
+      } else {
+        this.duration = 0
       }
 
       if (isNaN(parseFloat(this.price))) {
@@ -369,6 +426,9 @@ export default {
     }
   },
   mounted () {
+    if (this.singleInfo) {
+      this.shouldLoad = false
+    }
     if (this.$route.params.file) {
       this.file = this.$route.params.file
       let audioType = {
@@ -394,13 +454,23 @@ export default {
     }
 
     if (this.podcastInfo) {
+      this.disableDuration = false
+      this.durationSelectStr = 'Select Demo duration'
       this.podcastTitle = this.podcastInfo.podcast
       this.programTitle = this.podcastInfo.title
       this.podcastDesp = this.podcastInfo.desp
       this.category = this.podcastInfo.category
-      this.duration = this.podcastInfo.duration
+      if (this.podcastInfo.duration !== 0 && this.podcastInfo.duration !== -1) {
+        this.duration = this.podcastInfo.duration + 's'
+      } else if (this.podcastInfo.duration === -1) {
+        this.duration = 'Allow Full'
+      } else {
+        this.duration = 'Off'
+      }
       this.price = this.podcastInfo.price
     }
+
+    this.shouldLoad = true
 
     if (this.userType === 'guest') {
       this.failSnackbar = true
@@ -552,6 +622,14 @@ export default {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;

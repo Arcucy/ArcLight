@@ -78,9 +78,6 @@ export default {
   watch: {
     async search (val, oldVal) {
       val && val !== oldVal && await this.querySelections(val)
-    },
-    select (val) {
-      console.log(val)
     }
   },
   methods: {

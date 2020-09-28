@@ -17,9 +17,9 @@
     </div>
     <div class="notice">
       Developed by
-      <a href="https://github.com/AyakaLab">Ayaka Lab</a>
+      <a href="https://github.com/AyakaLab" target="_blank" >Ayaka Lab</a>
       for Project
-      <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a>
+      <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
     </div>
   </v-app>
 </template>

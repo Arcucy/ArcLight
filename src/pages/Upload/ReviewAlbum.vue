@@ -54,7 +54,7 @@
                   Demo Duration
                 </div>
                 <v-text-field
-                  v-model="duration"
+                  v-model="durationDisplay"
                   solo
                   disabled
                   class="album-demo"
@@ -65,7 +65,8 @@
           <div v-if="musicIsReady" class="players">
             <div v-for="(music, index) in musicList" :key="index" class="player-container">
               <div class="music-title">
-              #{{ index + 1 }} {{ music.title }}
+              #{{ index + 1 }} {{ music.title }}<br>
+              {{ music.price }}
               </div>
               <div class="player">
                 <aplayer id="ap" :music="music" :lrcType="0" class="music-player" theme="#E56D9B" />
@@ -87,13 +88,16 @@
             ></v-progress-linear>
           </div>
           <div class="upload-status-music" v-if="!uploadDone">
-            <div class="upload-title">Uploading Music... {{ uploadMusicNumber }}</div>
+            <div style="display: flex;">
+              <div class="upload-title">Uploading Music... {{ uploadMusicNumber }} {{ uploadMusicPct }}%</div>
+              <div class="upload-title">{{ uploadStatus }}</div>
+            </div>
             <v-progress-linear
               :buffer-value="musicPct"
               v-model="musicPct"
               :value="musicPct"
               stream
-              color="#FF3B6C"
+              color="#E56D9B"
             ></v-progress-linear>
           </div>
         </div>
@@ -139,7 +143,7 @@
             It will need a short time of mining for miners to help you save to next block.
             Be patient, your wonderful will be forever stored!
           </p>
-          <v-btn class="confirm-button" depressed color="#E56D9B" :disabled="disAllowStep2" block @click="showUpload = false">
+          <v-btn class="confirm-button" depressed color="#E56D9B" block @click="showUpload = false">
             Confirm
           </v-btn>
         </v-card>
@@ -166,6 +170,7 @@ export default {
       data: '',
       price: '',
       duration: '',
+      durationDisplay: '',
       priceWidth: 0,
       audio: '',
       submitBtnLoading: false,
@@ -183,7 +188,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumMusicFile', 'albumMusicRaw', 'albumMusicType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete'])
+    ...mapState(['keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumMusicFile', 'albumMusicRaw', 'albumMusicType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
   },
   watch: {
     albumUploadComplete (val) {
@@ -325,6 +330,13 @@ export default {
 
     this.price = stringUtil.toPlainString(this.albumInfo.price) + ' AR'
     this.duration = this.albumInfo.duration
+    if (this.duration === -1) {
+      this.durationDisplay = 'Album Full'
+    } else if (this.duration === 0) {
+      this.durationDisplay = 'Off'
+    } else {
+      this.durationDisplay = this.duration + 's'
+    }
 
     const priceString = stringUtil.toPlainString(this.albumInfo.price) + ''
     let length = priceString.length

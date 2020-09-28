@@ -57,11 +57,11 @@
                   Demo Duration
                 </div>
                 <v-text-field
-                  v-model="duration"
+                  v-model="durationDisplay"
                   solo
                   disabled
                   class="podcast-demo"
-                  :style="`width: 54px;`"
+                  :style="`width: 110px;`"
                 ></v-text-field>
             </div>
           </div>
@@ -83,13 +83,16 @@
             ></v-progress-linear>
           </div>
           <div class="upload-status-music" v-if="uploadMusicPct !== 100">
-            <div class="upload-title">Uploading Music...</div>
+            <div style="display: flex;">
+              <div class="upload-title" style="flex: 1">Uploading Music... {{ uploadMusicPct }}%</div>
+              <div class="upload-title">{{ uploadStatus }}</div>
+            </div>
             <v-progress-linear
               :buffer-value="musicPct"
               v-model="musicPct"
               :value="musicPct"
               stream
-              color="#FF3B6C"
+              color="#E56D9B"
             ></v-progress-linear>
           </div>
         </div>
@@ -135,7 +138,7 @@
             It will need a short time of mining for miners to help you save to next block.
             Be patient, your wonderful will be forever stored!
           </p>
-          <v-btn class="confirm-button" depressed color="#E56D9B" :disabled="disAllowStep2" block @click="showUpload = false">
+          <v-btn class="confirm-button" depressed color="#E56D9B" block @click="showUpload = false">
             Confirm
           </v-btn>
         </v-card>
@@ -161,6 +164,7 @@ export default {
     return {
       price: '',
       duration: '',
+      durationDisplay: '',
       priceWidth: 0,
       audio: '',
       submitBtnLoading: false,
@@ -175,7 +179,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'podcastCoverFile', 'podcastCoverRaw', 'podcastCoverType', 'podcastMusicFile', 'podcastMusicRaw', 'podcastMusicType', 'podcastInfo', 'uploadCoverPct', 'uploadMusicPct', 'podcastUploadComplete'])
+    ...mapState(['keyFileContent', 'username', 'podcastCoverFile', 'podcastCoverRaw', 'podcastCoverType', 'podcastMusicFile', 'podcastMusicRaw', 'podcastMusicType', 'podcastInfo', 'uploadCoverPct', 'uploadMusicPct', 'podcastUploadComplete', 'uploadStatus'])
   },
   watch: {
     podcastUploadComplete (val) {
@@ -280,6 +284,13 @@ export default {
 
     this.price = stringUtil.toPlainString(this.podcastInfo.price) + ' AR'
     this.duration = this.podcastInfo.duration
+    if (this.duration === -1) {
+      this.durationDisplay = 'Album Full'
+    } else if (this.duration === 0) {
+      this.durationDisplay = 'Off'
+    } else {
+      this.durationDisplay = this.duration + 's'
+    }
 
     const priceString = stringUtil.toPlainString(this.podcastInfo.price) + ''
     let length = priceString.length
