@@ -55,7 +55,7 @@
                   solo
                   disabled
                   class="soundeffect-demo"
-                  :style="`width: 54px;`"
+                  :style="`width: 110px;`"
                 ></v-text-field>
             </div>
           </div>
@@ -77,13 +77,16 @@
             ></v-progress-linear>
           </div>
           <div class="upload-status-music" v-if="uploadMusicPct !== 100">
-            <div class="upload-title">Uploading Music...</div>
+            <div style="display: flex;">
+              <div class="upload-title" style="flex: 1">Uploading Music... {{ uploadMusicPct }}%</div>
+              <div class="upload-title">{{ uploadStatus }}</div>
+            </div>
             <v-progress-linear
               :buffer-value="musicPct"
               v-model="musicPct"
               :value="musicPct"
               stream
-              color="#FF3B6C"
+              color="#E56D9B"
             ></v-progress-linear>
           </div>
         </div>
@@ -170,7 +173,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo', 'uploadCoverPct', 'uploadMusicPct', 'soundEffectUploadComplete'])
+    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo', 'uploadCoverPct', 'uploadMusicPct', 'soundEffectUploadComplete', 'uploadStatus'])
   },
   watch: {
     soundEffectUploadComplete (val) {
@@ -273,7 +276,13 @@ export default {
 
     this.price = stringUtil.toPlainString(this.soundEffectInfo.price) + ' AR'
     this.duration = this.soundEffectInfo.duration
-    this.durationDisplay = this.duration + 's'
+    if (this.duration === -1) {
+      this.durationDisplay = 'Album Full'
+    } else if (this.duration === 0) {
+      this.durationDisplay = 'Off'
+    } else {
+      this.durationDisplay = this.duration + 's'
+    }
 
     const priceString = stringUtil.toPlainString(this.soundEffectInfo.price) + ''
     let length = priceString.length

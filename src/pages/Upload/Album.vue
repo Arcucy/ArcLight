@@ -58,18 +58,10 @@
           ></v-textarea>
           <div class="name-desp side-title">Genre</div>
           <genreSelect v-model="genre" style="margin-bottom: 16px;" />
-          <div class="name-desp side-title">Demo Duration</div>
-          <v-select
-            dark
-            v-model="duration"
-            :items="durationSelection"
-            label="Select Demo duration"
-            solo
-          ></v-select>
           <div v-for="(file, index) in fileList" :key="index">
             <div class="name-title side-title">#{{ index + 1 }} Music Name</div>
             <v-text-field
-              v-model="fileList[index].title"
+              v-model="file.title"
               label="Solo"
               placeholder="Enter Your Music Title..."
               solo
@@ -82,7 +74,7 @@
             <div class="finput-container">
               <v-file-input
                 class="finput"
-                v-model="fileList[index].music"
+                v-model="file.music"
                 color="#FFF"
                 chips
                 placeholder="Select your file"
@@ -117,7 +109,7 @@
             </div>
             <div class="name-desp side-title">#{{ index + 1 }} Music Price</div>
             <v-text-field
-              v-model="fileList[index].price"
+              v-model="file.price"
               class="price"
               solo
               dark
@@ -130,6 +122,17 @@
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
+          <div class="name-desp side-title">Demo Duration</div>
+          <v-select
+            dark
+            :disabled="mainDisableDuration"
+            color="#E56D9B"
+            v-model="duration"
+            :items="durationSelection"
+            :label="durationSelectStr"
+            :loading="mainDisableDuration"
+            solo
+          ></v-select>
           <div class="name-desp side-title">Album Price will always be 80% of your total price for each song</div>
           <v-btn color="#E56D9B" depressed dark class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
         </div>
@@ -214,7 +217,7 @@ export default {
   data () {
     return {
       file: null,
-      fileList: [{ music: null, title: '', price: 0, type: '' }, { music: null, title: '', price: 0, type: '' }],
+      fileList: [{ music: null, title: '', price: 0, type: '', disableDuration: true }, { music: null, title: '', price: 0, type: '', disableDuration: true }],
       genre: '',
       duration: '',
       price: 0,
@@ -235,11 +238,19 @@ export default {
       albumSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
-      durationSelection: ['10s', '30s', '60s', 'Off']
+      durationSelection: ['10s', '30s', '60s', 'Off', 'Allow Full'],
+      maxDuration: 0,
+      disableDuration: true
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType', 'albumInfo'])
+    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType', 'albumInfo']),
+    mainDisableDuration () {
+      return !this.fileList.every(item => !item.disableDuration)
+    },
+    durationSelectStr () {
+      return this.mainDisableDuration ? 'Please Upload Your Artwork...' : 'Select Demo duration'
+    }
   },
   watch: {
     userType (val) {
@@ -251,6 +262,51 @@ export default {
           this.$router.push({ name: 'Landing' })
         }, 3000)
       }
+    },
+    fileList: {
+      handler: (val) => {
+        val.forEach(item => {
+          if (item.music) {
+            const reader = new FileReader()
+            reader.readAsArrayBuffer(item.music)
+            reader.onload = async (e) => {
+              const data = e.target.result
+              let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+              let source
+
+              audioCtx.createBufferSource()
+              source = await audioCtx.decodeAudioData(data.slice())
+              let duration = source.duration
+              let index = 0
+              if (duration < 60 && duration >= 30) {
+                index = this.durationSelection.indexOf('60s')
+                if (index > -1) {
+                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+                }
+              }
+              if (duration < 30 && duration >= 15) {
+                index = this.durationSelection.indexOf('30s')
+                if (index > -1) {
+                  this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+                }
+              }
+              if (duration < 15) {
+                index = this.durationSelection.indexOf('30s')
+                if (index > -1) {
+                  this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+                  this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+                }
+              }
+              item.disableDuration = false
+            }
+          } else {
+            item.disableDuration = true
+          }
+        })
+      },
+      deep: true
     }
   },
   methods: {
@@ -420,7 +476,7 @@ export default {
       this.snackbar = true
     },
     musicAdd () {
-      this.fileList.push({ music: null, title: '', price: 0, type: '' })
+      this.fileList.push({ music: null, title: '', price: 0, type: '', disableDuration: true })
     },
     musicLess (i) {
       if (this.fileList.length <= 2) return
