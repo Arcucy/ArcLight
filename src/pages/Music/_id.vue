@@ -83,7 +83,7 @@
       </div>
       <!-- Download -->
       <div v-if="(owned || artist.id === wallet || !price) && !loading" class="music-download">
-        <a :href="audio.src" :download="info.name + ' - ' + info.artist + '.' + ext" style="text-decoration: none;">
+        <a :href="completeAudio.src" :download="info.name + ' - ' + info.artist + '.' + ext" style="text-decoration: none;">
           <v-btn
             block
             large
@@ -401,12 +401,12 @@ export default {
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
       const { fullUrl, trialUrl } = await this.getAudio(data.music, data.duration)
-      this.completeAudio = { ...audio, url: fullUrl }
+      this.completeAudio = { ...audio, src: fullUrl }
       if (trialUrl) {
         this.auditionClip = {
           ...audio,
           title: `「${data.duration}s Demo」 ` + audio.title,
-          url: trialUrl
+          src: trialUrl
         }
       }
 
@@ -438,12 +438,12 @@ export default {
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
       const { fullUrl, trialUrl } = await this.getAudio(data.music[index].id, data.duration)
-      this.completeAudio = { ...audio, url: fullUrl }
+      this.completeAudio = { ...audio, src: fullUrl }
       if (trialUrl) {
         this.auditionClip = {
           ...audio,
           title: `「${data.duration}s Demo」 ` + audio.title,
-          url: trialUrl
+          src: trialUrl
         }
       }
 
@@ -472,12 +472,12 @@ export default {
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
       const { fullUrl, trialUrl } = await this.getAudio(data.program, data.duration)
-      this.completeAudio = { ...audio, url: fullUrl }
+      this.completeAudio = { ...audio, src: fullUrl }
       if (trialUrl) {
         this.auditionClip = {
           ...audio,
           title: `「${data.duration}s Demo」 ` + audio.title,
-          url: trialUrl
+          src: trialUrl
         }
       }
 
@@ -505,12 +505,12 @@ export default {
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
       const { fullUrl, trialUrl } = await this.getAudio(data.audio, data.duration)
-      this.completeAudio = { ...audio, url: fullUrl }
+      this.completeAudio = { ...audio, src: fullUrl }
       if (trialUrl) {
         this.auditionClip = {
           ...audio,
           title: `「${data.duration}s Demo」 ` + audio.title,
-          url: trialUrl
+          src: trialUrl
         }
       }
 
