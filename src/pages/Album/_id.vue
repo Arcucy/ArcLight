@@ -253,8 +253,9 @@ export default {
       if (res2) {
         const transaction = await api.arweave.getTransactionDetail(res2)
         const tags = await api.arweave.getTagsByTransaction(transaction)
-        const type = tags['Purchase-Type']
-        if (type === 'album-full') {
+        console.log(tags)
+        const type = tags['Album-Type']
+        if (type === 'full') {
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
           const ar = api.arweave.getArFromWinston(transaction.quantity)
           if (ar === finalPrice) this.owned = true
