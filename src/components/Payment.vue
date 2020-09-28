@@ -4,7 +4,7 @@
       <div class="music-download">
         <div v-if="$route.name === 'Music' || type !== 'album-full'" class="music-download-price">
           <p v-if="artist.id !== wallet && price" class="music-download-price-text">
-            Sale for {{ price }} AR
+            {{ purchaseSlogan }}
           </p>
           <p v-else class="free-text music-download-price-text">
             Free
@@ -182,7 +182,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['username', 'paymentId', 'purchaseComplete'])
+    ...mapState(['username', 'paymentId', 'purchaseComplete']),
+    purchaseSlogan () {
+      if (this.item.duration !== -1) return `Pay ${this.price} AR for Full Version`
+      else return `Pay ${this.price} AR to Download`
+    }
   },
   watch: {
     showWallet (val) {
