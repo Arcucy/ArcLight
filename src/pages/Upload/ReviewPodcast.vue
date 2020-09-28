@@ -135,7 +135,7 @@
             It will need a short time of mining for miners to help you save to next block.
             Be patient, your wonderful will be forever stored!
           </p>
-          <v-btn class="confirm-button" depressed color="#E56D9B" :disabled="disAllowStep2" block @click="showUpload = false">
+          <v-btn class="confirm-button" depressed color="#E56D9B" block @click="showUpload = false">
             Confirm
           </v-btn>
         </v-card>
