@@ -120,6 +120,7 @@
               v-model="fileList[index].price"
               class="price"
               solo
+              dark
               label="Price"
               type="number"
               prepend-inner-icon="mdi-cash-multiple"

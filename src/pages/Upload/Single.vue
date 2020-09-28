@@ -73,6 +73,7 @@
             class="price"
             id="price"
             solo
+            dark
             type="number"
             label="Price"
             maxlength="12"

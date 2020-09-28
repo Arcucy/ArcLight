@@ -72,6 +72,7 @@
             class="price"
             id="price"
             solo
+            dark
             type="number"
             label="Price"
             prepend-inner-icon="mdi-cash-multiple"
