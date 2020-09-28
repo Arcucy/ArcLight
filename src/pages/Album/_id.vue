@@ -269,7 +269,6 @@ export default {
       if (res2) {
         const transaction = await api.arweave.getTransactionDetail(res2)
         const tags = await api.arweave.getTagsByTransaction(transaction)
-        console.log(tags)
         const type = tags['Album-Type']
         if (type === 'full') {
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
@@ -413,7 +412,6 @@ export default {
       return new Promise(async (resolve, reject) => {
         try {
           this.pctArray[index] = 0
-          console.log(index)
           const music = await api.arweave.getMusic(id, pct => { this.info.list[index].pct = pct })
           this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
@@ -475,7 +473,6 @@ export default {
         const reader = new FileReader()
         reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
         reader.onload = (event) => {
-          console.log('getting data for: ', item.title + ' by ' + this.info.artist + '.' + getExt[music.type] + ' with ' + music.src)
           resolve({ data: event.target.result, type: music.type })
         }
       })
@@ -497,13 +494,10 @@ export default {
           'audio/wav': 'wav',
           'audio/ogg': 'ogg'
         }
-        console.log('get url for:', title + ' by ' + this.info.artist)
         const data = await this.getMusicRaw({ id: id, title: title })
-        console.log(data)
         zip.file(title + ' by ' + this.info.artist + '.' + getExt[data.type], new Blob([data.data], { type: data.type }))
       }
       zip.generateAsync({ type: 'blob' }).then((blob) => {
-        console.log(blob)
         let url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
         const div = document.getElementById('album')
         const a = document.createElement('a')
