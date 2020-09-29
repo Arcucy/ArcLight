@@ -122,10 +122,11 @@
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="checkBtnLoading" @click="verify">Verify</v-btn>
           <div class="name-desp side-title">Demo Duration</div>
           <v-select
             dark
-            :disabled="mainDisableDuration"
+            :disabled="demoIsDisable"
             color="#E56D9B"
             v-model="duration"
             :items="durationSelection"
@@ -134,7 +135,7 @@
             solo
           ></v-select>
           <div class="name-desp side-title">Album Price will always be 80% of your total price for each song</div>
-          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :disabled="demoIsDisable" :loading="submitBtnLoading" @click="submit">Review</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -239,9 +240,11 @@ export default {
       albumSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
+      checkBtnLoading: false,
       durationSelection: ['10s', '30s', '60s', 'Off', 'Allow Full'],
       maxDuration: 0,
-      disableDuration: true
+      disableDuration: true,
+      demoIsDisable: true
     }
   },
   computed: {
@@ -275,45 +278,11 @@ export default {
       }
     },
     fileList: {
-      handler: (val) => {
+      handler (val) {
         val.forEach(item => {
-          if (item.music) {
-            const reader = new FileReader()
-            reader.readAsArrayBuffer(item.music)
-            reader.onload = async (e) => {
-              const data = e.target.result
-              let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-              let source
-
-              audioCtx.createBufferSource()
-              source = await audioCtx.decodeAudioData(data.slice())
-              let duration = source.duration
-              let index = 0
-              if (duration < 60 && duration >= 30) {
-                index = this.durationSelection.indexOf('60s')
-                if (index > -1) {
-                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
-                }
-              }
-              if (duration < 30 && duration >= 15) {
-                index = this.durationSelection.indexOf('30s')
-                if (index > -1) {
-                  this.durationSelection = this.durationSelection.filter(item => item !== '30s')
-                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
-                }
-              }
-              if (duration < 15) {
-                index = this.durationSelection.indexOf('30s')
-                if (index > -1) {
-                  this.durationSelection = this.durationSelection.filter(item => item !== '30s')
-                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
-                  this.durationSelection = this.durationSelection.filter(item => item !== '15s')
-                }
-              }
-              item.disableDuration = false
-            }
-          } else {
+          if (!item.music) {
             item.disableDuration = true
+            this.demoIsDisable = true
           }
         })
       },
@@ -322,6 +291,58 @@ export default {
   },
   methods: {
     ...mapActions(['uploadAlbumCoverFile', 'reviewAlbum']),
+    async verify () {
+      this.fileList.forEach((item, i) => {
+        if (item.music) {
+          console.log('music:', item.music)
+          const reader = new FileReader()
+          reader.readAsArrayBuffer(item.music)
+          reader.onload = async (e) => {
+            const data = e.target.result
+            e = null
+            let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+            let source
+
+            audioCtx.createBufferSource()
+            source = await audioCtx.decodeAudioData(data.slice())
+            let duration = source.duration
+            audioCtx = null
+            source = null
+            let index = 0
+            if (duration < 60 && duration >= 30) {
+              index = this.durationSelection.indexOf('60s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              }
+            }
+            if (duration < 30 && duration >= 15) {
+              index = this.durationSelection.indexOf('30s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              }
+            }
+            if (duration < 15) {
+              index = this.durationSelection.indexOf('30s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+              }
+            }
+            item.disableDuration = false
+            if (i === (this.fileList.length - 1)) {
+              this.demoIsDisable = false
+            }
+          }
+        } else {
+          this.failSnackbar = true
+          this.failMessage = 'Please upload at least ' + this.fileList.length + ' files'
+          item.disableDuration = true
+        }
+      })
+      this.demoIsDisable = true
+    },
     async submit () {
       this.submitBtnLoading = true
 
@@ -407,7 +428,7 @@ export default {
         return
       }
 
-      console.log(this.price)
+      this.price = API.arweave.getArFromWinston(this.price)
       console.log(this.duration)
 
       if (parseFloat(this.price) < 0) {
@@ -438,7 +459,7 @@ export default {
 
       for (let i = 0; i < this.fileList.length; i++) {
         if (!this.fileList[i].title) {
-          this.failMessage = 'Your music must have titles'
+          this.failMessage = 'Your music must have title for #' + (i + 1)
           this.failSnackbar = true
           this.submitBtnLoading = false
           return

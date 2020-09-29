@@ -89,7 +89,7 @@
           </div>
           <div class="upload-status-music" v-if="!uploadDone">
             <div style="display: flex;">
-              <div class="upload-title">Uploading Music... {{ uploadMusicNumber }} {{ uploadMusicPct }}%</div>
+              <div class="upload-title" style="flex: 1">Uploading Music... {{ uploadMusicNumber }} {{ uploadMusicPct }}%</div>
               <div class="upload-title">{{ uploadStatusDisplay }}</div>
             </div>
             <v-progress-linear
@@ -342,7 +342,7 @@ export default {
       this.musicList = urls
     })
 
-    this.price = stringUtil.toPlainString(this.albumInfo.price) + ' AR'
+    this.price = parseFloat(api.arweave.getArFromWinston(this.albumInfo.price)).toFixed(12).replace(/\.?0+$/, '') + ' AR'
     this.duration = this.albumInfo.duration
     if (this.duration === -1) {
       this.durationDisplay = 'Album Full'
@@ -594,6 +594,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-direction: column;
+  .music-title {
+    margin-top: 10px;
+    font-weight: 600;
+  }
 }
 
 .upload-status {
