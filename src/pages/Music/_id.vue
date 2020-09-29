@@ -111,6 +111,7 @@
           :trackNumber="$route.query.album + ''"
         />
       </div>
+      <!-- Await confirm -->
       <div v-if="awaitConfirm" class="music-await">
         <div class="music-await-progress">
           <v-progress-circular indeterminate color="#E56D9B" />
@@ -296,19 +297,21 @@ export default {
           this.awaitConfirm = false
           if (ar === finalPrice) this.owned = true
         } else {
-          const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
-          const transaction = await this.getBuyTransactionDetail(res2)
-          if (!transaction) {
-            this.loading = false
-            return
-          }
-          const tags = await api.arweave.getTagsByTransaction(transaction)
-          const type = tags['Purchase-Type']
-          if (type === 'album-full') {
-            const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
-            const ar = api.arweave.getArFromWinston(transaction.quantity)
-            this.awaitConfirm = false
-            if (ar === finalPrice) this.owned = true
+          const res2 = await api.arweave.getAlbumPurchaseStatus(address, itemAddress)
+          if (res2) {
+            const transaction = await this.getBuyTransactionDetail(res2)
+            if (!transaction) {
+              this.loading = false
+              return
+            }
+            const tags = await api.arweave.getTagsByTransaction(transaction)
+            const type = tags['Album-Type']
+            if (type === 'full') {
+              const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
+              const ar = api.arweave.getArFromWinston(transaction.quantity)
+              this.awaitConfirm = false
+              if (ar === finalPrice) this.owned = true
+            }
           }
         }
       } else {
@@ -336,7 +339,7 @@ export default {
           this.awaitConfirm = true
           this.timerIndex = setTimeout(() => { this.getItemStatus(this.wallet, this.$route.params.id, this.price) }, 2000)
         } else {
-          console.error('[Purchase record query failed] type:', { ...e }.type, e)
+          console.error('[Purchase record query failed] type:', { ...e }.type, txid, e)
           this.$message.error(`Purchase record query failed, type: ${{ ...e }.type || 'Unknown'}`)
           this.awaitConfirm = false
         }
