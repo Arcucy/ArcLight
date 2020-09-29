@@ -483,14 +483,13 @@ export default {
       }
 
       let musicList = []
-
       if (this.price === 0) {
         for (let i = 0; i < this.fileList.length; i++) {
-          this.price = this.price + parseFloat(this.fileList[i].price)
+          this.price = this.price + Number(API.arweave.getWinstonFromAr(this.fileList[i].price))
         }
         this.price = this.price * 0.8
       }
-
+      this.price = API.arweave.getArFromWinston(this.price)
       for (let i = 0; i < this.fileList.length; i++) {
         let aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
@@ -558,7 +557,9 @@ export default {
   mounted () {
     if (this.$route.params.file) {
       this.$route.params.file.forEach((file, index) => {
+        if (!this.fileList[index]) this.fileList.push({ music: null, title: '', price: 0, type: '', disableDuration: true })
         this.fileList[index].music = file
+        console.log(file)
       })
       this.$route.params.music.forEach((item, index) => {
         this.fileList[index].title = item.title
@@ -572,6 +573,7 @@ export default {
     }
 
     if (this.albumInfo) {
+      console.log(this.albumInfo)
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre

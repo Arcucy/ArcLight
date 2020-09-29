@@ -187,7 +187,8 @@ export default {
       showDialog: false,
       showUpload: false,
       canGoBack: true,
-      uploadStatusDisplay: ''
+      uploadStatusDisplay: '',
+      priceDisplay: ''
     }
   },
   computed: {
@@ -342,7 +343,7 @@ export default {
       this.musicList = urls
     })
 
-    this.price = parseFloat(api.arweave.getArFromWinston(this.albumInfo.price)).toFixed(12).replace(/\.?0+$/, '') + ' AR'
+    this.price = parseFloat(this.albumInfo.price).toFixed(12).replace(/\.?0+$/, '') + ' AR'
     this.duration = this.albumInfo.duration
     if (this.duration === -1) {
       this.durationDisplay = 'Album Full'
