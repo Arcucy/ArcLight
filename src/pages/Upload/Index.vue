@@ -69,7 +69,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn'])
+    ...mapState(['isLoggedIn', 'wallet'])
+  },
+  watch: {
+    wallet (val) {
+      if (!val) {
+        this.failMessage = 'Login is required to upload'
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    }
   },
   mounted () {
     setTimeout(() => {
