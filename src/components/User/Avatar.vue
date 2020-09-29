@@ -15,7 +15,7 @@
     </v-img>
     <!-- Default avatar -->
     <div v-else class="avatar-icon">
-    <v-icon :size="Math.round(size * 0.7)" dark>mdi-account-circle</v-icon>
+      <v-icon :size="Math.round(size * 0.7)" dark>mdi-account-circle</v-icon>
     </div>
   </v-avatar>
 </template>

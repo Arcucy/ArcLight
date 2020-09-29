@@ -88,6 +88,23 @@
           <loadCard v-if="podcast.loading" />
         </scrollXBox>
       </div>
+      <!-- Favourite Singers -->
+      <div class="songs">
+        <div class="songs-header">
+          <h4>
+            Similar authors
+          </h4>
+        </div>
+        <scrollXBox list-id="singers" card-id="singers-card">
+          <userCard
+            id="singers-card"
+            class="single-card"
+            v-for="(similarAuthor, index) in similarAuthors"
+            :key="index"
+            :user="similarAuthor"
+          />
+        </scrollXBox>
+      </div>
     </div>
 </template>
 
@@ -156,7 +173,41 @@ export default {
         title: 'Loading...',
         price: '0000',
         authorUsername: 'Artist loading...'
-      }
+      },
+      similarAuthors: [
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'Taylor Swift'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'TRXYE'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'TIKKA'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'Lady Gaga'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: '李知恩'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'Ariana Grande'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'Aril Lavigne Lavigne Lavigne Lavigne'
+        },
+        {
+          avatar: 'https://picsum.photos/510/300?random',
+          nickname: 'Little Sound'
+        }
+      ]
     }
   },
   computed: {
