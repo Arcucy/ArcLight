@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-avatar">
-      <avatar :src="avatar" :size="140" />
+      <avatar :src="avatar" :size="size" />
     </div>
     <h1 class="card-nickname">
       {{ nickname }}
@@ -22,12 +22,29 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      size: 140
+    }
+  },
   computed: {
     avatar () {
       return this.user.avatar
     },
     nickname () {
       return this.user.nickname
+    }
+  },
+  mounted () {
+    this.adaptive()
+    window.addEventListener('resize', this.adaptive)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.adaptive)
+  },
+  methods: {
+    adaptive () {
+      this.size = window.innerWidth > 992 ? 140 : 100
     }
   }
 }
@@ -58,6 +75,16 @@ export default {
     -webkit-line-clamp: 1;
     overflow: hidden;
     word-break: break-all;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .card {
+    width: 100px;
+    &-avatar {
+      width: 100px;
+      height: 100px;
+    }
   }
 }
 </style>
