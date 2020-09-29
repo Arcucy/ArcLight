@@ -251,6 +251,8 @@ export default {
         this.owned = true
       } else {
         this.owned = false
+        this.awaitConfirm = false
+        clearInterval(this.timerIndex)
         this.getItemStatus(val, this.$route.params.id, this.price)
       }
     }
@@ -843,6 +845,7 @@ export default {
     -webkit-line-clamp: 1;
     overflow: hidden;
     word-break: break-all;
+    text-align: left;
     span {
       margin-right: 8px;
       padding: 8px 16px 8px;
