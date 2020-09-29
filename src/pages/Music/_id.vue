@@ -64,7 +64,7 @@
         <!-- Player -->
         <aplayer v-if="audio !== '' && !loading" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
         <!-- No trial version -->
-        <div v-if="audio === '' && !loading" class="music-loading">
+        <div v-if="!audio && !loading" class="music-loading">
           <p>
             There is no demo version of this artwork
           </p>
@@ -265,7 +265,8 @@ export default {
     wallet (val) {
       if (this.info.artistId === val) {
         this.owned = true
-      } else {
+      } else if (this.completeAudio && !this.loading) {
+        // 需要确保歌曲已经获取完成才可以进行这些操作，避免用户在刷新页面后触发这边的代码。
         this.owned = false
         this.awaitConfirm = false
         clearInterval(this.timerIndex)
