@@ -625,7 +625,9 @@ export default new Vuex.Store({
       console.log(albumTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getPostFromAddress(address).catch(() => {
+        postInfo = []
+      })
       if (postInfo) {
         postInfo = JSON.parse(postInfo)
       } else {
