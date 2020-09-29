@@ -201,6 +201,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import API from '@/api/api'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
@@ -359,30 +360,70 @@ export default {
         return
       }
 
-      if (this.duration !== 'Off') {
+      if (this.duration !== 'Off' && this.duration !== 'Allow Full') {
         this.duration = (this.duration + '').replace('s', '')
         this.duration = parseInt(this.duration)
+      } else if (this.duration === 'Allow Full') {
+        this.duration = -1
       } else {
         this.duration = 0
       }
 
       let shouldReturn = false
+      let shouldHasPrice = false
       for (let i = 0; i < this.fileList.length; i++) {
         const item = this.fileList[i]
+        console.log(parseFloat(item.price) > 1)
         if (isNaN(parseFloat(item.price))) {
           this.failMessage = 'The price must be numbers'
           this.failSnackbar = true
           this.submitBtnLoading = false
           shouldReturn = true
+        } else if (shouldHasPrice && parseFloat(item.price) === 0) {
+          this.failMessage = 'Album Song should have price or completely free'
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          shouldHasPrice = false
+          shouldReturn = true
           break
+        } else if (parseFloat(item.price) > 0) {
+          shouldHasPrice = true
+          console.log(shouldHasPrice)
         }
       }
       if (shouldReturn) return
+
+      if (this.price === 0) {
+        for (let i = 0; i < this.fileList.length; i++) {
+          this.price = this.price + parseFloat(API.arweave.getWinstonFromAr(this.fileList[i].price))
+        }
+        this.price = this.price * 0.8
+      }
 
       if (isNaN(parseFloat(this.price))) {
         this.failMessage = 'The price must be numbers'
         this.failSnackbar = true
         this.submitBtnLoading = false
+        return
+      }
+
+      console.log(this.price)
+      console.log(this.duration)
+
+      if (parseFloat(this.price) < 0) {
+        this.failMessage = `Price can't be negative`
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      } else {
+        this.price = parseFloat((this.price + '').replace(/-/gm, ''))
+      }
+
+      if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
+        this.failMessage = `You can't set demo for free music`
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        // eslint-disable-next-line no-useless-return
         return
       }
 
@@ -513,11 +554,14 @@ export default {
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre
-      if (this.albumInfo.duration !== 0) {
+      if (this.albumInfo.duration !== 0 && this.albumInfo.duration !== -1) {
         this.duration = this.albumInfo.duration + 's'
+      } else if (this.albumInfo.duration === -1) {
+        this.duration = 'Allow Full'
       } else {
         this.duration = 'Off'
       }
+      this.price = API.arweave.getArFromWinston(this.albumInfo.price)
     }
 
     if (this.userType === 'guest') {
