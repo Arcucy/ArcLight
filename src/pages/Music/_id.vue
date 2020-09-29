@@ -246,7 +246,6 @@ export default {
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
-    window.vueTest = this
   },
   watch: {
     $route (val) {
