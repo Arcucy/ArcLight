@@ -58,7 +58,7 @@
                   solo
                   disabled
                   class="album-demo"
-                  :style="`width: 54px;`"
+                  :style="`width: 110px;`"
                 ></v-text-field>
             </div>
           </div>
@@ -191,14 +191,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumMusicFile', 'albumMusicRaw', 'albumMusicType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
+    ...mapState(['keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
   },
   watch: {
     albumUploadComplete (val) {
-      this.showUpload = true
-      this.submitBtnLoading = false
-      this.uploadDone = true
-      this.canGoBack = false
+      if (val) {
+        this.showUpload = true
+        this.submitBtnLoading = false
+        this.uploadDone = true
+        this.canGoBack = false
+      }
     },
     uploadCoverPct (val) {
       this.coverPct = val
