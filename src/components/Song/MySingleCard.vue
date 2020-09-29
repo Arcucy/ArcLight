@@ -93,7 +93,8 @@ export default {
       cover: '',
       infoTxid: '',
       pct: 0,
-      timerIndex: null
+      timerIndex: null,
+      audioUrl: ''
     }
   },
   computed: {
@@ -132,6 +133,8 @@ export default {
   destroyed () {
     // 卡片或者页面被销毁时清除定时器
     if (this.timerIndex) clearTimeout(this.timerIndex)
+
+    if (this.audioUrl) window.URL.revokeObjectURL(this.audioUrl)
   },
   methods: {
     async get () {
@@ -241,8 +244,12 @@ export default {
     async downloadAudio () {
       if (!this.card || !this.card.audioTxid || this.downloadLoading) return
       this.downloadLoading = true
+      // 清除旧数据
+      if (this.audioUrl) window.URL.revokeObjectURL(this.audioUrl)
+
       const audio = await this.getAudio(this.card.audioTxid)
       if (!audio) return
+      this.audioUrl = audio.src
 
       const getExt = {
         'audio/mp3': 'mp3',
@@ -251,17 +258,32 @@ export default {
         'audio/ogg': 'ogg'
       }
 
+      // 拼接文件名
       const { authorUsername } = this.card
+      const fileName = this.title + ' - ' + authorUsername + '.' + getExt[audio.type]
+      // 创建下载用的 a 标签
       const div = document.getElementById('app')
       const a = document.createElement('a')
-      a.href = audio.src
-      a.download = this.title + ' - ' + authorUsername + '.' + getExt[audio.type]
+      a.href = this.audioUrl
+      a.download = fileName
       a.id = 'audio' + this.audioTxid
       div.appendChild(a)
+      // 获取并点击创建的 a 标签
       const downloadA = document.getElementById('audio' + this.audioTxid)
       downloadA.click()
-      window.URL.revokeObjectURL(audio.src)
+      // 删除 a 标签
       div.removeChild(a)
+      // 提示下载成功
+      this.$notify({
+        duration: 6000,
+        type: 'success',
+        title: `Downloaded: ${fileName}`,
+        dangerouslyUseHTMLString: true,
+        message: `<span class="album-click-download">
+          If your download didn't started,
+          <a href="${this.audioUrl}" download="${fileName}">click here</a>
+        <span>`
+      })
       setTimeout(() => {
         this.downloadLoading = false
         this.pct = 0
@@ -381,5 +403,12 @@ a {
       }
     }
   }
+}
+</style>
+
+<style lang="less">
+.library-card-click-download {
+  text-align: left;
+  display: inline-block;
 }
 </style>
