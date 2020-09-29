@@ -68,6 +68,27 @@
             <span class="left-content">Fee</span>
             <h4>{{ fee.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
           </div>
+          <div class="price-line">
+            <span class="left-content price-line-title-container">
+              <span class="price-line-title-container-main-title-container">
+                <span class="price-line-maintitle">Tip</span>
+                <h4>{{ tip.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
+              </span>
+              <span class="price-line-title-container-sub-title-container">
+                <span class="price-line-subtitle">to Developer (~3%)</span>
+                <span>{{ tipToDeveloperDisplay }} AR</span>
+              </span>
+              <span class="price-line-title-container-sub-title-container">
+                <span class="price-line-subtitle">to Community (~1%)</span>
+                <span>{{ tipToCommunityDisplay }} AR</span>
+              </span>
+            </span>
+          </div>
+          <v-divider dark style="margin: 10px 0 10px"></v-divider>
+          <div class="price-line">
+            <span class="left-content">Total</span>
+            <h4>{{ total.toFixed(12).replace(/\.?0+$/, '') }} AR</h4>
+          </div>
         </div>
         <v-btn class="wallet-upload-button" depressed color="#E56D9B" block :loading="paymentConfirm" @click="step3">
           Confirm
@@ -166,7 +187,7 @@ export default {
     return {
       priceDisplay: 0,
       balance: 0,
-      fee: 0.00000038,
+      fee: 0.00000076,
       showWallet: false,
       disAllowStep2: true,
       showConfirm: false,
@@ -178,11 +199,21 @@ export default {
       fileName: '',
       keyFileContent: '',
       paymentAddress: '',
-      file: ''
+      file: '',
+      tip: 0,
+      tipToDeveloper: 0,
+      tipToCommunity: 0,
+      total: 0
     }
   },
   computed: {
     ...mapState(['username', 'paymentId', 'purchaseComplete']),
+    tipToDeveloperDisplay () {
+      return parseFloat(API.arweave.getArFromWinston(this.tipToDeveloper))
+    },
+    tipToCommunityDisplay () {
+      return parseFloat(API.arweave.getArFromWinston(this.tipToCommunity))
+    },
     purchaseSlogan () {
       if (this.item.duration !== -1) return `Pay ${this.price} AR for Full Version`
       else return `Pay ${this.price} AR to Download`
@@ -289,6 +320,16 @@ export default {
         this.failMessage = 'You cannot pay to your self'
         return
       }
+
+      const fullPrice = API.arweave.getWinstonFromAr(this.price)
+      this.tipToDeveloper = parseInt(fullPrice * 0.03)
+      this.tipToCommunity = parseInt(fullPrice * 0.01)
+      const total = parseInt(fullPrice) + this.tipToDeveloper + this.tipToCommunity
+      this.tip = this.tipToDeveloper + this.tipToCommunity
+      this.tip = parseFloat(API.arweave.getArFromWinston(this.tip))
+      this.total = API.arweave.getArFromWinston(total)
+      this.total = Number(this.total)
+
       this.showWallet = false
       this.showConfirm = true
     },
@@ -299,7 +340,9 @@ export default {
         price: this.price,
         item: this.itemId,
         key: this.keyFileContent,
-        type: this.type
+        type: this.type,
+        toDeveloper: this.tipToDeveloper,
+        toCommunity: this.tipToCommunity
       }
       if (this.type === 'album-info') {
         data.trackNumber = this.trackNumber
@@ -378,6 +421,25 @@ export default {
   }
   .price-line {
     display: flex;
+    &-title-container-main-title-container {
+      display: flex;
+      .price-line-maintitle {
+        flex: 1;
+      }
+    }
+    &-title-container {
+      display: flex;
+      flex-direction: column;
+      &-sub-title-container {
+        text-indent: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        .price-line-subtitle {
+          flex: 1
+        }
+      }
+    }
   }
   .left-content {
     flex: 1;

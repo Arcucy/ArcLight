@@ -263,6 +263,16 @@ export default {
         }, 3000)
       }
     },
+    wallet (val) {
+      if (!val) {
+        this.failMessage = 'Login is required to upload'
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
     fileList: {
       handler: (val) => {
         val.forEach(item => {

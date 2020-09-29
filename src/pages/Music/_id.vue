@@ -267,6 +267,8 @@ export default {
         this.owned = true
       } else {
         this.owned = false
+        this.awaitConfirm = false
+        clearInterval(this.timerIndex)
         this.getItemStatus(val, this.$route.params.id, this.price)
       }
     }
@@ -922,6 +924,7 @@ export default {
     -webkit-line-clamp: 1;
     overflow: hidden;
     word-break: break-all;
+    text-align: left;
     span {
       margin-right: 8px;
       padding: 8px 16px 8px;
@@ -954,7 +957,7 @@ export default {
 
   &-artist a {
     text-decoration: none;
-    margin-top: 10px;
+    margin-top: 16px;
     font-size: 20px;
     color: #FFF;
     display: -webkit-box;
@@ -969,7 +972,7 @@ export default {
     }
   }
   &-desp {
-    margin-top: 16px;
+    margin-top: 10px;
   }
   &-desp > span {
     color: white;

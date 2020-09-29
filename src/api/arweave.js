@@ -44,7 +44,7 @@ const REVERSED_AUDIO_TYPE = {
   'soundeffect-info': 'Sound Effect'
 }
 
-const APP_NAME = 'arclight-test'
+const APP_NAME = 'arclight-alpha'
 
 let arweave = {
   breakOnCall: false,

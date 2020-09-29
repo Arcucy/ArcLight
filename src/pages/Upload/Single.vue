@@ -224,11 +224,21 @@ export default {
     }
   },
   computed: {
-    ...mapState(['singleCoverFile', 'singleCoverRaw', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType', 'singleInfo'])
+    ...mapState(['wallet', 'singleCoverFile', 'singleCoverRaw', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType', 'singleInfo'])
   },
   watch: {
     $router (val) {
       alert('You sure you want to leave?')
+    },
+    wallet (val) {
+      if (!val) {
+        this.failMessage = 'Login is required to upload'
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
     },
     userType (val) {
       if (this.userType === 'guest') {
