@@ -19,9 +19,6 @@ let ar = Arweave.init({
   logging: false
 })
 
-let community = new Community(ar)
-community.setCommunityTx(config.community)
-
 export default new Vuex.Store({
   modules: {
   },
@@ -1140,6 +1137,9 @@ export default new Vuex.Store({
       console.log(data)
       const now = Date.now()
 
+      let community = new Community(ar)
+      community.setCommunityTx(config.community)
+
       let comTx = ''
       community.setWallet(data.key)
       let holder = await community.selectWeightedHolder()
@@ -1163,6 +1163,7 @@ export default new Vuex.Store({
 
       const comRes = await ar.transactions.post(comTx)
       console.log(comTx.id + ': ', comRes)
+      community = null
 
       let devTx = ''
 
