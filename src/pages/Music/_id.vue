@@ -957,7 +957,7 @@ export default {
 
   &-artist a {
     text-decoration: none;
-    margin-top: 10px;
+    margin-top: 16px;
     font-size: 20px;
     color: #FFF;
     display: -webkit-box;
@@ -972,7 +972,7 @@ export default {
     }
   }
   &-desp {
-    margin-top: 16px;
+    margin-top: 10px;
   }
   &-desp > span {
     color: white;
