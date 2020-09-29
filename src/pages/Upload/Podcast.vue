@@ -361,6 +361,23 @@ export default {
         return
       }
 
+      if (parseFloat(this.price) < 0) {
+        this.failMessage = `Price can't be negative`
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      } else {
+        this.price = parseFloat((this.price + '').replace(/-/gm, ''))
+      }
+
+      if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
+        this.failMessage = `You can't set demo for free music`
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        // eslint-disable-next-line no-useless-return
+        return
+      }
+
       if (!this.file) {
         this.failMessage = 'A source music file for a podcast release is required'
         this.failSnackbar = true

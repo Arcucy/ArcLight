@@ -122,10 +122,11 @@
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="checkBtnLoading" @click="verify">Verify</v-btn>
           <div class="name-desp side-title">Demo Duration</div>
           <v-select
             dark
-            :disabled="mainDisableDuration"
+            :disabled="demoIsDisable"
             color="#E56D9B"
             v-model="duration"
             :items="durationSelection"
@@ -134,7 +135,7 @@
             solo
           ></v-select>
           <div class="name-desp side-title">Album Price will always be 80% of your total price for each song</div>
-          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :disabled="demoIsDisable" :loading="submitBtnLoading" @click="submit">Review</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -201,6 +202,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import API from '@/api/api'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
@@ -238,9 +240,11 @@ export default {
       albumSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
+      checkBtnLoading: false,
       durationSelection: ['10s', '30s', '60s', 'Off', 'Allow Full'],
       maxDuration: 0,
-      disableDuration: true
+      disableDuration: true,
+      demoIsDisable: true
     }
   },
   computed: {
@@ -274,45 +278,11 @@ export default {
       }
     },
     fileList: {
-      handler: (val) => {
+      handler (val) {
         val.forEach(item => {
-          if (item.music) {
-            const reader = new FileReader()
-            reader.readAsArrayBuffer(item.music)
-            reader.onload = async (e) => {
-              const data = e.target.result
-              let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-              let source
-
-              audioCtx.createBufferSource()
-              source = await audioCtx.decodeAudioData(data.slice())
-              let duration = source.duration
-              let index = 0
-              if (duration < 60 && duration >= 30) {
-                index = this.durationSelection.indexOf('60s')
-                if (index > -1) {
-                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
-                }
-              }
-              if (duration < 30 && duration >= 15) {
-                index = this.durationSelection.indexOf('30s')
-                if (index > -1) {
-                  this.durationSelection = this.durationSelection.filter(item => item !== '30s')
-                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
-                }
-              }
-              if (duration < 15) {
-                index = this.durationSelection.indexOf('30s')
-                if (index > -1) {
-                  this.durationSelection = this.durationSelection.filter(item => item !== '30s')
-                  this.durationSelection = this.durationSelection.filter(item => item !== '60s')
-                  this.durationSelection = this.durationSelection.filter(item => item !== '15s')
-                }
-              }
-              item.disableDuration = false
-            }
-          } else {
+          if (!item.music) {
             item.disableDuration = true
+            this.demoIsDisable = true
           }
         })
       },
@@ -321,6 +291,58 @@ export default {
   },
   methods: {
     ...mapActions(['uploadAlbumCoverFile', 'reviewAlbum']),
+    async verify () {
+      this.fileList.forEach((item, i) => {
+        if (item.music) {
+          console.log('music:', item.music)
+          const reader = new FileReader()
+          reader.readAsArrayBuffer(item.music)
+          reader.onload = async (e) => {
+            const data = e.target.result
+            e = null
+            let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+            let source
+
+            audioCtx.createBufferSource()
+            source = await audioCtx.decodeAudioData(data.slice())
+            let duration = source.duration
+            audioCtx = null
+            source = null
+            let index = 0
+            if (duration < 60 && duration >= 30) {
+              index = this.durationSelection.indexOf('60s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              }
+            }
+            if (duration < 30 && duration >= 15) {
+              index = this.durationSelection.indexOf('30s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              }
+            }
+            if (duration < 15) {
+              index = this.durationSelection.indexOf('30s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+              }
+            }
+            item.disableDuration = false
+            if (i === (this.fileList.length - 1)) {
+              this.demoIsDisable = false
+            }
+          }
+        } else {
+          this.failSnackbar = true
+          this.failMessage = 'Please upload at least ' + this.fileList.length + ' files'
+          item.disableDuration = true
+        }
+      })
+      this.demoIsDisable = true
+    },
     async submit () {
       this.submitBtnLoading = true
 
@@ -359,30 +381,70 @@ export default {
         return
       }
 
-      if (this.duration !== 'Off') {
+      if (this.duration !== 'Off' && this.duration !== 'Allow Full') {
         this.duration = (this.duration + '').replace('s', '')
         this.duration = parseInt(this.duration)
+      } else if (this.duration === 'Allow Full') {
+        this.duration = -1
       } else {
         this.duration = 0
       }
 
       let shouldReturn = false
+      let shouldHasPrice = false
       for (let i = 0; i < this.fileList.length; i++) {
         const item = this.fileList[i]
+        console.log(parseFloat(item.price) > 1)
         if (isNaN(parseFloat(item.price))) {
           this.failMessage = 'The price must be numbers'
           this.failSnackbar = true
           this.submitBtnLoading = false
           shouldReturn = true
+        } else if (shouldHasPrice && parseFloat(item.price) === 0) {
+          this.failMessage = 'Album Song should have price or completely free'
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          shouldHasPrice = false
+          shouldReturn = true
           break
+        } else if (parseFloat(item.price) > 0) {
+          shouldHasPrice = true
+          console.log(shouldHasPrice)
         }
       }
       if (shouldReturn) return
+
+      if (this.price === 0) {
+        for (let i = 0; i < this.fileList.length; i++) {
+          this.price = this.price + parseFloat(API.arweave.getWinstonFromAr(this.fileList[i].price))
+        }
+        this.price = this.price * 0.8
+      }
 
       if (isNaN(parseFloat(this.price))) {
         this.failMessage = 'The price must be numbers'
         this.failSnackbar = true
         this.submitBtnLoading = false
+        return
+      }
+
+      this.price = API.arweave.getArFromWinston(this.price)
+      console.log(this.duration)
+
+      if (parseFloat(this.price) < 0) {
+        this.failMessage = `Price can't be negative`
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      } else {
+        this.price = parseFloat((this.price + '').replace(/-/gm, ''))
+      }
+
+      if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
+        this.failMessage = `You can't set demo for free music`
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        // eslint-disable-next-line no-useless-return
         return
       }
 
@@ -397,7 +459,7 @@ export default {
 
       for (let i = 0; i < this.fileList.length; i++) {
         if (!this.fileList[i].title) {
-          this.failMessage = 'Your music must have titles'
+          this.failMessage = 'Your music must have title for #' + (i + 1)
           this.failSnackbar = true
           this.submitBtnLoading = false
           return
@@ -513,11 +575,14 @@ export default {
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre
-      if (this.albumInfo.duration !== 0) {
+      if (this.albumInfo.duration !== 0 && this.albumInfo.duration !== -1) {
         this.duration = this.albumInfo.duration + 's'
+      } else if (this.albumInfo.duration === -1) {
+        this.duration = 'Allow Full'
       } else {
         this.duration = 'Off'
       }
+      this.price = API.arweave.getArFromWinston(this.albumInfo.price)
     }
 
     if (this.userType === 'guest') {

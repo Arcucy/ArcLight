@@ -176,14 +176,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicFile', 'soundEffectMusicRaw', 'soundEffectMusicType', 'soundEffectInfo', 'uploadCoverPct', 'uploadMusicPct', 'soundEffectUploadComplete', 'uploadStatus'])
+    ...mapState(['keyFileContent', 'username', 'soundEffectCoverFile', 'soundEffectCoverRaw', 'soundEffectCoverType', 'soundEffectMusicType', 'soundEffectInfo', 'uploadCoverPct', 'uploadMusicPct', 'soundEffectUploadComplete', 'uploadStatus'])
   },
   watch: {
     soundEffectUploadComplete (val) {
-      this.showUpload = true
-      this.submitBtnLoading = false
-      this.uploadDone = true
-      this.canGoBack = false
+      if (val) {
+        this.showUpload = true
+        this.submitBtnLoading = false
+        this.uploadDone = true
+        this.canGoBack = false
+      }
     },
     uploadCoverPct (val) {
       this.coverPct = val

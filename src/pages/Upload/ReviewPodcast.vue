@@ -182,14 +182,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'podcastCoverFile', 'podcastCoverRaw', 'podcastCoverType', 'podcastMusicFile', 'podcastMusicRaw', 'podcastMusicType', 'podcastInfo', 'uploadCoverPct', 'uploadMusicPct', 'podcastUploadComplete', 'uploadStatus'])
+    ...mapState(['keyFileContent', 'username', 'podcastCoverFile', 'podcastCoverRaw', 'podcastCoverType', 'podcastMusicType', 'podcastInfo', 'uploadCoverPct', 'uploadMusicPct', 'podcastUploadComplete', 'uploadStatus'])
   },
   watch: {
     podcastUploadComplete (val) {
-      this.showUpload = true
-      this.submitBtnLoading = false
-      this.uploadDone = true
-      this.canGoBack = false
+      if (val) {
+        this.showUpload = true
+        this.submitBtnLoading = false
+        this.uploadDone = true
+        this.canGoBack = false
+      }
     },
     uploadCoverPct (val) {
       this.coverPct = val
