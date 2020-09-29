@@ -63,6 +63,12 @@
         </div>
         <!-- Player -->
         <aplayer v-if="audio !== '' && !loading" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+        <!-- No trial version -->
+        <div v-if="audio === '' && !loading" class="music-loading">
+          <p>
+            There is no demo version of this artwork
+          </p>
+        </div>
         <!-- Loading -->
         <div v-if="loading" class="music-loading">
           <v-progress-linear
@@ -77,7 +83,7 @@
       </div>
       <!-- Download -->
       <div v-if="(owned || artist.id === wallet || !price) && !loading" class="music-download">
-        <a :href="audio.src" :download="info.name + ' - ' + info.artist + '.' + ext" style="text-decoration: none;">
+        <a :href="completeAudio.src" :download="info.name + ' - ' + info.artist + '.' + ext" style="text-decoration: none;">
           <v-btn
             block
             large
@@ -105,6 +111,7 @@
           :trackNumber="$route.query.album + ''"
         />
       </div>
+      <!-- Await confirm -->
       <div v-if="awaitConfirm" class="music-await">
         <div class="music-await-progress">
           <v-progress-circular indeterminate color="#E56D9B" />
@@ -172,14 +179,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
+import api from '@/api/api'
+import decode from '@/util/decode'
+import audioUtil from '@/util/audio'
 
 import spaceLayout from '@/components/Layout/Space'
 import miniAvatar from '@/components/User/MiniAvatar'
 import payment from '@/components/Payment'
-
-import api from '@/api/api'
-import decode from '@/util/decode'
-import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -191,7 +199,8 @@ export default {
     return {
       type: '',
       musicId: '',
-      audio: '',
+      auditionClip: '',
+      completeAudio: '',
       imgShoudLoad: true,
       awaitConfirm: false,
       info: {
@@ -202,6 +211,7 @@ export default {
         genre: 'Await Data...',
         cover: 'undefined',
         albumTitle: '',
+        duration: 0,
         id: ''
       },
       artist: {
@@ -228,16 +238,22 @@ export default {
         'audio/ogg': 'ogg'
       }
       return getExt[this.musicType]
+    },
+    audio () {
+      const unlock = this.owned || this.artist.id === this.wallet || !this.price
+      return unlock || this.info.duration === -1 ? this.completeAudio : this.auditionClip
     }
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
+    window.vueTest = this
   },
   watch: {
     $route (val) {
       this.loading = true
       this.imgShoudLoad = false
-      this.audio = {}
+      this.auditionClip = ''
+      this.completeAudio = ''
       this.info.cover = 'undefined'
       this.pct = 0
       this.owned = false
@@ -259,48 +275,62 @@ export default {
   },
   destroyed () {
     // 释放 webkitURL
-    if (this.audio && this.audio.url) window.webkitURL.revokeObjectURL(this.audio.url)
+    if (this.auditionClip && this.auditionClip.url) window.webkitURL.revokeObjectURL(this.auditionClip.url)
+    if (this.completeAudio && this.completeAudio.url) window.webkitURL.revokeObjectURL(this.completeAudio.url)
     // 卡片或者页面被销毁时清除定时器
     if (this.timerIndex) clearTimeout(this.timerIndex)
   },
   methods: {
     async getItemStatus (address, itemAddress, price) {
       if (!address) {
+        this.loading = false
         return
       }
       if (this.type === 'album-info') {
         const res1 = await api.arweave.getAlbumItemPurchaseStatus(address, itemAddress, this.$route.query.album)
         if (res1) {
           const transaction = await this.getBuyTransactionDetail(res1)
-          if (!transaction) return
+          if (!transaction) {
+            this.loading = false
+            return
+          }
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
           const ar = api.arweave.getArFromWinston(transaction.quantity)
           this.awaitConfirm = false
           if (ar === finalPrice) this.owned = true
         } else {
-          const res2 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
-          const transaction = await this.getBuyTransactionDetail(res2)
-          if (!transaction) return
-          const tags = await api.arweave.getTagsByTransaction(transaction)
-          const type = tags['Purchase-Type']
-          if (type === 'album-full') {
-            const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
-            const ar = api.arweave.getArFromWinston(transaction.quantity)
-            this.awaitConfirm = false
-            if (ar === finalPrice) this.owned = true
+          const res2 = await api.arweave.getAlbumPurchaseStatus(address, itemAddress)
+          if (res2) {
+            const transaction = await this.getBuyTransactionDetail(res2)
+            if (!transaction) {
+              this.loading = false
+              return
+            }
+            const tags = await api.arweave.getTagsByTransaction(transaction)
+            const type = tags['Album-Type']
+            if (type === 'full') {
+              const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
+              const ar = api.arweave.getArFromWinston(transaction.quantity)
+              this.awaitConfirm = false
+              if (ar === finalPrice) this.owned = true
+            }
           }
         }
       } else {
         const res3 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
         if (res3) {
           const transaction = await this.getBuyTransactionDetail(res3)
-          if (!transaction) return
+          if (!transaction) {
+            this.loading = false
+            return
+          }
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
           const ar = api.arweave.getArFromWinston(transaction.quantity)
           this.awaitConfirm = false
           if (ar === finalPrice) this.owned = true
         }
       }
+      this.loading = false
     },
     async getBuyTransactionDetail (txid) {
       let transaction
@@ -311,7 +341,7 @@ export default {
           this.awaitConfirm = true
           this.timerIndex = setTimeout(() => { this.getItemStatus(this.wallet, this.$route.params.id, this.price) }, 2000)
         } else {
-          console.error('[Purchase record query failed] type:', { ...e }.type, e)
+          console.error('[Purchase record query failed] type:', { ...e }.type, txid, e)
           this.$message.error(`Purchase record query failed, type: ${{ ...e }.type || 'Unknown'}`)
           this.awaitConfirm = false
         }
@@ -346,12 +376,13 @@ export default {
             this.$router.replace({ name: 'Landing' })
             return
         }
+        this.pct = 0
         this.getItemStatus(this.wallet, this.$route.params.id, this.price)
       } catch (e) {
         console.error('[Failed to get music information]', e)
         this.$message.error('Failed to get music information')
+        this.loading = false
       }
-      this.loading = false
     },
     /** 初始化单曲 */
     async initSingle (tags, data) {
@@ -361,6 +392,7 @@ export default {
       // 标题、简介、类型
       audio.title = data.title
       this.info.name = data.title
+      this.info.duration = data.duration
 
       data.desp = data.desp.replace(/<br>/gm, '\\n')
       data.desp = data.desp.replace(/<[^>]*>/gmu, '')
@@ -373,8 +405,15 @@ export default {
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.music)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.music, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -389,6 +428,7 @@ export default {
       // 标题、简介、类型
       audio.title = data.music[index].title
       this.info.name = data.music[index].title
+      this.info.duration = data.duration
 
       data.desp = data.desp.replace(/<br>/gm, '\\n')
       data.desp = data.desp.replace(/<[^>]*>/gmu, '')
@@ -402,8 +442,15 @@ export default {
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.music[index].id)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.music[index].id, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -416,6 +463,7 @@ export default {
       // 标题、简介
       audio.title = data.title
       this.info.name = data.title
+      this.info.duration = data.duration
 
       data.desp = data.desp.replace(/<br>/gm, '\\n')
       data.desp = data.desp.replace(/<[^>]*>/gmu, '')
@@ -428,8 +476,15 @@ export default {
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.program)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.program, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
 
       document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${data.podcast} \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -442,6 +497,7 @@ export default {
       // 标题、简介
       audio.title = data.title
       this.info.name = data.title
+      this.info.duration = data.duration
 
       data.desp = data.desp.replace(/<br>/gm, '\\n')
       data.desp = data.desp.replace(/<[^>]*>/gmu, '')
@@ -453,8 +509,15 @@ export default {
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.audio)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.audio, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -466,24 +529,40 @@ export default {
       this.info.artistId = tags['Author-Address']
       this.getArtist(tags['Author-Address'], audio)
     },
-    getAudio (id) {
+    /** 获取音频 */
+    async getAudio (id, duration) {
+      try {
+        const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+        this.musicType = music.type
+        // 完整版的 Url
+        const fullUrl = await this.getBase64Url(music)
+        // 试听版的 Url
+        let trialUrl
+        if (duration && duration > 0) trialUrl = await this.getAuditionClip(music.data.buffer, duration)
+        return { fullUrl, trialUrl }
+      } catch (e) {
+        console.error('[Failed to get audio data]', e)
+        this.$message.error('Failed to get audio data')
+        return { fullUrl: '' }
+      }
+    },
+    /** 将资源加载到一个 url */
+    getBase64Url (buffer) {
       return new Promise(async (resolve, reject) => {
-        try {
-          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
-          this.musicType = music.type
-          // 挂载音频到一个 URL，并指定给 audio.pic
-          const reader = new FileReader()
-          reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
-          reader.onload = (event) => {
-            const url = window.webkitURL.createObjectURL(new Blob([event.target.result], { type: music.type }))
-            resolve(url)
-          }
-        } catch (e) {
-          console.error('[Failed to get audio data]', e)
-          this.$message.error('Failed to get audio data')
-          resolve('')
+        // 挂载音频到一个 URL，并指定给 audio.pic
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(new Blob([buffer.data], { type: buffer.type }))
+        reader.onload = (event) => {
+          const url = window.webkitURL.createObjectURL(new Blob([event.target.result], { type: buffer.type }))
+          resolve(url)
         }
       })
+    },
+    async getAuditionClip (buffer, last) {
+      const audioCtx = new AudioContext()
+      const audioBuffer = await audioCtx.decodeAudioData(buffer.slice())
+      const wave = audioUtil.audioBufferToWave(audioUtil.cutAudio(audioBuffer, 0, last))
+      return window.webkitURL.createObjectURL(wave)
     },
     async getArtist (id, audio) {
       this.artist.id = id

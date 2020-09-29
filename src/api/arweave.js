@@ -518,6 +518,59 @@ let arweave = {
   },
 
   /**
+   * 获取用户购买完整专辑的状态
+   * @param {*} address   - 用户钱包地址
+   * @param {*} item      - 购买物品地址
+   */
+  getAlbumPurchaseStatus (address, item) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Album-Type',
+              expr2: 'full'
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Item',
+              expr2: item
+            }
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids[0])
+      })
+    })
+  },
+
+  /**
    * 获取用户购买物品的状态
    * @param {*} address   - 用户钱包地址
    * @param {*} item      - 购买物品地址

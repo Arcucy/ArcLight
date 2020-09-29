@@ -4,7 +4,7 @@
       <div class="music-download">
         <div v-if="$route.name === 'Music' || type !== 'album-full'" class="music-download-price">
           <p v-if="artist.id !== wallet && price" class="music-download-price-text">
-            Sale for {{ price }} AR
+            {{ purchaseSlogan }}
           </p>
           <p v-else class="free-text music-download-price-text">
             Free
@@ -62,7 +62,7 @@
         <div class="confirm-price">
           <div class="price-line">
             <span class="left-content">Music Price</span>
-            <h4>{{ price }} AR</h4>
+            <h4>{{ priceDisplay }} AR</h4>
           </div>
           <div class="price-line">
             <span class="left-content">Fee</span>
@@ -213,6 +213,10 @@ export default {
     },
     tipToCommunityDisplay () {
       return parseFloat(API.arweave.getArFromWinston(this.tipToCommunity))
+    },
+    purchaseSlogan () {
+      if (this.item.duration !== -1) return `Pay ${this.price} AR for Full Version`
+      else return `Pay ${this.price} AR to Download`
     }
   },
   watch: {
@@ -281,6 +285,7 @@ export default {
         return
       }
       this.showWallet = true
+      this.priceDisplay = this.price.toFixed(12).replace(/\.?0+$/, '')
     },
     async step2 () {
       if (this.type === 'album-info') {
@@ -292,7 +297,9 @@ export default {
           return
         }
       } else {
-        const status = await API.arweave.getItemPurchaseStatus(this.wallet, this.itemId)
+        let status
+        if (this.type === 'album-full') status = await API.arweave.getAlbumPurchaseStatus(this.wallet, this.itemId)
+        else status = await API.arweave.getItemPurchaseStatus(this.wallet, this.itemId)
         if (status) {
           this.failSnackbar = true
           this.failMessage = 'You have already bought this song'
