@@ -225,6 +225,10 @@ export default {
   destroyed () {
     // 卡片或者页面被销毁时清除定时器
     if (this.timerIndex) clearTimeout(this.timerIndex)
+    // 释放 webkitURL
+    this.audio.forEach(item => {
+      if (item.src) window.URL.revokeObjectURL(item.src)
+    })
   },
   watch: {
     wallet (val) {
@@ -294,7 +298,6 @@ export default {
           if (type === 'full') {
             const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
             const ar = api.arweave.getArFromWinston(transaction.quantity)
-            console.log('判断是否相等 finalPrice:', finalPrice, 'Ar:', ar)
             if (ar === finalPrice) this.owned = true
           }
           this.awaitConfirm = false
@@ -481,6 +484,10 @@ export default {
         'audio/ogg': 'ogg'
       }
 
+      if (this.audio[index] && this.audio[index].src) {
+        window.URL.revokeObjectURL(this.audio[index].src)
+      }
+
       this.audio[index] = ({ src: res.src, name: music.title + ' - ' + this.artist.username + '.' + getExt[res.type] })
       const div = document.getElementById('album')
       const a = document.createElement('a')
@@ -490,8 +497,17 @@ export default {
       div.appendChild(a)
       const downloadA = document.getElementById('audio' + index)
       downloadA.click()
-      window.URL.revokeObjectURL(res.src)
       div.removeChild(a)
+      this.$notify({
+        duration: 6000,
+        type: 'success',
+        title: `Downloaded: ${this.audio[index].name}`,
+        dangerouslyUseHTMLString: true,
+        message: `<span class="album-click-download">
+          If your download didn't started,
+          <a href="${this.audio[index].src}" download="${this.audio[index].name}">click here</a>
+        <span>`
+      })
       setTimeout(() => {
         this.info.list[index].downloadAwait = false
         this.pct = 0
@@ -843,5 +859,12 @@ a {
   .album-buy-label button {
     width: 120px;
   }
+}
+</style>
+
+<style lang="less">
+.album-click-download {
+  text-align: left;
+  display: inline-block;
 }
 </style>
