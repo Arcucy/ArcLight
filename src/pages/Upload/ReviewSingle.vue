@@ -180,14 +180,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicFile', 'singleMusicRaw', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
+    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
   },
   watch: {
     singleUploadComplete (val) {
-      this.showUpload = true
-      this.submitBtnLoading = false
-      this.uploadDone = true
-      this.canGoBack = false
+      if (val) {
+        this.showUpload = true
+        this.submitBtnLoading = false
+        this.uploadDone = true
+        this.canGoBack = false
+      }
     },
     uploadCoverPct (val) {
       this.coverPct = val

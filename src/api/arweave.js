@@ -85,12 +85,15 @@ let arweave = {
    * 根据给定的 txid (交易ID) 获取完整的交易明细
    * @param {String} txid     - 交易编号
    */
-  getTransactionDetail (txid) {
+  getTransactionDetail (txid, retry = false) {
     return new Promise((resolve, reject) => {
       ar.transactions.get(txid).then(detail => {
         resolve(detail)
       }).catch(err => {
         reject(err)
+        if (retry) {
+          this.getTransactionDetail(txid, true)
+        }
       })
     })
   },
@@ -1044,7 +1047,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
+        let detail = await this.getTransactionDetail(ids[0], true)
         ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
           resolve(data)
         })
