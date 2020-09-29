@@ -2,7 +2,7 @@
   <spaceLayout>
     <div>
       <div class="podcast">
-        <div class="upload-header">
+        <div v-if="canGoBack" class="upload-header">
           <a @click="$router.push({ name: 'uploadPodcast', params: $route.params.data })" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
             Back to Upload
@@ -70,9 +70,9 @@
           </div>
         </div>
         <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
-        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="() => {$router.push({ name: 'Songs' })}">Done</v-btn>
+        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="jump">Done</v-btn>
         <div class="upload-status" v-if="submitBtnLoading">
-          <div class="upload-status-cover" v-if="uploadCoverPct !== 100">
+          <div class="upload-status-cover" v-if="coverPct !== 100">
             <div class="upload-title">Uploading Cover...</div>
             <v-progress-linear
               :buffer-value="coverPct"
@@ -82,15 +82,16 @@
               color="#3B8CFF"
             ></v-progress-linear>
           </div>
-          <div class="upload-status-music" v-if="uploadMusicPct !== 100">
+          <div class="upload-status-music" v-if="!uploadDone">
             <div style="display: flex;">
               <div class="upload-title" style="flex: 1">Uploading Music... {{ uploadMusicPct }}%</div>
-              <div class="upload-title">{{ uploadStatus }}</div>
+              <div class="upload-title">{{ uploadStatusDisplay }}</div>
             </div>
             <v-progress-linear
               :buffer-value="musicPct"
               v-model="musicPct"
               :value="musicPct"
+              :indeterminate="musicPct === 100"
               stream
               color="#E56D9B"
             ></v-progress-linear>
@@ -175,7 +176,9 @@ export default {
       uploadDone: false,
       bill: {},
       showDialog: false,
-      showUpload: false
+      showUpload: false,
+      canGoBack: true,
+      uploadStatusDisplay: ''
     }
   },
   computed: {
@@ -184,8 +187,9 @@ export default {
   watch: {
     podcastUploadComplete (val) {
       this.showUpload = true
-      this.submitBtnLoading = !val
+      this.submitBtnLoading = false
       this.uploadDone = true
+      this.canGoBack = false
     },
     uploadCoverPct (val) {
       this.coverPct = val
@@ -198,10 +202,13 @@ export default {
     },
     musicPct (val) {
       this.musicPct = val
+    },
+    uploadStatus (val) {
+      this.uploadStatusDisplay = val
     }
   },
   methods: {
-    ...mapActions(['uploadPodcast']),
+    ...mapActions(['uploadPodcast', 'resetPodcastInfo']),
     submit () {
       if (this.submitBtnLoading) return
       this.submitBtnLoading = true
@@ -253,6 +260,10 @@ export default {
         program: '-'.repeat(43)
       })
       return strJson
+    },
+    jump () {
+      this.resetPodcastInfo()
+      this.$router.push({ name: 'Songs' })
     }
   },
   mounted () {
@@ -260,6 +271,7 @@ export default {
 
     this.coverPct = 0
     this.musicPct = 0
+    this.uploadStatusDisplay = 0
     this.uploadDone = false
 
     if (!this.podcastInfo) {
@@ -459,6 +471,22 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
   line-height: 30px;
+}
+
+.upload-notice {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .upload-notice-content {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+}
+
+.upload-notice-title {
+  margin-bottom: 24px;
+  text-align: left;
 }
 
 /deep/ .v-input__slot {

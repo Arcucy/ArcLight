@@ -2,7 +2,7 @@
   <spaceLayout>
     <div>
       <div class="album">
-        <div class="upload-header">
+        <div v-if="canGoBack" class="upload-header">
           <a @click="$router.push({ name: 'uploadAlbum', params: $route.params.data })" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
             Back to Upload
@@ -75,9 +75,9 @@
           </div>
         </div>
         <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
-        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="() => {$router.push({ name: 'Songs' })}">Done</v-btn>
+        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="jump">Done</v-btn>
         <div class="upload-status" v-if="submitBtnLoading">
-          <div class="upload-status-cover" v-if="uploadCoverPct !== 100">
+          <div class="upload-status-cover" v-if="coverPct !== 100">
             <div class="upload-title">Uploading Cover...</div>
             <v-progress-linear
               :buffer-value="coverPct"
@@ -90,12 +90,13 @@
           <div class="upload-status-music" v-if="!uploadDone">
             <div style="display: flex;">
               <div class="upload-title">Uploading Music... {{ uploadMusicNumber }} {{ uploadMusicPct }}%</div>
-              <div class="upload-title">{{ uploadStatus }}</div>
+              <div class="upload-title">{{ uploadStatusDisplay }}</div>
             </div>
             <v-progress-linear
               :buffer-value="musicPct"
               v-model="musicPct"
               :value="musicPct"
+              :indeterminate="musicPct === 100"
               stream
               color="#E56D9B"
             ></v-progress-linear>
@@ -184,7 +185,9 @@ export default {
       uploadDone: false,
       bill: {},
       showDialog: false,
-      showUpload: false
+      showUpload: false,
+      canGoBack: true,
+      uploadStatusDisplay: ''
     }
   },
   computed: {
@@ -193,8 +196,9 @@ export default {
   watch: {
     albumUploadComplete (val) {
       this.showUpload = true
-      this.submitBtnLoading = !val
+      this.submitBtnLoading = false
       this.uploadDone = true
+      this.canGoBack = false
     },
     uploadCoverPct (val) {
       this.coverPct = val
@@ -207,10 +211,13 @@ export default {
     },
     musicPct (val) {
       this.musicPct = val
+    },
+    uploadStatus (val) {
+      this.uploadStatusDisplay = val
     }
   },
   methods: {
-    ...mapActions(['uploadAlbum']),
+    ...mapActions(['uploadAlbum', 'resetAlbumInfo']),
     submit () {
       if (this.submitBtnLoading) return
       this.submitBtnLoading = true
@@ -304,9 +311,14 @@ export default {
         music
       })
       return strJson
+    },
+    jump () {
+      this.resetAlbumInfo()
+      this.$router.push({ name: 'Songs' })
     }
   },
   mounted () {
+    this.uploadStatusDisplay = 0
     document.title = 'Review Your Upload - ArcLight'
     this.musicPct = 0
     this.coverPct = 0
@@ -600,7 +612,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   .upload-notice-content {
-    margin-top: 24px;
     margin-bottom: 24px;
     text-align: left;
   }
