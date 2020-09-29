@@ -99,10 +99,11 @@
           <userCard
             id="singers-card"
             class="single-card"
-            v-for="(similarAuthor, index) in similarAuthors"
+            v-for="(similarAuthor, index) in sinilar.list"
             :key="index"
             :user="similarAuthor"
           />
+          <loadCard v-if="sinilar.loading"  width="140px" />
         </scrollXBox>
       </div>
     </div>
@@ -174,40 +175,17 @@ export default {
         price: '0000',
         authorUsername: 'Artist loading...'
       },
-      similarAuthors: [
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Taylor Swift'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'TRXYE'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'TIKKA'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Lady Gaga'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: '李知恩'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Ariana Grande'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Aril Lavigne Lavigne Lavigne Lavigne'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random',
-          nickname: 'Little Sound'
+      sinilar: {
+        list: [],
+        addresses: [],
+        loading: true,
+        size: 10,
+        cardTemplet: {
+          address: '',
+          nickname: 'Artist loading...',
+          postInfoTxid: ''
         }
-      ]
+      }
     }
   },
   computed: {
@@ -234,6 +212,7 @@ export default {
     this.getUserAudioList('album', this.album)
     this.getUserAudioList('soundEffect', this.sound)
     this.getUserAudioList('podcast', this.podcast)
+    this.getSimilarUsers()
   },
   methods: {
     ...mapActions(['setIsMe']),
@@ -283,6 +262,77 @@ export default {
       aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
       const addresse = aObject.addresses.shift()
       if (addresse) this.getInfoByTxid(aObject, addresse)
+    },
+    /** 获取相似的用户列表 */
+    async getSimilarUsers () {
+      this.sinilar.loading = true
+      try {
+        const res = await api.arweave.getPostFromAddress(this.$route.params.id)
+        if (!res) {
+          this.sinilar.loading = false
+          return
+        }
+        const { 'Top1-Genre': genre1, 'Top2-Genre': genre2, 'Top3-Genre': genre3 } = res.tags
+        this.sinilar.addresses = await this.getSimilarPostInfo(genre1, genre2, genre3)
+        for (let i = 0; this.sinilar.addresses.length !== 0 && i < this.sinilar.size; i++) {
+          this.newUserInfoByPostInfoTxid(this.sinilar, this.sinilar.addresses.shift())
+        }
+      } catch (e) {
+        console.error(`[Failed to get similar users list]`, e)
+        this.$message.error(`Failed to get similar users list`)
+      }
+      this.sinilar.loading = false
+    },
+    /** 获取相似的 post info 列表 */
+    async getSimilarPostInfo (genre1 = 'noGenreData', genre2 = 'noGenreData', genre3 = 'noGenreData') {
+      const top1Addresses = await api.arweave.getTheMostSimilarUsers(genre1)
+      const top2Addresses = await api.arweave.GetTheSimilarUsers(genre1, genre2)
+      const top3Addresses = await api.arweave.getSomewhatSimilarUsers(genre1, genre2, genre3)
+      /** 获取自己的所有 post info 地址，然后将相似地址当中和自己地址一样的部分删除 */
+      const myTxid = await api.arweave.getPostInfosByAddress(this.$route.params.id)
+      const postInfoAddresses = [...new Set([...top1Addresses, ...top2Addresses, ...top3Addresses])].filter(item => !myTxid.find(myItem => myItem === item))
+      return postInfoAddresses
+    },
+    /** 新建用户信息卡片，并通过 post info 的地址进行查询 */
+    async newUserInfoByPostInfoTxid (aObject, txid) {
+      // 重复代码，封装一下。
+      const getNewUserInfo = () => {
+        const addresse = aObject.addresses.shift()
+        if (addresse) this.newUserInfoByPostInfoTxid(aObject, addresse)
+      }
+
+      aObject.list.push({...aObject.cardTemplet, postInfoTxid: txid})
+      try {
+        const transaction = await api.arweave.getTransactionDetail(txid)
+        if (transaction) {
+          const tags = api.arweave.getTagsByTransaction(transaction)
+          const cardIndex = aObject.list.findIndex(item => item.postInfoTxid === txid)
+          const finalData = {
+            address: tags['Author-Address'],
+            nickname: tags['Author-Username'],
+            postInfoTxid: txid
+          }
+          // 如果这个 post info 所指的用户已经查到过一次了，这个就作废，重新查一个。
+          const sameCardIndex = aObject.list.findIndex(item => item.address === tags['Author-Address'])
+          if (sameCardIndex !== -1) {
+            // 如果数据相同的卡片排序在这个卡片之前，就删掉这个卡片，否则删掉另外那个数据相同的卡片。
+            if (sameCardIndex < cardIndex) aObject.list.splice(cardIndex, 1)
+            else {
+              this.$set(aObject.list, cardIndex, finalData)
+              aObject.list.splice(sameCardIndex, 1)
+            }
+            getNewUserInfo()
+          } else {
+            this.$set(aObject.list, cardIndex, finalData)
+          }
+          return
+        }
+      } catch (e) {
+        console.error(`[Get failed] type: ${e.type}, txid: ${txid}, error:`, e)
+      }
+      // 失败处理：删掉这个卡片，并请求一个新的。
+      aObject.list.splice(aObject.list.findIndex(item => item.postInfoTxid === txid), 1)
+      getNewUserInfo()
     }
   }
 }
