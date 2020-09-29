@@ -5,6 +5,7 @@ import Arweave from 'arweave'
 import { encryptBuffer } from '../util/encrypt'
 import config from '../config/index'
 import API from '../api/api'
+import Community from 'community-js'
 
 Vue.use(Vuex)
 
@@ -17,6 +18,9 @@ let ar = Arweave.init({
   timeout: 10000,
   logging: false
 })
+
+let community = new Community(ar)
+community.setCommunityTx(config.community)
 
 export default new Vuex.Store({
   modules: {
@@ -347,11 +351,21 @@ export default new Vuex.Store({
       commit('setSingleInfo', data.single)
       commit('setSingleObj', data)
     },
+    resetSingleInfo ({ commit }) {
+      commit('setUploadMusicPct', 0)
+      commit('setSingleCoverRaw', '')
+      commit('setSingleInfo', '')
+    },
     reviewAlbum ({ commit }, data) {
       commit('setAlbumCoverRaw', data.img.data)
       commit('setAlbumCoverType', data.img.type)
       commit('setAlbumInfo', data.album)
       commit('setAlbumObj', data)
+    },
+    resetAlbumInfo ({ commit }) {
+      commit('setUploadMusicPct', 0)
+      commit('setAlbumInfo', '')
+      commit('setAlbumCoverRaw', '')
     },
     reviewPodcast ({ commit }, data) {
       commit('setPodcastCoverRaw', data.img.data)
@@ -362,6 +376,11 @@ export default new Vuex.Store({
       commit('setPodcastInfo', data.podcast)
       commit('setPodcastObj', data)
     },
+    resetPodcastInfo ({ commit }) {
+      commit('setUploadMusicPct', 0)
+      commit('setPodcastCoverRaw', '')
+      commit('setPodcastInfo', '')
+    },
     reviewSoundEffect ({ commit }, data) {
       commit('setSoundEffectCoverRaw', data.img.data)
       commit('setSoundEffectCoverType', data.img.type)
@@ -370,6 +389,11 @@ export default new Vuex.Store({
       commit('setSoundEffectMusicType', data.music.type)
       commit('setSoundEffectInfo', data.soundeffect)
       commit('setSoundEffectObj', data)
+    },
+    resetSoundEffectInfo ({ commit }) {
+      commit('setUploadMusicPct', 0)
+      commit('setSoundEffectInfo', '')
+      commit('setSoundEffectCoverRaw', '')
     },
     async uploadSingle ({ commit }, data) {
       commit('setSingleUploadComplete', false)
@@ -426,14 +450,14 @@ export default new Vuex.Store({
 
       await ar.transactions.sign(musicTransaction, data.key)
       let musicUploader = await ar.transactions.getUploader(musicTransaction)
-      commit('uploadStatus', 'Uploading chunks' + `${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
       while (!musicUploader.isComplete) {
         await musicUploader.uploadChunk()
         commit('setUploadMusicPct', musicUploader.pctComplete)
+        commit('setUploadStatus', 'Uploading chunks: ' + `${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
         console.log(`${musicUploader.pctComplete}% complete, ${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
       }
 
-      commit('uploadStatus', 'Await confirmation on post')
+      commit('setUploadStatus', 'Await confirmation on post')
       commit('setSingleMusicId', musicTransaction.id)
       commit('setSingleMusicLink', 'https://arweave.net/' + musicTransaction.id)
       console.log(musicTransaction.id)
@@ -515,7 +539,7 @@ export default new Vuex.Store({
         console.log(`${postInfoUploader.pctComplete}% complete, ${postInfoUploader.uploadedChunks}/${postInfoUploader.totalChunks}`)
       }
 
-      const postInfoRes = await ar.transactions.post(postInfoTransaction)
+      const postInfoRes = await ar.transactions.post(postInfoTransaction).catch(err => console.log('single post-info error: ', JSON.stringify(err)))
       console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setSingleLink', singleTransaction.id)
@@ -584,11 +608,11 @@ export default new Vuex.Store({
 
         await ar.transactions.sign(musicTransaction, data.key)
         let musicUploader = await ar.transactions.getUploader(musicTransaction)
-        commit('uploadStatus', 'Uploading chunks: ' + `${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
         while (!musicUploader.isComplete) {
           await musicUploader.uploadChunk()
           commit('setUploadMusicNumber', i + 1)
           commit('setUploadMusicPct', musicUploader.pctComplete)
+          commit('setUploadStatus', 'Uploading chunks: ' + `${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
           console.log(`${musicUploader.pctComplete}% complete, ${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
         }
 
@@ -597,7 +621,7 @@ export default new Vuex.Store({
         console.log(musicTransaction.id)
 
         console.log('Await confirmation on post for #' + (i + 1))
-        commit('uploadStatus', 'Await confirmation on post for #' + (i + 1))
+        commit('setUploadStatus', 'Await confirmation on post for #' + (i + 1))
         const musicRes = await ar.transactions.post(musicTransaction)
         console.log(musicTransaction.id + ': ', musicRes)
         musicList.push({ id: musicTransaction.id, title: musicFileList[i].title, price: musicFileList[i].price })
@@ -676,7 +700,7 @@ export default new Vuex.Store({
         console.log(`${postInfoUploader.pctComplete}% complete, ${postInfoUploader.uploadedChunks}/${postInfoUploader.totalChunks}`)
       }
 
-      const postInfoRes = await ar.transactions.post(postInfoTransaction)
+      const postInfoRes = await ar.transactions.post(postInfoTransaction).catch(err => console.log('album post-info error: ', JSON.stringify(err)))
       console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setAlbumUploadComplete', true)
@@ -735,14 +759,14 @@ export default new Vuex.Store({
 
       await ar.transactions.sign(programTransaction, data.key)
       let programUploader = await ar.transactions.getUploader(programTransaction)
-      commit('uploadStatus', 'Uploading chunks: ' + `${programUploader.uploadedChunks}/${programUploader.totalChunks}`)
       while (!programUploader.isComplete) {
         await programUploader.uploadChunk()
         commit('setUploadMusicPct', programUploader.pctComplete)
+        commit('setUploadStatus', 'Uploading chunks: ' + `${programUploader.uploadedChunks}/${programUploader.totalChunks}`)
         console.log(`${programUploader.pctComplete}% complete, ${programUploader.uploadedChunks}/${programUploader.totalChunks}`)
       }
 
-      commit('uploadStatus', 'Await confirmation on post')
+      commit('setUploadStatus', 'Await confirmation on post')
       commit('setSingleMusicId', programTransaction.id)
       commit('setSingleMusicLink', 'https://arweave.net/' + programTransaction.id)
       console.log(programTransaction.id)
@@ -824,7 +848,7 @@ export default new Vuex.Store({
         console.log(`${postInfoUploader.pctComplete}% complete, ${postInfoUploader.uploadedChunks}/${postInfoUploader.totalChunks}`)
       }
 
-      const postInfoRes = await ar.transactions.post(postInfoTransaction)
+      const postInfoRes = await ar.transactions.post(postInfoTransaction).catch(err => console.log('podcast post-info error: ', JSON.stringify(err)))
       console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setPodcastUploadComplete', true)
@@ -887,10 +911,11 @@ export default new Vuex.Store({
       while (!musicUploader.isComplete) {
         await musicUploader.uploadChunk()
         commit('setUploadMusicPct', musicUploader.pctComplete)
+        commit('setUploadStatus', 'Uploading chunks: ' + `${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
         console.log(`${musicUploader.pctComplete}% complete, ${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
       }
 
-      commit('uploadStatus', 'Await confirmation on post')
+      commit('setUploadStatus', 'Await confirmation on post')
       commit('setSingleMusicId', audioTransaction.id)
       commit('setSingleMusicLink', 'https://arweave.net/' + audioTransaction.id)
       console.log(audioTransaction.id)
@@ -955,7 +980,7 @@ export default new Vuex.Store({
         console.log(`${postInfoUploader.pctComplete}% complete, ${postInfoUploader.uploadedChunks}/${postInfoUploader.totalChunks}`)
       }
 
-      const postInfoRes = await ar.transactions.post(postInfoTransaction)
+      const postInfoRes = await ar.transactions.post(postInfoTransaction).catch(err => console.log('soundeffect post-info error: ', JSON.stringify(err)))
       console.log(postInfoTransaction.id + ': ', postInfoRes)
 
       commit('setSoundEffectUploadComplete', true)
@@ -1114,7 +1139,31 @@ export default new Vuex.Store({
       commit('setPurchaseComplete', false)
       console.log(data)
       const now = Date.now()
-      let transaction = ''
+
+      let comTx = ''
+      community.setWallet(data.key)
+      let holder = await community.selectWeightedHolder()
+      console.log(holder)
+
+      comTx = await ar.createTransaction({
+        target: holder,
+        quantity: data.toCommunity + ''
+      }, data.key)
+
+      comTx.addTag('App-Name', APP_NAME) // 指定 App-Name 为 测试网
+      comTx.addTag('Type', 'Tip-Community') // 指定类型为 购买
+      comTx.addTag('Unix-Time', now) // 时间是多少
+      comTx.addTag('Target', data.target) // 付款给谁
+      comTx.addTag('Source', data.source) // 谁买的
+      comTx.addTag('Price', data.price) // 物品价格
+      comTx.addTag('Item', data.item) // 购买物品 ID
+
+      console.log(comTx)
+      await ar.transactions.sign(comTx, data.key)
+
+      const comRes = await ar.transactions.post(comTx)
+      console.log(comTx.id + ': ', comRes)
+
       let devTx = ''
 
       devTx = await ar.createTransaction({
@@ -1135,6 +1184,8 @@ export default new Vuex.Store({
 
       const devRes = await ar.transactions.post(devTx)
       console.log(devTx.id + ': ', devRes)
+
+      let transaction = ''
 
       transaction = await ar.createTransaction({
         target: data.target,

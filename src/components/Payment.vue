@@ -78,16 +78,16 @@
                 <span class="price-line-subtitle">to Developer (~3%)</span>
                 <span>{{ tipToDeveloperDisplay }} AR</span>
               </span>
-              <!-- <span class="price-line-title-container-sub-title-container">
+              <span class="price-line-title-container-sub-title-container">
                 <span class="price-line-subtitle">to Community (~1%)</span>
                 <span>{{ tipToCommunityDisplay }} AR</span>
-              </span> -->
+              </span>
             </span>
           </div>
           <v-divider dark style="margin: 10px 0 10px"></v-divider>
           <div class="price-line">
             <span class="left-content">Total</span>
-            <h4>{{ total.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
+            <h4>{{ total.toFixed(12).replace(/\.?0+$/, '') }} AR</h4>
           </div>
         </div>
         <v-btn class="wallet-upload-button" depressed color="#E56D9B" block :loading="paymentConfirm" @click="step3">
@@ -328,7 +328,7 @@ export default {
       this.tip = this.tipToDeveloper + this.tipToCommunity
       this.tip = parseFloat(API.arweave.getArFromWinston(this.tip))
       this.total = API.arweave.getArFromWinston(total)
-      this.total = parseFloat(this.total)
+      this.total = Number(this.total)
 
       this.showWallet = false
       this.showConfirm = true
@@ -341,8 +341,8 @@ export default {
         item: this.itemId,
         key: this.keyFileContent,
         type: this.type,
-        toDeveloper: this.tipToDeveloper
-        // toCommunity: this.tipToCommunity
+        toDeveloper: this.tipToDeveloper,
+        toCommunity: this.tipToCommunity
       }
       if (this.type === 'album-info') {
         data.trackNumber = this.trackNumber
