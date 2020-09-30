@@ -218,7 +218,7 @@ export default {
       return res
     },
     discountDisplay () {
-      const res = Number(this.price) / Number(this.originalPrice)
+      const res = Number(api.arweave.getWinstonFromAr(this.price)) / Number(api.arweave.getWinstonFromAr(this.originalPrice))
       return (1 - res) * 100
     }
   },
