@@ -91,7 +91,7 @@
             </h4>
             <div class="album-buy-label">
               <div class="album-buy-label-discount">
-                -20%
+                -{{ discountDisplay }}%
               </div>
               <div class="album-buy-label-price">
                 <p class="album-buy-label-price-original">
@@ -216,6 +216,10 @@ export default {
     albumPct () {
       let res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
       return res
+    },
+    discountDisplay () {
+      const res = Number(this.price) / Number(this.originalPrice)
+      return (1 - res) * 100
     }
   },
   mounted () {
