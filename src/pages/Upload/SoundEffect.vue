@@ -48,7 +48,7 @@
             counter
             maxlength="100"
           ></v-text-field>
-          <div class="name-desp side-title">Description</div>
+          <div class="name-desp side-title">Description (use \n for new line)</div>
           <v-textarea
             v-model="soundeffectDesp"
             solo

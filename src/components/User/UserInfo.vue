@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     edit () {
-      this.$router.push({ name: 'Edit' })
+      this.$router.push({ path: '/user/' + this.id + '/edit' })
     },
     async getUserInfo () {
       API.arweave.getLocationFromAddress(this.id).then(location => {
