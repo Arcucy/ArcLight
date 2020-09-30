@@ -140,6 +140,8 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 
+import { getCookie } from '@/util/cookie'
+
 import spaceLayout from '@/components/Layout/Space.vue'
 import avatar from '@/components/User/Avatar'
 
@@ -192,6 +194,8 @@ export default {
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
         }, 2000)
+      } else {
+        this.getUserInfo()
       }
     },
     userInfoUpdateComplete (val) {
@@ -310,14 +314,14 @@ export default {
     document.title = 'Edit Profile - ArcLight'
   },
   mounted () {
-    if (!this.wallet) {
+    const c = getCookie('arclight_userkey')
+    if (!c && !this.wallet) {
       this.failSnackbar = true
       this.failMessage = 'Please Login First'
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 2000)
     }
-    this.getUserInfo()
     window.onbeforeunload = function (e) {
       e = e || window.event
       if (e) {

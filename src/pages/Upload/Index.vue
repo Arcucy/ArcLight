@@ -43,7 +43,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
 
 import spaceLayout from '@/components/Layout/Space.vue'
 
@@ -81,19 +83,30 @@ export default {
           this.$router.push({ name: 'Landing' })
         }, 3000)
       }
+    },
+    isLoggedIn (val) {
+      setTimeout(() => {
+        if (!val) this.$router.push({ name: 'Landing' })
+      }, 5000)
     }
   },
+  methods: {
+    ...mapActions(['setKey'])
+  },
   mounted () {
-    setTimeout(() => {
-      if (!this.isLoggedIn) {
-        this.failMessage = 'Login is required to upload'
-        this.failSnackbar = true
+    const c = getCookie('arclight_userkey')
+    if (!c) {
+      setTimeout(() => {
+        if (!this.isLoggedIn) {
+          this.failMessage = 'Login is required to upload'
+          this.failSnackbar = true
 
-        setTimeout(() => {
-          this.$router.push({ name: 'Landing' })
-        }, 3000)
-      }
-    }, 3000)
+          setTimeout(() => {
+            this.$router.push({ name: 'Landing' })
+          }, 3000)
+        }
+      }, 3000)
+    }
 
     document.title = 'Choose Upload Type - ArcLight'
 

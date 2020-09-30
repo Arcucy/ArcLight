@@ -44,7 +44,7 @@ const REVERSED_AUDIO_TYPE = {
   'soundeffect-info': 'Sound Effect'
 }
 
-const APP_NAME = 'arclight-alpha'
+const APP_NAME = 'arclight-app'
 
 let arweave = {
   breakOnCall: false,
@@ -234,8 +234,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -808,8 +807,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -848,8 +846,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -888,8 +885,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -928,8 +924,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -968,8 +963,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -1186,8 +1180,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -1286,8 +1279,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -1325,39 +1317,6 @@ let arweave = {
         })
       })
     })
-  },
-
-  /**
-   * Publish a single based on the given address and key file   
-   * 根据给定的钱包地址和密钥文件发布音乐（单曲）
-   * @param {String} address              - 用户的钱包地址
-   * @param {JSON Object} key             - 使用 keyFileContent，不是原始文件
-   * @param {SingleMusic Object} single   - Single 单曲音乐的 data obejct 对象
-   */
-  postSingleFromAddress (address, key, single) {
-
-  },
-
-  /**
-   * Publish an album based on the given address and key file   
-   * 根据给定的地址和密钥文件发布专辑
-   * @param {*} address                   - 用户的钱包地址
-   * @param {*} key                       - 使用 keyFileContent，不是原始文件
-   * @param {*} single                    - Album 专辑音乐的 data object 对象
-   */
-  postAlbumFromAddress (address, key, single) {
-
-  },
-
-  /**
-   * Publish a podcast based on the given address and key file   
-   * 根据给定的地址和密钥文件发布播客
-   * @param {*} address                   - 用户的钱包地址
-   * @param {*} key                       - 使用 keyFileContent，不是原始文件
-   * @param {*} podcast                   - Podcast 播客的 data object 对象
-   */
-  postPodcastFromAddress (address, key, podcast) {
-
   }
 }
 
