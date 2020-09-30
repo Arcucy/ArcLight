@@ -609,7 +609,7 @@ let arweave = {
             expr2: {
               op: 'equals',
               expr1: 'Track-Number',
-              expr2: trackNumber
+              expr2: trackNumber + ''
             }
           }
         }
@@ -1301,6 +1301,12 @@ let arweave = {
    */
   async getUploadPrice (byte) {
     const res = await Axios.get(`${arweaveHost}/price/${Number(byte)}`)
+    if (res && res.data) return res.data
+    else return 0
+  },
+
+  async getPaymentPrice (address) {
+    const res = await Axios.get(`${arweaveHost}/price/1/${address}`)
     if (res && res.data) return res.data
     else return 0
   },

@@ -137,6 +137,9 @@
             It will need a short time of mining for miners to help you save to next block.
             Be patient, your wonderful will be forever stored!
           </p>
+          <p class="upload-notice-content">
+            Transaction ID: {{ singleInfoIdDisplay }}
+          </p>
           <v-btn class="confirm-button" depressed color="#E56D9B" block @click="() => { $store.commit('setUploadMusicPct', 0);showUpload = false }">
             Confirm
           </v-btn>
@@ -176,11 +179,12 @@ export default {
       showDialog: false,
       showUpload: false,
       canGoBack: true,
-      uploadStatusDisplay: ''
+      uploadStatusDisplay: '',
+      singleInfoIdDisplay: ''
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
+    ...mapState(['singleInfoId', 'keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
   },
   watch: {
     singleUploadComplete (val) {
@@ -205,6 +209,9 @@ export default {
     },
     uploadStatus (val) {
       this.uploadStatusDisplay = val
+    },
+    singleInfoId (val) {
+      this.singleInfoIdDisplay = val
     }
   },
   methods: {

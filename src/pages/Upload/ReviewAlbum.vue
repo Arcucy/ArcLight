@@ -144,6 +144,9 @@
             It will need a short time of mining for miners to help you save to next block.
             Be patient, your wonderful will be forever stored!
           </p>
+          <p class="upload-notice-content">
+            Transaction ID: {{ albumInfoIdDisplay }}
+          </p>
           <v-btn class="confirm-button" depressed color="#E56D9B" block @click="showUpload = false">
             Confirm
           </v-btn>
@@ -187,11 +190,13 @@ export default {
       showDialog: false,
       showUpload: false,
       canGoBack: true,
-      uploadStatusDisplay: ''
+      uploadStatusDisplay: '',
+      priceDisplay: '',
+      albumInfoIdDisplay: ''
     }
   },
   computed: {
-    ...mapState(['keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
+    ...mapState(['albumInfoId', 'keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
   },
   watch: {
     albumUploadComplete (val) {
@@ -216,6 +221,9 @@ export default {
     },
     uploadStatus (val) {
       this.uploadStatusDisplay = val
+    },
+    albumInfoId (val) {
+      this.albumInfoIdDisplay = val
     }
   },
   methods: {
@@ -341,8 +349,7 @@ export default {
       this.musicIsReady = true
       this.musicList = urls
     })
-
-    this.price = parseFloat(api.arweave.getArFromWinston(this.albumInfo.price)).toFixed(12).replace(/\.?0+$/, '') + ' AR'
+    this.price = parseFloat(this.albumInfo.price).toFixed(12).replace(/\.?0+$/, '') + ' AR'
     this.duration = this.albumInfo.duration
     if (this.duration === -1) {
       this.durationDisplay = 'Album Full'

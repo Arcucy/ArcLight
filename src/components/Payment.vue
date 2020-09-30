@@ -49,6 +49,7 @@
     <v-dialog
       v-model="showConfirm"
       width="360"
+      :persistent="shouldLock"
       @click:outside="outsideReset"
     >
       <v-card dark class="confirm">
@@ -66,13 +67,13 @@
           </div>
           <div class="price-line">
             <span class="left-content">Fee</span>
-            <h4>{{ fee.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
+            <h4>{{ fee }} AR</h4>
           </div>
           <div class="price-line">
             <span class="left-content price-line-title-container">
               <span class="price-line-title-container-main-title-container">
                 <span class="price-line-maintitle">Tip</span>
-                <h4>{{ tip.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
+                <h4>{{ tip }} AR</h4>
               </span>
               <span class="price-line-title-container-sub-title-container">
                 <span class="price-line-subtitle">to Developer (~3%)</span>
@@ -203,7 +204,8 @@ export default {
       tip: 0,
       tipToDeveloper: 0,
       tipToCommunity: 0,
-      total: 0
+      total: 0,
+      shouldLock: false
     }
   },
   computed: {
@@ -321,12 +323,17 @@ export default {
         return
       }
 
+      const res = await this.getFee(this.artist.id)
+      this.fee = parseInt(API.arweave.getWinstonFromAr(this.fee)) + parseInt(res)
+      this.fee = parseFloat(API.arweave.getArFromWinston(this.fee)).toFixed(12).replace(/\.?0+$/, '')
+
       const fullPrice = API.arweave.getWinstonFromAr(this.price)
       this.tipToDeveloper = parseInt(fullPrice * 0.03)
       this.tipToCommunity = parseInt(fullPrice * 0.01)
       const total = parseInt(fullPrice) + this.tipToDeveloper + this.tipToCommunity
       this.tip = this.tipToDeveloper + this.tipToCommunity
       this.tip = parseFloat(API.arweave.getArFromWinston(this.tip))
+      this.tip = Number(this.tip)
       this.total = API.arweave.getArFromWinston(total)
       this.total = Number(this.total)
 
@@ -334,6 +341,7 @@ export default {
       this.showConfirm = true
     },
     step3 () {
+      this.shouldLock = true
       const data = {
         target: this.artist.id,
         source: this.wallet,
@@ -381,6 +389,13 @@ export default {
             ? b + '0.' + Array(1 - e - c.length).join(0) + c + d
             : b + c + d + Array(e - d.length + 1).join(0)
         })
+    },
+    async getFee (address) {
+      const res = await API.arweave.getPaymentPrice(address)
+      if (res) {
+        if (res > 250000000000) return 250000000000
+        else return 0
+      }
     }
   },
   mounted () {

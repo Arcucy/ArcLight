@@ -294,7 +294,6 @@ export default {
     async verify () {
       this.fileList.forEach((item, i) => {
         if (item.music) {
-          console.log('music:', item.music)
           const reader = new FileReader()
           reader.readAsArrayBuffer(item.music)
           reader.onload = async (e) => {
@@ -394,7 +393,6 @@ export default {
       let shouldHasPrice = false
       for (let i = 0; i < this.fileList.length; i++) {
         const item = this.fileList[i]
-        console.log(parseFloat(item.price) > 1)
         if (isNaN(parseFloat(item.price))) {
           this.failMessage = 'The price must be numbers'
           this.failSnackbar = true
@@ -409,14 +407,13 @@ export default {
           break
         } else if (parseFloat(item.price) > 0) {
           shouldHasPrice = true
-          console.log(shouldHasPrice)
         }
       }
       if (shouldReturn) return
 
       if (this.price === 0) {
         for (let i = 0; i < this.fileList.length; i++) {
-          this.price = this.price + parseFloat(API.arweave.getWinstonFromAr(this.fileList[i].price))
+          this.price = this.price + Number(API.arweave.getWinstonFromAr(this.fileList[i].price))
         }
         this.price = this.price * 0.8
       }
@@ -429,7 +426,6 @@ export default {
       }
 
       this.price = API.arweave.getArFromWinston(this.price)
-      console.log(this.duration)
 
       if (parseFloat(this.price) < 0) {
         this.failMessage = `Price can't be negative`
@@ -444,7 +440,6 @@ export default {
         this.failMessage = `You can't set demo for free music`
         this.failSnackbar = true
         this.submitBtnLoading = false
-        // eslint-disable-next-line no-useless-return
         return
       }
 
@@ -483,13 +478,6 @@ export default {
       }
 
       let musicList = []
-
-      if (this.price === 0) {
-        for (let i = 0; i < this.fileList.length; i++) {
-          this.price = this.price + parseFloat(this.fileList[i].price)
-        }
-        this.price = this.price * 0.8
-      }
 
       for (let i = 0; i < this.fileList.length; i++) {
         let aext = this.fileList[i].music.name.split('.').pop()
@@ -558,6 +546,7 @@ export default {
   mounted () {
     if (this.$route.params.file) {
       this.$route.params.file.forEach((file, index) => {
+        if (!this.fileList[index]) this.fileList.push({ music: null, title: '', price: 0, type: '', disableDuration: true })
         this.fileList[index].music = file
       })
       this.$route.params.music.forEach((item, index) => {
@@ -572,6 +561,7 @@ export default {
     }
 
     if (this.albumInfo) {
+      console.log(this.albumInfo)
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre
@@ -582,7 +572,7 @@ export default {
       } else {
         this.duration = 'Off'
       }
-      this.price = API.arweave.getArFromWinston(this.albumInfo.price)
+      this.price = Number(API.arweave.getArFromWinston(this.albumInfo.price))
     }
 
     if (this.userType === 'guest') {
