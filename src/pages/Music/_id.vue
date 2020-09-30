@@ -33,10 +33,22 @@
         </div>
         <div class="music-info-container">
           <div class="music-title-container">
-            <span v-if="type !== 'soundeffect-info'" class="music-title">
-              {{ info.genre }}
-            </span>
-              {{ info.name }}
+            <v-tooltip top :disabled="!toGenre.name">
+              <template v-slot:activator="{ on, attrs }">
+                <span v-bind="attrs" v-on="on">
+                  <router-link
+                    v-if="type !== 'soundeffect-info'"
+                    class="music-title-genre"
+                    :class="!toGenre.name && 'no-click'"
+                    :to="toGenre"
+                  >
+                    {{ info.genre }}
+                  </router-link>
+                </span>
+              </template>
+              <span>View similar artwork</span>
+            </v-tooltip>
+            {{ info.name }}
           </div>
           <div class="mobile mobile-music-title-container">
             <span class="genre">{{ info.genre }}</span>
@@ -242,11 +254,20 @@ export default {
     audio () {
       const unlock = this.owned || this.artist.id === this.wallet || !this.price
       return unlock || this.info.duration === -1 ? this.completeAudio : this.auditionClip
+    },
+    toGenre () {
+      if (!this.info.genre) return {}
+      switch (this.type) {
+        case 'single-info':
+          return { name: 'SongsSingles', query: { genre: this.info.genre } }
+        case 'album-info':
+          return { name: 'SongsAlbums', query: { genre: this.info.genre } }
+      }
+      return {}
     }
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
-    window.vueTest = this
   },
   watch: {
     $route (val) {
@@ -926,7 +947,8 @@ export default {
     overflow: hidden;
     word-break: break-all;
     text-align: left;
-    span {
+    .music-title-genre {
+      text-decoration: none;
       margin-right: 8px;
       padding: 8px 16px 8px;
       background-color: #FAE5ED;
@@ -936,6 +958,9 @@ export default {
       white-space: nowrap;
       font-size: 16px;
       display: inline-block;
+      &.no-click {
+        cursor: default;
+      }
     }
   }
   &-album {

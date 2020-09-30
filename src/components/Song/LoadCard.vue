@@ -36,6 +36,7 @@ export default {
   align-items: center;
   border-radius: 5px;
   background: #ffffff0d;
+  padding: 10px;
   p {
     color: white;
   }
