@@ -15,7 +15,8 @@ export default {
   provide () {
     return {
       routerRefresh: this.routerRefresh,
-      updateQuery: this.updateQuery
+      updateQuery: this.updateQuery,
+      backPage: this.backPage
     }
   },
   methods: {
@@ -38,6 +39,17 @@ export default {
           }
         })
       }
+    },
+    backPage (defaultLink) {
+      const originRoute = { ...this.$route }
+      const pushLink = defaultLink || { name: 'Landing' }
+      this.$router.go(-1)
+      // 如果页面没有变化，返回失败，将回到默认页面
+      this.$nextTick(() => {
+        if (this.$route.fullPath === originRoute.fullPath) {
+          this.$router.push(pushLink)
+        }
+      })
     }
   }
 }
