@@ -437,21 +437,34 @@ export default new Vuex.Store({
       }
 
       let final = []
+      let final2 = []
       postInfo.push({ typs: 'single', id: singleTransaction.id, genre: data.single.genre, 'timestamp': Date.now() })
-
       postInfo.forEach(item => {
-        const res = final.find(val => val.genre === item.genre)
-        if (res) res.count++
-        else final.push({ genre: item.genre, count: 1 })
+        if (item.genre) {
+          const res = final.find(val => val.genre === item.genre)
+          if (res) res.count++
+          else final.push({ genre: item.genre, count: 1 })
+        }
       })
       final.sort((a, b) => b.count - a.count)
+
+      postInfo.forEach(item => {
+        if (item.genre) {
+          const res = final2.find(val => val.category === item.category)
+          if (res) res.count++
+          else final2.push({ category: item.category, count: 1 })
+        }
+      })
+      final2.sort((a, b) => b.count - a.count)
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
       if (final[0]) postInfoTransaction.addTag('Top1-Genre', final[0].genre)
       if (final[1]) postInfoTransaction.addTag('Top2-Genre', final[1].genre)
       if (final[2]) postInfoTransaction.addTag('Top3-Genre', final[2].genre)
-      if (final[3]) console.log('No need to display more')
+      if (final2[0]) postInfoTransaction.addTag('Top1-Category', final[0].category)
+      if (final2[1]) postInfoTransaction.addTag('Top2-Category', final[1].category)
+      if (final2[2]) postInfoTransaction.addTag('Top3-Category', final[2].category)
       postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
@@ -588,20 +601,35 @@ export default new Vuex.Store({
       }
 
       let final = []
+      let final2 = []
       postInfo.push({ typs: 'album', id: musicList, genre: data.album.genre, 'timestamp': Date.now() })
 
       postInfo.forEach(item => {
-        const res = final.find(val => val.genre === item.genre)
-        if (res) res.count++
-        else final.push({ genre: item.genre, count: 1 })
+        if (item.genre) {
+          const res = final.find(val => val.genre === item.genre)
+          if (res) res.count++
+          else final.push({ genre: item.genre, count: 1 })
+        }
       })
       final.sort((a, b) => b.count - a.count)
+
+      postInfo.forEach(item => {
+        if (item.genre) {
+          const res = final2.find(val => val.category === item.category)
+          if (res) res.count++
+          else final2.push({ category: item.category, count: 1 })
+        }
+      })
+      final2.sort((a, b) => b.count - a.count)
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
       if (final[0]) postInfoTransaction.addTag('Top1-Genre', final[0].genre)
       if (final[1]) postInfoTransaction.addTag('Top2-Genre', final[1].genre)
       if (final[2]) postInfoTransaction.addTag('Top3-Genre', final[2].genre)
+      if (final2[0]) postInfoTransaction.addTag('Top1-Category', final[0].category)
+      if (final2[1]) postInfoTransaction.addTag('Top2-Category', final[1].category)
+      if (final2[2]) postInfoTransaction.addTag('Top3-Category', final[2].category)
       postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
@@ -724,22 +752,35 @@ export default new Vuex.Store({
       }
 
       let final = []
+      let final2 = []
       postInfo.push({ typs: 'podcast', id: podcastTransaction.id, genre: data.podcast.category, 'timestamp': Date.now() })
 
       postInfo.forEach(item => {
-        const res = final.find(val => val.category === item.category)
-        if (res) res.count++
-        else final.push({ category: item.category, count: 1 })
+        if (item.genre) {
+          const res = final.find(val => val.genre === item.genre)
+          if (res) res.count++
+          else final.push({ genre: item.genre, count: 1 })
+        }
       })
       final.sort((a, b) => b.count - a.count)
-      console.log(final)
+
+      postInfo.forEach(item => {
+        if (item.genre) {
+          const res = final2.find(val => val.category === item.category)
+          if (res) res.count++
+          else final2.push({ category: item.category, count: 1 })
+        }
+      })
+      final2.sort((a, b) => b.count - a.count)
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
-      if (final[0]) postInfoTransaction.addTag('Top1-Genre', final[0].category)
-      if (final[1]) postInfoTransaction.addTag('Top2-Genre', final[1].category)
-      if (final[2]) postInfoTransaction.addTag('Top3-Genre', final[2].category)
-      if (final[3]) console.log('No need to display more')
+      if (final[0]) postInfoTransaction.addTag('Top1-Genre', final[0].genre)
+      if (final[1]) postInfoTransaction.addTag('Top2-Genre', final[1].genre)
+      if (final[2]) postInfoTransaction.addTag('Top3-Genre', final[2].genre)
+      if (final2[0]) postInfoTransaction.addTag('Top1-Category', final[0].category)
+      if (final2[1]) postInfoTransaction.addTag('Top2-Category', final[1].category)
+      if (final2[2]) postInfoTransaction.addTag('Top3-Category', final[2].category)
       postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
@@ -859,10 +900,38 @@ export default new Vuex.Store({
         postInfo = []
       }
 
-      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, genre: data.album.genre, 'timestamp': Date.now() })
+      let final = []
+      let final2 = []
+      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, 'timestamp': Date.now() })
+
+      postInfo.forEach(item => {
+        if (item.genre) {
+          const res = final.find(val => val.genre === item.genre)
+          if (res) res.count++
+          else final.push({ genre: item.genre, count: 1 })
+        }
+      })
+      final.sort((a, b) => b.count - a.count)
+
+      postInfo.forEach(item => {
+        if (item.genre) {
+          const res = final2.find(val => val.category === item.category)
+          if (res) res.count++
+          else final2.push({ category: item.category, count: 1 })
+        }
+      })
+      final2.sort((a, b) => b.count - a.count)
+
+      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, 'timestamp': Date.now() })
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
+      if (final[0]) postInfoTransaction.addTag('Top1-Genre', final[0].genre)
+      if (final[1]) postInfoTransaction.addTag('Top2-Genre', final[1].genre)
+      if (final[2]) postInfoTransaction.addTag('Top3-Genre', final[2].genre)
+      if (final2[0]) postInfoTransaction.addTag('Top1-Category', final[0].category)
+      if (final2[1]) postInfoTransaction.addTag('Top2-Category', final[1].category)
+      if (final2[2]) postInfoTransaction.addTag('Top3-Category', final[2].category)
       postInfoTransaction.addTag('App-Name', APP_NAME)
       postInfoTransaction.addTag('Unix-Time', Date.now())
       postInfoTransaction.addTag('Type', 'post-info')
@@ -1026,6 +1095,7 @@ export default new Vuex.Store({
       console.log(transaction.id + ': ', res)
     },
     async purchaseForItem ({ commit }, data) {
+      console.log(data)
       commit('setPurchaseComplete', false)
       const now = Date.now()
 
@@ -1033,29 +1103,33 @@ export default new Vuex.Store({
       community.setCommunityTx(config.community)
 
       let comTx = ''
-      community.setWallet(data.key)
-      let holder = await community.selectWeightedHolder()
-      console.log(holder)
+      try {
+        let holder = await community.selectWeightedHolder()
+        console.log(holder)
 
-      comTx = await ar.createTransaction({
-        target: holder,
-        quantity: data.toCommunity + ''
-      }, data.key)
+        comTx = await ar.createTransaction({
+          target: holder,
+          quantity: data.toCommunity + ''
+        }, data.key)
 
-      comTx.addTag('App-Name', APP_NAME) // 指定 App-Name 为 测试网
-      comTx.addTag('Type', 'Tip-Community') // 指定类型为 购买
-      comTx.addTag('Unix-Time', now) // 时间是多少
-      comTx.addTag('Target', data.target) // 付款给谁
-      comTx.addTag('Source', data.source) // 谁买的
-      comTx.addTag('Price', data.price) // 物品价格
-      comTx.addTag('Item', data.item) // 购买物品 ID
+        comTx.addTag('App-Name', APP_NAME)
+        comTx.addTag('Type', 'Tip-Community')
+        comTx.addTag('Unix-Time', now)
+        comTx.addTag('Target', data.target)
+        comTx.addTag('Source', data.source)
+        comTx.addTag('Price', data.price)
+        comTx.addTag('Item', data.item)
 
-      await ar.transactions.sign(comTx, data.key)
+        await ar.transactions.sign(comTx, data.key)
 
-      const comRes = await ar.transactions.post(comTx)
-      console.log(comTx.id + ': ', comRes)
-      community = null
+        const comRes = await ar.transactions.post(comTx)
+        console.log('to community', comTx.id + ': ', comRes)
+        community = null
+      } catch (e) {
+        community = null
+      }
 
+      console.log('continue')
       let devTx = ''
 
       devTx = await ar.createTransaction({
@@ -1063,18 +1137,18 @@ export default new Vuex.Store({
         quantity: data.toDeveloper + ''
       }, data.key)
 
-      devTx.addTag('App-Name', APP_NAME) // 指定 App-Name 为 测试网
-      devTx.addTag('Type', 'Tip-Developer') // 指定类型为 购买
-      devTx.addTag('Unix-Time', now) // 时间是多少
-      devTx.addTag('Target', data.target) // 付款给谁
-      devTx.addTag('Source', data.source) // 谁买的
-      devTx.addTag('Price', data.price) // 物品价格
-      devTx.addTag('Item', data.item) // 购买物品 ID
+      devTx.addTag('App-Name', APP_NAME)
+      devTx.addTag('Type', 'Tip-Developer')
+      devTx.addTag('Unix-Time', now)
+      devTx.addTag('Target', data.target)
+      devTx.addTag('Source', data.source)
+      devTx.addTag('Price', data.price)
+      devTx.addTag('Item', data.item)
 
       await ar.transactions.sign(devTx, data.key)
 
       const devRes = await ar.transactions.post(devTx)
-      console.log(devTx.id + ': ', devRes)
+      console.log('to developer', devTx.id + ': ', devRes)
 
       let transaction = ''
 
@@ -1086,20 +1160,20 @@ export default new Vuex.Store({
       let albumType = data.type
       if (data.type === 'album-full') data.type = 'album-info'
 
-      transaction.addTag('App-Name', APP_NAME) // 指定 App-Name 为 测试网
-      transaction.addTag('Type', 'Purchase') // 指定类型为 购买
-      transaction.addTag('Purchase-Type', data.type) // 购买类型，比如什么 single-info 啦，album-info 啦
-      if (albumType === 'album-info') { // 如果类型是购买专辑的话，执行下面的命令
+      transaction.addTag('App-Name', APP_NAME)
+      transaction.addTag('Type', 'Purchase')
+      transaction.addTag('Purchase-Type', data.type)
+      if (albumType === 'album-info') {
         transaction.addTag('Album-Type', 'one')
-        transaction.addTag('Track-Number', data.trackNumber) // 专辑内曲目编号
+        transaction.addTag('Track-Number', data.trackNumber)
       } else if (albumType === 'album-full') {
         transaction.addTag('Album-Type', 'full')
       }
-      transaction.addTag('Unix-Time', now) // 时间是多少
-      transaction.addTag('Target', data.target) // 付款给谁
-      transaction.addTag('Source', data.source) // 谁买的
-      transaction.addTag('Price', data.price) // 物品价格
-      transaction.addTag('Item', data.item) // 购买物品 ID
+      transaction.addTag('Unix-Time', now)
+      transaction.addTag('Target', data.target)
+      transaction.addTag('Source', data.source)
+      transaction.addTag('Price', data.price)
+      transaction.addTag('Item', data.item)
 
       await ar.transactions.sign(transaction, data.key)
 

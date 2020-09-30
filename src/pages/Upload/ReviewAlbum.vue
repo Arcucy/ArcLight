@@ -349,7 +349,6 @@ export default {
       this.musicIsReady = true
       this.musicList = urls
     })
-
     this.price = parseFloat(this.albumInfo.price).toFixed(12).replace(/\.?0+$/, '') + ' AR'
     this.duration = this.albumInfo.duration
     if (this.duration === -1) {

@@ -383,19 +383,26 @@ export default {
         }
         if (this.wallet) {
           for (let index = 0; index < this.info.list.length; index++) {
-            const item = this.info.list[index]
-            const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, id, index + 1 + '')
-            if (res1) {
-              const transaction = await api.arweave.getTransactionDetail(res1)
-              const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
-              const ar = api.arweave.getArFromWinston(transaction.quantity)
-              if (ar === finalPrice) item.unlock = true
+            try {
+              const item = this.info.list[index]
+              const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, id, index + 1 + '')
+              if (res1) {
+                const transaction = await api.arweave.getTransactionDetail(res1)
+                const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
+                const ar = api.arweave.getArFromWinston(transaction.quantity)
+                if (ar === finalPrice) item.unlock = true
 
-              const winstonPriceSingle = api.arweave.getWinstonFromAr(parseFloat(item.price))
-              const winstonPriceAlbum = api.arweave.getWinstonFromAr(parseFloat(this.price))
-              let newAlbumPrice = winstonPriceAlbum / 0.8
-              newAlbumPrice = (newAlbumPrice - parseInt(winstonPriceSingle)) * 0.8
-              this.price = api.arweave.getArFromWinston(newAlbumPrice)
+                const winstonPriceSingle = api.arweave.getWinstonFromAr(parseFloat(item.price))
+                const winstonPriceAlbum = api.arweave.getWinstonFromAr(parseFloat(this.price))
+                let newAlbumPrice = winstonPriceAlbum / 0.8
+                newAlbumPrice = (newAlbumPrice - parseInt(winstonPriceSingle)) * 0.8
+                this.price = api.arweave.getArFromWinston(newAlbumPrice)
+              }
+            } catch (e) {
+              if (e.type !== 'TX_PENDING') {
+                this.$message.error('An Error Occuered: ' + e.type)
+                console.error('An Error Occured', e.type, e)
+              }
             }
           }
           this.owned = this.info.list.every(item => item.unlock === true)
@@ -417,6 +424,7 @@ export default {
         this.getArtist(this.info.authorAddress)
       } catch (e) {
         this.$message.error('Failed to get album information')
+        console.error('An Error Occured', e.type, e)
       }
       this.loading = false
     },

@@ -49,6 +49,7 @@
     <v-dialog
       v-model="showConfirm"
       width="360"
+      :persistent="shouldLock"
       @click:outside="outsideReset"
     >
       <v-card dark class="confirm">
@@ -72,7 +73,7 @@
             <span class="left-content price-line-title-container">
               <span class="price-line-title-container-main-title-container">
                 <span class="price-line-maintitle">Tip</span>
-                <h4>{{ tip.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
+                <h4>{{ tip }} AR</h4>
               </span>
               <span class="price-line-title-container-sub-title-container">
                 <span class="price-line-subtitle">to Developer (~3%)</span>
@@ -203,7 +204,8 @@ export default {
       tip: 0,
       tipToDeveloper: 0,
       tipToCommunity: 0,
-      total: 0
+      total: 0,
+      shouldLock: false
     }
   },
   computed: {
@@ -331,6 +333,7 @@ export default {
       const total = parseInt(fullPrice) + this.tipToDeveloper + this.tipToCommunity
       this.tip = this.tipToDeveloper + this.tipToCommunity
       this.tip = parseFloat(API.arweave.getArFromWinston(this.tip))
+      this.tip = Number(this.tip)
       this.total = API.arweave.getArFromWinston(total)
       this.total = Number(this.total)
 
@@ -338,6 +341,7 @@ export default {
       this.showConfirm = true
     },
     step3 () {
+      this.shouldLock = true
       const data = {
         target: this.artist.id,
         source: this.wallet,

@@ -609,7 +609,7 @@ let arweave = {
             expr2: {
               op: 'equals',
               expr1: 'Track-Number',
-              expr2: trackNumber
+              expr2: trackNumber + ''
             }
           }
         }
