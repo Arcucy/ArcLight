@@ -351,23 +351,12 @@ export default {
   z-index: 10;
   overflow: hidden;
   transition: all 0.3s;
+  backdrop-filter: blur(0px);
   &.frosted {
     padding: 5px 0;
     background: #adadad4d;
     box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
-    &::before {
-      backdrop-filter: blur(20px);
-    }
-  }
-  &::before {
-    transition: all 0.3s;
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 0; right: 0;
-    backdrop-filter: blur(0px);
-    z-index: -1;
-    margin: -30px;
+    backdrop-filter: blur(20px);
   }
 }
 
