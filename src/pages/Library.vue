@@ -51,6 +51,7 @@ import spaceLayout from '@/components/Layout/Space'
 import mySingleCard from '@/components/Song/MySingleCard'
 
 export default {
+  inject: ['updateQuery'],
   components: {
     spaceLayout,
     mySingleCard
@@ -130,13 +131,6 @@ export default {
         this.$message.error(`Failed to get ${type} list`)
       }
       this.loading = false
-    },
-    updateQuery (key, val) {
-      const query = { ...this.$route.query }
-      if (query[key] !== val) {
-        query[key] = val
-        this.$router.replace({ query })
-      }
     }
   }
 }
