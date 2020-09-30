@@ -55,12 +55,13 @@ export default {
 
 .notice {
   color: rgb(177, 177, 177);
-  margin: 50px auto 50px;
+  margin: 50px auto 0;
   text-align: center;
   animation-name: fadeInOpacity;
   animation-iteration-count: 1;
   animation-timing-function: ease;
   animation-duration: 4s;
+  padding-bottom: 50px;
 }
 
 @keyframes fadeInOpacity {

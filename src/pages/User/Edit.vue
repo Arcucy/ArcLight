@@ -94,6 +94,26 @@
         </div>
       </div>
       <v-snackbar
+        v-model="successSnackbar"
+        color="#00C853"
+        timeout="3000"
+        top="top"
+        style="margin-top: 16px;"
+      >
+        {{ successMessage }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            dark
+            text
+            v-bind="attrs"
+            @click="successSnackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+      <v-snackbar
         v-model="failSnackbar"
         color="#E53935"
         timeout="3000"
@@ -134,8 +154,6 @@ export default {
     spaceLayout,
     avatar
   },
-  props: {
-  },
   data () {
     return {
       location: '',
@@ -151,6 +169,8 @@ export default {
       submitBtnLoading: false,
       failSnackbar: false,
       failMessage: '',
+      successSnackbar: false,
+      successMessage: '',
       user: {
         location: '',
         website: '',
@@ -173,10 +193,39 @@ export default {
           this.$router.push({ name: 'Landing' })
         }, 2000)
       }
+    },
+    userInfoUpdateComplete (val) {
+      if (val) {
+        console.log(val)
+        if (val === 'location') {
+          this.successSnackbar = true
+          this.successMessage = 'Location Update Successfully'
+        }
+        if (val === 'website') {
+          this.successSnackbar = true
+          this.successMessage = 'Website Update Successfully'
+        }
+        if (val === 'intro') {
+          this.successSnackbar = true
+          this.successMessage = 'Introduction Update Successfully'
+        }
+        if (val === 'neteaseId') {
+          this.successSnackbar = true
+          this.successMessage = 'Netease CloudMusic ID Update Successfully'
+        }
+        if (val === 'soundcloudId') {
+          this.successSnackbar = true
+          this.successMessage = 'SoundCloud ID Update Successfully'
+        }
+        if (val === 'bandcampId') {
+          this.successSnackbar = true
+          this.successMessage = 'Bandcamp ID Update Successfully'
+        }
+      }
     }
   },
   methods: {
-    ...mapActions(['updateLocation', 'updateWebsite', 'updateIntro', 'updateNeteaseId', 'updateSoundCloudId', 'updateBandcampId']),
+    ...mapActions(['updateLocation', 'updateWebsite', 'updateIntro', 'updateNeteaseId', 'updateSoundCloudId', 'updateBandcampId', 'userInfoUpdateComplete']),
     submit () {
       if (this.location && this.location !== this.user.location) {
         this.updateLocation({ key: this.keyFileContent, value: this.location })

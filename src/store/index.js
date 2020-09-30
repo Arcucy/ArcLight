@@ -33,6 +33,7 @@ export default new Vuex.Store({
     userType: '',
     userAvatar: '',
     userIntroduction: '',
+    userInfoUpdateComplete: '',
     userNoBalanceFailure: false,
     isMe: false,
     userPageLoading: true,
@@ -105,6 +106,9 @@ export default new Vuex.Store({
     },
     setUserIntroduction (state, intro) {
       state.userIntroduction = intro
+    },
+    setUserInfoUpdateComplete (state, status) {
+      state.userInfoUpdateComplete = status
     },
     setUserNoBalanceFailure (state, status) {
       state.userNoBalanceFailure = status
@@ -973,6 +977,8 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+      commit('setUserInfoUpdateComplete', 'location')
+      commit('setUserInfoUpdateComplete', false)
     },
     async updateWebsite ({ commit }, data) {
       console.log('Update website to user profile')
@@ -997,6 +1003,8 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+      commit('setUserInfoUpdateComplete', 'website')
+      commit('setUserInfoUpdateComplete', false)
     },
     async updateIntro ({ commit }, data) {
       console.log('Update introduction to user profile')
@@ -1021,6 +1029,8 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+      commit('setUserInfoUpdateComplete', 'intro')
+      commit('setUserInfoUpdateComplete', false)
     },
     async updateNeteaseId ({ commit }, data) {
       console.log('Update netease id to user profile')
@@ -1045,6 +1055,8 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+      commit('setUserInfoUpdateComplete', 'neteaseId')
+      commit('setUserInfoUpdateComplete', false)
     },
     async updateSoundCloudId ({ commit }, data) {
       console.log('Update soundcloud id to user profile')
@@ -1069,6 +1081,8 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+      commit('setUserInfoUpdateComplete', 'soundcloudId')
+      commit('setUserInfoUpdateComplete', false)
     },
     async updateBandcampId ({ commit }, data) {
       console.log('Update bandcamp id to user profile')
@@ -1093,6 +1107,8 @@ export default new Vuex.Store({
 
       const res = await ar.transactions.post(transaction)
       console.log(transaction.id + ': ', res)
+      commit('setUserInfoUpdateComplete', 'bandcampId')
+      commit('setUserInfoUpdateComplete', false)
     },
     async purchaseForItem ({ commit }, data) {
       console.log(data)
