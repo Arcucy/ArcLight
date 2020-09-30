@@ -219,8 +219,10 @@ export default {
       return res
     },
     discountDisplay () {
-      const res = Number(api.arweave.getWinstonFromAr(this.price)) / Number(api.arweave.getWinstonFromAr(this.originalPrice))
-      return (1 - res) * 100
+      let res = Number(api.arweave.getWinstonFromAr(this.price)) / Number(api.arweave.getWinstonFromAr(this.originalPrice))
+      res = (1 - res) * 100
+      res = res.toFixed(4)
+      return res
     }
   },
   mounted () {

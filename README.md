@@ -3,8 +3,9 @@
 </p>
 <h1 align="center">ArcLight</h1>
 <p align="center">An Arweave Music and Podcast Distribution App for users to publish, listen and pay to the encrypted music</p>
+<p align="center"><strong>Now 1.0.0 Online</strong></p>
 <p align="center"><strong>Great Thanks to ❤️<a href="https://github.com/LittleSound">@LittleSound</a>❤️ for contributing this project</strong></p>
-<p align="center"><a href="https://arweave.net/DdjCHM9GiWxQ7NnRQq_jJ7Ib4kOe8tlSchdu4nGbVWw">Live Permaweb</a> for ArcLight</p>
+<p align="center"><a href="https://arweave.net/XVwDlpEp8LQXDxgOpyXelHcGMwMQ92s80WIoTgZc0cY">Live Permaweb</a> for ArcLight</p>
 <p align="center">
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
