@@ -1,10 +1,10 @@
 <template>
   <div class="songs">
     <div class="songs-header">
-      <router-link :to="{ name: 'User', params: { id: $route.params.id } }">
+      <a @click="backPage({ name: 'User', params: { id: $route.params.id } })">
         <v-icon class="header-icon">mdi-chevron-left</v-icon>
         ALL {{ label }} Sellings
-      </router-link>
+      </a>
       <genreFilter v-if="filterSwitch" class="songs-header-filter" v-model="genreFilter" />
     </div>
     <!-- Default list -->
@@ -63,7 +63,7 @@ import loadCard from '@/components/Song/LoadCard'
 import genreFilter from '@/components/Song/GenreFilter'
 
 export default {
-  inject: ['updateQuery'],
+  inject: ['updateQuery', 'backPage'],
   components: {
     spaceLayout,
     singleCard,

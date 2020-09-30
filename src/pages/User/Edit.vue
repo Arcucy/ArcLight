@@ -3,7 +3,7 @@
     <spaceLayout>
       <div class="edit-profile-container">
         <div class="edit-header">
-          <a @click="() => { $router.go(-1) }" class="back-link">
+          <a @click="backPage()" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
             Back to Profile
           </a>
@@ -150,6 +150,7 @@ import bandcampLogo from '@/assets/image/bandcamp.png'
 import API from '@/api/api'
 
 export default {
+  inject: ['backPage'],
   components: {
     spaceLayout,
     avatar

@@ -3,7 +3,7 @@
     <div class="album" id="album">
       <!-- Back Button -->
       <div class="album-header">
-        <a @click="$router.go(-1)">
+        <a @click="backPage({ name: 'Songs' })">
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
@@ -170,6 +170,7 @@ import { mapState } from 'vuex'
 let zip = new JSZip()
 
 export default {
+  inject: ['backPage'],
   components: {
     spaceLayout,
     albumInfo,
