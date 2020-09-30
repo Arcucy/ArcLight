@@ -7,6 +7,7 @@
             <v-icon class="header-icon">mdi-chevron-left</v-icon>
             ALL Singles Sellings
           </router-link>
+          <genreFilter v-model="genreFilter" />
         </div>
         <div class="songs-list">
           <getAudioInfo
@@ -20,7 +21,7 @@
           </getAudioInfo>
           <loadCard
             v-if="loading || addressList.length === 0"
-            :message="!loading && addressList.length === 0 ? 'No data' : ''"
+            :message="!loading && addressList.length === 0 ? noDataLabel : ''"
           />
         </div>
         <div v-if="maxPage > 1" class="songs-pagination">
@@ -45,13 +46,16 @@ import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
 import getAudioInfo from '@/components/Song/GetAudioInfo'
 import loadCard from '@/components/Song/LoadCard'
+import genreFilter from '@/components/Song/GenreFilter'
 
 export default {
+  inject: ['updateQuery'],
   components: {
     spaceLayout,
     singleCard,
     getAudioInfo,
-    loadCard
+    loadCard,
+    genreFilter
   },
   data () {
     return {
@@ -59,7 +63,8 @@ export default {
       addressList: [],
       page: 1, // 页码
       pagesize: 16, // 每页数量
-      flash: false
+      flash: false,
+      genreFilter: this.$route.query.genre || ''
     }
   },
   computed: {
@@ -68,12 +73,20 @@ export default {
     },
     maxPage () {
       return Math.ceil(this.addressList.length / this.pagesize)
+    },
+    noDataLabel () {
+      return genreFilter ? 'The filter result is empty' : 'No data'
     }
   },
   watch: {
-    page () {
+    page (val) {
+      this.updateQuery('page', val > 1 && val)
       this.flash = true
       setTimeout(() => { this.flash = false })
+    },
+    genreFilter (val) {
+      this.updateQuery('genre', val)
+      this.getAllAudioList('single')
     }
   },
   mounted () {
@@ -82,14 +95,13 @@ export default {
   },
   methods: {
     async getAllAudioList (type) {
+      this.loading = true
+      this.addressList = []
+      this.page = 1
+      const genreFilter = this.genreFilter
       try {
-        let res = await api.arweave.getAllAudioList(type)
-        // 循环一些数据方便测试
-        // let res2 = []
-        // for (let i = 0; i < 20; i++) {
-        //   res2.push(...res)
-        // }
-        // console.log(res2.length)
+        let res = await api.arweave.getAllAudioList(type, genreFilter)
+        if (genreFilter !== this.genreFilter) return
         this.addressList = res || []
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
@@ -120,6 +132,7 @@ export default {
       text-decoration: none;
       display: flex;
       align-items: center;
+      white-space: nowrap;
       transition: all 0.3s;
       &:hover {
         .header-icon {
@@ -158,6 +171,15 @@ export default {
     grid-template-columns: repeat(auto-fill,minmax(100px,1fr));
     min-height: 454px;
     grid-gap: 20px 16px;
+  }
+}
+@media screen and (max-width: 640px) {
+  .songs-header {
+    flex-direction: column;
+    align-items: stretch;
+    a {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>
