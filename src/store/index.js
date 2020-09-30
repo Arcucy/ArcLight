@@ -390,6 +390,8 @@ export default new Vuex.Store({
         commit('setUploadStatus', 'Uploading chunks: ' + `${musicUploader.uploadedChunks}/${musicUploader.totalChunks}`)
       }
 
+      commit('setUploadStatus', 'Await confirmation on post')
+
       const musicRes = await ar.transactions.post(musicTransaction)
       console.log(musicTransaction.id + ': ', musicRes)
 

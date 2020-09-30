@@ -1086,6 +1086,12 @@ let arweave = {
     else return 0
   },
 
+  async getPaymentPrice (address) {
+    const res = await Axios.get(`${arweaveHost}/price/1/${address}`)
+    if (res && res.data) return res.data
+    else return 0
+  },
+
   winstonToAr (winston) {
     return ar.ar.winstonToAr(winston)
   },

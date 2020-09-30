@@ -66,7 +66,7 @@
           </div>
           <div class="price-line">
             <span class="left-content">Fee</span>
-            <h4>{{ fee.toLocaleString('fullwide', { useGrouping: false }) }} AR</h4>
+            <h4>{{ fee }} AR</h4>
           </div>
           <div class="price-line">
             <span class="left-content price-line-title-container">
@@ -321,6 +321,10 @@ export default {
         return
       }
 
+      const res = await this.getFee(this.artist.id)
+      this.fee = parseInt(API.arweave.getWinstonFromAr(this.fee)) + parseInt(res)
+      this.fee = parseFloat(API.arweave.getArFromWinston(this.fee)).toFixed(12).replace(/\.?0+$/, '')
+
       const fullPrice = API.arweave.getWinstonFromAr(this.price)
       this.tipToDeveloper = parseInt(fullPrice * 0.03)
       this.tipToCommunity = parseInt(fullPrice * 0.01)
@@ -381,6 +385,13 @@ export default {
             ? b + '0.' + Array(1 - e - c.length).join(0) + c + d
             : b + c + d + Array(e - d.length + 1).join(0)
         })
+    },
+    async getFee (address) {
+      const res = await API.arweave.getPaymentPrice(address)
+      if (res) {
+        if (res > 250000000000) return 250000000000
+        else return 0
+      }
     }
   },
   mounted () {
