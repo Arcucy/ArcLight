@@ -7,6 +7,7 @@
             <v-icon class="header-icon">mdi-chevron-left</v-icon>
             ALL Albums Sellings
           </router-link>
+          <genreFilter v-model="genreFilter" />
         </div>
         <div class="songs-list">
           <getAudioInfo
@@ -20,7 +21,7 @@
           </getAudioInfo>
           <loadCard
             v-if="loading || addressList.length === 0"
-            :message="!loading && addressList.length === 0 ? 'No data' : ''"
+            :message="!loading && addressList.length === 0 ? noDataLabel : ''"
             width="188px"
           />
         </div>
@@ -46,13 +47,16 @@ import spaceLayout from '@/components/Layout/Space'
 import albumCard from '@/components/Song/AlbumCard'
 import getAudioInfo from '@/components/Song/GetAudioInfo'
 import loadCard from '@/components/Song/LoadCard'
+import genreFilter from '@/components/Song/GenreFilter'
 
 export default {
+  inject: ['updateQuery'],
   components: {
     spaceLayout,
     albumCard,
     getAudioInfo,
-    loadCard
+    loadCard,
+    genreFilter
   },
   data () {
     return {
@@ -60,7 +64,8 @@ export default {
       addressList: [],
       page: 1, // 页码
       pagesize: 10, // 每页数量
-      flash: false
+      flash: false,
+      genreFilter: this.$route.query.genre || ''
     }
   },
   computed: {
@@ -69,12 +74,20 @@ export default {
     },
     maxPage () {
       return Math.ceil(this.addressList.length / this.pagesize)
+    },
+    noDataLabel () {
+      return this.genreFilter ? 'The filter result is empty' : 'No data'
     }
   },
   watch: {
-    page () {
+    page (val) {
+      this.updateQuery('page', val > 1 && val)
       this.flash = true
       setTimeout(() => { this.flash = false })
+    },
+    genreFilter (val) {
+      this.updateQuery('genre', val)
+      this.getAllAudioList('album')
     }
   },
   mounted () {
@@ -83,8 +96,13 @@ export default {
   },
   methods: {
     async getAllAudioList (type) {
+      this.loading = true
+      this.addressList = []
+      this.page = 1
+      const genreFilter = this.genreFilter
       try {
-        let res = await api.arweave.getAllAudioList(type)
+        let res = await api.arweave.getAllAudioList(type, genreFilter)
+        if (genreFilter !== this.genreFilter) return
         this.addressList = res || []
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
@@ -115,6 +133,7 @@ export default {
       text-decoration: none;
       display: flex;
       align-items: center;
+      white-space: nowrap;
       transition: all 0.3s;
       &:hover {
         .header-icon {
@@ -153,6 +172,15 @@ export default {
     grid-template-columns: repeat(auto-fill,minmax(146px,1fr));
     min-height: 454px;
     grid-gap: 20px 20px;
+  }
+}
+@media screen and (max-width: 640px) {
+  .songs-header {
+    flex-direction: column;
+    align-items: stretch;
+    a {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>

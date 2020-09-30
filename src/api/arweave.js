@@ -977,6 +977,184 @@ let arweave = {
   },
 
   /**
+   * 获取与提供的类型标签最相似的用户类型（一种类型符合目标的一级类型）。
+   * @param {Number} genre1 歌曲类型
+   */
+  getTheMostSimilarUsers (genre1) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          },
+          expr2: { // 匹配歌曲类型
+            op: 'equals',
+            expr1: 'Top1-Genre',
+            expr2: genre1
+          }
+        }
+      }).then(ids => { resolve(ids || []) })
+    })
+  },
+
+  /**
+   * 获取与提供的类型标签相似的用户类型(两种类型的任意一种符合目标的一或二级类型)。
+   * @param {Number} genre1 歌曲类型
+   */
+  GetTheSimilarUsers (genre1, genre2) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          },
+          expr2: { // 匹配歌曲类型
+            op: 'or',
+            expr1: { // Top1 类型
+              op: 'or',
+              expr1: {
+                op: 'equals',
+                expr1: 'Top1-Genre',
+                expr2: genre1
+              },
+              expr2: {
+                op: 'equals',
+                expr1: 'Top1-Genre',
+                expr2: genre2
+              }
+            },
+            expr2: { // Top2 类型
+              op: 'or',
+              expr1: {
+                op: 'equals',
+                expr1: 'Top2-Genre',
+                expr2: genre1
+              },
+              expr2: {
+                op: 'equals',
+                expr1: 'Top2-Genre',
+                expr2: genre2
+              }
+            }
+          }
+        }
+      }).then(ids => { resolve(ids || []) })
+    })
+  },
+
+  /**
+   * 获取与提供的类型标签有些相似的用户类型(三种类型的任意一种符合目标的一或二或三级类型)。
+   * @param {Number} genre1 歌曲类型
+   */
+  getSomewhatSimilarUsers (excluded, genre1, genre2, genre3) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          },
+          expr2: { // 匹配歌曲类型
+            op: 'or',
+            expr1: { // Top1 类型
+              op: 'or',
+              expr1: {
+                op: 'equals',
+                expr1: 'Top1-Genre',
+                expr2: genre1
+              },
+              expr2: {
+                op: 'or',
+                expr1: {
+                  op: 'equals',
+                  expr1: 'Top1-Genre',
+                  expr2: genre2
+                },
+                expr2: {
+                  op: 'equals',
+                  expr1: 'Top1-Genre',
+                  expr2: genre3
+                }
+              }
+            },
+            expr2: {
+              op: 'or',
+              expr1: { // Top2 类型
+                op: 'or',
+                expr1: {
+                  op: 'equals',
+                  expr1: 'Top2-Genre',
+                  expr2: genre1
+                },
+                expr2: {
+                  op: 'or',
+                  expr1: {
+                    op: 'equals',
+                    expr1: 'Top2-Genre',
+                    expr2: genre2
+                  },
+                  expr2: {
+                    op: 'equals',
+                    expr1: 'Top2-Genre',
+                    expr2: genre3
+                  }
+                }
+              },
+              expr2: { // Top3 类型
+                op: 'or',
+                expr1: {
+                  op: 'equals',
+                  expr1: 'Top3-Genre',
+                  expr2: genre1
+                },
+                expr2: {
+                  op: 'or',
+                  expr1: {
+                    op: 'equals',
+                    expr1: 'Top3-Genre',
+                    expr2: genre2
+                  },
+                  expr2: {
+                    op: 'equals',
+                    expr1: 'Top3-Genre',
+                    expr2: genre3
+                  }
+                }
+              }
+            }
+          }
+        }
+      }).then(ids => { resolve(ids || []) })
+    })
+  },
+
+  /**
    * Get user's Bandcamp Id settings from given address
    * @param {String} address  - 用户的钱包地址s 
    */
@@ -1016,6 +1194,36 @@ let arweave = {
     })
   },
 
+  /**
+   * 获取用户上传的所有 post info 的 txid 列表
+   * @param {*} address 
+   */
+  getPostInfosByAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          }
+        }
+      }).then(async ids => { resolve(ids || []) })
+    })
+  },
+
   getPostFromAddress (address) {
     return new Promise((resolve, reject) => {
       ar.arql({
@@ -1039,15 +1247,26 @@ let arweave = {
           }
         }
       }).then(async ids => {
-        if (ids.length === 0) {
-          resolve(false)
+        if (!ids.length) {
+          resolve(null)
           return
         }
-
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
-          resolve(data)
-        })
+        // 有可能查到正在等待确认的交易所以需要通过循环尝试另一个交易地址，直到成功或者遍历了所有的地址。
+        let detail
+        for (let i = 0; i < ids.length; i++) {
+          try {
+            detail = await this.getTransactionDetail(ids[i])
+            break
+          } catch (e) {
+            if (e.type !== 'TX_PENDING') {
+              throw new Error(e)
+            }
+          }
+        }
+        if (!detail) resolve(null)
+        let tags = this.getTagsByTransaction(detail)
+        let data = JSON.parse(decode.uint8ArrayToString(detail.data))
+        resolve({ data, tags, tx: detail })
       })
     })
   },

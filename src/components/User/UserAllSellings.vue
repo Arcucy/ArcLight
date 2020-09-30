@@ -5,6 +5,7 @@
         <v-icon class="header-icon">mdi-chevron-left</v-icon>
         ALL {{ label }} Sellings
       </router-link>
+      <genreFilter v-if="filterSwitch" class="songs-header-filter" v-model="genreFilter" />
     </div>
     <!-- Default list -->
     <div v-if="type !== 'album'" class="songs-list">
@@ -19,7 +20,7 @@
       </getAudioInfo>
       <loadCard
         v-if="loading || addressList.length === 0"
-        :message="!loading && addressList.length === 0 ? 'No data' : ''"
+        :message="!loading && addressList.length === 0 ? noDataLabel : ''"
       />
     </div>
     <!-- Album list -->
@@ -35,7 +36,7 @@
       </getAudioInfo>
       <loadCard
         v-if="loading || addressList.length === 0"
-        :message="!loading && addressList.length === 0 ? 'No data' : ''"
+        :message="!loading && addressList.length === 0 ? noDataLabel : ''"
         width="188px"
       />
     </div>
@@ -59,14 +60,17 @@ import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import getAudioInfo from '@/components/Song/GetAudioInfo'
 import loadCard from '@/components/Song/LoadCard'
+import genreFilter from '@/components/Song/GenreFilter'
 
 export default {
+  inject: ['updateQuery'],
   components: {
     spaceLayout,
     singleCard,
     albumCard,
     getAudioInfo,
-    loadCard
+    loadCard,
+    genreFilter
   },
   props: {
     type: {
@@ -84,11 +88,14 @@ export default {
     }
   },
   data () {
+    const filterSwitch = this.type === 'single' || this.type === 'album'
     return {
       loading: true,
       addressList: [],
       page: 1, // 页码
-      flash: false
+      flash: false,
+      genreFilter: (filterSwitch && this.$route.query.genre) || '',
+      filterSwitch
     }
   },
   computed: {
@@ -97,12 +104,21 @@ export default {
     },
     maxPage () {
       return Math.ceil(this.addressList.length / this.pagesize)
+    },
+    noDataLabel () {
+      return this.genreFilter ? 'The filter result is empty' : 'No data'
     }
   },
   watch: {
-    page () {
+    page (val) {
+      this.updateQuery('page', val > 1 && val)
       this.flash = true
       setTimeout(() => { this.flash = false })
+    },
+    genreFilter (val) {
+      if (!this.filterSwitch) return
+      this.updateQuery('genre', val)
+      this.getUserAudioList(this.type)
     }
   },
   mounted () {
@@ -111,14 +127,13 @@ export default {
   },
   methods: {
     async getUserAudioList (type) {
+      this.loading = true
+      this.addressList = []
+      this.page = 1
+      const genreFilter = this.genreFilter
       try {
-        let res = await api.arweave.getUserAudioList(this.$route.params.id, type)
-        // 循环一些数据方便测试
-        // let res2 = []
-        // for (let i = 0; i < 20; i++) {
-        //   res2.push(...res)
-        // }
-        // console.log(res2.length)
+        let res = await api.arweave.getUserAudioList(this.$route.params.id, type, genreFilter)
+        if (genreFilter !== this.genreFilter) return
         this.addressList = res || []
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
@@ -146,6 +161,7 @@ export default {
       text-decoration: none;
       display: flex;
       align-items: center;
+      white-space: nowrap;
       transition: all 0.3s;
       &:hover {
         .header-icon {
@@ -184,6 +200,15 @@ export default {
       grid-template-columns: repeat(auto-fill,minmax(146px,1fr));
       min-height: 454px;
       grid-gap: 20px 20px;
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .songs-header {
+    flex-direction: column;
+    align-items: stretch;
+    &-filter {
+      margin-top: 10px;
     }
   }
 }
