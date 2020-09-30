@@ -89,7 +89,7 @@
         </scrollXBox>
       </div>
       <!-- Favourite Singers -->
-      <div class="songs">
+      <div v-if="sinilar.loading || sinilar.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
             Similar authors
