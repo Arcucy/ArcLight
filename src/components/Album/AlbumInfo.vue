@@ -22,9 +22,20 @@
     <!-- Info -->
     <div class="albuminfo-right">
       <h3 class="albuminfo-right-title">
-        <span class="albuminfo-right-genre">
-          {{ album.genre }}
-        </span>
+        <v-tooltip top :disabled="!toGenre.name">
+          <template v-slot:activator="{ on, attrs }">
+            <span v-bind="attrs" v-on="on">
+              <router-link
+                class="albuminfo-right-genre"
+                :class="!toGenre.name && 'no-click'"
+                :to="toGenre"
+              >
+                {{ album.genre }}
+              </router-link>
+            </span>
+          </template>
+          <span>View similar artwork</span>
+        </v-tooltip>
         {{ album.name || 'Loading...' }}
       </h3>
       <div class="mobile mobile-albuminfo-right">
@@ -60,17 +71,21 @@ export default {
       imgShouldLoad: true
     }
   },
+  computed: {
+    time () {
+      return this.album.unixTime ? this.$moment(this.album.unixTime).format('MMMDo HH:mm:ss') : '--:--:--'
+    },
+    toGenre () {
+      if (!this.album || !this.album.genre || this.album.genre === 'Await Data...') return {}
+      return { name: 'SongsAlbums', query: { genre: this.album.genre } }
+    }
+  },
   watch: {
     album () {
       this.imgShouldLoad = false
       setTimeout(() => {
         this.imgShouldLoad = true
       })
-    }
-  },
-  computed: {
-    time () {
-      return this.album.unixTime ? this.$moment(this.album.unixTime).format('MMMDo HH:mm:ss') : '--:--:--'
     }
   }
 }
@@ -153,6 +168,7 @@ export default {
       word-break: break-all;
     }
     &-genre {
+      text-decoration: none;
       height: 30px;
       margin-right: 8px;
       padding: 8px 16px 8px;
@@ -163,6 +179,9 @@ export default {
       display: inline-table;
       color: #D85C8B;
       white-space: nowrap;
+      &.no-click {
+        cursor: default;
+      }
     }
     &-artist {
       .content();
