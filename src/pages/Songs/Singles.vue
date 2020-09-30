@@ -75,7 +75,7 @@ export default {
       return Math.ceil(this.addressList.length / this.pagesize)
     },
     noDataLabel () {
-      return genreFilter ? 'The filter result is empty' : 'No data'
+      return this.genreFilter ? 'The filter result is empty' : 'No data'
     }
   },
   watch: {
