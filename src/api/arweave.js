@@ -1228,8 +1228,9 @@ let arweave = {
         if (!data) {
           resolve(false)
         } else {
-          resolve(data)
           clearTimeout(this.timerInterval)
+          data = decode.uint8ArrayToString(data.data)
+          resolve(data)
         }
       }
     })
