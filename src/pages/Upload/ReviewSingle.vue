@@ -392,6 +392,7 @@ export default {
   border-radius: 10px;
   font-weight: 700;
   color: #D85C8B;
+  white-space: nowrap;
 }
 
 .single-title {

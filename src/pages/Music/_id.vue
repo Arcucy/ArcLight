@@ -3,7 +3,7 @@
     <div class="music">
       <!-- Back Button -->
       <div class="music-header">
-        <a @click="$router.go(-1)">
+        <a @click="backPage({ name: 'Songs' })">
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
@@ -202,6 +202,7 @@ import miniAvatar from '@/components/User/MiniAvatar'
 import payment from '@/components/Payment'
 
 export default {
+  inject: ['backPage'],
   components: {
     payment,
     spaceLayout,

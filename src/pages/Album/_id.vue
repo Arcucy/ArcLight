@@ -3,7 +3,7 @@
     <div class="album" id="album">
       <!-- Back Button -->
       <div class="album-header">
-        <a @click="$router.go(-1)">
+        <a @click="backPage({ name: 'Songs' })">
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
@@ -90,7 +90,10 @@
               Buy 「{{ info.name }}」
             </h4>
             <div class="album-buy-label">
-              <div class="album-buy-label-discount">
+              <div
+                class="album-buy-label-discount"
+                v-if="price <= originalPrice && discountDisplay"
+              >
                 -{{ discountDisplay }}%
               </div>
               <div class="album-buy-label-price">
@@ -170,6 +173,7 @@ import { mapState } from 'vuex'
 let zip = new JSZip()
 
 export default {
+  inject: ['backPage'],
   components: {
     spaceLayout,
     albumInfo,
@@ -218,8 +222,12 @@ export default {
       return res
     },
     discountDisplay () {
-      const res = Number(api.arweave.getWinstonFromAr(this.price)) / Number(api.arweave.getWinstonFromAr(this.originalPrice))
-      return (1 - res) * 100
+      let res = Number(api.arweave.getWinstonFromAr(this.price)) / Number(api.arweave.getWinstonFromAr(this.originalPrice))
+      res = (1 - res) * 100
+      res = res.toFixed(0)
+      if (isNaN(res)) return 0
+      if (res > 99) return 99
+      return res || 0
     }
   },
   mounted () {

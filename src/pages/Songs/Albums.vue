@@ -3,10 +3,10 @@
     <div class="songs-bg">
       <div class="songs">
         <div class="songs-header">
-          <router-link :to="{ name: 'Songs' }">
+          <a @click="backPage({ name: 'Songs' })">
             <v-icon class="header-icon">mdi-chevron-left</v-icon>
             ALL Albums Sellings
-          </router-link>
+          </a>
           <genreFilter v-model="genreFilter" />
         </div>
         <div class="songs-list">
@@ -50,7 +50,7 @@ import loadCard from '@/components/Song/LoadCard'
 import genreFilter from '@/components/Song/GenreFilter'
 
 export default {
-  inject: ['updateQuery'],
+  inject: ['updateQuery', 'backPage'],
   components: {
     spaceLayout,
     albumCard,
