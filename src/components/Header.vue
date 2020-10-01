@@ -64,7 +64,7 @@
           v-bind="attrs"
           v-on="on"
         >
-          <v-avatar style="height: 30px; width: 30px;">
+          <v-avatar size="24">
             <v-icon :size="24" v-if="!userAvatar" dark style="margin-right: 0.3rem;">mdi-account-circle</v-icon>
             <img
               v-if="userAvatar"
