@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import Arweave from 'arweave'
 
 import { encryptBuffer } from '../util/encrypt'
-import decode from '../util/decode'
 import config from '../config/index'
 import API from '../api/api'
 import Community from 'community-js'
@@ -437,10 +436,9 @@ export default new Vuex.Store({
 
       // Create post info
       let postInfo = await API.arweave.getDataForPost(address)
-      const res = decode.uint8ArrayToString(postInfo.data)
-      console.log(res)
+      console.log(postInfo)
       if (postInfo) {
-        postInfo = JSON.parse(res)
+        postInfo = JSON.parse(postInfo)
       } else {
         postInfo = []
       }
@@ -601,10 +599,8 @@ export default new Vuex.Store({
 
       // Create post info
       let postInfo = await API.arweave.getDataForPost(address)
-      const res = decode.uint8ArrayToString(postInfo.data)
-      console.log(res)
       if (postInfo) {
-        postInfo = JSON.parse(res)
+        postInfo = JSON.parse(postInfo)
       } else {
         postInfo = []
       }
@@ -754,10 +750,8 @@ export default new Vuex.Store({
 
       // Create post info
       let postInfo = await API.arweave.getDataForPost(address)
-      const res = decode.uint8ArrayToString(postInfo.data)
-      console.log(res)
       if (postInfo) {
-        postInfo = JSON.parse(res)
+        postInfo = JSON.parse(postInfo)
       } else {
         postInfo = []
       }
@@ -905,10 +899,9 @@ export default new Vuex.Store({
 
       // Create post info
       let postInfo = await API.arweave.getDataForPost(address)
-      const res = decode.uint8ArrayToString(postInfo.data)
-      console.log(res)
+      console.log(postInfo)
       if (postInfo) {
-        postInfo = JSON.parse(res)
+        postInfo = JSON.parse(postInfo)
       } else {
         postInfo = []
       }
