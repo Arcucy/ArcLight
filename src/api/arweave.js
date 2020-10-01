@@ -1223,7 +1223,7 @@ let arweave = {
     return new Promise(async (resolve, reject) => {
       const list = await this.getPostInfosByAddress(address)
       if (!list.length) {
-        resolve({ data: null })
+        resolve(null)
       } else {
         let data = await this.getPostData(list[0], address)
         if (!data) {
