@@ -46,6 +46,7 @@
 import { mapActions, mapState } from 'vuex'
 
 import { getCookie } from '@/util/cookie'
+import API from '@/api/api'
 
 import spaceLayout from '@/components/Layout/Space.vue'
 
@@ -106,6 +107,14 @@ export default {
           }, 3000)
         }
       }, 3000)
+    }
+
+    try {
+      API.arweave.getDataForPost(this.wallet).then(res => {
+        console.log(JSON.parse(res))
+      }).catch(err => console.log('出问题了', err))
+    } catch (e) {
+      console.error('有问题', e)
     }
 
     document.title = 'Choose Upload Type - ArcLight'

@@ -90,7 +90,10 @@
               Buy 「{{ info.name }}」
             </h4>
             <div class="album-buy-label">
-              <div class="album-buy-label-discount">
+              <div
+                class="album-buy-label-discount"
+                v-if="price <= originalPrice && discountDisplay"
+              >
                 -{{ discountDisplay }}%
               </div>
               <div class="album-buy-label-price">
@@ -221,8 +224,10 @@ export default {
     discountDisplay () {
       let res = Number(api.arweave.getWinstonFromAr(this.price)) / Number(api.arweave.getWinstonFromAr(this.originalPrice))
       res = (1 - res) * 100
-      res = res.toFixed(4)
-      return res
+      res = res.toFixed(0)
+      if (isNaN(res)) return 0
+      if (res > 99) return 99
+      return res || 0
     }
   },
   mounted () {

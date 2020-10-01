@@ -2,6 +2,7 @@
   <router-link class="card-link" :to="{ name: 'Music', params: { id: card.txid } }">
     <div class="card" v-ripple>
       <v-img
+        v-if="!blink"
         class="card-img"
         :src="cover"
         alt="cover"
@@ -13,6 +14,7 @@
           </div>
         </template>
       </v-img>
+      <div v-else class="card-img-blink" />
       <p class="card-title">
         {{ card.title }}
       </p>
@@ -50,7 +52,8 @@ export default {
   },
   data () {
     return {
-      cover: 'Loading'
+      cover: 'Loading',
+      blink: false
     }
   },
   computed: {
@@ -72,8 +75,21 @@ export default {
   methods: {
     async getCover () {
       if (this.card && this.card.coverTxid) {
-        this.cover = await api.arweave.getCover(this.card.coverTxid)
+        this.cover = 'Loading'
+        this.newBlink()
+        const txid = this.card.coverTxid
+        try {
+          const img = await api.arweave.getCover(txid)
+          if (txid !== this.card.coverTxid) return
+          this.cover = img
+        } catch (e) {
+          this.cover = ''
+        }
       } else this.cover = ''
+    },
+    newBlink () {
+      this.blink = true
+      setTimeout(() => { this.blink = false })
     }
   }
 }
@@ -123,6 +139,13 @@ a {
       width: 100%;
       height: 100%;
     }
+  }
+
+  &-img-blink {
+    border-radius:5px;
+    width: 128px;
+    height: 128px;
+    background: #252525;
   }
 
   &-title {

@@ -435,7 +435,8 @@ export default new Vuex.Store({
       console.log(singleTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getDataForPost(address)
+      console.log(postInfo)
       if (postInfo) {
         postInfo = JSON.parse(postInfo)
       } else {
@@ -597,9 +598,7 @@ export default new Vuex.Store({
       console.log(albumTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address).catch(() => {
-        postInfo = []
-      })
+      let postInfo = await API.arweave.getDataForPost(address)
       if (postInfo) {
         postInfo = JSON.parse(postInfo)
       } else {
@@ -750,7 +749,7 @@ export default new Vuex.Store({
       console.log(podcastTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getDataForPost(address)
       if (postInfo) {
         postInfo = JSON.parse(postInfo)
       } else {
@@ -899,7 +898,8 @@ export default new Vuex.Store({
       console.log(soundEffectTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getDataForPost(address)
+      console.log(postInfo)
       if (postInfo) {
         postInfo = JSON.parse(postInfo)
       } else {
