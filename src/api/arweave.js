@@ -4,6 +4,7 @@ import Axios from 'axios'
 
 import { decryptBuffer } from '../util/encrypt'
 import decode from '../util/decode'
+import stringUtil from '../util/string'
 
 const arweaveHost = 'https://arweave.net/'
 
@@ -281,7 +282,7 @@ let arweave = {
         if (ids.length === 0) {
           resolve([])
         } else {
-          resolve(ids)
+          resolve(stringUtil.getBlockedArray(ids, type))
         }
       })
     })
@@ -335,7 +336,7 @@ let arweave = {
         if (ids.length === 0) {
           resolve([])
         } else {
-          resolve(ids)
+          resolve(stringUtil.getBlockedArray(ids, type))
         }
       })
     })
