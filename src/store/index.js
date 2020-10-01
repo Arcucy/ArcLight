@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import Arweave from 'arweave'
 
 import { encryptBuffer } from '../util/encrypt'
+import decode from '../util/decode'
 import config from '../config/index'
 import API from '../api/api'
 import Community from 'community-js'
@@ -435,9 +436,11 @@ export default new Vuex.Store({
       console.log(singleTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getDataForPost(address)
+      const res = decode.uint8ArrayToString(postInfo.data)
+      console.log(res)
       if (postInfo) {
-        postInfo = JSON.parse(postInfo)
+        postInfo = JSON.parse(res)
       } else {
         postInfo = []
       }
@@ -597,11 +600,11 @@ export default new Vuex.Store({
       console.log(albumTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address).catch(() => {
-        postInfo = []
-      })
+      let postInfo = await API.arweave.getDataForPost(address)
+      const res = decode.uint8ArrayToString(postInfo.data)
+      console.log(res)
       if (postInfo) {
-        postInfo = JSON.parse(postInfo)
+        postInfo = JSON.parse(res)
       } else {
         postInfo = []
       }
@@ -750,9 +753,11 @@ export default new Vuex.Store({
       console.log(podcastTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getDataForPost(address)
+      const res = decode.uint8ArrayToString(postInfo.data)
+      console.log(res)
       if (postInfo) {
-        postInfo = JSON.parse(postInfo)
+        postInfo = JSON.parse(res)
       } else {
         postInfo = []
       }
@@ -899,9 +904,11 @@ export default new Vuex.Store({
       console.log(soundEffectTransaction.id + ': ', singleRes)
 
       // Create post info
-      let postInfo = await API.arweave.getPostFromAddress(address)
+      let postInfo = await API.arweave.getDataForPost(address)
+      const res = decode.uint8ArrayToString(postInfo.data)
+      console.log(res)
       if (postInfo) {
-        postInfo = JSON.parse(postInfo)
+        postInfo = JSON.parse(res)
       } else {
         postInfo = []
       }

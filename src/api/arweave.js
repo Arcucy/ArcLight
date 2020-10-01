@@ -48,6 +48,7 @@ const APP_NAME = 'arclight-app'
 
 let arweave = {
   breakOnCall: false,
+  timerInterval: undefined,
 
   /**
    * Get user address based on key file content input   
@@ -1217,6 +1218,40 @@ let arweave = {
     })
   },
 
+  getDataForPost (address) {
+    return new Promise(async (resolve, reject) => {
+      const list = await this.getPostInfosByAddress(address)
+      if (!list.length) {
+        resolve({ data: null })
+      } else {
+        let data = await this.getPostData(list[0], address)
+        if (!data) {
+          resolve(false)
+        } else {
+          resolve(data)
+          clearTimeout(this.timerInterval)
+        }
+      }
+    })
+  },
+
+  async getPostData (txid, address) {
+    let transaction
+    try {
+      transaction = await this.getTransactionDetail(txid)
+    } catch (e) {
+      if (e.type === 'TX_PENDING') {
+        this.timerInterval = setTimeout(() => { 
+          console.log('retry')
+          this.getDataForPost(address) 
+        }, 2000)
+      } else {
+        console.log(e)
+      }
+    }
+    return transaction
+  },
+
   getPostFromAddress (address) {
     return new Promise((resolve, reject) => {
       ar.arql({
@@ -1252,11 +1287,11 @@ let arweave = {
             break
           } catch (e) {
             if (e.type !== 'TX_PENDING') {
-              throw new Error(e)
+              reject(new Error(e))
             }
           }
         }
-        if (!detail) resolve(null)
+        if (!detail) resolve(false)
         let tags = this.getTagsByTransaction(detail)
         let data = JSON.parse(decode.uint8ArrayToString(detail.data))
         resolve({ data, tags, tx: detail })
