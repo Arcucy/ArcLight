@@ -1118,7 +1118,8 @@ export default new Vuex.Store({
       const now = Date.now()
 
       let community = new Community(ar)
-      community.setCommunityTx(config.community)
+      const txIsSet = await community.setCommunityTx(config.community)
+      console.log(txIsSet)
 
       let comTx = ''
       try {
@@ -1144,6 +1145,7 @@ export default new Vuex.Store({
         console.log('to community', comTx.id + ': ', comRes)
         community = null
       } catch (e) {
+        console.log(e)
         community = null
       }
 
