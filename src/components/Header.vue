@@ -64,13 +64,12 @@
           v-bind="attrs"
           v-on="on"
         >
-          <v-avatar size="24">
-            <v-icon :size="24" v-if="!userAvatar" dark style="margin-right: 0.3rem;">mdi-account-circle</v-icon>
+          <v-avatar size="24" style="margin-right: 0.3rem;">
+            <v-icon :size="24" v-if="!userAvatar" dark>mdi-account-circle</v-icon>
             <img
               v-if="userAvatar"
               :src="userAvatar"
               :alt="username"
-              style="margin-right: 0.3rem;"
             >
           </v-avatar>
           <p class="username">{{ username }}</p>
