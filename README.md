@@ -5,7 +5,7 @@
 <p align="center">An Arweave Music and Podcast Distribution App for users to publish, listen and pay to the encrypted music</p>
 <p align="center"><strong>Now 1.0.4 Online</strong></p>
 <p align="center">Great Thanks to ❤️ <a href="https://github.com/LittleSound">@LittleSound</a> ❤️ for contributing this project</p>
-<p align="center"><a href="https://arweave.net/8MAsxppeTdFM9ufgI90Z_F0ZG-rsFoJZQmKyfE_v4J0">Live Permaweb</a> for ArcLight</p>
+<p align="center"><a href="https://arweave.net/CUdQRumObOi5zDefzLzsdz6U_LTcM5EMRzjemiiIJ_U">Live Permaweb</a> for ArcLight</p>
 <p align="center">
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
