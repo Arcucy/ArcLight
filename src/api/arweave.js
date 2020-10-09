@@ -995,7 +995,7 @@ let arweave = {
           expr2: { // 匹配歌曲类型
             op: 'equals',
             expr1: 'Top1-Genre',
-            expr2: genre1
+            expr2: genre1 || 'noGenreData'
           }
         }
       }).then(ids => { resolve(ids || []) })
@@ -1029,12 +1029,12 @@ let arweave = {
               expr1: {
                 op: 'equals',
                 expr1: 'Top1-Genre',
-                expr2: genre1
+                expr2: genre1 || 'noGenreData'
               },
               expr2: {
                 op: 'equals',
                 expr1: 'Top1-Genre',
-                expr2: genre2
+                expr2: genre2 || 'noGenreData'
               }
             },
             expr2: { // Top2 类型
@@ -1042,12 +1042,12 @@ let arweave = {
               expr1: {
                 op: 'equals',
                 expr1: 'Top2-Genre',
-                expr2: genre1
+                expr2: genre1 || 'noGenreData'
               },
               expr2: {
                 op: 'equals',
                 expr1: 'Top2-Genre',
-                expr2: genre2
+                expr2: genre2 || 'noGenreData'
               }
             }
           }
@@ -1083,19 +1083,19 @@ let arweave = {
               expr1: {
                 op: 'equals',
                 expr1: 'Top1-Genre',
-                expr2: genre1
+                expr2: genre1 || 'noGenreData'
               },
               expr2: {
                 op: 'or',
                 expr1: {
                   op: 'equals',
                   expr1: 'Top1-Genre',
-                  expr2: genre2
+                  expr2: genre2 || 'noGenreData'
                 },
                 expr2: {
                   op: 'equals',
                   expr1: 'Top1-Genre',
-                  expr2: genre3
+                  expr2: genre3 || 'noGenreData'
                 }
               }
             },
@@ -1106,19 +1106,19 @@ let arweave = {
                 expr1: {
                   op: 'equals',
                   expr1: 'Top2-Genre',
-                  expr2: genre1
+                  expr2: genre1 || 'noGenreData'
                 },
                 expr2: {
                   op: 'or',
                   expr1: {
                     op: 'equals',
                     expr1: 'Top2-Genre',
-                    expr2: genre2
+                    expr2: genre2 || 'noGenreData'
                   },
                   expr2: {
                     op: 'equals',
                     expr1: 'Top2-Genre',
-                    expr2: genre3
+                    expr2: genre3 || 'noGenreData'
                   }
                 }
               },
@@ -1127,19 +1127,19 @@ let arweave = {
                 expr1: {
                   op: 'equals',
                   expr1: 'Top3-Genre',
-                  expr2: genre1
+                  expr2: genre1 || 'noGenreData'
                 },
                 expr2: {
                   op: 'or',
                   expr1: {
                     op: 'equals',
                     expr1: 'Top3-Genre',
-                    expr2: genre2
+                    expr2: genre2 || 'noGenreData'
                   },
                   expr2: {
                     op: 'equals',
                     expr1: 'Top3-Genre',
-                    expr2: genre3
+                    expr2: genre3 || 'noGenreData'
                   }
                 }
               }
