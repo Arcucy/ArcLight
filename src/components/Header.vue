@@ -305,7 +305,7 @@ export default {
           this.show = false
           if (this.writeCookie) {
             clearCookie('arclight_userkey')
-            setCookie('arclight_userkey', this.fileRaw)
+            setCookie('arclight_userkey', this.fileRaw, 7)
           }
         } catch (err) {
           this.failSnackbar = true
