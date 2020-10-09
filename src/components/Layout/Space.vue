@@ -20,6 +20,8 @@
       <a href="https://github.com/AyakaLab" target="_blank" >Ayaka Lab</a>
       for Project
       <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
+      <br>
+      Version {{ version }} {{ detailVersion }}
     </div>
   </v-app>
 </template>
@@ -28,9 +30,21 @@
 
 import Header from '@/components/Header.vue'
 
+import packageJson from '../../../package.json'
+
 export default {
   components: {
     Header
+  },
+  data () {
+    return {
+      version: '',
+      detailVersion: ''
+    }
+  },
+  mounted () {
+    this.version = packageJson.version
+    this.detailVersion = packageJson.detailVersion
   }
 }
 </script>
