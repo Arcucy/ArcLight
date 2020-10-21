@@ -7,6 +7,9 @@
 <p align="center">Great Thanks to ❤️ <a href="https://github.com/LittleSound">@LittleSound</a> ❤️ for contributing this project</p>
 <p align="center"><a href="https://arweave.net/CUdQRumObOi5zDefzLzsdz6U_LTcM5EMRzjemiiIJ_U">Live Permaweb</a> for ArcLight</p>
 <p align="center">
+  <a href="https://discord.gg/bGZ2ZQ">
+    <img src="https://img.shields.io/discord/766689493435678770.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2" />
+  </a>
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
 </p>
