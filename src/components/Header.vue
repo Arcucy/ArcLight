@@ -8,10 +8,10 @@
         ArcLight
       </router-link>
       <router-link :to="{ name: 'Songs' }" class="link text-link">
-        Music
+        {{ $t('music') }}
       </router-link>
       <router-link :to="{ name: 'About' }" class="link text-link">
-        About
+        {{ $t('about') }}
       </router-link>
     </div>
     <div class="mobile-nav mobile-search-bar">
@@ -20,7 +20,7 @@
       </v-btn>
     </div>
     <Search class="search-bar"/>
-    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Login</v-btn>
+    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}</v-btn>
     <v-btn v-if="isLoggedIn" class="mobile-nav mobile-upload" fab dark x-small color="#E56D9B" @click="uploadMusic">
       <v-icon dark>mdi-upload</v-icon>
     </v-btn>
@@ -36,7 +36,7 @@
       <v-avatar :size="24">
         <v-icon :size="24" light style="color: #E56D9B;">mdi-upload</v-icon>
       </v-avatar>
-      Upload Music
+      {{ $t('uploadMusic') }}
     </v-btn>
 
     <v-menu v-if="isLoggedIn" offset-y dark class="user-menu">
@@ -106,19 +106,19 @@
       max-width="340"
     >
       <v-card>
-        <v-card-title class="headline">Upload your key</v-card-title>
+        <v-card-title class="headline">{{ $t('uploadYourKey') }}</v-card-title>
         <v-file-input
           v-model="file"
           accept="application/json"
-          label="Upload"
+          :label="$t('cacheUpload')"
           style="width: 90%; margin-left: 10px;"
-          placeholder="Insert your wallet key"
+          :placeholder="$t('insertYourKey')"
         >
         </v-file-input>
         <v-checkbox
           color="#E56D9B"
           v-model="writeCookie"
-          label="Save Key for this Session for 7 days"
+          :label="$t('saveYourKeyInCookie')"
           style="padding:0 20px;"
         >
         </v-checkbox>
@@ -130,13 +130,13 @@
             @click="submit"
             class="upload-btn"
           >
-            Upload
+            {{ $t('cacheLogin') }}
           </v-btn>
           <v-btn
             text
             @click="show = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -147,7 +147,7 @@
           <v-btn icon dark @click="mobileDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title style="margin-right: 10px;">Search</v-toolbar-title>
+          <v-toolbar-title style="margin-right: 10px;">{{ $t('search') }}</v-toolbar-title>
         </v-toolbar>
         <v-list three-line subheader>
           <Search @should-close="closeMobileDialog" class="mobile-search" />
@@ -160,7 +160,7 @@
       timeout="3000"
       top="top"
     >
-      File Read Successful
+      {{ $t('fileReadSuccess') }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -169,7 +169,7 @@
           v-bind="attrs"
           @click="snackbar = false"
         >
-          Close
+          {{ $t('close') }}
         </v-btn>
       </template>
     </v-snackbar>
@@ -188,7 +188,7 @@
           v-bind="attrs"
           @click="snackbar = false"
         >
-          Close
+          {{ $t('close') }}
         </v-btn>
       </template>
     </v-snackbar>
@@ -224,9 +224,9 @@ export default {
       failSnackbar: false,
       failMessage: '',
       menuItems: [
-        { title: 'My Profile', path: '/user/' },
-        { title: 'My Library', path: '/library' },
-        { title: 'Sign Out', type: 'danger' }
+        { title: this.$t('myProfile'), path: '/user/' },
+        { title: this.$t('myLibrary'), path: '/library' },
+        { title: this.$t('signOut'), type: 'danger' }
       ],
       frosted: false,
       mobileDialog: false,
@@ -244,13 +244,13 @@ export default {
       if (val) {
         this.loginBtnLoading = false
         this.failSnackbar = true
-        this.failMessage = 'Account has no balance, try another one'
+        this.failMessage = this.$t('accountHasNoBalance')
       }
     },
     userAccountFailure (val) {
       if (val) {
         this.failSnackbar = true
-        this.failMessage = 'Account has errored transactions, check your balance'
+        this.failMessage = this.$t('accountHasErroredTx')
       }
     }
   },
@@ -258,6 +258,9 @@ export default {
     this.$nextTick(() => {
       this.scrollShow()
       window.addEventListener('scroll', this.scrollShow)
+      this.menuItems[0].title = this.$t('myProfile')
+      this.menuItems[1].title = this.$t('myLibrary')
+      this.menuItems[2].title = this.$t('signOut')
     })
 
     this.loginBtnLoading = true
@@ -309,7 +312,7 @@ export default {
           }
         } catch (err) {
           this.failSnackbar = true
-          this.failMessage = 'File Read Failed, Try again'
+          this.failMessage = this.$t('fileReadFail')
         }
       }
       this.menuItems[0].path = '/user/' + this.wallet

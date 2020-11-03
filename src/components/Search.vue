@@ -12,7 +12,7 @@
       class="mx-4 autocomplete"
       flat
       hide-details
-      label="Search address / user / music"
+      :label="$t('searchPlaceholder')"
       solo-inverted
       background-color="#333333"
       color="primary"
