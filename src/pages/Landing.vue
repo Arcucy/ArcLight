@@ -8,8 +8,8 @@
         <span>Permaweb</span>
       </div>
       <div class="btn-group">
-        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
-        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">Why ArcLight</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">{{ $t('startBrowsing') }}</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">{{ $t('whyArcLight') }}</v-btn>
       </div>
     </div>
   </spaceLayout>

@@ -16,10 +16,11 @@
       <slot />
     </div>
     <div class="notice">
-      Developed by
-      <a href="https://github.com/AyakaLab" target="_blank" >Ayaka Lab</a>
-      for Project
+      {{ $t('developedBy') }}
+      <a href="https://github.com/Arcucy" target="_blank" >Arcucy</a>
+      {{ $t('forProject') }}
       <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
+      <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
       <br>
       Version {{ version }} {{ detailVersion }}
     </div>

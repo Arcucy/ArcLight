@@ -50,6 +50,32 @@ export default {
           this.$router.push(pushLink)
         }
       })
+    },
+    getBrowserLangCode () {
+      return navigator.language || navigator.userLanguage
+    },
+    getLangCode () {
+      const localStore = window.localStorage || localStorage
+      return localStore.getItem('locale_lang')
+    },
+    setLangCode () {
+      const localStore = window.localStorage || localStorage
+      localStore.setItem('locale_lang', this.getBrowserLangCode())
+    }
+  },
+  mounted () {
+    let lang = this.getLangCode()
+    if (!lang) {
+      this.setLangCode()
+      lang = this.getLangCode()
+    }
+    switch (lang) {
+      case 'zh':
+        this.$i18n.locale = 'zhCN'
+        break
+      case 'en':
+        this.$i18n.locale = 'en'
+        break
     }
   }
 }
