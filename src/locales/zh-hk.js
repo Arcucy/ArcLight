@@ -28,5 +28,16 @@ export default {
   cacheUpload: '本地保存',
   upload: '上传',
   close: '关闭',
-  search: '搜索'
+  search: '搜索',
+  noData: 'No Data',
+  single: '单曲',
+  album: '专辑',
+  podcast: '播客',
+  soundEffect: '音效',
+  loading: 'Loading...',
+  artistLoading: 'Artist loading...',
+  // songs
+  newSingleSelling: 'New Singles Sellings',
+  allSelling: 'All Sellings',
+  newAlbumSelling: 'New Albums Sellings'
 }

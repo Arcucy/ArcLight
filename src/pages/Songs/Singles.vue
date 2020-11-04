@@ -5,7 +5,7 @@
         <div class="songs-header">
           <a @click="backPage({ name: 'Songs' })">
             <v-icon class="header-icon">mdi-chevron-left</v-icon>
-            ALL Singles Sellings
+            {{ $t('newSingleSelling') }}
           </a>
           <genreFilter v-model="genreFilter" />
         </div>

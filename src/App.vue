@@ -72,6 +72,7 @@ export default {
     switch (lang) {
       case 'zh':
         this.$i18n.locale = 'zhCN'
+        this.$moment.locale('zh-CN')
         break
       case 'en':
         this.$i18n.locale = 'en'

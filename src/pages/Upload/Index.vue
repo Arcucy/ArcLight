@@ -1,23 +1,23 @@
 <template>
   <spaceLayout>
     <div class="upload-selection-container">
-      <div class="selection-title">Choose the type to upload</div>
+      <div class="selection-title">{{ $t('chooseType') }}</div>
       <div class="selection-container">
         <router-link :to="{ name: 'uploadSingle' }" id="single" class="upload-cover">
           <v-img :src="cover.single" height="128" width="128" style="margin: 0 10px;" class="selection-cover"/>
-          <div class="selection-text">Single</div>
+          <div class="selection-text">{{ $t('single') }}</div>
         </router-link>
         <router-link :to="{ name: 'uploadAlbum' }" id="album" class="upload-cover">
           <v-img :src="cover.album" height="128" width="128" style="margin: 0 10px;" class="selection-cover" />
-          <div class="selection-text">Album</div>
+          <div class="selection-text">{{ $t('album') }}</div>
         </router-link>
         <router-link :to="{ name: 'uploadPodcast' }" id="podcast" class="upload-cover">
           <v-img :src="cover.podcast" height="128" width="128" style="margin: 0 10px;" class="selection-cover" />
-          <div class="selection-text">Podcast</div>
+          <div class="selection-text">{{ $t('podcast') }}</div>
         </router-link>
         <router-link :to="{ name: 'uploadSoundEffect' }" id="soundEffect" class="upload-cover">
           <v-img :src="cover.soundeffect" height="128" width="128" style="margin: 0 10px;" class="selection-cover" />
-          <div class="selection-text">Sound Effect</div>
+          <div class="selection-text">{{ $t('soundEffect') }}</div>
         </router-link>
       </div>
     </div>

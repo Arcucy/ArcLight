@@ -27,5 +27,16 @@ export default {
   cacheUpload: 'Upload',
   upload: 'Upload',
   close: 'Close',
-  search: 'Search'
+  search: 'Search',
+  noData: 'No Data',
+  single: 'Single',
+  album: 'Album',
+  podcast: 'Podcast',
+  soundEffect: 'Sound Effect',
+  loading: 'Loading...',
+  artistLoading: 'Artist loading...',
+  // songs
+  newSingleSelling: 'New Singles Sellings',
+  allSelling: 'All Sellings',
+  newAlbumSelling: 'New Albums Sellings'
 }

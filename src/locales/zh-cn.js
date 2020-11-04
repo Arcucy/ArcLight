@@ -24,9 +24,22 @@ export default {
   fileReadSuccess: '文件读取成功',
   fileReadFail: '文件读取失败，请再试一次',
   // general
-  cacheLogin: 'Login',
+  cacheLogin: '登录',
   cacheUpload: '本地保存',
   upload: '上传',
   close: '关闭',
-  search: '搜索'
+  search: '搜索',
+  noData: '无数据',
+  single: '单曲',
+  album: '专辑',
+  podcast: '播客',
+  soundEffect: '音效',
+  loading: '加载中...',
+  artistLoading: '加载作曲者中...',
+  // songs
+  newSingleSelling: '最新发布单曲',
+  allSelling: '所有单曲',
+  newAlbumSelling: '最新发布专辑',
+  // upload
+  chooseType: '选择你想要上传的类型'
 }

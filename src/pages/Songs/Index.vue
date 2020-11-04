@@ -5,10 +5,10 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            New Singles Sellings
+            {{ $t('newSingleSelling') }}
           </h4>
           <router-link :to="{ name: 'SongsSingles' }">
-            All Sellings
+            {{ $t('allSelling') }}
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
@@ -22,7 +22,7 @@
           />
           <loadCard
             v-if="single.loading || single.list.length === 0"
-            :message="!single.loading && single.list.length === 0 ? 'No data' : ''"
+            :message="!single.loading && single.list.length === 0 ? this.$t('noData') : ''"
           />
         </scrollXBox>
       </div>
@@ -30,10 +30,10 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            New Albums Sellings
+            {{ $t('newAlbumSelling') }}
           </h4>
           <router-link :to="{ name: 'SongsAlbums' }">
-            All Sellings
+            {{ $t('allSelling') }}
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
@@ -47,7 +47,7 @@
           />
           <loadCard
             v-if="album.loading || album.list.length === 0"
-            :message="!album.loading && album.list.length === 0 ? 'No data' : ''"
+            :message="!album.loading && album.list.length === 0 ? this.$t('noData') : ''"
             width="188px"
           />
         </scrollXBox>
@@ -106,6 +106,10 @@ export default {
     document.title = 'Browse All Seling Music - ArcLight'
     this.getAllAudioList('single', this.single)
     this.getAllAudioList('album', this.album)
+    this.$nextTick(() => {
+      this.loadingCard.title = this.$t('loading')
+      this.loadingCard.authorUsername = this.$t('artistLoading')
+    })
   },
   methods: {
     async getAllAudioList (type, aObject) {
