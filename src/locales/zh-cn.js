@@ -23,6 +23,8 @@ export default {
   // file message
   fileReadSuccess: '文件读取成功',
   fileReadFail: '文件读取失败，请再试一次',
+  imageReadSuccess: '图片读取成功',
+
   // general
   cacheLogin: '登录',
   cacheUpload: '本地保存',
@@ -36,10 +38,35 @@ export default {
   soundEffect: '音效',
   loading: '加载中...',
   artistLoading: '加载作曲者中...',
+  genre: '音乐流派',
+  price: '价格',
+  review: '复审',
   // songs
   newSingleSelling: '最新发布单曲',
   allSelling: '所有单曲',
   newAlbumSelling: '最新发布专辑',
   // upload
-  chooseType: '选择你想要上传的类型'
+  chooseType: '选择你想要上传的类型',
+  backToSelection: '返回选择菜单',
+  singleCover: '单曲封面',
+  musicName: '单曲名称',
+  enterYourMusicTitle: '请输入你的单曲名称...',
+  uploadDescription: '简介 (使用 \\n 来换行)',
+  yourSingleDescription: '请输入你的单曲简介...',
+  selectYourFile: '选择你的文件',
+  demoDuration: '试听长度',
+  pleaseUploadYourArtwork: '请上传你的作品...',
+  loginIsRequiredToUpload: '必须登录才能上传作品',
+  usernameIsRequiredToUpload: '必须设置用户名后才能上传作品',
+  selectDemoDuration: '选择试听长度',
+  genreIsRequiredToUpload: '请为你的作品选择你的音乐流派 (None 为留空)',
+  demoDurationIsRequiredToUpload: '请选择试听长度',
+  priceMustBeNumber: '价格必须设置为数字',
+  priceCantBeNegative: `价格不可以为负值`,
+  demoCantBeSetToFreeMusic: `你不可以给免费音乐设置试听时长`,
+  // single
+  singleCoverIsRequiredToUpload: '需要设置封面才能发布单曲',
+  singleTitleIsRequiredToUpload: '需要设置标题才能发布单曲',
+  singleDespIsRequiredToUpload: '需要设置简介才能发布单曲',
+  singleSourceFileIsRequiredToUpload: '需要选中上传文件才能发布单曲'
 }
