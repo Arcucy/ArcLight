@@ -3,48 +3,44 @@
     <spaceLayout>
       <div class="about-container">
         <div class="about-title">
-          Why <span class="pink-text">ArcLight</span> ?
+          {{ $t('why') }} <span class="pink-text">ArcLight</span> ?
         </div>
         <div class="about-subtitle">
-          about Project <span class="pink-text">ArcLight</span>
+          {{ $t('about') }} Project <span class="pink-text">{{ $t('arcLightLocalized') }}</span>
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            Project ArcLight first started as an Arweave storage solution dapp, after the <a href="https://gitcoin.co/issue/ArweaveTeam/Bounties/32/100023546">Gitcoin bounty</a> was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.
+            {{ $t('about1P1Part1') }} <a href="https://gitcoin.co/issue/ArweaveTeam/Bounties/32/100023546">Gitcoin bounty</a> {{ $t('about1P1Part2') }}
           </p>
           <p id="p2" class="about-p">
-            Why choose ArcLight? We use Arweave's Permaweb as our storage for your wonderful artworks, we try everything to protect your copyright to your music, including encrypting your music to an
-            unreadable source on Arweave network explorer, so the people must pay to you as your price defined for your project to get the download source of your music.
+            {{ $t('about1P2Part1') }}
           </p>
         </div><div class="about-title">
-          All different <span class="pink-text">Sound</span>
+          {{ $t('allDifferent') }} <span class="pink-text">{{ $t('sound') }}</span>
         </div>
         <div class="about-subtitle">
-          we support <span class="pink-text">single music</span>, <span class="pink-text">albums</span>, <span class="pink-text">podcasts</span>, and <span class="pink-text">sound effects</span>
+          {{ $t('weSupport') }} <span class="pink-text">{{ $t('singleMusic') }}</span>, <span class="pink-text">{{ $t('albums') }}</span>, <span class="pink-text">{{ $t('podcasts') }}</span>{{ $t('andWithComma') }}<span class="pink-text">{{ $t('soundEffects') }}</span>
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            We support many types of artworks to upload, same as the title has been said, you can upload single music, album, podcast, sound effect to the ArcLight platform,
-            with the powerful knowledge base we could get, you can have up to <strong>913</strong> different genres for single music and album to use, and the category for the podcast is same as the Apple Podcast category.
+            {{ $t('about2P1Part1') }}
           </p>
           <p id="p2" class="about-p">
-            Express all your creativity to produce whatever you can think of, ArcLight helps you to store them up.
+            {{ $t('about2P1Part2') }}
           </p>
         </div>
         <div class="about-title">
-          <span class="pink-text">Encryption</span> and <span class="pink-text">Profit</span>
+          <span class="pink-text">{{ $t('encryption') }}</span>{{ $t('andWithSpace') }}<span class="pink-text">{{ $t('profit') }}</span>
         </div>
         <div class="about-subtitle">
-          a <span class="pink-text">secure way</span> to store your artworks
+          <span class="pink-text">{{ $t('secureWay') }}</span> {{ $t('toStoreYourArtworks') }}
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            A great chance we can introduce our technic to have your artwork safe.
+            {{ $t('about3P1Part1') }}
           </p>
           <p id="p2" class="about-p">
-            Different from the DRM system, we simply encrypt your audio after you upload it into the broswer, after the encryption of our own, Arweave API will encrypt it again before uploading it to the
-            Permaweb. Your listener can only get the source file after they pay to you, otherwise, they can only get a small amount of music demo or the full trial (if you wish to disable the demo function).
-            After the customers decided to pay for your work, they will use the official token <strong>AR</strong> pay to your account.
+            {{ $t('about3P2Part1') }}
           </p>
         </div>
         <div class="about-title">
