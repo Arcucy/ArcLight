@@ -53,17 +53,21 @@ export default {
   singleCover: '单曲封面',
   albumCover: '专辑封面',
   podcastCover: '播客封面',
+  soundEffectCover: '音效封面',
   musicName: '单曲名称',
   podcastTitle: '播客名称 (更新到老的播客请使用同一个名称)',
   programTitle: '节目名称',
+  soundEffectName: '音效名称',
   enterYourMusicTitle: '请输入你的单曲名称...',
   enterYourAlbumTitle: '请输入你的专辑名称...',
   enterYourPodcastTitle: '请输入你的播客名称...',
   enterYourProgramTitle: '请输入你的节目名称...',
+  enterYourSoundEffectTitle: '请输入你的音效名称...',
   uploadDescription: '简介 (使用 \\n 来换行)',
   yourSingleDescription: '请输入你的单曲简介...',
   yourAlbumDescritption: '请输入你的专辑简介...',
   yourPodcastDescription: '请输入你的节目简介...',
+  yourSoundEffectDescription: '请输入你的音效简介...',
   selectYourFile: '选择你的文件',
   demoDuration: '试听长度',
   pleaseUploadYourArtwork: '请上传你的作品...',
@@ -96,5 +100,10 @@ export default {
   podcastProgramTitleIsRequiredToUpload: '需要填写节目名称才能发布播客',
   podcastDespIsRequiredToUpload: '需要填写简介才能发布播客',
   podcastCategoryIsRequiredToUpload: '请为你的播客节目选择类别 (None 为留空)',
-  podcastSourceFileIsRequiredToUpload: '需要选中上传文件才能发布播客'
+  podcastSourceFileIsRequiredToUpload: '需要选中上传文件才能发布播客',
+  // sound Effect
+  soundEffectCoverIsRequiredToUpload: '需要设置封面才能发布音效',
+  soundEffectTitleIsRequiredToUpload: '需要填写标题才能发布音效',
+  soundEffectDespIsRequiredToUpload: '需要填写简介才能发布音效',
+  soundEffectSourceFileIsRequiredToUpload: '需要选中上传文件才能发布音效'
 }

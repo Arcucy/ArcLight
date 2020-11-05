@@ -49,17 +49,21 @@ export default {
   singleCover: 'Single Cover',
   albumCover: 'Album Cover',
   podcastCover: 'Podcast Cover',
+  soundEffectCover: 'Sound Effect Cover',
   musicName: 'Music Name',
   podcastTitle: 'Podcast Title (Update old podcast = same title)',
   programTitle: 'Program Title',
+  soundEffectName: 'Sound Effect Name',
   enterYourMusicTitle: 'Enter Your Music Title...',
   enterYourAlbumTitle: 'Enter Your Album Title...',
   enterYourPodcastTitle: 'Enter Your Podcast Title...',
   enterYourProgramTitle: 'Enter Your Program Title...',
+  enterYourSoundEffectTitle: 'Enter Your Sound Effect Title...',
   uploadDescription: 'Description (use \\n for new line)',
   yourSingleDescription: 'Your Single Description...',
   yourAlbumDescritption: 'Your Album Description...',
   yourPodcastDescription: 'Your podcast Description...',
+  yourSoundEffectDescription: 'Your Sound Effect Description...',
   selectYourFile: 'Select your file',
   demoDuration: 'Demo Duration',
   pleaseUploadYourArtwork: 'Please Upload Your Artwork...',
@@ -92,5 +96,10 @@ export default {
   podcastProgramTitleIsRequiredToUpload: 'A title for a program (episode) release is required',
   podcastDespIsRequiredToUpload: 'A description for a podcast release is required',
   podcastCategoryIsRequiredToUpload: 'Please select the category of your program (None for blank)',
-  podcastSourceFileIsRequiredToUpload: 'A source music file for a podcast release is required'
+  podcastSourceFileIsRequiredToUpload: 'A source music file for a podcast release is required',
+  // sound Effect
+  soundEffectCoverIsRequiredToUpload: 'A cover for a soundeffect release is required',
+  soundEffectTitleIsRequiredToUpload: 'A title for a soundeffect release is required',
+  soundEffectDespIsRequiredToUpload: 'A description for a soundeffect release is required',
+  soundEffectSourceFileIsRequiredToUpload: 'A source music file for a soundeffect release is required'
 }
