@@ -470,7 +470,7 @@ export default {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Single - ArcLight'
+    document.title = this.$t('uploadNewSingle') + ' - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {
         this.failMessage = this.$t('loginIsRequiredToUpload')

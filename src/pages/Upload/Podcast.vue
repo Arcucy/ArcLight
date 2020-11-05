@@ -491,7 +491,7 @@ export default {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Podcast - ArcLight'
+    document.title = this.$t('uploadNewPodcast') + ' - ArcLight'
 
     setTimeout(() => {
       if (!this.isLoggedIn) {

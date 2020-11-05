@@ -22,6 +22,13 @@ export default {
   // file message
   fileReadSuccess: 'File Read Successful',
   fileReadFail: 'File Read Failed, Try again',
+  imageReadSuccess: '图片读取成功',
+  // page title
+  uploadNewSingle: 'Upload a new Single',
+  uploadNewAlbum: 'Upload a new Album',
+  uploadNewPodcast: 'Upload a new Podcast',
+  uploadNewSoundEffect: 'Upload a new Sound Effect',
+  reviewYourUpload: 'Review Your Upload',
   // general
   cacheLogin: 'Login',
   cacheUpload: 'Upload',

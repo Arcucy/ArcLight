@@ -327,7 +327,7 @@ export default {
   },
   mounted () {
     this.uploadStatusDisplay = 0
-    document.title = 'Review Your Upload - ArcLight'
+    document.title = this.$t('reviewYourUpload') + ' - ArcLight'
     this.musicPct = 0
     this.coverPct = 0
     this.uploadDone = false

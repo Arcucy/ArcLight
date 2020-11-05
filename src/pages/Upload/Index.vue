@@ -117,7 +117,7 @@ export default {
       console.error('有问题', e)
     }
 
-    document.title = 'Choose Upload Type - ArcLight'
+    document.title = this.$t('chooseType') + ' - ArcLight'
 
     const single = document.getElementById('single')
     const album = document.getElementById('album')

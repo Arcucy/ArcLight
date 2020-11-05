@@ -455,7 +455,7 @@ export default {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Sound Effect - ArcLight'
+    document.title = this.$t('uploadNewSoundEffect') + ' - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {
         this.failMessage = this.$t('loginIsRequiredToUpload')

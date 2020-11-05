@@ -266,7 +266,7 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Review Your Upload - ArcLight'
+    document.title = this.$t('reviewYourUpload') + ' - ArcLight'
 
     this.musicPct = 0
     this.coverPct = 0

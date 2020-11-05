@@ -24,7 +24,12 @@ export default {
   fileReadSuccess: '文件读取成功',
   fileReadFail: '文件读取失败，请再试一次',
   imageReadSuccess: '图片读取成功',
-
+  // page title
+  uploadNewSingle: '上传新单曲',
+  uploadNewAlbum: '上传新专辑',
+  uploadNewPodcast: '上传新播客',
+  uploadNewSoundEffect: '上传新音效',
+  reviewYourUpload: '检查你的上传信息',
   // general
   cacheLogin: '登录',
   cacheUpload: '本地保存',
