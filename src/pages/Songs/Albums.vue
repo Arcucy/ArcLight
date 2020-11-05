@@ -91,7 +91,7 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Browse all selling albums - ArcLight'
+    document.title = this.$t('browseAllAlbum') + ' - ArcLight'
     this.getAllAudioList('album')
   },
   methods: {

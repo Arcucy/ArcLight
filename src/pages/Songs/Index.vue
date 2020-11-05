@@ -103,7 +103,7 @@ export default {
   created () {
   },
   mounted () {
-    document.title = 'Browse All Seling Music - ArcLight'
+    document.title = this.$t('browseAllMusic') + ' - ArcLight'
     this.getAllAudioList('single', this.single)
     this.getAllAudioList('album', this.album)
     this.$nextTick(() => {

@@ -30,6 +30,9 @@ export default {
   uploadNewPodcast: '上传新播客',
   uploadNewSoundEffect: '上传新音效',
   reviewYourUpload: '检查你的上传信息',
+  browseAllAlbum: '所有专辑',
+  browseAllSingle: '所有单曲',
+  browseAllMusic: '所有曲目', 
   // general
   cacheLogin: '登录',
   cacheUpload: '本地保存',
