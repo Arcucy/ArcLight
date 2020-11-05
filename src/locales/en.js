@@ -39,6 +39,8 @@ export default {
   category: 'Category',
   price: 'Price',
   review: 'Review',
+  transaction: 'Transaction',
+  confirm: 'Confirm',
   // songs
   newSingleSelling: 'New Singles Sellings',
   allSelling: 'All Sellings',
@@ -101,5 +103,19 @@ export default {
   soundEffectCoverIsRequiredToUpload: 'A cover for a soundeffect release is required',
   soundEffectTitleIsRequiredToUpload: 'A title for a soundeffect release is required',
   soundEffectDespIsRequiredToUpload: 'A description for a soundeffect release is required',
-  soundEffectSourceFileIsRequiredToUpload: 'A source music file for a soundeffect release is required'
+  soundEffectSourceFileIsRequiredToUpload: 'A source music file for a soundeffect release is required',
+  // review
+  backToUpload: 'Back to Upload',
+  singleWarning: 'Please carefully review your Single release here,',
+  albumWarning: 'Please carefully review your Album release here,',
+  podcastWarning: 'Please carefully review your Podcast release here,',
+  soundEffectWarning: 'Please carefully review your Sound Effect release here,',
+  reviewWarning: 'if there is no problem, you can submit your wonderful work',
+  priceCost: 'Price Cost',
+  uploadingCover: 'Uploading Cover...',
+  uploadingMusic: 'Uploading Music...',
+  uploadSuccess: 'Upload Successful!',
+  uploadPending: 'Upload Pending',
+  uploadPendingInfo: 'Your artwork has been uploaded to Arweave Permaweb Storage. Your work may not be available soon after you uploaded, It will need a short time of mining for miners to help you save to next block. Be patient, your wonderful will be forever stored!',
+  unknownErrorOccurred: 'Unknown Error Occurred'
 }

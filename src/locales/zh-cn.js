@@ -43,6 +43,9 @@ export default {
   price: '价格',
   review: '检查上传表单',
   verify: '验证上传文件',
+  transaction: '交易',
+  confirm: '确定',
+  submit: '提交',
   // songs
   newSingleSelling: '最新发布单曲',
   allSelling: '所有单曲',
@@ -105,5 +108,19 @@ export default {
   soundEffectCoverIsRequiredToUpload: '需要设置封面才能发布音效',
   soundEffectTitleIsRequiredToUpload: '需要填写标题才能发布音效',
   soundEffectDespIsRequiredToUpload: '需要填写简介才能发布音效',
-  soundEffectSourceFileIsRequiredToUpload: '需要选中上传文件才能发布音效'
+  soundEffectSourceFileIsRequiredToUpload: '需要选中上传文件才能发布音效',
+  // review
+  backToUpload: '返回上传表单',
+  singleWarning: '请在此仔细检查你的单曲上传内容，',
+  albumWarning: '请在此仔细检查你的专辑上传内容，',
+  podcastWarning: '请在此仔细检查你的播客上传内容，',
+  soundEffectWarning: '请在此仔细检查你的音效上传内容，',
+  reviewWarning: '如果没有任何问题，你就可以提交你的上传请求了',
+  priceCost: '价格消耗',
+  uploadingCover: '正在上传封面...',
+  uploadingMusic: '正在上传曲目...',
+  uploadSuccess: '上传成功！',
+  uploadPending: '上传正在等待确定',
+  uploadPendingInfo: '你的作品已经被提交至 Arweave Permaweb Storage（永存网存储中心）。你的作品在上传结束之后可能不会立即可用，数据需要区块链上的矿工进行数据处理后帮你存储至下一个区块。请耐心等待，你的作品将会被永远存储起来！',
+  unknownErrorOccurred: '发生了未知错误'
 }
