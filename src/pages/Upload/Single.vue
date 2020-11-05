@@ -113,7 +113,7 @@
 
             solo
           ></v-select>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar

@@ -40,7 +40,8 @@ export default {
   artistLoading: '加载作曲者中...',
   genre: '音乐流派',
   price: '价格',
-  review: '复审',
+  review: '检查上传表单',
+  verify: '验证上传文件',
   // songs
   newSingleSelling: '最新发布单曲',
   allSelling: '所有单曲',
@@ -49,10 +50,13 @@ export default {
   chooseType: '选择你想要上传的类型',
   backToSelection: '返回选择菜单',
   singleCover: '单曲封面',
+  albumCover: '专辑封面',
   musicName: '单曲名称',
   enterYourMusicTitle: '请输入你的单曲名称...',
+  enterYourAlbumTitle: '请输入你的专辑名称...',
   uploadDescription: '简介 (使用 \\n 来换行)',
   yourSingleDescription: '请输入你的单曲简介...',
+  yourAlbumDescritption: '请输入你的专辑简介...',
   selectYourFile: '选择你的文件',
   demoDuration: '试听长度',
   pleaseUploadYourArtwork: '请上传你的作品...',
@@ -66,7 +70,17 @@ export default {
   demoCantBeSetToFreeMusic: `你不可以给免费音乐设置试听时长`,
   // single
   singleCoverIsRequiredToUpload: '需要设置封面才能发布单曲',
-  singleTitleIsRequiredToUpload: '需要设置标题才能发布单曲',
-  singleDespIsRequiredToUpload: '需要设置简介才能发布单曲',
-  singleSourceFileIsRequiredToUpload: '需要选中上传文件才能发布单曲'
+  singleTitleIsRequiredToUpload: '需要填写标题才能发布单曲',
+  singleDespIsRequiredToUpload: '需要填写简介才能发布单曲',
+  singleSourceFileIsRequiredToUpload: '需要选中上传文件才能发布单曲',
+  // album
+  albumCoverIsRequiredToUpload: '需要设置封面才能发布专辑',
+  albumTitleIsRequiredToUpload: '需要填写标题才能发布专辑',
+  albumDespIsRequiredToUpload: '需要填写简介才能发布专辑',
+  albumPleaseUploadAtLeast: '请上传至少 ',
+  albumPleaseUploadAtLeastFile: ' 个文件',
+  albumSongShouldHavePriceOrFree: '专辑内单曲只能一一填写价格或完全免费',
+  albumSourceFileIsRequiredToUpload: '专辑内缺失了应包含的曲目源文件',
+  albumMusicTitleIsRequiredToUpload: '音乐必须具有标题给 #',
+  albumPriceWillAlwaysBe80Percent: '专辑总价格将会永远是你的所有单曲总价格的 80%'
 }

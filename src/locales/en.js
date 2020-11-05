@@ -43,13 +43,16 @@ export default {
   allSelling: 'All Sellings',
   newAlbumSelling: 'New Albums Sellings',
   // upload
-  chooseType: '选择你想要上传的类型',
+  chooseType: 'Choose the Type to Upload',
   backToSelection: 'Back to Selection',
   singleCover: 'Single Cover',
+  albumCover: 'Album Cover',
   musicName: 'Music Name',
   enterYourMusicTitle: 'Enter Your Music Title...',
+  enterYourAlbumTitle: 'Enter Your Album Title...',
   uploadDescription: 'Description (use \\n for new line)',
   yourSingleDescription: 'Your Single Description...',
+  yourAlbumDescritption: 'Your Album Description...',
   selectYourFile: 'Select your file',
   demoDuration: 'Demo Duration',
   pleaseUploadYourArtwork: 'Please Upload Your Artwork...',
@@ -65,5 +68,15 @@ export default {
   singleCoverIsRequiredToUpload: 'A cover for a single release is required',
   singleTitleIsRequiredToUpload: 'A title for a single release is required',
   singleDespIsRequiredToUpload: 'A description for a single release is required',
-  singleSourceFileIsRequiredToUpload: 'A source music file for a single release is required'
+  singleSourceFileIsRequiredToUpload: 'A source music file for a single release is required',
+  // album
+  albumCoverIsRequiredToUpload: 'A cover for a album release is required',
+  albumTitleIsRequiredToUpload: 'A title for a album release is required',
+  albumDespIsRequiredToUpload: 'A description for a album release is required',
+  albumPleaseUploadAtLeast: 'Please upload at least ',
+  albumPleaseUploadAtLeastFile: ' files',
+  albumSongShouldHavePriceOrFree: 'Album Song should have price or completely free',
+  albumSourceFileIsRequiredToUpload: 'You must select sources of music file of two for album release',
+  albumMusicTitleIsRequiredToUpload: 'Your music must have title for #',
+  albumPriceWillAlwaysBe80Percent: 'Album Price will always be 80% of your total price for each song'
 }
