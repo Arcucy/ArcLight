@@ -36,6 +36,7 @@ export default {
   loading: 'Loading...',
   artistLoading: 'Artist loading...',
   genre: 'Genre',
+  category: 'Category',
   price: 'Price',
   review: 'Review',
   // songs
@@ -47,12 +48,18 @@ export default {
   backToSelection: 'Back to Selection',
   singleCover: 'Single Cover',
   albumCover: 'Album Cover',
+  podcastCover: 'Podcast Cover',
   musicName: 'Music Name',
+  podcastTitle: 'Podcast Title (Update old podcast = same title)',
+  programTitle: 'Program Title',
   enterYourMusicTitle: 'Enter Your Music Title...',
   enterYourAlbumTitle: 'Enter Your Album Title...',
+  enterYourPodcastTitle: 'Enter Your Podcast Title...',
+  enterYourProgramTitle: 'Enter Your Program Title...',
   uploadDescription: 'Description (use \\n for new line)',
   yourSingleDescription: 'Your Single Description...',
   yourAlbumDescritption: 'Your Album Description...',
+  yourPodcastDescription: 'Your podcast Description...',
   selectYourFile: 'Select your file',
   demoDuration: 'Demo Duration',
   pleaseUploadYourArtwork: 'Please Upload Your Artwork...',
@@ -78,5 +85,12 @@ export default {
   albumSongShouldHavePriceOrFree: 'Album Song should have price or completely free',
   albumSourceFileIsRequiredToUpload: 'You must select sources of music file of two for album release',
   albumMusicTitleIsRequiredToUpload: 'Your music must have title for #',
-  albumPriceWillAlwaysBe80Percent: 'Album Price will always be 80% of your total price for each song'
+  albumPriceWillAlwaysBe80Percent: 'Album Price will always be 80% of your total price for each song',
+  // podcast
+  podcastCoverIsRequiredToUpload: 'A cover for a podcast release is required',
+  podcastTitleIsRequiredToUpload: 'A title for your Podcast release is required',
+  podcastProgramTitleIsRequiredToUpload: 'A title for a program (episode) release is required',
+  podcastDespIsRequiredToUpload: 'A description for a podcast release is required',
+  podcastCategoryIsRequiredToUpload: 'Please select the category of your program (None for blank)',
+  podcastSourceFileIsRequiredToUpload: 'A source music file for a podcast release is required'
 }
