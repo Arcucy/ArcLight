@@ -34,7 +34,7 @@ export default {
   browseAllSingle: '所有单曲',
   browseAllMusic: '所有曲目',
   profile: '个人主页',
-  profileOf: ` 的个人主页`,
+  profileOf: '的个人主页',
   // general
   cacheLogin: '登录',
   cacheUpload: '本地保存',
