@@ -1,3 +1,7 @@
+.stars {
+  transform: scale(2);
+}
+
 #stars {
   width: 1px;
   height: 1px;
@@ -52,8 +56,9 @@
   box-shadow: 1761px 212px #FFF, 364px 1971px #FFF, 884px 1534px #FFF, 1681px 841px #FFF, 615px 634px #FFF, 5px 1705px #FFF, 259px 251px #FFF, 60px 518px #FFF, 722px 604px #FFF, 1130px 1393px #FFF, 1949px 55px #FFF, 715px 1988px #FFF, 488px 1558px #FFF, 1931px 338px #FFF, 565px 788px #FFF, 1096px 1022px #FFF, 1810px 234px #FFF, 411px 755px #FFF, 671px 102px #FFF, 252px 874px #FFF, 1453px 19px #FFF, 1020px 143px #FFF, 337px 1713px #FFF, 1978px 303px #FFF, 388px 1539px #FFF, 1139px 1430px #FFF, 1462px 111px #FFF, 1156px 1426px #FFF, 443px 1442px #FFF, 1640px 1019px #FFF, 794px 1721px #FFF, 648px 544px #FFF, 44px 16px #FFF, 728px 1660px #FFF, 20px 948px #FFF, 1241px 1746px #FFF, 4px 1732px #FFF, 746px 627px #FFF, 475px 1289px #FFF, 1485px 755px #FFF, 759px 1046px #FFF, 1949px 1045px #FFF, 1763px 1578px #FFF, 228px 1824px #FFF, 1622px 1229px #FFF, 730px 1635px #FFF, 1158px 322px #FFF, 215px 751px #FFF, 552px 177px #FFF, 491px 1352px #FFF, 1013px 1262px #FFF, 1020px 1086px #FFF, 367px 545px #FFF, 720px 146px #FFF, 1356px 854px #FFF, 1819px 1522px #FFF, 1608px 901px #FFF, 1750px 1621px #FFF, 911px 990px #FFF, 1781px 365px #FFF, 976px 280px #FFF, 1881px 65px #FFF, 1399px 2000px #FFF, 525px 450px #FFF, 1960px 1417px #FFF, 489px 448px #FFF, 1300px 887px #FFF, 59px 545px #FFF, 369px 1214px #FFF, 892px 1335px #FFF, 1017px 1181px #FFF, 1391px 813px #FFF, 69px 1691px #FFF, 371px 328px #FFF, 607px 144px #FFF, 1311px 729px #FFF, 462px 1692px #FFF, 1589px 1677px #FFF, 1869px 117px #FFF, 342px 1230px #FFF, 1947px 1882px #FFF, 1940px 376px #FFF, 1212px 18px #FFF, 867px 1435px #FFF, 315px 1830px #FFF, 1740px 976px #FFF, 184px 655px #FFF, 217px 1137px #FFF, 1132px 147px #FFF, 551px 488px #FFF, 944px 1321px #FFF, 729px 417px #FFF, 1817px 358px #FFF, 290px 955px #FFF, 1051px 993px #FFF, 1600px 1772px #FFF, 81px 1651px #FFF, 430px 1494px #FFF, 1959px 1895px #FFF, 1049px 1151px #FFF;
 }
 
-.landing-container {
+.layout-bg {
   position: fixed;
+  z-index: -10;
   height: 100%;
   width: 100%;
   font-family: "lato", sans-serif;
@@ -109,7 +114,7 @@
   border-radius: 100%/100%;
   background: #FF92BC;
   filter: blur(30px);
-  -webkit-filter: blur(200px);
+  -webkit-filter: blur(30px);
   opacity: 0.7;
   top: -10%;
 }
@@ -154,7 +159,7 @@
 
 a {
   text-decoration: none;
-  color: #E56D9B;
+  color: #E56D9B !important;
 }
 
 @keyframes fadeInOpacity {
@@ -174,78 +179,5 @@ a {
 
   to {
     transform: translateY(-2000px);
-  }
-}
-
-@keyframes animTitle {
-  0% {
-    transform: translateY(-26px);
-    opacity: 0;
-  }
-
-  30%,
-  100% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-}
-
-@keyframes animOne {
-
-  0%,
-  15% {
-    transform: translateY(-26px);
-    opacity: 0;
-  }
-
-  35%,
-  80% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-
-  92%,
-  100% {
-    transform: translateY(-4px);
-  }
-}
-
-@keyframes animTwo {
-
-  0%,
-  25% {
-    transform: translateY(-26px);
-    opacity: 0;
-  }
-
-  45%,
-  80% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-
-  92%,
-  100% {
-    transform: translateY(-4px);
-  }
-}
-
-@keyframes animThree {
-
-  0%,
-  35% {
-    transform: translateY(-26px);
-    opacity: 0;
-  }
-
-  55%,
-  80% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-
-  92%,
-  100% {
-    transform: translateY(-4px);
   }
 }

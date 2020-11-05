@@ -153,7 +153,7 @@ export default {
     border-radius: 100%/100%;
     background: #FF92BC;
     filter: blur(30px);
-    -webkit-filter: blur(200px);
+    -webkit-filter: blur(30px);
     opacity: 0.7;
     top: -10%;
 }
@@ -381,11 +381,5 @@ a {
     100% {
         transform: translateY(-4px);
     }
-}
-</style>
-
-<style>
-html {
-    overflow: hidden !important;
 }
 </style>

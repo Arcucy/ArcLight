@@ -1,38 +1,50 @@
 <template>
-  <div class="card-bg">
-    <div class="card">
-      <v-img
-        class="card-img"
-        src="https://picsum.photos/510/300?random"
-        alt="cover"
-        aspect-ratio="1"
-      >
-        <template v-slot:placeholder>
-          <div class="card-img-loading">
-            <v-progress-circular indeterminate color="#E56D9B" />
-          </div>
-        </template>
-      </v-img>
-      <p class="card-title">
-        {{ card.title }}
-      </p>
-      <p class="card-artist">
-        by {{ card.artist }}
-      </p>
-      <p class="card-price">
-        play {{ card.price }} AR
-      </p>
-      <p class="card-time">
-        {{ card.time }}
-      </p>
+  <router-link class="card-link" :to="{ name: 'Album', params: { id: card.txid } }">
+    <div class="card-bg" v-ripple>
+      <div class="card">
+        <v-img
+          v-if="!blink"
+          class="card-img"
+          :src="cover"
+          alt="cover"
+          aspect-ratio="1"
+        >
+          <template v-slot:placeholder>
+            <div class="card-img-loading">
+              <v-progress-circular indeterminate color="#E56D9B" />
+            </div>
+          </template>
+        </v-img>
+        <div v-else class="card-img-blink" />
+        <p class="card-title">
+          {{ card.title }}
+        </p>
+        <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
+          by {{ card.authorUsername }}
+        </router-link>
+        <a v-else class="card-artist">
+          {{ card.authorUsername }}
+        </a>
+        <p v-if="card.price != 0" class="card-price">
+          pay {{ card.price }} AR
+        </p>
+        <p v-else class="card-price free-song">
+          Free
+        </p>
+        <p class="card-time">
+          {{ time }}
+        </p>
+      </div>
+      <div class="record">
+        <img src="@/assets/image/record.png" alt="record">
+      </div>
     </div>
-    <div class="record">
-      <img src="@/assets/image/record.png" alt="record">
-    </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
+import api from '@/api/api'
+import { isNDaysAgo } from '@/util/momentFun'
 
 export default {
   components: {
@@ -42,6 +54,48 @@ export default {
       type: Object,
       required: true
     }
+  },
+  data () {
+    return {
+      cover: 'Loading',
+      blink: false
+    }
+  },
+  computed: {
+    time () {
+      if (!this.card) return '--:--:--'
+      const time = this.$moment(this.card.unixTime)
+      return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
+    }
+  },
+  watch: {
+    card (val) {
+      if (val) this.getCover()
+      else this.cover = ''
+    }
+  },
+  async mounted () {
+    this.getCover()
+  },
+  methods: {
+    async getCover () {
+      if (this.card && this.card.coverTxid) {
+        this.cover = 'Loading'
+        this.newBlink()
+        const txid = this.card.coverTxid
+        try {
+          const img = await api.arweave.getCover(txid)
+          if (txid !== this.card.coverTxid) return
+          this.cover = img
+        } catch (e) {
+          this.cover = ''
+        }
+      } else this.cover = ''
+    },
+    newBlink () {
+      this.blink = true
+      setTimeout(() => { this.blink = false })
+    }
   }
 }
 </script>
@@ -50,11 +104,20 @@ export default {
 p {
   text-align: left;
 }
+a {
+  text-decoration: none;
+  color: white;
+}
+.card-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .card-bg {
   display: flex;
   width: 188px;
   .record {
-    width: 1200px;
+    width: 120px;
     min-width: 120px;
     height: 120px;
     min-height: 120px;
@@ -68,11 +131,12 @@ p {
   .card {
     width: 128px;
     .content {
-      margin-top: 4px;
+      margin: 4px 0 0;
       font-size: 14px;
       font-weight: 400;
       color: #FFFFFF;
       line-height: 20px;
+      text-align: left;
     }
 
     .word-limit {
@@ -97,8 +161,15 @@ p {
       }
     }
 
+    &-img-blink {
+      border-radius:5px;
+      width: 128px;
+      height: 128px;
+      background: #252525;
+    }
+
     &-title {
-      margin-top: 10px;
+      margin: 10px 0 0;
       font-size: 14px;
       font-weight: 500;
       color: #FFFFFF;
@@ -109,20 +180,46 @@ p {
     &-artist {
       .content();
       .word-limit();
+      &:hover {
+        color: #E56D9B;
+      }
     }
 
     &-price {
       .content();
       .word-limit();
+      &.free-song {
+        color: #66BB6A;
+      }
     }
 
     &-time {
-      margin-top: 8px;
+      margin: 8px 0 0;
       font-size: 12px;
       font-weight: 400;
       color: #B2B2B2;
       line-height: 17px;
       .word-limit();
+    }
+  }
+}
+@media screen and (max-width: 992px) {
+  .card-bg {
+      width: 146px;
+    .card{
+      width: 100px;
+      &-img {
+        height: 100px;
+        width: 100px;
+      }
+    }
+    .record {
+      min-width: 92px;
+      min-height: 92px;
+      height: 92px;
+      width: 92px;
+      margin-left: -46px;
+      margin-top: 4px;
     }
   }
 }
