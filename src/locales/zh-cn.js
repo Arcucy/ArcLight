@@ -46,6 +46,7 @@ export default {
   transaction: '交易',
   confirm: '确定',
   submit: '提交',
+  done: '完成',
   // songs
   newSingleSelling: '最新发布单曲',
   allSelling: '所有单曲',

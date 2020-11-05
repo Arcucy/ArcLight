@@ -41,6 +41,8 @@ export default {
   review: 'Review',
   transaction: 'Transaction',
   confirm: 'Confirm',
+  submit: 'Submit',
+  done: 'Done',
   // songs
   newSingleSelling: 'New Singles Sellings',
   allSelling: 'All Sellings',
