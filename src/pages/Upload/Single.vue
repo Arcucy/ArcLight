@@ -113,7 +113,7 @@
 
             solo
           ></v-select>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -470,7 +470,7 @@ export default {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Single - ArcLight'
+    document.title = this.$t('uploadNewSingle') + ' - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {
         this.failMessage = this.$t('loginIsRequiredToUpload')

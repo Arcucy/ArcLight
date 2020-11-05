@@ -5,15 +5,15 @@
         <div v-if="canGoBack" class="upload-header">
           <a @click="$router.push({ name: 'uploadPodcast', params: $route.params.data })" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Upload
+            {{ $t('backToUpload') }}
           </a>
         </div>
         <div class="notice-title">
           <v-icon light color="rgba(251, 140, 0, 1.000)" style="font-size: 40px; margin-right: 20px;">mdi-alert-circle-outline</v-icon>
           <div class="notice-content">
-            Please carefully review your Podcast release here,
+            {{ $t('podcastWarning') }}
             <br>
-            if there is no problem, you can submit your wonderful work
+            {{ $t('reviewWarning') }}
           </div>
         </div>
         <div class="podcast-container">
@@ -42,7 +42,7 @@
           <div class="other-container">
             <div class="podcast-price">
                 <div class="other-title">
-                  Price Cost
+                  {{ $t('priceCost') }}
                 </div>
                 <v-text-field
                   v-model="price"
@@ -54,7 +54,7 @@
             </div>
             <div class="podcast-demo">
                 <div class="other-title">
-                  Demo Duration
+                  {{ $t('demoDuration') }}
                 </div>
                 <v-text-field
                   v-model="durationDisplay"
@@ -69,11 +69,11 @@
             <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
           </div>
         </div>
-        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">Submit</v-btn>
-        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="jump">Done</v-btn>
+        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">{{ $t('submit') }}</v-btn>
+        <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="jump">{{ $t('done') }}</v-btn>
         <div class="upload-status" v-if="submitBtnLoading">
           <div class="upload-status-cover" v-if="coverPct !== 100">
-            <div class="upload-title">Uploading Cover...</div>
+            <div class="upload-title">{{ $t('uploadingCover') }}</div>
             <v-progress-linear
               :buffer-value="coverPct"
               v-model="coverPct"
@@ -84,7 +84,7 @@
           </div>
           <div class="upload-status-music" v-if="!uploadDone">
             <div style="display: flex;">
-              <div class="upload-title" style="flex: 1">Uploading Music... {{ uploadMusicPct }}%</div>
+              <div class="upload-title" style="flex: 1">{{ $t('uploadingMusic') }} {{ uploadMusicPct }}%</div>
               <div class="upload-title">{{ uploadStatusDisplay }}</div>
             </div>
             <v-progress-linear
@@ -98,7 +98,7 @@
           </div>
         </div>
         <div v-if="uploadDone" >
-          <div class="upload-title">Upload Successful!</div>
+          <div class="upload-title">{{ $t('uploadSuccess') }}</div>
         </div>
       </div>
       <v-snackbar
@@ -117,7 +117,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -132,18 +132,16 @@
       >
         <v-card dark class="upload-notice">
           <h3 class="upload-notice-title">
-            Upload Pending
+            {{ $t('uploadPending') }}
           </h3>
           <p class="upload-notice-content">
-            Your artwork has been uploaded to Arweave Permaweb Storage. Your work may not be available soon after you uploaded,
-            It will need a short time of mining for miners to help you save to next block.
-            Be patient, your wonderful will be forever stored!
+            {{ $t('uploadPendingInfo') }}
           </p>
           <p class="upload-notice-content">
-            Transaction ID: {{ podcastInfoIdDisplay }}
+            {{ $t('transaction') }} ID: {{ podcastInfoIdDisplay }}
           </p>
           <v-btn class="confirm-button" depressed color="#E56D9B" block @click="showUpload = false">
-            Confirm
+            {{ $t('confirm') }}
           </v-btn>
         </v-card>
       </v-dialog>
@@ -276,7 +274,7 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Review Your Upload - ArcLight'
+    document.title = this.$t('reviewYourUpload') + ' - ArcLight'
 
     this.coverPct = 0
     this.musicPct = 0
@@ -284,7 +282,7 @@ export default {
     this.uploadDone = false
 
     if (!this.podcastInfo) {
-      this.failMessage = 'Unknown Error Occurred'
+      this.failMessage = this.$t('unknownErrorOccurred')
       this.failSnackbar = true
 
       this.$router.push({ name: 'Upload' })

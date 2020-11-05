@@ -5,11 +5,11 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Podcast Cover</div>
+          <div class="cover-title side-title">{{ $t('podcastCover') }}</div>
           <img-upload
           :img-upload-done="imgUploadDone"
           :update-type="'podcast'"
@@ -22,7 +22,7 @@
             >
               <div class="edit">
                 <v-icon color="#FFF">mdi-camera</v-icon>
-                Podcast Cover
+                {{ $t('podcastCover') }}
               </div>
               <img
                 id="avatar"
@@ -34,11 +34,11 @@
               <img v-else id="new-logo" src="../../assets/image/podcast.png" style="margin-top: 10px;"/>
             </div>
           </img-upload>
-          <div class="name-title side-title">Podcast Title (Update old podcast = same title)</div>
+          <div class="name-title side-title">{{ $t('podcastTitle') }}</div>
           <v-text-field
             v-model="podcastTitle"
             label="Solo"
-            placeholder="Enter Your Podcast Title..."
+            :placeholder="$t('enterYourPodcastTitle')"
             solo
             dark
             color="#FFF"
@@ -46,11 +46,11 @@
             counter
             maxlength="100"
           ></v-text-field>
-          <div class="name-title side-title">Program Title</div>
+          <div class="name-title side-title">{{ $t('programTitle') }}</div>
           <v-text-field
             v-model="programTitle"
             label="Solo"
-            placeholder="Enter Your Program Title..."
+            :placeholder="$t('enterYourProgramTitle')"
             solo
             dark
             color="#FFF"
@@ -58,19 +58,19 @@
             counter
             maxlength="100"
           ></v-text-field>
-          <div class="name-desp side-title">Description (use \n for new line)</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="podcastDesp"
             solo
             dark
             name="input-7-4"
-            label="Your podcast Description..."
+            :label="$t('yourPodcastDescription')"
             counter
             maxlength="1000"
           ></v-textarea>
-          <div class="name-desp side-title">Category</div>
+          <div class="name-desp side-title">{{ $t('类别') }}</div>
           <podcastSelect v-model="category" style="margin-bottom: 16px;" />
-          <div class="name-desp side-title">Price</div>
+          <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
             v-model="price"
             class="price"
@@ -78,7 +78,7 @@
             solo
             dark
             type="number"
-            label="Price"
+            :label="$t('price')"
             prepend-inner-icon="mdi-cash-multiple"
             maxlength="12"
           ></v-text-field>
@@ -87,7 +87,7 @@
             v-model="file"
             color="#FFF"
             chips
-            placeholder="Select your file"
+            :placeholder="$t('selectYourFile')"
             prepend-icon="mdi-paperclip"
             outlined
             accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -113,7 +113,7 @@
               </span>
             </template>
           </v-file-input>
-          <div class="name-desp side-title">Demo Duration</div>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
           <v-select
             dark
             :disabled="disableDuration"
@@ -124,7 +124,7 @@
             :loading="disableDuration"
             solo
           ></v-select>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -133,7 +133,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -142,26 +142,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="podcastSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Podcast Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="podcastSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -181,7 +162,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -225,7 +206,6 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      podcastSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
       shouldLoad: true,
@@ -242,7 +222,7 @@ export default {
     userType (val) {
       if (this.userType === 'guest') {
         this.failSnackbar = true
-        this.failMessage = 'You must have a username in order to upload'
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
 
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
@@ -251,7 +231,7 @@ export default {
     },
     wallet (val) {
       if (!val) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -293,7 +273,7 @@ export default {
               this.durationSelection = this.durationSelection.filter(item => item !== '15s')
             }
           }
-          this.durationSelectStr = 'Select Demo duration'
+          this.durationSelectStr = this.$t('selectDemoDuration')
           this.disableDuration = false
         }
       }
@@ -304,42 +284,42 @@ export default {
     submit () {
       this.submitBtnLoading = true
       if (this.podcastCover === '') {
-        this.failMessage = 'A cover for a podcast release is required'
+        this.failMessage = this.$t('podcastCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.podcastTitle === '') {
-        this.failMessage = 'A title for your Podcast release is required'
+        this.failMessage = this.$t('podcastTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.programTitle === '') {
-        this.failMessage = 'A title for a program (episode) release is required'
+        this.failMessage = this.$t('podcastProgramTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.podcastDesp === '') {
-        this.failMessage = 'A description for a podcast release is required'
+        this.failMessage = this.$t('podcastDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.category) {
-        this.failMessage = 'Please select the category of your program (None for blank)'
+        this.failMessage = this.$t('podcastCategoryIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -355,14 +335,14 @@ export default {
       }
 
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (parseFloat(this.price) < 0) {
-        this.failMessage = `Price can't be negative`
+        this.failMessage = this.$t('priceCantBeNegative')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -371,7 +351,7 @@ export default {
       }
 
       if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
-        this.failMessage = `You can't set demo for free music`
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
         this.failSnackbar = true
         this.submitBtnLoading = false
         // eslint-disable-next-line no-useless-return
@@ -379,7 +359,7 @@ export default {
       }
 
       if (!this.file) {
-        this.failMessage = 'A source music file for a podcast release is required'
+        this.failMessage = this.$t('podcastSourceFileIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -453,6 +433,10 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      this.durationSelectStr = this.$t('pleaseUploadYourArtwork')
+    })
+
     if (this.singleInfo) {
       this.shouldLoad = false
     }
@@ -482,7 +466,7 @@ export default {
 
     if (this.podcastInfo) {
       this.disableDuration = false
-      this.durationSelectStr = 'Select Demo duration'
+      this.durationSelectStr = this.$t('selectDemoDuration')
       this.podcastTitle = this.podcastInfo.podcast
       this.programTitle = this.podcastInfo.title
       this.podcastDesp = this.podcastInfo.desp
@@ -501,17 +485,17 @@ export default {
 
     if (this.userType === 'guest') {
       this.failSnackbar = true
-      this.failMessage = 'You must have a username in order to upload'
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
 
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Podcast - ArcLight'
+    document.title = this.$t('uploadNewPodcast') + ' - ArcLight'
 
     setTimeout(() => {
       if (!this.isLoggedIn) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {

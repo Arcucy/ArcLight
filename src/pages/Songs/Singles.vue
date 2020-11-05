@@ -90,7 +90,7 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Browse All Selling Singles - ArcLight'
+    document.title = this.$t('browseAllSingle') + ' - ArcLight'
     this.getAllAudioList('single')
   },
   methods: {

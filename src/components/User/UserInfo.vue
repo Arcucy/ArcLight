@@ -29,7 +29,7 @@
     <P class="userinfo-introduction" v-html="introduction" />
     <v-btn v-if="isMyself" small class="userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon left>mdi-pencil</v-icon>
-      EDIT PROFILE
+      {{ $t('editProfile') }}
     </v-btn>
     <v-btn v-if="isMyself" x-small fab class="mobile mobile-userinfo-btn" color="#FFF" outlined light @click="edit">
       <v-icon>mdi-pencil</v-icon>
@@ -153,9 +153,9 @@ export default {
         this.user.nickname = user.data
         this.user.type = user.type
         if (user.type === 'guest') {
-          document.title = 'Profile - ArcLight'
+          document.title =  this.$t('profile') + ' - ArcLight'
         } else {
-          document.title = user.data + `'s Profile - ArcLight`
+          document.title = user.data + this.$t('profileOf') + ` - ArcLight`
         }
         if (user.type !== 'guest') {
           const avatar = await API.arweave.getAvatarFromAddress(this.id)
