@@ -153,7 +153,7 @@ export default {
         this.user.nickname = user.data
         this.user.type = user.type
         if (user.type === 'guest') {
-          document.title =  this.$t('profile') + ' - ArcLight'
+          document.title = this.$t('profile') + ' - ArcLight'
         } else {
           document.title = user.data + this.$t('profileOf') + ` - ArcLight`
         }
