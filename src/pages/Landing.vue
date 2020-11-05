@@ -23,7 +23,9 @@ export default {
     spaceLayout
   },
   mounted () {
-    document.title = 'ArcLight - Music Distribution Platform'
+    this.$nextTick(() => {
+      document.title = 'ArcLight - ' + this.$t('mainTitle')
+    })
   }
 }
 </script>

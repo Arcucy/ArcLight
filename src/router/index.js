@@ -5,7 +5,6 @@ import Landing from '@/pages/Landing.vue'
 import About from '@/pages/About.vue'
 import Music from '@/pages/Music/_id.vue'
 import Album from '@/pages/Album/_id.vue'
-import MusicMenu from '@/pages/Music.vue'
 import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
@@ -103,11 +102,6 @@ export default new Router({
       name: 'Album',
       component: Album,
       props: true
-    },
-    {
-      path: '/music',
-      name: 'MusicMenu',
-      component: MusicMenu
     },
     {
       path: '/songs',
