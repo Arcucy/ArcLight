@@ -29,6 +29,11 @@ export default {
   uploadNewPodcast: 'Upload a new Podcast',
   uploadNewSoundEffect: 'Upload a new Sound Effect',
   reviewYourUpload: 'Review Your Upload',
+  browseAllAlbum: 'Browse all selling Albums',
+  browseAllSingle: 'Browse All Selling Singles',
+  browseAllMusic: 'Browse All Seling Music',
+  profile: 'Profile',
+  profileOf: `'s Profile`,
   // general
   cacheLogin: 'Login',
   cacheUpload: 'Upload',
@@ -54,6 +59,11 @@ export default {
   newSingleSelling: 'New Singles Sellings',
   allSelling: 'All Sellings',
   newAlbumSelling: 'New Albums Sellings',
+  newPodcastSelling: 'New Podcast Sellings',
+  newSoundEffectSelling: 'New Sound Sellings',
+  // profile
+  similarAuthors: 'Similar authors',
+  editProfile: 'EDIT PROFILE',
   // upload
   chooseType: 'Choose the Type to Upload',
   backToSelection: 'Back to Selection',

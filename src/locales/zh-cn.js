@@ -32,7 +32,9 @@ export default {
   reviewYourUpload: '检查你的上传信息',
   browseAllAlbum: '所有专辑',
   browseAllSingle: '所有单曲',
-  browseAllMusic: '所有曲目', 
+  browseAllMusic: '所有曲目',
+  profile: '个人主页',
+  profileOf: ` 的个人主页`,
   // general
   cacheLogin: '登录',
   cacheUpload: '本地保存',
@@ -57,8 +59,13 @@ export default {
   done: '完成',
   // songs
   newSingleSelling: '最新发布单曲',
-  allSelling: '所有单曲',
+  allSelling: '所有作品',
   newAlbumSelling: '最新发布专辑',
+  newPodcastSelling: '最新发布播客',
+  newSoundEffectSelling: '最新发布音效',
+  // profile
+  similarAuthors: '相似作曲家',
+  editProfile: '编辑个人主页',
   // upload
   chooseType: '选择你想要上传的类型',
   backToSelection: '返回选择菜单',
