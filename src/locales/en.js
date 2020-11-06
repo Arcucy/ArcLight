@@ -7,9 +7,9 @@ export default {
   // about
   why: 'Why',
   arcLightLocalized: 'ArcLight',
-  aboutP1Part1: 'Project ArcLight first started as an Arweave storage solution dapp, after the ',
-  aboutP2Part2: ' was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.',
-  aboutP2Part1: `Why choose ArcLight? We use Arweave's Permaweb as our storage for your wonderful artworks, we try everything to protect your copyright to your music, including encrypting your music to an unreadable source on Arweave network explorer, so the people must pay to you as your price defined for your project to get the download source of your music.`,
+  about1P1Part1: 'Project ArcLight first started as an Arweave storage solution dapp, after the ',
+  about1P2Part2: ' was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.',
+  about1P2Part1: 'Why choose ArcLight? We use Arweave\'s Permaweb as our storage for your wonderful artworks, we try everything to protect your copyright to your music, including encrypting your music to an unreadable source on Arweave network explorer, so the people must pay to you as your price defined for your project to get the download source of your music.',
   allDifferent: 'All different',
   sound: 'Sound',
   weSupport: 'we support',

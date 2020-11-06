@@ -38,6 +38,7 @@ export default {
   thankYouForChoosingArcLight: '感谢你选择 ArcLight！',
   // header
   music: '音乐',
+  about: '关于',
   login: '登录',
   uploadYourKey: '提供你的私钥',
   insertYourKey: '选择你的私钥文件',
