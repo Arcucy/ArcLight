@@ -4,7 +4,7 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Podcasts Sellings
+            {{ $t('podcastSelling') }}
           </h4>
         </div>
         <div class="songs-list">
@@ -19,7 +19,7 @@
           </getAudioInfo>
           <loadCard
             v-if="loading || addressList.length === 0"
-            :message="!loading && addressList.length === 0 ? 'No data' : ''"
+            :message="!loading && addressList.length === 0 ? $t('noData') : ''"
           />
         </div>
         <div v-if="maxPage > 1" class="songs-pagination">
@@ -79,7 +79,7 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Browse all selling albums - ArcLight'
+    document.title = this.$t('browseAllPodcast') + ' - ArcLight'
     this.getAllAudioList('podcast')
   },
   methods: {

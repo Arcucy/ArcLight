@@ -7,7 +7,7 @@
             {{ purchaseSlogan }}
           </p>
           <p v-else class="free-text music-download-price-text">
-            Free
+            {{ $t('free') }}
           </p>
         </div>
         <v-btn
@@ -20,7 +20,7 @@
           :height="44"
           @click.stop="buyClick"
         >
-          BUY
+          {{ $t('buy') }}
         </v-btn>
       </div>
     </div>
@@ -31,7 +31,7 @@
     >
       <v-card dark class="wallet">
         <h3 class="payment-title">
-          Payment of 「{{ item.name }}」
+          {{ $t('paymentOf') }} 「{{ item.name }}」
         </h3>
         <div class="file-input-area" id="file-input-area">
           <v-icon v-if="!file" >mdi-plus</v-icon>
@@ -39,7 +39,7 @@
           <input class="file-input" id="file-input" type="file" accept="application/json">
         </div>
         <p class="payment-content">
-          Please drag your wallet application into this box to complete the payment.
+          {{ $t('pleaseInsertYourWalletKey') }}
         </p>
         <v-btn class="wallet-upload-button" depressed color="#E56D9B" :disabled="disAllowStep2" block @click="step2">
           Upload key
@@ -54,45 +54,44 @@
     >
       <v-card dark class="confirm">
         <h3 class="confirm-title">
-          Payment of 「{{ item.name }}」
+          {{ $t('paymentOf') }} 「{{ item.name }}」
         </h3>
         <p class="payment-content">
-          Please carefully review the following information about your order,
-          Once you are all set to pay, click <strong>Confirm</strong> button
+          {{ $t('orderReviewWarningPart1') }} <strong>{{ $t('confirm') }}</strong> {{ $t('orderReviewWarningPart2') }}
         </p>
         <div class="confirm-price">
           <div class="price-line">
-            <span class="left-content">Music Price</span>
+            <span class="left-content">{{ $t('price') }}</span>
             <h4>{{ priceDisplay }} AR</h4>
           </div>
           <div class="price-line">
-            <span class="left-content">Fee</span>
+            <span class="left-content">{{ $t('fee') }}</span>
             <h4>{{ fee }} AR</h4>
           </div>
           <div class="price-line">
             <span class="left-content price-line-title-container">
               <span class="price-line-title-container-main-title-container">
-                <span class="price-line-maintitle">Tip</span>
+                <span class="price-line-maintitle">{{ $t('tip') }}</span>
                 <h4>{{ tip }} AR</h4>
               </span>
               <span class="price-line-title-container-sub-title-container">
-                <span class="price-line-subtitle">to Developer (~3%)</span>
+                <span class="price-line-subtitle">{{ $t('toDeveloper') }} (~3%)</span>
                 <span>{{ tipToDeveloperDisplay }} AR</span>
               </span>
               <span class="price-line-title-container-sub-title-container">
-                <span class="price-line-subtitle">to Community (~1%)</span>
+                <span class="price-line-subtitle">{{ $t('toCommunity') }} (~1%)</span>
                 <span>{{ tipToCommunityDisplay }} AR</span>
               </span>
             </span>
           </div>
           <v-divider dark style="margin: 10px 0 10px"></v-divider>
           <div class="price-line">
-            <span class="left-content">Total</span>
+            <span class="left-content">{{ $t('paymentTotal') }}</span>
             <h4>{{ total.toFixed(12).replace(/\.?0+$/, '') }} AR</h4>
           </div>
         </div>
         <v-btn class="wallet-upload-button" depressed color="#E56D9B" block :loading="paymentConfirm" @click="step3">
-          Confirm
+          {{ $t('confirm') }}
         </v-btn>
       </v-card>
     </v-dialog>

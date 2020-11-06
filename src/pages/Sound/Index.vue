@@ -4,7 +4,7 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Sounds Sellings
+            {{ $t('soundSelling') }}
           </h4>
         </div>
         <div class="songs-list">
@@ -79,7 +79,7 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Browse All Selling Singles - ArcLight'
+    document.title = this.$t('browseAllSound') + ' - ArcLight'
     this.getAllAudioList('soundEffect')
   },
   methods: {

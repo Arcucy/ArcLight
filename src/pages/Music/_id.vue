@@ -7,10 +7,10 @@
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
-              {{ info.name || 'Back' }}
+              {{ info.name || $t('back') }}
             </span>
             <span class="header-title-back">
-              Back
+              {{ $t('back') }}
             </span>
           </span>
         </a>
@@ -46,7 +46,7 @@
                   </router-link>
                 </span>
               </template>
-              <span>View similar artwork</span>
+              <span>{{ $t('viewSimilarArtwork') }}</span>
             </v-tooltip>
             {{ info.name }}
           </div>
@@ -78,7 +78,7 @@
         <!-- No trial version -->
         <div v-if="!audio && !loading" class="music-loading">
           <p>
-            There is no demo version of this artwork
+            {{ $t('thereIsNoDemoVersionOfThisArtwork') }}
           </p>
         </div>
         <!-- Loading -->
@@ -130,10 +130,10 @@
         </div>
         <div class="music-await-text">
           <h4>
-            「Buy」please wait. . .
+            「{{ $t('buy') }}」{{ $t('pleaseWait') }}
           </h4>
           <p>
-            Waiting for the transaction to be merged into a new block, this may take a few minutes. You can leave this page and do something else.
+            {{ $t('waitingForBlockConfirm') }}
           </p>
         </div>
       </div>
@@ -171,17 +171,17 @@
       <v-card dark>
         <div class="pay">
           <h3 class="pay-title">
-            Payment of 「{{ info.name }}」
+            {{ $t('paymentOf') }} 「{{ info.name }}」
           </h3>
           <div class="pay-icon">
             <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
           </div>
           <p class="pay-intro">
-            Succeed to unlock the music！
+            {{ $t('succeedToUnlockMusic') }}
           </p>
 
           <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
-            BACK TO MUSIC PLAYER
+            {{ $t('backToMusicPlayer') }}
             <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
           </v-btn>
         </div>
