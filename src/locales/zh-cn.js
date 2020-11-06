@@ -7,7 +7,6 @@ export default {
   developedApp: '计划而开发',
   // about
   why: '为什么选择',
-  about: '关于',
   arcLightLocalized: 'ArcLight (弧光)',
   about1P1Part1: 'Project ArcLight（弧光计划）最初是以 Arweave 平台的存储系统来设计和构建的，在',
   about1P1Part2: ' 公布之后，我们把目光放在了打造一个真正开放和自由的音乐分发平台来完成这个 GitCoin Bounty 所需的要求。',
@@ -31,6 +30,7 @@ export default {
   about3P2Part1: '与 DRM 系统不同的是，我们只是在您上传到浏览器内部后对您的音频进行简单的加密，经过我们自己的加密后，Arweave API 会再次加密后再上传到 Permaweb（永存网）。您的听众只有在向您付费后才能获得源文件，否则只能获得少量的音乐试听或完整的试用版（如果您想关闭试听功能）。客户决定为你的作品付费后，会使用官方代币 AR 支付到你的账户。',
   // header
   music: '音乐',
+  about: '关于',
   login: '登录',
   uploadYourKey: '提供你的私钥',
   insertYourKey: '选择你的私钥文件',
