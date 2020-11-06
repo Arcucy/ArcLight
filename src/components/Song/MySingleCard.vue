@@ -30,9 +30,9 @@
         </div>
         <div v-else class="music-info">
           <p class="music-info-title">
-            {{ title || 'Loading...' }}
+            {{ title || $t('loading') }}
             <span v-if="!loading && audioType === 'album-info' && isSingle">
-              From: {{ card.title }}
+              {{ $t('from') }}: {{ card.title }}
             </span>
           </p>
           <p
@@ -42,7 +42,7 @@
             by {{ card.authorUsername || 'Anonymity' }}
           </p>
           <p v-else class="music-info-artist">
-            {{ card.authorUsername || 'Artist loading...' }}
+            {{ card.authorUsername || $t('artistLoading') }}
           </p>
         </div>
         <router-link v-if="canDownload" to="">
@@ -172,7 +172,7 @@ export default {
         }
       } catch (e) {
         if (e.type === 'TX_PENDING') {
-          this.errorMessage = 'Transaction pending, please wait'
+          this.errorMessage = this.$t('txPendingPleaseWait')
           // 如果交易待确认会自动重试
           this.timerIndex = setTimeout(() => { this.get() }, 2000)
           return false

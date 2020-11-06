@@ -41,6 +41,10 @@ export default {
     this.card = this.loadingCard
   },
   mounted () {
+    this.$nextTick(() => {
+      this.loadingCard.title = this.$t('loading')
+      this.loadingCard.authorUsername = this.$t('artistLoading')
+    })
     this.getInfo()
   },
   methods: {

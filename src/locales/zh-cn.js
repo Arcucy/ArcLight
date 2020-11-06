@@ -93,6 +93,8 @@ export default {
   avatar: '头像',
   username: '用户名',
   save: '保存',
+  free: '免费',
+  pay: '支付',
   // songs
   newSingleSelling: '最新发布单曲',
   allSelling: '所有作品',
@@ -103,6 +105,7 @@ export default {
   titleLoading: '名称加载中...',
   awaitData: '等待数据...',
   musicLoading: '音乐加载中...',
+  genreFilter: '音乐流派过滤',
   // profile
   similarAuthors: '相似作曲家',
   editProfile: '编辑个人主页',
@@ -132,6 +135,9 @@ export default {
   websiteUrlInvalid: '无效的网站 URL 地址',
   introductionHasLimit: '个人简介不得超出 1000 个字符',
   neteaseCloudMusicIdInvalid: '无效的网易云音乐用户 ID',
+  // library
+  from: '来自',
+  txPendingPleaseWait: '交易正在等待被确认，请等待...',
   // upload
   chooseType: '选择你想要上传的类型',
   backToSelection: '返回选择菜单',

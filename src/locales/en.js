@@ -88,6 +88,9 @@ export default {
   done: 'Done',
   avatar: 'Avatar',
   username: 'Username',
+  save: 'Save',
+  free: 'Free',
+  pay: 'pay',
   // songs
   newSingleSelling: 'New Singles Sellings',
   allSelling: 'All Sellings',
@@ -98,6 +101,7 @@ export default {
   titleLoading: 'Title loading...',
   awaitData: 'Await Data...',
   musicLoading: 'Music loading...',
+  genreFilter: 'Genre Filter',
   // profile
   similarAuthors: 'Similar authors',
   editProfile: 'EDIT PROFILE',
@@ -127,6 +131,9 @@ export default {
   websiteUrlInvalid: 'Invalid Website URL',
   introductionHasLimit: 'Introduction Length has 1000 characters limit',
   neteaseCloudMusicIdInvalid: 'Invalid Netease CloudMusic User ID',
+  // library
+  from: 'From',
+  txPendingPleaseWait: 'Transaction pending, please wait',
   // upload
   chooseType: 'Choose the Type to Upload',
   backToSelection: 'Back to Selection',
