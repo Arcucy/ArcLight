@@ -31,7 +31,6 @@ export default {
   about3P2Part1: '与 DRM 系统不同的是，我们只是在您上传到浏览器内部后对您的音频进行简单的加密，经过我们自己的加密后，Arweave API 会再次加密后再上传到 Permaweb（永存网）。您的听众只有在向您付费后才能获得源文件，否则只能获得少量的音乐试听或完整的试用版（如果您想关闭试听功能）。客户决定为你的作品付费后，会使用官方代币 AR 支付到你的账户。',
   // header
   music: '音乐',
-  about: '关于',
   login: '登录',
   uploadYourKey: '提供你的私钥',
   insertYourKey: '选择你的私钥文件',
