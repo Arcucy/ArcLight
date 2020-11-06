@@ -52,7 +52,13 @@ export default {
       })
     },
     getBrowserLangCode () {
-      return navigator.language || navigator.userLanguage
+      const lang = navigator.languages
+      for (let i = 0; i < lang.length; i++) {
+        let item = lang[i]
+        if (item === 'zh-CN') return item
+        if (item === 'zh-TW') return item
+        if (item === 'en-US') return item
+      }
     },
     getLangCode () {
       const localStore = window.localStorage || localStorage
@@ -70,12 +76,17 @@ export default {
       lang = this.getLangCode()
     }
     switch (lang) {
-      case 'zh':
+      case 'zh-CN':
         this.$i18n.locale = 'zhCN'
-        this.$moment.locale('zh-CN')
+        this.$moment.locale('zh-cn')
         break
-      case 'en':
+      case 'zh-TW':
+        this.$i18n.locale = 'zhCN'
+        this.$moment.locale('zh-tw')
+        break
+      case 'en-US':
         this.$i18n.locale = 'en'
+        this.$moment.locale('en-us')
         break
     }
   }
