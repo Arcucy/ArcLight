@@ -171,6 +171,7 @@ export default {
   loginIsRequiredToUpload: '必须登录才能上传作品',
   usernameIsRequiredToUpload: '必须设置用户名后才能上传作品',
   selectDemoDuration: '选择试听长度',
+  searchGenre: '搜索音乐流派',
   genreIsRequiredToUpload: '请为你的作品选择你的音乐流派 (None 为留空)',
   demoDurationIsRequiredToUpload: '请选择试听长度',
   priceMustBeNumber: '价格必须设置为数字',
@@ -203,6 +204,7 @@ export default {
   podcastTitleIsRequiredToUpload: '需要填写播客标题才能发布播客',
   podcastProgramTitleIsRequiredToUpload: '需要填写节目名称才能发布播客',
   podcastDespIsRequiredToUpload: '需要填写简介才能发布播客',
+  searchCategory: '搜索类别',
   podcastCategoryIsRequiredToUpload: '请为你的播客节目选择类别 (None 为留空)',
   podcastSourceFileIsRequiredToUpload: '需要选中上传文件才能发布播客',
   // sound Effect

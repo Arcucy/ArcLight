@@ -167,6 +167,7 @@ export default {
   loginIsRequiredToUpload: 'Login is required to upload',
   usernameIsRequiredToUpload: 'You must have a username in order to upload',
   selectDemoDuration: 'Select Demo duration',
+  searchGenre: 'Search Genre',
   genreIsRequiredToUpload: 'Please select the genre of your music (None for blank)',
   demoDurationIsRequiredToUpload: 'The demo duration is required',
   priceMustBeNumber: 'The price must be numbers',
@@ -199,6 +200,7 @@ export default {
   podcastTitleIsRequiredToUpload: 'A title for your Podcast release is required',
   podcastProgramTitleIsRequiredToUpload: 'A title for a program (episode) release is required',
   podcastDespIsRequiredToUpload: 'A description for a podcast release is required',
+  searchCategory: 'Search Category',
   podcastCategoryIsRequiredToUpload: 'Please select the category of your program (None for blank)',
   podcastSourceFileIsRequiredToUpload: 'A source music file for a podcast release is required',
   // sound Effect
