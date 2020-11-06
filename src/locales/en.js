@@ -14,7 +14,7 @@ export default {
   sound: 'Sound',
   weSupport: 'we support',
   singleMusic: 'single music',
-  albums: '专辑发布',
+  albums: 'albums',
   podcasts: 'podcasts',
   andWithComma: ', and ',
   soundEffects: 'sound effects',
@@ -27,6 +27,12 @@ export default {
   toStoreYourArtworks: 'to store your artworks',
   about3P1Part1: 'A great chance we can introduce our technic to have your artwork safe.',
   about3P2Part1: 'Different from the DRM system, we simply encrypt your audio after you upload it into the broswer, after the encryption of our own, Arweave API will encrypt it again before uploading it to the Permaweb. Your listener can only get the source file after they pay to you, otherwise, they can only get a small amount of music demo or the full trial (if you wish to disable the demo function). After the customers decided to pay for your work, they will use the official token AR pay to your account.',
+  ensure: 'Ensure',
+  yourWithSpace: ' your ',
+  rewards: 'rewards',
+  about4P1Part1: 'When customers paying the AR to your account, we will generate a receipt transaction to the customer side, including the UNIX timestamp information, the price paid to you, the target music or album custom bought, and your address. All the information will be saved into the receipt transaction.',
+  about4P2Part1: 'We will look back for the transactions for users, in order to prevent unauthorized official sign to the transactions, check the timestamp is correct to the payment, check the price and the price you required is right, after all the process is done and validated, the music source file will be able to deliver to the customers. And you will receive the transaction as well.',
+  thankYouForChoosingArcLight: 'Thank you for choosing ArcLight!',
   // header
   music: 'Music',
   about: 'About',
@@ -45,7 +51,7 @@ export default {
   // file message
   fileReadSuccess: 'File Read Successful',
   fileReadFail: 'File Read Failed, Try again',
-  imageReadSuccess: '图片读取成功',
+  imageReadSuccess: 'Image Read Successful',
   // page title
   mainTitle: 'Music Distribution Platform',
   uploadNewSingle: 'Upload a new Single',
@@ -62,6 +68,7 @@ export default {
   cacheLogin: 'Login',
   cacheUpload: 'Upload',
   upload: 'Upload',
+  download: 'Download',
   close: 'Close',
   search: 'Search',
   noData: 'No Data',
@@ -85,6 +92,10 @@ export default {
   newAlbumSelling: 'New Albums Sellings',
   newPodcastSelling: 'New Podcast Sellings',
   newSoundEffectSelling: 'New Sound Sellings',
+  // music
+  titleLoading: 'Title loading...',
+  awaitData: 'Await Data...',
+  musicLoading: 'Music loading...',
   // profile
   similarAuthors: 'Similar authors',
   editProfile: 'EDIT PROFILE',

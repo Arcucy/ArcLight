@@ -28,6 +28,14 @@ export default {
   toStoreYourArtworks: '来储存和共享你的作品',
   about3P1Part1: '一次不错的机会来介绍我们的技术是如何来确保您的艺术品安全的',
   about3P2Part1: '与 DRM 系统不同的是，我们只是在您上传到浏览器内部后对您的音频进行简单的加密，经过我们自己的加密后，Arweave API 会再次加密后再上传到 Permaweb（永存网）。您的听众只有在向您付费后才能获得源文件，否则只能获得少量的音乐试听或完整的试用版（如果您想关闭试听功能）。客户决定为你的作品付费后，会使用官方代币 AR 支付到你的账户。',
+  ensure: '确保',
+  yourWithSpace: ' 你的 ',
+  rewards: '收益',
+  validation: '验证',
+  ofThePayments: '所有支付交易',
+  about4P1Part1: '当客户向您的帐户支付 AR 时，我们将向客户方生成收据交易，包括 UNIX 时间戳信息，支付给您的价格，购买的目标音乐或专辑以及您的地址。所有信息将被保存到收据交易中。',
+  about4P2Part1: '我们会为用户找回交易，以防止未经授权的官方签名进行交易，检查时间戳是否正确，检查价格和所需价格是否正确，在所有过程都经过验证之后，音乐源文件将能够交付给客户。您也会收到交易所支付的帐额。',
+  thankYouForChoosingArcLight: '感谢你选择 ArcLight！',
   // header
   music: '音乐',
   about: '关于',
@@ -63,6 +71,7 @@ export default {
   cacheLogin: '登录',
   cacheUpload: '本地保存',
   upload: '上传',
+  download: '下载',
   close: '关闭',
   search: '搜索',
   noData: '无数据',
@@ -87,6 +96,10 @@ export default {
   newAlbumSelling: '最新发布专辑',
   newPodcastSelling: '最新发布播客',
   newSoundEffectSelling: '最新发布音效',
+  // music
+  titleLoading: '名称加载中...',
+  awaitData: '等待数据...',
+  musicLoading: '音乐加载中...',
   // profile
   similarAuthors: '相似作曲家',
   editProfile: '编辑个人主页',

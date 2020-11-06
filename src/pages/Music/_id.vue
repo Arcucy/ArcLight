@@ -89,7 +89,7 @@
             color="#E56D9B"
           />
           <p>
-            Music loading...
+            {{ $t('musicLoading') }}
           </p>
         </div>
       </div>
@@ -105,7 +105,7 @@
             color="#E56D9B"
             :height="44"
           >
-            Download
+            {{ $t('download') }}
           </v-btn>
         </a>
       </div>
@@ -269,6 +269,11 @@ export default {
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
+    this.$nextTick(() => {
+      this.info.name = this.$t('titleLoading')
+      this.info.genre = this.$t('awaitData')
+      this.artist.username = this.$t('artistLoading')
+    })
   },
   watch: {
     $route (val) {
