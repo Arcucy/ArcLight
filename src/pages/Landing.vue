@@ -8,22 +8,27 @@
         <span>Permaweb</span>
       </div>
       <div class="btn-group">
-        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
-        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">Why ArcLight</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">{{ $t('startBrowsing') }}</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">{{ $t('whyArcLight') }}</v-btn>
       </div>
     </div>
+    <Version class="version-container" />
   </spaceLayout>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
+import Version from '@/components/Version.vue'
 
 export default {
   components: {
-    spaceLayout
+    spaceLayout,
+    Version
   },
   mounted () {
-    document.title = 'ArcLight - Music Distribution Platform'
+    this.$nextTick(() => {
+      document.title = 'ArcLight - ' + this.$t('mainTitle')
+    })
   }
 }
 </script>
@@ -37,7 +42,7 @@ export default {
 #title {
   position: absolute;
   font-weight: 300;
-  top: 63%;
+  top: 60%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -56,7 +61,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 91%;
+  top: 82%;
   left: 0;
   right: 0;
   font-size: 25px;
@@ -80,7 +85,7 @@ export default {
 
 .btn-group {
   position: absolute;
-  top: 100%;
+  top: 88%;
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -100,6 +105,12 @@ export default {
   &:hover {
     transform: scale(1.15);
   }
+}
+
+.version-container {
+  position: relative;
+  bottom: -79vh;
+  margin: 0 auto 0;
 }
 
 @keyframes fadeInOpacity {

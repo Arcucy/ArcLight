@@ -15,7 +15,7 @@
     </v-img>
     <!-- Default avatar -->
     <div v-else class="avatar-icon">
-    <v-icon :size="Math.round(size * 0.7)" dark>mdi-account-circle</v-icon>
+      <v-icon :size="Math.round(size * 0.7)" dark>mdi-account-circle</v-icon>
     </div>
   </v-avatar>
 </template>
@@ -46,8 +46,8 @@ export default {
   padding: 2px;
   &-img {
     border: 2px solid white;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     background: #252525;
     &-loading {
       display: flex;

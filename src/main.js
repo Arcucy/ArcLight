@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from '@/store/index.js'
 import Aplayer from 'vue-aplayer'
+import i18n from '@/locales'
 
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
@@ -30,6 +31,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   vuetify: new Vuetify(),
   components: { App, Aplayer },
   template: '<App/>'

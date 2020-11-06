@@ -1,23 +1,23 @@
 <template>
   <spaceLayout>
     <div class="upload-selection-container">
-      <div class="selection-title">Choose the type to upload</div>
+      <div class="selection-title">{{ $t('chooseType') }}</div>
       <div class="selection-container">
         <router-link :to="{ name: 'uploadSingle' }" id="single" class="upload-cover">
           <v-img :src="cover.single" height="128" width="128" style="margin: 0 10px;" class="selection-cover"/>
-          <div class="selection-text">Single</div>
+          <div class="selection-text">{{ $t('single') }}</div>
         </router-link>
         <router-link :to="{ name: 'uploadAlbum' }" id="album" class="upload-cover">
           <v-img :src="cover.album" height="128" width="128" style="margin: 0 10px;" class="selection-cover" />
-          <div class="selection-text">Album</div>
+          <div class="selection-text">{{ $t('album') }}</div>
         </router-link>
         <router-link :to="{ name: 'uploadPodcast' }" id="podcast" class="upload-cover">
           <v-img :src="cover.podcast" height="128" width="128" style="margin: 0 10px;" class="selection-cover" />
-          <div class="selection-text">Podcast</div>
+          <div class="selection-text">{{ $t('podcast') }}</div>
         </router-link>
         <router-link :to="{ name: 'uploadSoundEffect' }" id="soundEffect" class="upload-cover">
           <v-img :src="cover.soundeffect" height="128" width="128" style="margin: 0 10px;" class="selection-cover" />
-          <div class="selection-text">Sound Effect</div>
+          <div class="selection-text">{{ $t('soundEffect') }}</div>
         </router-link>
       </div>
     </div>
@@ -43,7 +43,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
+
+import { getCookie } from '@/util/cookie'
+import API from '@/api/api'
 
 import spaceLayout from '@/components/Layout/Space.vue'
 
@@ -51,8 +54,6 @@ import singleImg from '@/assets/image/single.png'
 import albumImg from '@/assets/image/album.png'
 import podcastImg from '@/assets/image/podcast.png'
 import soundEffectImg from '@/assets/image/soundeffect.png'
-
-import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -71,12 +72,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn'])
+    ...mapState(['isLoggedIn', 'wallet'])
   },
-  mounted () {
-    const c = getCookie('arclight_userkey')
-    setTimeout(() => {
-      if (!this.isLoggedIn || c) {
+  watch: {
+    wallet (val) {
+      if (!val) {
         this.failMessage = 'Login is required to upload'
         this.failSnackbar = true
 
@@ -84,9 +84,40 @@ export default {
           this.$router.push({ name: 'Landing' })
         }, 3000)
       }
-    }, 3000)
+    },
+    isLoggedIn (val) {
+      setTimeout(() => {
+        if (!val) this.$router.push({ name: 'Landing' })
+      }, 5000)
+    }
+  },
+  methods: {
+    ...mapActions(['setKey'])
+  },
+  mounted () {
+    const c = getCookie('arclight_userkey')
+    if (!c) {
+      setTimeout(() => {
+        if (!this.isLoggedIn) {
+          this.failMessage = 'Login is required to upload'
+          this.failSnackbar = true
 
-    document.title = 'Choose Upload Type - ArcLight'
+          setTimeout(() => {
+            this.$router.push({ name: 'Landing' })
+          }, 3000)
+        }
+      }, 3000)
+    }
+
+    try {
+      API.arweave.getDataForPost(this.wallet).then(res => {
+        console.log(JSON.parse(res))
+      }).catch(err => console.log('出问题了', err))
+    } catch (e) {
+      console.error('有问题', e)
+    }
+
+    document.title = this.$t('chooseType') + ' - ArcLight'
 
     const single = document.getElementById('single')
     const album = document.getElementById('album')
@@ -199,5 +230,22 @@ export default {
   100% {
     transform: scale(1.2);
   }
+}
+@media screen and (max-width: 768px) {
+  .upload-selection-container {
+    margin-top: 20px;
+  }
+  .selection-container {
+    padding: 0 10px 0;
+    flex-direction: column;
+    align-items: center;
+  }
+  .upload-cover {
+    margin-bottom: 10px;
+  }
+}
+@media screen and (max-width: 640px) {
+}
+@media screen and (max-width: 480px) {
 }
 </style>

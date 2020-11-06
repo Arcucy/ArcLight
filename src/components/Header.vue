@@ -8,19 +8,61 @@
         ArcLight
       </router-link>
       <router-link :to="{ name: 'Songs' }" class="link text-link">
-        Music
+        {{ $t('music') }}
       </router-link>
       <router-link :to="{ name: 'About' }" class="link text-link">
-        About
+        {{ $t('about') }}
       </router-link>
     </div>
+
+    <v-menu offset-y dark class="localization-menu">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="mx-2 mobile-nav mobile-localization"
+          x-small
+          fab
+          dark
+          color="#E56D9B"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon dark>
+            mdi-earth
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="mx-2 localization"
+          small
+          fab
+          dark
+          color="#E56D9B"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon dark>
+            mdi-earth
+          </v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in localizationItems"
+          :key="index"
+          @click="setLang(item)"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
     <div class="mobile-nav mobile-search-bar">
-      <v-btn icon color="white">
+      <v-btn icon color="white" @click="mobileDialog = true">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </div>
+
     <Search class="search-bar"/>
-    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">Login</v-btn>
+    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}</v-btn>
     <v-btn v-if="isLoggedIn" class="mobile-nav mobile-upload" fab dark x-small color="#E56D9B" @click="uploadMusic">
       <v-icon dark>mdi-upload</v-icon>
     </v-btn>
@@ -36,7 +78,7 @@
       <v-avatar :size="24">
         <v-icon :size="24" light style="color: #E56D9B;">mdi-upload</v-icon>
       </v-avatar>
-      Upload Music
+      {{ $t('uploadMusic') }}
     </v-btn>
 
     <v-menu v-if="isLoggedIn" offset-y dark class="user-menu">
@@ -64,16 +106,15 @@
           v-bind="attrs"
           v-on="on"
         >
-          <v-avatar :size="24">
-            <v-icon :size="24" v-if="!userAvatar" dark style="margin-right: 0.3rem;">mdi-account-circle</v-icon>
+          <v-avatar size="24" style="margin-right: 0.3rem;">
+            <v-icon :size="24" v-if="!userAvatar" dark>mdi-account-circle</v-icon>
             <img
               v-if="userAvatar"
               :src="userAvatar"
               :alt="username"
-              style="margin-right: 0.3rem;"
             >
           </v-avatar>
-          {{ username }}
+          <p class="username">{{ username }}</p>
         </v-btn>
       </template>
       <v-list>
@@ -104,22 +145,22 @@
 
     <v-dialog
       v-model="show"
-      max-width="290"
+      max-width="340"
     >
-      <v-card style="width: 50vw">
-        <v-card-title class="headline">Upload your key</v-card-title>
+      <v-card>
+        <v-card-title class="headline">{{ $t('uploadYourKey') }}</v-card-title>
         <v-file-input
           v-model="file"
           accept="application/json"
-          label="Upload"
+          :label="$t('cacheUpload')"
           style="width: 90%; margin-left: 10px;"
-          placeholder="Insert your wallet key"
+          :placeholder="$t('insertYourKey')"
         >
         </v-file-input>
         <v-checkbox
           color="#E56D9B"
           v-model="writeCookie"
-          label="Save Key for this Session for 7 days"
+          :label="$t('saveYourKeyInCookie')"
           style="padding:0 20px;"
         >
         </v-checkbox>
@@ -131,15 +172,28 @@
             @click="submit"
             class="upload-btn"
           >
-            Upload
+            {{ $t('cacheLogin') }}
           </v-btn>
           <v-btn
             text
             @click="show = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="mobileDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+      <v-card dark>
+        <v-toolbar dark color="#E56D9B">
+          <v-btn icon dark @click="mobileDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title style="margin-right: 10px;">{{ $t('search') }}</v-toolbar-title>
+        </v-toolbar>
+        <v-list three-line subheader>
+          <Search @should-close="closeMobileDialog" class="mobile-search" />
+        </v-list>
       </v-card>
     </v-dialog>
     <v-snackbar
@@ -148,7 +202,7 @@
       timeout="3000"
       top="top"
     >
-      File Read Successful
+      {{ $t('fileReadSuccess') }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -157,7 +211,7 @@
           v-bind="attrs"
           @click="snackbar = false"
         >
-          Close
+          {{ $t('close') }}
         </v-btn>
       </template>
     </v-snackbar>
@@ -167,7 +221,7 @@
       timeout="3000"
       top="top"
     >
-      File Read Failed, Try again
+      {{ failMessage }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -176,7 +230,7 @@
           v-bind="attrs"
           @click="snackbar = false"
         >
-          Close
+          {{ $t('close') }}
         </v-btn>
       </template>
     </v-snackbar>
@@ -210,27 +264,65 @@ export default {
       needUpload: false,
       snackbar: false,
       failSnackbar: false,
+      failMessage: '',
       menuItems: [
-        { title: 'My Profile', path: '/user/' },
-        { title: 'My Library', path: '/library' },
-        { title: 'Sign Out', type: 'danger' }
+        { title: this.$t('myProfile'), path: '/user/' },
+        { title: this.$t('myLibrary'), path: '/library' },
+        { title: this.$t('signOut'), type: 'danger' }
       ],
+      localizationItems: [
+        'English',
+        '中文 (简体)',
+        '中文 (繁体)'
+      ],
+      lang: 'English',
       frosted: false,
+      mobileDialog: false,
       showPosition: 1
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet'])
+    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
   },
   watch: {
     wallet (val) {
       this.menuItems[0].path = '/user/' + val
+    },
+    userNoBalanceFailure (val) {
+      if (val) {
+        this.loginBtnLoading = false
+        this.failSnackbar = true
+        this.failMessage = this.$t('accountHasNoBalance')
+      }
+    },
+    userAccountFailure (val) {
+      if (val) {
+        this.failSnackbar = true
+        this.failMessage = this.$t('accountHasErroredTx')
+      }
+    },
+    lang (val) {
+      this.$i18n.locale = val
+      switch (val) {
+        case 'zhCN':
+          this.$moment.locale('zh-cn')
+          break
+        case 'zhTW':
+          this.$moment.locale('zh-tw')
+          break
+        case 'en':
+          this.$moment.locale('en-US')
+          break
+      }
     }
   },
   mounted () {
     this.$nextTick(() => {
       this.scrollShow()
       window.addEventListener('scroll', this.scrollShow)
+      this.menuItems[0].title = this.$t('myProfile')
+      this.menuItems[1].title = this.$t('myLibrary')
+      this.menuItems[2].title = this.$t('signOut')
     })
 
     this.loginBtnLoading = true
@@ -278,10 +370,11 @@ export default {
           this.show = false
           if (this.writeCookie) {
             clearCookie('arclight_userkey')
-            setCookie('arclight_userkey', this.fileRaw)
+            setCookie('arclight_userkey', this.fileRaw, 7)
           }
         } catch (err) {
           this.failSnackbar = true
+          this.failMessage = this.$t('fileReadFail')
         }
       }
       this.menuItems[0].path = '/user/' + this.wallet
@@ -295,8 +388,28 @@ export default {
         this.$router.push({ path: item.path })
       }
     },
+    setLang (item) {
+      const localStore = window.localStorage || localStorage
+      switch (item) {
+        case '中文 (简体)':
+          localStore.setItem('locale_lang', 'zhCN')
+          this.lang = 'zhCN'
+          break
+        case '中文 (繁体)':
+          localStore.setItem('locale_lang', 'zhTW')
+          this.lang = 'zhTW'
+          break
+        case 'English':
+          localStore.setItem('locale_lang', 'en')
+          this.lang = 'en'
+          break
+      }
+    },
     uploadMusic () {
       this.$router.push({ name: 'Upload' })
+    },
+    closeMobileDialog (status) {
+      this.mobileDialog = status
     }
   }
 }
@@ -319,23 +432,12 @@ export default {
   z-index: 10;
   overflow: hidden;
   transition: all 0.3s;
+  backdrop-filter: blur(0px);
   &.frosted {
     padding: 5px 0;
     background: #adadad4d;
     box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
-    &::before {
-      backdrop-filter: blur(20px);
-    }
-  }
-  &::before {
-    transition: all 0.3s;
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 0; right: 0;
-    backdrop-filter: blur(0px);
-    z-index: -1;
-    margin: -30px;
+    backdrop-filter: blur(20px);
   }
 }
 
@@ -351,7 +453,7 @@ export default {
   font-size: 1.2rem;
   color: white;
   img {
-    height: 3rem;
+    height: 2.2rem;
   }
 }
 
@@ -379,6 +481,10 @@ export default {
   width: 50%;
 }
 
+.mobile-search {
+  margin-top: 16px;
+}
+
 .sign {
   margin-left: 1rem;
   margin-right: 2rem;
@@ -392,6 +498,13 @@ export default {
   margin-right: 2rem;
   /deep/ .v-btn__content {
     color: white;
+    max-width: 200px;
+    .username {
+      margin: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 }
 
@@ -470,6 +583,13 @@ export default {
     display: block;
     margin-right: 10px;
   }
+
+  .localization {
+    display: none;
+  }
+  .mobile-localization {
+    display: block;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -500,7 +620,9 @@ export default {
 }
 
 @media screen and (max-width: 640px) {
-
+  .link-container {
+    margin-left: 0.5rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -520,5 +642,13 @@ export default {
 <style lang="less">
 /deep/ .theme--light .v-list {
   background-color: #333;
+}
+
+@media screen and (max-width: 1200px) {
+  .v-application {
+    .v-menu__content {
+      max-height: 80vh !important;
+    }
+  }
 }
 </style>

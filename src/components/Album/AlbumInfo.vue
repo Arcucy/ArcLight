@@ -3,6 +3,7 @@
     <!-- Cover -->
     <div class="albuminfo-cover">
       <v-img
+        v-if="imgShouldLoad"
         class="albuminfo-cover-img"
         :src="album.cover"
         alt="cover"
@@ -21,16 +22,31 @@
     <!-- Info -->
     <div class="albuminfo-right">
       <h3 class="albuminfo-right-title">
-        <span class="albuminfo-right-genre">
-          {{ album.genre }}
-        </span>
-        {{ album.name || 'Loading...' }}
+        <v-tooltip top :disabled="!toGenre.name">
+          <template v-slot:activator="{ on, attrs }">
+            <span v-bind="attrs" v-on="on">
+              <router-link
+                class="albuminfo-right-genre"
+                :class="!toGenre.name && 'no-click'"
+                :to="toGenre"
+              >
+                {{ album.genre }}
+              </router-link>
+            </span>
+          </template>
+          <span>View similar artwork</span>
+        </v-tooltip>
+        {{ album.name || $t('loading') }}
       </h3>
+      <div class="mobile mobile-albuminfo-right">
+        <span class="genre">{{ album.genre }}</span>
+        <span class="title">{{ album.name  }}</span>
+      </div>
       <router-link class="albuminfo-right-artist" :to="{ name: 'User', params: { id: album.authorAddress } }">
         by {{ album.artist }}
       </router-link>
       <p class="albuminfo-right-time">
-        Time: {{ time }}
+        {{ $t('time') }}: {{ time }}
       </p>
       <p class="albuminfo-right-desp" v-html="album.desp" />
     </div>
@@ -50,16 +66,36 @@ export default {
       required: true
     }
   },
-
+  data () {
+    return {
+      imgShouldLoad: true
+    }
+  },
   computed: {
     time () {
       return this.album.unixTime ? this.$moment(this.album.unixTime).format('MMMDo HH:mm:ss') : '--:--:--'
+    },
+    toGenre () {
+      if (!this.album || !this.album.genre || this.album.genre === this.$t('awaitData')) return {}
+      return { name: 'SongsAlbums', query: { genre: this.album.genre } }
+    }
+  },
+  watch: {
+    album () {
+      this.imgShouldLoad = false
+      setTimeout(() => {
+        this.imgShouldLoad = true
+      })
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.mobile {
+  display: none;
+}
+
 .albuminfo {
   display: flex;
   margin-top: 20px;
@@ -116,6 +152,7 @@ export default {
     }
 
     &-title {
+      .word-limit();
       margin: 0 0 20px;
       font-size: 24px;
       font-weight: 500;
@@ -124,17 +161,27 @@ export default {
       text-align: left;
       display: flex;
       align-items: center;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      word-break: break-all;
     }
     &-genre {
-      .content();
-      .word-limit();
+      text-decoration: none;
       height: 30px;
+      margin-right: 8px;
+      padding: 8px 16px 8px;
       background-color: #FAE5ED;
-      border-radius: 2px;
-      display: inline-block;
-      color: #E56D9B;
-      padding: 5px 10px;
-      margin: 0 10px 0 0;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      display: inline-table;
+      color: #D85C8B;
+      white-space: nowrap;
+      &.no-click {
+        cursor: default;
+      }
     }
     &-artist {
       .content();
@@ -155,6 +202,36 @@ export default {
   }
 }
 @media screen and (max-width: 768px) {
+  .albuminfo-right-title {
+    display: none;
+  }
+  .mobile-albuminfo-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .genre {
+      margin-right: 8px;
+      padding: 5px 10px 5px;
+      background-color: #FAE5ED;
+      border-radius: 5px;
+      font-weight: 700;
+      color: #D85C8B;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .title {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      word-break: break-all;
+    }
+  }
+
   .albuminfo {
     flex-direction: column;
     &-right {

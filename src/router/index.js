@@ -5,11 +5,18 @@ import Landing from '@/pages/Landing.vue'
 import About from '@/pages/About.vue'
 import Music from '@/pages/Music/_id.vue'
 import Album from '@/pages/Album/_id.vue'
-import MusicMenu from '@/pages/Music.vue'
 import Songs from '@/pages/Songs/Index'
 import SongsSingles from '@/pages/Songs/Singles'
 import SongsAlbums from '@/pages/Songs/Albums'
+
 import User from '@/pages/User/_id'
+import UserIndex from '@/pages/User/index'
+import UserSingle from '@/pages/User/Single'
+import UserAlbum from '@/pages/User/Album'
+import UserSound from '@/pages/User/Sound'
+import UserPodcast from '@/pages/User/Podcast'
+
+import Edit from '@/pages/User/Edit.vue'
 import Library from '@/pages/Library'
 
 import Upload from '@/pages/Upload/Index.vue'
@@ -23,18 +30,12 @@ import UploadSoundEffect from '@/pages/Upload/SoundEffect.vue'
 import ReviewSoundEffect from '@/pages/Upload/ReviewSoundEffect.vue'
 import Sound from '@/pages/Sound/Index'
 import Podcast from '@/pages/Podcast/Index'
-import Test from '@/pages/Upload/Test.vue'
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'hash',
   routes: [
-    {
-      path: '/test',
-      name: 'Test',
-      component: Test
-    },
     {
       path: '/',
       name: 'Landing',
@@ -103,11 +104,6 @@ export default new Router({
       props: true
     },
     {
-      path: '/music',
-      name: 'MusicMenu',
-      component: MusicMenu
-    },
-    {
       path: '/songs',
       name: 'Songs',
       component: Songs
@@ -134,9 +130,44 @@ export default new Router({
     },
     {
       path: '/user/:id',
-      name: 'User',
       component: User,
-      props: true
+      children: [
+        {
+          path: '',
+          name: 'User',
+          component: UserIndex,
+          props: true
+        },
+        {
+          path: 'single',
+          name: 'UserSingle',
+          component: UserSingle,
+          props: true
+        },
+        {
+          path: 'album',
+          name: 'UserAlbum',
+          component: UserAlbum,
+          props: true
+        },
+        {
+          path: 'sound',
+          name: 'UserSound',
+          component: UserSound,
+          props: true
+        },
+        {
+          path: 'podcast',
+          name: 'UserPodcast',
+          component: UserPodcast,
+          props: true
+        }
+      ]
+    },
+    {
+      path: '/user/:id/edit',
+      name: 'Edit',
+      component: Edit
     },
     {
       path: '/library',

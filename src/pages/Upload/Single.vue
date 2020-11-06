@@ -5,11 +5,11 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Single Cover</div>
+          <div class="cover-title side-title">{{ $t('singleCover') }}</div>
           <img-upload
           :img-upload-done="imgUploadDone"
           :update-type="'single'"
@@ -22,7 +22,7 @@
             >
               <div class="edit">
                 <v-icon color="#FFF">mdi-camera</v-icon>
-                Single Cover
+                {{ $t('singleCover') }}
               </div>
               <img
                 id="avatar"
@@ -34,47 +34,48 @@
               <img v-else id="new-logo" src="../../assets/image/single.png" style="margin-top: 10px;"/>
             </div>
           </img-upload>
-          <div class="name-title side-title">Music Name</div>
+          <div class="name-title side-title">{{ $t('musicName') }}</div>
           <v-text-field
             v-model="singleTitle"
             label="Solo"
-            placeholder="Enter Your Music Title..."
+            :placeholder="$t('enterYourMusicTitle')"
             solo
+            dark
             color="#FFF"
             style="margin-top: 16px;"
+            counter
+            maxlength="100"
           ></v-text-field>
-          <div class="name-desp side-title">Description</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="singleDesp"
             solo
-            name="input-7-4"
-            label="Your Single Description..."
-          ></v-textarea>
-          <div class="name-desp side-title">Genre</div>
-          <genreSelect v-model="genre" style="margin-bottom: 16px;" />
-          <div class="name-desp side-title">Demo Duration</div>
-          <v-select
             dark
-            color="#333"
-            v-model="duration"
-            :items="durationSelection"
-            label="Select Demo duration"
-            solo
-          ></v-select>
-          <div class="name-desp side-title">Price</div>
+            name="input-7-4"
+            :label="$t('yourSingleDescription')"
+            counter
+            maxlength="1000"
+          ></v-textarea>
+          <div class="name-desp side-title">{{ $t('genre') }}</div>
+          <genreSelect v-model="genre" style="margin-bottom: 16px;" />
+          <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
             v-model="price"
             class="price"
             id="price"
             solo
-            label="Prepend"
+            dark
+            type="number"
+            :label="$t('price')"
+            maxlength="12"
             prepend-inner-icon="mdi-cash-multiple"
           ></v-text-field>
           <v-file-input
+            class="finput"
             v-model="file"
             color="#FFF"
             chips
-            placeholder="Select your file"
+            :placeholder="$t('selectYourFile')"
             prepend-icon="mdi-paperclip"
             outlined
             accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -100,7 +101,19 @@
               </span>
             </template>
           </v-file-input>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
+          <v-select
+            dark
+            :disabled="disableDuration"
+            color="#E56D9B"
+            v-model="duration"
+            :items="durationSelection"
+            :label="durationSelectStr"
+            :loading="disableDuration"
+
+            solo
+          ></v-select>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -109,7 +122,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -118,26 +131,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="singleSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Single Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="singleSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -157,7 +151,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -173,8 +167,6 @@ import spaceLayout from '@/components/Layout/Space.vue'
 import genreSelect from '@/components/GenreSelect.vue'
 
 import singleDefault from '@/assets/image/single.png'
-
-import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -202,62 +194,155 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      singleSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
-      durationSelection: ['10s', '30s', '60s', 'Off']
+      shouldLoad: true,
+      durationSelection: ['15s', '30s', '60s', 'Off', 'Allow Full'],
+      maxDuration: 0,
+      disableDuration: true,
+      durationSelectStr: 'Please Upload Your Artwork...'
     }
   },
   computed: {
-    ...mapState(['singleCoverFile', 'isLoggedIn', 'keyFileContent', 'singleLink'])
+    ...mapState(['wallet', 'singleCoverFile', 'singleCoverRaw', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType', 'singleInfo'])
+  },
+  watch: {
+    $router (val) {
+      alert('You sure you want to leave?')
+    },
+    wallet (val) {
+      if (!val) {
+        this.failMessage = this.$t('loginIsRequiredToUpload')
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
+    file (val, oldVal) {
+      if (val && val !== oldVal) {
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(val)
+        reader.onload = async (e) => {
+          const data = e.target.result
+          let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          let source
+
+          audioCtx.createBufferSource()
+          source = await audioCtx.decodeAudioData(data.slice())
+          let duration = source.duration
+          let index = 0
+          if (duration < 60 && duration >= 30) {
+            index = this.durationSelection.indexOf('60s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+            }
+          }
+          if (duration < 30 && duration >= 15) {
+            index = this.durationSelection.indexOf('30s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+            }
+          }
+          if (duration < 15) {
+            index = this.durationSelection.indexOf('30s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+            }
+          }
+          this.durationSelectStr = this.$t('selectDemoDuration')
+          this.disableDuration = false
+        }
+      }
+    }
   },
   methods: {
     ...mapActions(['uploadSingleCoverFile', 'reviewSingle']),
     submit () {
       this.submitBtnLoading = true
       if (this.singleCover === '') {
-        this.failMessage = 'A cover for a single release is required'
+        this.failMessage = this.$t('singleCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.singleTitle === '') {
-        this.failMessage = 'A title for a single release is required'
+        this.failMessage = this.$t('singleTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.singleDesp === '') {
-        this.failMessage = 'A description for a single release is required'
+        this.failMessage = this.$t('singleDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.genre) {
-        this.failMessage = 'Please select the genre of your music (None for blank)'
-        this.failSnackbar = true
-        this.submitBtnLoading = false
-      }
-
-      if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('genreIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
+      if (!this.duration) {
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      }
+
+      if (this.duration !== 'Off' && this.duration !== 'Allow Full') {
+        this.duration = (this.duration + '').replace('s', '')
+        this.duration = parseInt(this.duration)
+      } else if (this.duration === 'Allow Full') {
+        this.duration = -1
+      } else {
+        this.duration = 0
+      }
+
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      }
+
+      if (parseFloat(this.price) < 0) {
+        this.failMessage = this.$t('priceCantBeNegative')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      } else {
+        this.price = parseFloat((this.price + '').replace(/-/gm, ''))
+      }
+
+      if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.file) {
-        this.failMessage = 'A source music file for a single release is required'
+        this.failMessage = this.$t('singleSourceFileIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -287,11 +372,9 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
+        this.singleDesp = this.singleDesp.replace(/<.*>/gmu, '')
         this.singleDesp = this.singleDesp.replace(/\\n/g, '<br>')
-        this.singleDesp = this.singleDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
-        this.singleDesp = this.singleDesp.replace(/(<img src=.*(\/)?>)/, '')
-        this.singleDesp = this.singleDesp.replace(/<audio>.*<\/audio>/, '')
-        this.singleDesp = '<p>' + this.singleDesp + '</p>'
+        this.singleDesp = this.singleDesp
 
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
@@ -330,12 +413,67 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Upload a new Single - ArcLight'
+    this.$nextTick(() => {
+      this.durationSelectStr = this.$t('pleaseUploadYourArtwork')
+    })
 
-    const c = getCookie('arclight_userkey')
+    if (this.singleInfo) {
+      this.shouldLoad = false
+    }
+    if (this.$route.params.file) {
+      this.file = this.$route.params.file
+      let audioType = {
+        mp3: 'audio/mp3',
+        flac: 'audio/flac',
+        wav: 'audio/wav',
+        ogg: 'audio/ogg'
+      }
+
+      let aext = this.file.name.split('.').pop()
+      console.log('Content-Type:', audioType[aext])
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(this.file)
+      reader.onload = async (e) => {
+        this.music = e.target.result
+        this.musicContent = this.file
+      }
+    }
+
+    if (this.singleCoverRaw) {
+      this.singleCover = this.singleCoverRaw
+      this.fileRaw = this.singleCoverRaw
+    }
+
+    if (this.singleInfo) {
+      this.disableDuration = false
+      this.durationSelectStr = this.$t('selectDemoDuration')
+      this.singleTitle = this.singleInfo.title
+      this.singleDesp = this.singleInfo.desp
+      this.genre = this.singleInfo.genre
+      if (this.singleInfo.duration !== 0 && this.singleInfo.duration !== -1) {
+        this.duration = this.singleInfo.duration + 's'
+      } else if (this.singleInfo.duration === -1) {
+        this.duration = 'Allow Full'
+      } else {
+        this.duration = 'Off'
+      }
+      this.price = this.singleInfo.price
+    }
+
+    this.shouldLoad = true
+
+    if (this.userType === 'guest') {
+      this.failSnackbar = true
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
+    document.title = this.$t('uploadNewSingle') + ' - ArcLight'
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
-        this.failMessage = 'Login is required to upload'
+      if (!this.isLoggedIn) {
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -343,6 +481,13 @@ export default {
         }, 3000)
       }
     }, 3000)
+    window.onbeforeunload = function (e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = 'You sure you want to leave?'
+      }
+      return 'You sure you want to leave?'
+    }
   }
 }
 </script>
@@ -447,25 +592,33 @@ export default {
 }
 
 /deep/ .v-text-field__slot > input {
-  color: white;
+  color: white !important;
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: white;
+    color: white !important;
     opacity: 1; /* Firefox */
   }
 }
 
 /deep/ .v-text-field__slot > textarea {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field__slot > label {
-  color: white;
+  color: white !important;
 }
 
 .price {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;
@@ -476,8 +629,19 @@ export default {
   }
 }
 
+.finput {
+  /deep/ .v-input__control {
+    .v-input__slot {
+      fieldset {
+        color: rgba(254, 118, 164, 0.7) !important;
+        border: 3px solid !important;
+      }
+    }
+  }
+}
+
 /deep/ .v-icon--link {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-select__selection {
@@ -485,23 +649,23 @@ export default {
 }
 
 /deep/ .v-select__slot > label {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-input__icon > i {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field--is-booted {
   color: #E56D9B;
-  border-color: white;
+  border-color: white !important;
 }
 
 /deep/ .v-file-input__text.v-file-input__text--placeholder {
-  color: white;
+  color: white !important;
 }
 
-/deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+/deep/ .v-text-field--solo>.v-input__control>.v-input__slot {
   background-color: rgba(51,51,51,0.8);
 }
 </style>

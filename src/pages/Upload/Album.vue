@@ -5,11 +5,11 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Album Cover</div>
+          <div class="cover-title side-title">{{ $t('albumCover') }}</div>
           <img-upload
           :img-upload-done="imgUploadDone"
           :update-type="'album'"
@@ -22,7 +22,7 @@
             >
               <div class="edit">
                 <v-icon color="#FFF">mdi-camera</v-icon>
-                Album Cover
+                {{ $t('albumCover') }}
               </div>
               <img
                 id="avatar"
@@ -38,45 +38,46 @@
             <v-text-field
               v-model="albumTitle"
               label="Solo"
-              placeholder="Enter Your Album Title..."
+              :placeholder="$t('enterYourAlbumTitle')"
               solo
+              dark
               color="#FFF"
               style="margin-top: 16px;"
+              counter
+              maxlength="100"
             ></v-text-field>
-          <div class="name-desp side-title">Description</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="albumDesp"
             solo
-            name="input-7-4"
-            label="Your Album Description..."
-          ></v-textarea>
-          <div class="name-desp side-title">Genre</div>
-          <genreSelect v-model="genre" style="margin-bottom: 16px;" />
-          <div class="name-desp side-title">Demo Duration</div>
-          <v-select
             dark
-            v-model="duration"
-            :items="durationSelection"
-            label="Select Demo duration"
-            solo
-          ></v-select>
+            name="input-7-4"
+            :label="$t('yourAlbumDescritption')"
+            counter
+            maxlength="1000"
+          ></v-textarea>
+          <div class="name-desp side-title">{{ $t('genre') }}</div>
+          <genreSelect v-model="genre" style="margin-bottom: 16px;" />
           <div v-for="(file, index) in fileList" :key="index">
-            <div class="name-title side-title">#{{ index + 1 }} Music Name</div>
+            <div class="name-title side-title">#{{ index + 1 }} {{ $t('musicName') }}</div>
             <v-text-field
-              v-model="fileList[index].title"
+              v-model="file.title"
               label="Solo"
-              placeholder="Enter Your Music Title..."
+              :placeholder="$t('enterYourMusicTitle')"
               solo
+              dark
               color="#FFF"
               style="margin-top: 16px;"
+              counter
+              maxlength="100"
             ></v-text-field>
             <div class="finput-container">
               <v-file-input
                 class="finput"
-                v-model="fileList[index].music"
+                v-model="file.music"
                 color="#FFF"
                 chips
-                placeholder="Select your file"
+                :placeholder="$t('selectYourFile')"
                 prepend-icon="mdi-paperclip"
                 outlined
                 accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -106,27 +107,35 @@
                 <v-icon>mdi-minus</v-icon>
               </v-btn>
             </div>
-            <div class="name-desp side-title">#{{ index + 1 }} Music Price</div>
+            <div class="name-desp side-title">#{{ index + 1 }} {{ $t('price') }}</div>
             <v-text-field
-              v-model="fileList[index].price"
+              v-model="file.price"
               class="price"
               solo
-              label="Prepend"
+              dark
+              :label="$t('price')"
+              type="number"
               prepend-inner-icon="mdi-cash-multiple"
+              maxlength="12"
             ></v-text-field>
           </div>
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-          <div class="name-desp side-title">Album Price</div>
-          <v-text-field
-            v-model="price"
-            class="price"
+          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="checkBtnLoading" @click="verify">{{ $t('verify') }}</v-btn>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
+          <v-select
+            dark
+            :disabled="demoIsDisable"
+            color="#E56D9B"
+            v-model="duration"
+            :items="durationSelection"
+            :label="durationSelectStr"
+            :loading="mainDisableDuration"
             solo
-            label="Prepend"
-            prepend-inner-icon="mdi-cash-multiple"
-          ></v-text-field>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          ></v-select>
+          <div class="name-desp side-title">{{ $t('albumPriceWillAlwaysBe80Percent') }}</div>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :disabled="demoIsDisable" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -135,7 +144,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -144,26 +153,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="albumSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Album Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="albumSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -183,7 +173,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -193,14 +183,13 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import API from '@/api/api'
 
 import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
 import genreSelect from '@/components/GenreSelect.vue'
 
 import albumDefault from '@/assets/image/album.png'
-
-import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -211,7 +200,7 @@ export default {
   data () {
     return {
       file: null,
-      fileList: [{ music: null, title: '', price: 0, type: '' }, { music: null, title: '', price: 0, type: '' }],
+      fileList: [{ music: null, title: '', price: 0, type: '', disableDuration: true }, { music: null, title: '', price: 0, type: '', disableDuration: true }],
       genre: '',
       duration: '',
       price: 0,
@@ -229,64 +218,223 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      albumSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
-      durationSelection: ['10s', '30s', '60s', 'Off']
+      checkBtnLoading: false,
+      durationSelection: ['10s', '30s', '60s', 'Off', 'Allow Full'],
+      maxDuration: 0,
+      disableDuration: true,
+      demoIsDisable: true
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'isLoggedIn', 'keyFileContent', 'albumLink'])
+    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType', 'albumInfo']),
+    mainDisableDuration () {
+      return !this.fileList.every(item => !item.disableDuration)
+    },
+    durationSelectStr () {
+      return this.mainDisableDuration ? this.$t('pleaseUploadYourArtwork') : this.$t('selectDemoDuration')
+    }
+  },
+  watch: {
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
+    wallet (val) {
+      if (!val) {
+        this.failMessage = this.$t('loginIsRequiredToUpload')
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
+    fileList: {
+      handler (val) {
+        val.forEach(item => {
+          if (!item.music) {
+            item.disableDuration = true
+            this.demoIsDisable = true
+          }
+        })
+      },
+      deep: true
+    }
   },
   methods: {
     ...mapActions(['uploadAlbumCoverFile', 'reviewAlbum']),
+    async verify () {
+      this.fileList.forEach((item, i) => {
+        if (item.music) {
+          const reader = new FileReader()
+          reader.readAsArrayBuffer(item.music)
+          reader.onload = async (e) => {
+            const data = e.target.result
+            e = null
+            let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+            let source
+
+            audioCtx.createBufferSource()
+            source = await audioCtx.decodeAudioData(data.slice())
+            let duration = source.duration
+            audioCtx = null
+            source = null
+            let index = 0
+            if (duration < 60 && duration >= 30) {
+              index = this.durationSelection.indexOf('60s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              }
+            }
+            if (duration < 30 && duration >= 15) {
+              index = this.durationSelection.indexOf('30s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              }
+            }
+            if (duration < 15) {
+              index = this.durationSelection.indexOf('30s')
+              if (index > -1) {
+                this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+                this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+              }
+            }
+            item.disableDuration = false
+            if (i === (this.fileList.length - 1)) {
+              this.demoIsDisable = false
+            }
+          }
+        } else {
+          this.failSnackbar = true
+          this.failMessage = this.$t('albumPleaseUploadAtLeast') + this.fileList.length + this.$t('albumPleaseUploadAtLeastFile')
+          item.disableDuration = true
+        }
+      })
+      this.demoIsDisable = true
+    },
     async submit () {
       this.submitBtnLoading = true
 
       if (this.albumCover === '') {
-        this.failMessage = 'A cover for a album release is required'
+        this.failMessage = this.$t('albumCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.albumTitle === '') {
-        this.failMessage = 'A title for a album release is required'
+        this.failMessage = this.$t('albumTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.albumDesp === '') {
-        this.failMessage = 'A description for a album release is required'
+        this.failMessage = this.$t('albumDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.genre) {
-        this.failMessage = 'Please select the genre of your music (None for blank)'
-        this.failSnackbar = true
-        this.submitBtnLoading = false
-      }
-
-      if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('genreIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
+      if (!this.duration) {
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      }
+
+      if (this.duration !== 'Off' && this.duration !== 'Allow Full') {
+        this.duration = (this.duration + '').replace('s', '')
+        this.duration = parseInt(this.duration)
+      } else if (this.duration === 'Allow Full') {
+        this.duration = -1
+      } else {
+        this.duration = 0
+      }
+
+      let shouldReturn = false
+      let shouldHasPrice = false
+      for (let i = 0; i < this.fileList.length; i++) {
+        const item = this.fileList[i]
+        if (isNaN(parseFloat(item.price))) {
+          this.failMessage = this.$t('priceMustBeNumber')
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          shouldReturn = true
+        } else if (shouldHasPrice && parseFloat(item.price) === 0) {
+          this.failMessage = this.$t('albumSongShouldHavePriceOrFree')
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          shouldHasPrice = false
+          shouldReturn = true
+          break
+        } else if (parseFloat(item.price) > 0) {
+          shouldHasPrice = true
+        }
+      }
+      if (shouldReturn) return
+
+      if (this.price === 0) {
+        for (let i = 0; i < this.fileList.length; i++) {
+          this.price = this.price + Number(API.arweave.getWinstonFromAr(this.fileList[i].price))
+        }
+        this.price = this.price * 0.8
+      }
+
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      }
+
+      this.price = API.arweave.getArFromWinston(this.price)
+
+      if (parseFloat(this.price) < 0) {
+        this.failMessage = this.$t('priceCantBeNegative')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      } else {
+        this.price = parseFloat((this.price + '').replace(/-/gm, ''))
+      }
+
+      if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       for (let i = 0; i < this.fileList.length; i++) {
-        if (!this.fileList[i]) {
-          this.failMessage = 'You must select sources of music file for two album release'
+        if (!this.fileList[i].music) {
+          this.failMessage = this.$t('albumSourceFileIsRequiredToUpload')
+          this.failSnackbar = true
+          this.submitBtnLoading = false
+          return
+        }
+      }
+
+      for (let i = 0; i < this.fileList.length; i++) {
+        if (!this.fileList[i].title) {
+          this.failMessage = this.$t('albumMusicTitleIsRequiredToUpload') + (i + 1)
           this.failSnackbar = true
           this.submitBtnLoading = false
           return
@@ -312,19 +460,15 @@ export default {
       let musicList = []
 
       for (let i = 0; i < this.fileList.length; i++) {
-        this.price = this.price + parseInt(this.fileList[i].price)
         let aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
         console.log('Content-Type:', audioType[aext])
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
       }
 
-      this.price = this.price * 0.8
+      this.albumDesp = this.albumDesp.replace(/<.*>/gmu, '')
       this.albumDesp = this.albumDesp.replace(/\\n/g, '<br>')
-      this.albumDesp = this.albumDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
-      this.albumDesp = this.albumDesp.replace(/(<img src=.*(\/)?>)/, '')
-      this.albumDesp = this.albumDesp.replace(/<audio>.*<\/audio>/, '')
-      this.albumDesp = '<p>' + this.albumDesp + '</p>'
+      this.albumDesp = this.albumDesp
 
       const dataObj = {
         img: { data: this.fileRaw, type: imgType[ext] },
@@ -340,7 +484,6 @@ export default {
       }
 
       this.reviewAlbum(dataObj)
-      console.log(this.music.length)
       this.$router.push({ name: 'ReviewAlbum', params: { data: { music: this.music, file: musicList } } })
     },
     getMusicList (obj, type) {
@@ -373,7 +516,7 @@ export default {
       this.snackbar = true
     },
     musicAdd () {
-      this.fileList.push({ music: null, title: '', price: 0, type: '' })
+      this.fileList.push({ music: null, title: '', price: 0, type: '', disableDuration: true })
     },
     musicLess (i) {
       if (this.fileList.length <= 2) return
@@ -381,12 +524,49 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Upload a new Album - ArcLight'
+    if (this.$route.params.file) {
+      this.$route.params.file.forEach((file, index) => {
+        if (!this.fileList[index]) this.fileList.push({ music: null, title: '', price: 0, type: '', disableDuration: true })
+        this.fileList[index].music = file
+      })
+      this.$route.params.music.forEach((item, index) => {
+        this.fileList[index].title = item.title
+        this.fileList[index].price = item.price
+      })
+    }
 
-    const c = getCookie('arclight_userkey')
+    if (this.albumCoverRaw) {
+      this.albumCover = this.albumCoverRaw
+      this.fileRaw = this.albumCoverRaw
+    }
+
+    if (this.albumInfo) {
+      console.log(this.albumInfo)
+      this.albumTitle = this.albumInfo.title
+      this.albumDesp = this.albumInfo.desp
+      this.genre = this.albumInfo.genre
+      if (this.albumInfo.duration !== 0 && this.albumInfo.duration !== -1) {
+        this.duration = this.albumInfo.duration + 's'
+      } else if (this.albumInfo.duration === -1) {
+        this.duration = 'Allow Full'
+      } else {
+        this.duration = 'Off'
+      }
+      this.price = Number(API.arweave.getArFromWinston(this.albumInfo.price))
+    }
+
+    if (this.userType === 'guest') {
+      this.failSnackbar = true
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
+    document.title = this.$t('uploadNewAlbum') + ' - ArcLight'
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
-        this.failMessage = 'Login is required to upload'
+      if (!this.isLoggedIn) {
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -394,6 +574,13 @@ export default {
         }, 3000)
       }
     }, 3000)
+    window.onbeforeunload = function (e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = 'You sure you want to leave?'
+      }
+      return 'You sure you want to leave?'
+    }
   }
 }
 </script>
@@ -437,7 +624,7 @@ export default {
   font-weight: 600;
   display: block;
   text-align: left;
-  color: white;
+  color: white !important;
   margin-bottom: 16px;
 }
 
@@ -498,25 +685,33 @@ export default {
 }
 
 /deep/ .v-text-field__slot > input {
-  color: white;
+  color: white !important;
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: white;
+    color: white !important;
     opacity: 1; /* Firefox */
   }
 }
 
 /deep/ .v-text-field__slot > textarea {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field__slot > label {
-  color: white;
+  color: white !important;
 }
 
 .price {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;
@@ -532,7 +727,7 @@ export default {
 }
 
 /deep/ .v-icon--link {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-select__selection {
@@ -540,29 +735,34 @@ export default {
 }
 
 /deep/ .v-select__slot > label {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-input__icon > i {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field--is-booted {
   color: #E56D9B;
-  border-color: white;
+  border-color: white !important;
 }
 
 /deep/ .v-file-input__text.v-file-input__text--placeholder {
-  color: white;
+  color: white !important;
 }
 
-/deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+/deep/ .v-text-field--solo>.v-input__control>.v-input__slot {
   background-color: rgba(51,51,51,0.8);
 }
 
 .finput {
-  /deep/ .v-input__control .v-input__slot fieldset {
-    color: rgba(254, 118, 164, 0.7) !important;
+  /deep/ .v-input__control {
+    .v-input__slot {
+      fieldset {
+        color: rgba(254, 118, 164, 0.7) !important;
+        border: 3px solid !important;
+      }
+    }
   }
 }
 

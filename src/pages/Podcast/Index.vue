@@ -4,21 +4,28 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Podcasts Sellings
+            {{ $t('podcastSelling') }}
           </h4>
         </div>
         <div class="songs-list">
-          <albumCard
-            class="album-card"
-            v-for="(item, index) in singles"
+          <getAudioInfo
+            v-for="(item, index) in paginatedAddressList"
             :key="index"
-            :card="item"
+            :txid="item"
+          >
+            <template v-slot="{ card }">
+              <singleCard v-if="!flash" :card="card" />
+            </template>
+          </getAudioInfo>
+          <loadCard
+            v-if="loading || addressList.length === 0"
+            :message="!loading && addressList.length === 0 ? $t('noData') : ''"
           />
         </div>
-        <div class="songs-pagination">
+        <div v-if="maxPage > 1" class="songs-pagination">
           <v-pagination
             v-model="page"
-            :length="20"
+            :length="maxPage"
             :total-visible="10"
             color="#E56D9B"
             dark
@@ -26,92 +33,66 @@
         </div>
       </div>
       <div class="come-down" />
-      <categoryNav v-model="tab" />
+      <categoryNav />
     </div>
   </spaceLayout>
 </template>
 
 <script>
+import api from '@/api/api'
+
 import spaceLayout from '@/components/Layout/Space'
-import albumCard from '@/components/Song/AlbumCard'
+import singleCard from '@/components/Song/SingleCard'
 import categoryNav from '@/components/CategoryNav'
+import getAudioInfo from '@/components/Song/GetAudioInfo'
+import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {
     spaceLayout,
-    albumCard,
-    categoryNav
+    singleCard,
+    categoryNav,
+    getAudioInfo,
+    loadCard
   },
   data () {
     return {
-      tab: 'song',
-      page: 1,
-      singles: [
-        {
-          title: 'RED',
-          artist: 'Taylor Swift',
-          price: 4.3,
-          time: '2020-09-01 10:22'
-        },
-        {
-          title: 'ALL OFF',
-          artist: 'ONE',
-          price: 5.2,
-          time: '2020-08-31 12:32'
-        },
-        {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2020-08-31 10:22'
-        },
-        {
-          title: 'RELOADED',
-          artist: '鹿晗',
-          price: 10.1,
-          time: '2020-08-30 10:22'
-        },
-        {
-          title: 'B v S soundtrack',
-          artist: 'Warner Brosaaaaa',
-          price: 4.3,
-          time: '2020-08-23 10:22'
-        },
-        {
-          title: '东风破',
-          artist: '周杰伦',
-          price: 14.6,
-          time: '2020-08-01 10:22'
-        },
-        {
-          title: 'YOUTH BLOOD',
-          artist: 'JINDER',
-          price: 10.1,
-          time: '2020-07-01 10:22'
-        },
-        {
-          title: 'THE SEVENTH SEVENTH',
-          artist: '张靓颖',
-          price: 10.1,
-          time: '2019-06-01 10:22'
-        },
-        {
-          title: 'RED',
-          artist: 'Tayl',
-          price: 8888,
-          time: '2020-05-01 10:22'
-        },
-        {
-          title: 'HEART BEAT',
-          artist: 'GEM',
-          price: 10.1,
-          time: '2000-08-31 10:22'
-        }
-      ]
+      loading: true,
+      addressList: [],
+      page: 1, // 页码
+      pagesize: 16, // 每页数量
+      flash: false
+    }
+  },
+  computed: {
+    paginatedAddressList () {
+      return this.addressList.slice((this.page - 1) * this.pagesize, this.page * this.pagesize)
+    },
+    maxPage () {
+      return Math.ceil(this.addressList.length / this.pagesize)
+    }
+  },
+  watch: {
+    page () {
+      this.flash = true
+      setTimeout(() => { this.flash = false })
     }
   },
   mounted () {
-    document.title = 'Browse all selling albums - ArcLight'
+    document.title = this.$t('browseAllPodcast') + ' - ArcLight'
+    this.getAllAudioList('podcast')
+  },
+  methods: {
+    async getAllAudioList (type) {
+      try {
+        let res = await api.arweave.getAllAudioList(type)
+        this.addressList = res || []
+      } catch (e) {
+        console.error(`[Failed to get ${type} list]`, e)
+        this.$message.error(`Failed to get ${type} list`)
+      }
+      this.loading = false
+    }
   }
 }
 </script>
@@ -135,13 +116,13 @@ export default {
     }
   }
   &-list {
-    margin: 0 20px 0;
-    display: flex;
+    margin: 16px 20px 32px;
     overflow: hidden;
-    flex-wrap: wrap;
-    .album-card {
-      margin: 16px 42px 32px 0;
-    }
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(128px,1fr));
+    grid-gap: 48px 16px;
+    justify-content: space-between;
+    min-height: 510px;
   }
   &-pagination {
     margin: 16px 20px 0;
@@ -153,6 +134,13 @@ export default {
   height: 100%;
   .come-down {
     flex: 1;
+  }
+}
+@media screen and (max-width: 992px) {
+  .songs-list {
+    grid-template-columns: repeat(auto-fill,minmax(146px,1fr));
+    min-height: 454px;
+    grid-gap: 20px 20px;
   }
 }
 </style>

@@ -5,105 +5,116 @@
       :loading="loading"
       :items="items"
       :search-input.sync="search"
-      cache-items
+      item-text="title"
+      item-value="id"
+      no-filter
+      return-object
       class="mx-4 autocomplete"
       flat
-      hide-no-data
       hide-details
-      label="Search address / user / music"
+      :label="$t('searchPlaceholder')"
       solo-inverted
       background-color="#333333"
+      color="primary"
+      @blur="reset"
     >
+      <template v-slot:item="data">
+        <template v-if="typeof (data.item) !== 'object'">
+          <v-list-item-content v-text="data.item.id"></v-list-item-content>
+        </template>
+        <template v-else-if="data.item.searchType === 'Tx'">
+          <v-list-item-icon style="margin-right: 10px;">
+            <v-icon large color="#E56D9B">{{data.item.icon}}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <a @click="goResult(data.item.id, data.item.type)">
+              <v-list-item-title v-html="data.item.id"></v-list-item-title>
+              <v-list-item-subtitle v-html="data.item.type" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
+            </a>
+          </v-list-item-content>
+        </template>
+        <template v-else-if="data.item.searchType === 'Music'">
+          <v-list-item-icon style="margin-right: 10px;">
+            <v-icon large color="#E56D9B">{{data.item.icon}}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <a @click="goResult(data.item.id, data.item.type)">
+              <v-list-item-title v-html="data.item.title"></v-list-item-title>
+              <v-list-item-subtitle v-html="'by ' + data.item.artist" style="text-align: left; color: #ED6A83;"></v-list-item-subtitle>
+            </a>
+          </v-list-item-content>
+        </template>
+      </template>
     </v-autocomplete>
   </div>
 </template>
 
 <script>
+import api from '@/api/api'
+import decode from '@/util/decode'
+
 export default {
   data () {
     return {
       loading: false,
       items: [],
       search: null,
-      select: null,
-      states: [
-        'Alabama',
-        'Alaska',
-        'American Samoa',
-        'Arizona',
-        'Arkansas',
-        'California',
-        'Colorado',
-        'Connecticut',
-        'Delaware',
-        'District of Columbia',
-        'Federated States of Micronesia',
-        'Florida',
-        'Georgia',
-        'Guam',
-        'Hawaii',
-        'Idaho',
-        'Illinois',
-        'Indiana',
-        'Iowa',
-        'Kansas',
-        'Kentucky',
-        'Louisiana',
-        'Maine',
-        'Marshall Islands',
-        'Maryland',
-        'Massachusetts',
-        'Michigan',
-        'Minnesota',
-        'Mississippi',
-        'Missouri',
-        'Montana',
-        'Nebraska',
-        'Nevada',
-        'New Hampshire',
-        'New Jersey',
-        'New Mexico',
-        'New York',
-        'North Carolina',
-        'North Dakota',
-        'Northern Mariana Islands',
-        'Ohio',
-        'Oklahoma',
-        'Oregon',
-        'Palau',
-        'Pennsylvania',
-        'Puerto Rico',
-        'Rhode Island',
-        'South Carolina',
-        'South Dakota',
-        'Tennessee',
-        'Texas',
-        'Utah',
-        'Vermont',
-        'Virgin Island',
-        'Virginia',
-        'Washington',
-        'West Virginia',
-        'Wisconsin',
-        'Wyoming'
-      ]
+      select: [],
+      option: [],
+      AUDIO_ICON: {
+        'single-info': 'mdi-music-circle',
+        'album-info': 'mdi-album',
+        'podcast-info': 'mdi-podcast',
+        'soundeffect-info': 'mdi-waveform'
+      },
+      REVERSED_AUDIO_TYPE: {
+        'single-info': 'Single',
+        'album-info': 'Album',
+        'podcast-info': 'Podcast',
+        'soundeffect-info': 'Sound Effect'
+      }
     }
   },
   watch: {
-    search (val) {
-      val && val !== this.select && this.querySelections(val)
+    async search (val, oldVal) {
+      val && val !== oldVal && await this.querySelections(val)
     }
   },
   methods: {
-    querySelections (v) {
+    async querySelections (v) {
+      this.items = []
       this.loading = true
-      // Simulated ajax query
-      setTimeout(() => {
-        this.items = this.states.filter(e => {
-          return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+
+      if (typeof (v) === 'string' && v.length === 43) {
+        let tx = await api.arweave.getTransactionDetail(v)
+
+        if (tx) {
+          const tags = await api.arweave.getTagsByTransaction(tx)
+          const data = JSON.parse(decode.uint8ArrayToString(tx.data))
+          this.items.push({ searchType: 'Tx', id: tx.id, title: data.title, artist: tags['Author-Username'], type: this.REVERSED_AUDIO_TYPE[tags['Type']], icon: this.AUDIO_ICON[tags['Type']] })
+        }
+      } else {
+        api.arweave.breakOnCall = true
+        api.arweave.querySearch(v, result => {
+          this.loading = true
+          this.items.push(result)
         })
-        this.loading = false
-      }, 500)
+      }
+
+      this.loading = false
+    },
+    goResult (id, type) {
+      this.$emit('should-close', false)
+      if (type === 'Album') {
+        this.$router.push({ path: '/album/' + id })
+      } else if (type !== 'User') {
+        this.$router.push({ path: '/music/' + id })
+      }
+    },
+    reset () {
+      this.items = []
+      this.loading = false
+      api.arweave.breakOnCall = true
     }
   }
 }
@@ -120,6 +131,15 @@ export default {
     &.primary--text {
       color: #E56D9B !important;
       caret-color: #E56D9B !important;
+    }
+  }
+
+  /deep/ .v-input__control {
+    background-color: rgba(51, 51, 51, 0.8) !important;
+    /deep/ .v-select__slot {
+      label {
+        color: #9F9F9F !important;
+      }
     }
   }
 }

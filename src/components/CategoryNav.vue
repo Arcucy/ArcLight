@@ -32,6 +32,13 @@ export default {
         }
       ]
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.tabs[0].label = this.$t('navSONG')
+      this.tabs[1].label = this.$t('navSOUND')
+      this.tabs[2].label = this.$t('navPODCAST')
+    })
   }
 }
 </script>
@@ -68,6 +75,23 @@ export default {
 
     &:nth-child(1) {
       margin-left: 0;
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .nav {
+    margin-top: 40px;
+    a {
+      margin: 0 0 0 40px;
+      font-size: 20px;
+    }
+  }
+}
+@media screen and (max-width: 480px) {
+  .nav {
+    a {
+      margin: 0 0 0 20px;
+      font-size: 16px;
     }
   }
 }

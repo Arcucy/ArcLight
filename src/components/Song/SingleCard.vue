@@ -1,7 +1,8 @@
 <template>
-  <router-link :to="{ name: 'Music', params: { id: card.txid } }" v-ripple>
-    <div class="card">
+  <router-link class="card-link" :to="{ name: 'Music', params: { id: card.txid } }">
+    <div class="card" v-ripple>
       <v-img
+        v-if="!blink"
         class="card-img"
         :src="cover"
         alt="cover"
@@ -13,17 +14,21 @@
           </div>
         </template>
       </v-img>
+      <div v-else class="card-img-blink" />
       <p class="card-title">
         {{ card.title }}
       </p>
-      <router-link class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
+      <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
         by {{ card.authorUsername }}
       </router-link>
+      <a v-else class="card-artist">
+        {{ card.authorUsername }}
+      </a>
       <p v-if="card.price != 0" class="card-price">
-        pay {{ card.price }} AR
+        {{ $t('pay') }} {{ card.price }} AR
       </p>
       <p v-else class="card-price free-song">
-        Free
+        {{ $t('free') }}
       </p>
       <p class="card-time">
         {{ time }}
@@ -47,19 +52,45 @@ export default {
   },
   data () {
     return {
-      cover: 'Loading'
+      cover: 'Loading',
+      blink: false
     }
   },
   computed: {
     time () {
+      if (!this.card) return '--:--:--'
       const time = this.$moment(this.card.unixTime)
       return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
     }
   },
-  async mounted () {
-    if (this.card && this.card.coverTxid) {
-      if (this.cover === 'Loading') this.cover = await api.arweave.getCover(this.card.coverTxid)
-    } else this.cover = ''
+  watch: {
+    card (val) {
+      if (val) this.getCover()
+      else this.cover = ''
+    }
+  },
+  mounted () {
+    this.getCover()
+  },
+  methods: {
+    async getCover () {
+      if (this.card && this.card.coverTxid) {
+        this.cover = 'Loading'
+        this.newBlink()
+        const txid = this.card.coverTxid
+        try {
+          const img = await api.arweave.getCover(txid)
+          if (txid !== this.card.coverTxid) return
+          this.cover = img
+        } catch (e) {
+          this.cover = ''
+        }
+      } else this.cover = ''
+    },
+    newBlink () {
+      this.blink = true
+      setTimeout(() => { this.blink = false })
+    }
   }
 }
 </script>
@@ -71,6 +102,11 @@ p {
 a {
   text-decoration: none;
   color: white;
+}
+.card-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .card {
   width: 128px;
@@ -103,6 +139,13 @@ a {
       width: 100%;
       height: 100%;
     }
+  }
+
+  &-img-blink {
+    border-radius:5px;
+    width: 128px;
+    height: 128px;
+    background: #252525;
   }
 
   &-title {
@@ -139,16 +182,13 @@ a {
     .word-limit();
   }
 }
-
-@media screen and (max-width: 1200px) {
-  .card-img {
-    height: 128px;
-  }
-}
 @media screen and (max-width: 992px) {
-  .card-img {
-    height: 100px;
+  .card {
     width: 100px;
+    .card-img {
+      height: 100px;
+      width: 100px;
+    }
   }
 }
 @media screen and (max-width: 768px) {

@@ -12,14 +12,10 @@
       <div id='earth' />
     </div>
     <Header />
-    <div class="slot-shell">
+    <div class="slot-shell" id="slot-shell">
       <slot />
     </div>
-    <div class="notice">
-      Developed by
-      <a href="https://github.com/AyakaLab">Ayaka Lab</a>
-      for Project
-      <a href="https://github.com/AyakaLab/ArcLight">ArcLight</a>
+    <div class="notice-space" id="notice-space">
     </div>
   </v-app>
 </template>
@@ -51,26 +47,13 @@ export default {
   position: relative;
   width: 100%;
   flex: 1;
+  margin-bottom: 50px;
 }
 
-.notice {
-  color: rgb(177, 177, 177);
-  margin: 50px auto 50px;
+.notice-space {
+  margin: 0 auto 0;
   text-align: center;
-  animation-name: fadeInOpacity;
-  animation-iteration-count: 1;
-  animation-timing-function: ease;
-  animation-duration: 4s;
-}
-
-@keyframes fadeInOpacity {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+  padding-bottom: 50px;
 }
 
 @media screen and (max-width: 400px){

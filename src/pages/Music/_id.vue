@@ -3,14 +3,14 @@
     <div class="music">
       <!-- Back Button -->
       <div class="music-header">
-        <a @click="$router.go(-1)">
+        <a @click="backPage({ name: 'Songs' })">
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
-              {{ info.name || 'Back' }}
+              {{ info.name || $t('back') }}
             </span>
             <span class="header-title-back">
-              Back
+              {{ $t('back') }}
             </span>
           </span>
         </a>
@@ -18,6 +18,7 @@
       <div class="music-info">
         <div class="music-cover-container">
           <v-img
+            v-if="imgShoudLoad"
             class="albuminfo-cover-img"
             :src="info.cover"
             alt="cover"
@@ -32,12 +33,26 @@
         </div>
         <div class="music-info-container">
           <div class="music-title-container">
-            <div class="music-title-genre">
-              {{ info.genre }}
-            </div>
-            <div class="music-title-text">
-              {{ info.name }}
-            </div>
+            <v-tooltip top :disabled="!toGenre.name">
+              <template v-slot:activator="{ on, attrs }">
+                <span v-bind="attrs" v-on="on">
+                  <router-link
+                    v-if="type !== 'soundeffect-info'"
+                    class="music-title-genre"
+                    :class="!toGenre.name && 'no-click'"
+                    :to="toGenre"
+                  >
+                    {{ info.genre }}
+                  </router-link>
+                </span>
+              </template>
+              <span>{{ $t('viewSimilarArtwork') }}</span>
+            </v-tooltip>
+            {{ info.name }}
+          </div>
+          <div class="mobile mobile-music-title-container">
+            <span class="genre">{{ info.genre }}</span>
+            <span class="title">{{ info.name }}</span>
           </div>
           <div v-if="this.info.albumTitle" class="music-title-album">
             <router-link :to="{ name: 'Album', params: { id: $route.params.id } }">
@@ -59,7 +74,13 @@
           {{ pct }}%
         </div>
         <!-- Player -->
-        <aplayer v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+        <aplayer v-if="audio !== '' && !loading" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
+        <!-- No trial version -->
+        <div v-if="!audio && !loading" class="music-loading">
+          <p>
+            {{ $t('thereIsNoDemoVersionOfThisArtwork') }}
+          </p>
+        </div>
         <!-- Loading -->
         <div v-if="loading" class="music-loading">
           <v-progress-linear
@@ -68,58 +89,56 @@
             color="#E56D9B"
           />
           <p>
-            Music loading...
+            {{ $t('musicLoading') }}
           </p>
         </div>
       </div>
       <!-- Download -->
-      <div v-if="owned" class="music-download">
-        <v-btn
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-        >
-          DOWNLOAD
-        </v-btn>
+      <div v-if="(owned || artist.id === wallet || !price) && !loading" class="music-download">
+        <a :href="completeAudio.src" :download="info.name + ' - ' + info.artist + '.' + ext" style="text-decoration: none;">
+          <v-btn
+            block
+            large
+            light
+            outlined
+            rounded
+            color="#E56D9B"
+            :height="44"
+          >
+            {{ $t('download') }}
+          </v-btn>
+        </a>
       </div>
       <!-- Buy -->
-      <div v-else class="music-download">
-        <p v-if="artist.username !== username">
-          Sale for {{ price }} AR
-        </p>
-        <v-btn
-          v-if="artist.username !== username"
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-          @click.stop="buyClick"
-        >
-          BUY
-        </v-btn>
-        <v-btn
-          v-else
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-          @click.stop="downloadSource"
-        >
-          Download
-        </v-btn>
+      <div v-else-if="!loading && !awaitConfirm" class="music-download">
+        <payment
+          @purchase-complete="purchaseComplete"
+          v-if="artist.id !== wallet && price"
+          :artist="artist"
+          :wallet="wallet"
+          :price="parseFloat(price)"
+          :item="info"
+          :type="type"
+          :itemId="$route.params.id"
+          :trackNumber="$route.query.album + ''"
+        />
+      </div>
+      <!-- Await confirm -->
+      <div v-if="awaitConfirm" class="music-await">
+        <div class="music-await-progress">
+          <v-progress-circular indeterminate color="#E56D9B" />
+        </div>
+        <div class="music-await-text">
+          <h4>
+            「{{ $t('buy') }}」{{ $t('pleaseWait') }}
+          </h4>
+          <p>
+            {{ $t('waitingForBlockConfirm') }}
+          </p>
+        </div>
       </div>
       <!-- Payed Users -->
-      <div class="music-sold">
+      <!-- <div class="music-sold">
         <p class="music-sold-title">
           These users have already bought this song.
         </p>
@@ -133,7 +152,7 @@
             <miniAvatar :size="38" :src="user.avatar" />
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- Artist -->
       <div class="music-artist">
         <router-link :to="{ name: 'User', params: { id: artist.id } }">
@@ -152,17 +171,17 @@
       <v-card dark>
         <div class="pay">
           <h3 class="pay-title">
-            Payment of 「{{ info.name }}」
+            {{ $t('paymentOf') }} 「{{ info.name }}」
           </h3>
           <div class="pay-icon">
             <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
           </div>
           <p class="pay-intro">
-            Succeed to unlock the music！
+            {{ $t('succeedToUnlockMusic') }}
           </p>
 
           <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
-            BACK TO MUSIC PLAYER
+            {{ $t('backToMusicPlayer') }}
             <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
           </v-btn>
         </div>
@@ -172,31 +191,41 @@
 </template>
 
 <script>
-
-import spaceLayout from '@/components/Layout/Space'
-import miniAvatar from '@/components/User/MiniAvatar'
+import { mapState } from 'vuex'
 
 import api from '@/api/api'
 import decode from '@/util/decode'
-import { mapState } from 'vuex'
+import audioUtil from '@/util/audio'
+
+import spaceLayout from '@/components/Layout/Space'
+import miniAvatar from '@/components/User/MiniAvatar'
+import payment from '@/components/Payment'
 
 export default {
+  inject: ['backPage'],
   components: {
+    payment,
     spaceLayout,
     miniAvatar
   },
   data () {
     return {
+      type: '',
       musicId: '',
-      audio: '',
+      auditionClip: '',
+      completeAudio: '',
+      imgShoudLoad: true,
+      awaitConfirm: false,
       info: {
         name: 'Title loading...',
         artist: '',
         artistId: '',
         desp: '',
         genre: 'Await Data...',
-        cover: '',
-        albumTitle: ''
+        cover: 'undefined',
+        albumTitle: '',
+        duration: 0,
+        id: ''
       },
       artist: {
         id: '',
@@ -204,53 +233,148 @@ export default {
         username: 'Artist loading...'
       },
       pct: 0,
-      price: 4.3,
+      price: 0,
+      albumPrice: 0,
       owned: false,
       showDialog: false,
       loading: true,
-      users: [
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        },
-        {
-          avatar: 'https://picsum.photos/510/300?random'
-        }
-      ]
+      timerIndex: null
     }
   },
   computed: {
-    ...mapState(['username'])
+    ...mapState(['wallet']),
+    ext () {
+      const getExt = {
+        'audio/mp3': 'mp3',
+        'audio/flac': 'flac',
+        'audio/wav': 'wav',
+        'audio/ogg': 'ogg'
+      }
+      return getExt[this.musicType]
+    },
+    audio () {
+      const unlock = this.owned || this.artist.id === this.wallet || !this.price
+      return unlock || this.info.duration === -1 ? this.completeAudio : this.auditionClip
+    },
+    toGenre () {
+      if (!this.info.genre) return {}
+      switch (this.type) {
+        case 'single-info':
+          return { name: 'SongsSingles', query: { genre: this.info.genre } }
+        case 'album-info':
+          return { name: 'SongsAlbums', query: { genre: this.info.genre } }
+      }
+      return {}
+    }
   },
   mounted () {
     this.getMusicInfo(this.$route.params.id)
+    this.$nextTick(() => {
+      this.info.name = this.$t('titleLoading')
+      this.info.genre = this.$t('awaitData')
+      this.artist.username = this.$t('artistLoading')
+    })
+  },
+  watch: {
+    $route (val) {
+      this.loading = true
+      this.imgShoudLoad = false
+      this.auditionClip = ''
+      this.completeAudio = ''
+      this.info.cover = 'undefined'
+      this.pct = 0
+      this.owned = false
+      setTimeout(() => {
+        this.imgShoudLoad = true
+      })
+      this.getMusicInfo(this.$route.params.id)
+    },
+    wallet (val) {
+      if (this.info.artistId === val) {
+        this.owned = true
+      } else if (this.completeAudio && !this.loading) {
+        // 需要确保歌曲已经获取完成才可以进行这些操作，避免用户在刷新页面后触发这边的代码。
+        this.owned = false
+        this.awaitConfirm = false
+        clearInterval(this.timerIndex)
+        this.getItemStatus(val, this.$route.params.id, this.price)
+      }
+    }
   },
   destroyed () {
     // 释放 webkitURL
-    if (this.audio && this.audio.url) window.webkitURL.revokeObjectURL(this.audio.url)
+    if (this.auditionClip && this.auditionClip.url) window.webkitURL.revokeObjectURL(this.auditionClip.url)
+    if (this.completeAudio && this.completeAudio.url) window.webkitURL.revokeObjectURL(this.completeAudio.url)
+    // 卡片或者页面被销毁时清除定时器
+    if (this.timerIndex) clearTimeout(this.timerIndex)
   },
   methods: {
-    buyClick () {
-      // 这里并没有真的付款代码，而是直接将参数设定为付款成功的状态。
-      this.showDialog = true
-      this.owned = true
+    async getItemStatus (address, itemAddress, price) {
+      if (!address) {
+        this.loading = false
+        return
+      }
+      if (this.type === 'album-info') {
+        const res1 = await api.arweave.getAlbumItemPurchaseStatus(address, itemAddress, this.$route.query.album)
+        if (res1) {
+          const transaction = await this.getBuyTransactionDetail(res1)
+          if (!transaction) {
+            this.loading = false
+            return
+          }
+          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+          const ar = api.arweave.getArFromWinston(transaction.quantity)
+          this.awaitConfirm = false
+          if (ar === finalPrice) this.owned = true
+        } else {
+          const res2 = await api.arweave.getAlbumPurchaseStatus(address, itemAddress)
+          if (res2) {
+            const transaction = await this.getBuyTransactionDetail(res2)
+            if (!transaction) {
+              this.loading = false
+              return
+            }
+            const tags = await api.arweave.getTagsByTransaction(transaction)
+            const type = tags['Album-Type']
+            if (type === 'full') {
+              const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(this.albumPrice)))
+              const ar = api.arweave.getArFromWinston(transaction.quantity)
+              this.awaitConfirm = false
+              if (ar === finalPrice) this.owned = true
+            }
+          }
+        }
+      } else {
+        const res3 = await api.arweave.getItemPurchaseStatus(address, itemAddress)
+        if (res3) {
+          const transaction = await this.getBuyTransactionDetail(res3)
+          if (!transaction) {
+            this.loading = false
+            return
+          }
+          const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
+          const ar = api.arweave.getArFromWinston(transaction.quantity)
+          this.awaitConfirm = false
+          if (ar === finalPrice) this.owned = true
+        }
+      }
+      this.loading = false
+    },
+    async getBuyTransactionDetail (txid) {
+      let transaction
+      try {
+        transaction = await api.arweave.getTransactionDetail(txid)
+      } catch (e) {
+        if (e.type === 'TX_PENDING') {
+          this.awaitConfirm = true
+          this.timerIndex = setTimeout(() => { this.getItemStatus(this.wallet, this.$route.params.id, this.price) }, 2000)
+        } else {
+          console.error('[Purchase record query failed] type:', { ...e }.type, txid, e)
+          this.$message.error(`Purchase record query failed, type: ${{ ...e }.type || 'Unknown'}`)
+          this.awaitConfirm = false
+        }
+      }
+      return transaction
     },
     /** 获取音乐信息 */
     async getMusicInfo (id) {
@@ -259,6 +383,7 @@ export default {
         const transaction = await api.arweave.getTransactionDetail(id)
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        this.type = tags.Type
         // 根据类型进行初始化
         switch (tags.Type) {
           case 'single-info': // 单曲
@@ -279,11 +404,13 @@ export default {
             this.$router.replace({ name: 'Landing' })
             return
         }
+        this.pct = 0
+        this.getItemStatus(this.wallet, this.$route.params.id, this.price)
       } catch (e) {
         console.error('[Failed to get music information]', e)
         this.$message.error('Failed to get music information')
+        this.loading = false
       }
-      this.loading = false
     },
     /** 初始化单曲 */
     async initSingle (tags, data) {
@@ -293,13 +420,31 @@ export default {
       // 标题、简介、类型
       audio.title = data.title
       this.info.name = data.title
+      this.info.duration = data.duration
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
       this.info.genre = tags['Genre']
+      this.price = data.price
+      this.info.id = data.music
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.music)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.music, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
+
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化专辑 */
     async initAlbum (tags, data, albumNum = 1) {
@@ -311,13 +456,32 @@ export default {
       // 标题、简介、类型
       audio.title = data.music[index].title
       this.info.name = data.music[index].title
+      this.info.duration = data.duration
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
       this.info.genre = tags['Genre']
+      this.price = data.music[index].price
+      this.info.id = data.music[index].id
+      this.albumPrice = tags['Price']
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.music[index].id)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.music[index].id, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
+
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化播客 */
     async initPodcast (tags, data) {
@@ -327,13 +491,31 @@ export default {
       // 标题、简介
       audio.title = data.title
       this.info.name = data.title
+      this.info.duration = data.duration
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
       this.info.genre = tags['Category']
+      this.price = data.price
+      this.info.id = data.program
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.program)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.program, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
+
+      document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${data.podcast} \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化音效 */
     async initSoundeffect (tags, data) {
@@ -343,12 +525,30 @@ export default {
       // 标题、简介
       audio.title = data.title
       this.info.name = data.title
+      this.info.duration = data.duration
+
+      data.desp = data.desp.replace(/<br>/gm, '\\n')
+      data.desp = data.desp.replace(/<[^>]*>/gmu, '')
+      data.desp = data.desp.replace(/\\n/gmu, '<br>')
+
       this.info.desp = data.desp
+      this.price = data.price
+      this.info.id = data.audio
       // 获取封面和音频
       audio.pic = await this.getCover(data.cover)
       this.info.cover = audio.pic
-      audio.src = await this.getAudio(data.audio)
-      this.audio = audio
+      const { fullUrl, trialUrl } = await this.getAudio(data.audio, data.duration)
+      this.completeAudio = { ...audio, src: fullUrl }
+      if (trialUrl) {
+        this.auditionClip = {
+          ...audio,
+          title: `「${data.duration}s Demo」 ` + audio.title,
+          src: trialUrl
+        }
+      }
+
+      document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
+      document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
     },
     /** 初始化作者信息 */
     initArtist (audio, tags) {
@@ -357,23 +557,40 @@ export default {
       this.info.artistId = tags['Author-Address']
       this.getArtist(tags['Author-Address'], audio)
     },
-    getAudio (id) {
+    /** 获取音频 */
+    async getAudio (id, duration) {
+      try {
+        const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+        this.musicType = music.type
+        // 完整版的 Url
+        const fullUrl = await this.getBase64Url(music)
+        // 试听版的 Url
+        let trialUrl
+        if (duration && duration > 0) trialUrl = await this.getAuditionClip(music.data.buffer, duration)
+        return { fullUrl, trialUrl }
+      } catch (e) {
+        console.error('[Failed to get audio data]', e)
+        this.$message.error('Failed to get audio data')
+        return { fullUrl: '' }
+      }
+    },
+    /** 将资源加载到一个 url */
+    getBase64Url (buffer) {
       return new Promise(async (resolve, reject) => {
-        try {
-          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
-          // 挂载音频到一个 URL，并指定给 audio.pic
-          const reader = new FileReader()
-          reader.readAsArrayBuffer(new Blob([music.data], { type: music.type }))
-          reader.onload = (event) => {
-            const url = window.webkitURL.createObjectURL(new Blob([event.target.result], { type: music.type }))
-            resolve(url)
-          }
-        } catch (e) {
-          console.error('[Failed to get audio data]', e)
-          this.$message.error('Failed to get audio data')
-          resolve('')
+        // 挂载音频到一个 URL，并指定给 audio.pic
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(new Blob([buffer.data], { type: buffer.type }))
+        reader.onload = (event) => {
+          const url = window.webkitURL.createObjectURL(new Blob([event.target.result], { type: buffer.type }))
+          resolve(url)
         }
       })
+    },
+    async getAuditionClip (buffer, last) {
+      const audioCtx = new AudioContext()
+      const audioBuffer = await audioCtx.decodeAudioData(buffer.slice())
+      const wave = audioUtil.audioBufferToWave(audioUtil.cutAudio(audioBuffer, 0, last))
+      return window.webkitURL.createObjectURL(wave)
     },
     async getArtist (id, audio) {
       this.artist.id = id
@@ -417,14 +634,20 @@ export default {
         if (newKey === key) return tags[i].get('value', { decode: true, string: true })
       }
     },
-    downloadSource () {
-
+    purchaseComplete () {
+      this.awaitConfirm = true
+      this.getItemStatus(this.wallet, this.$route.params.id, this.price)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+
+.mobile {
+  display: none;
+}
+
 .music {
   margin: 48px auto 20px;
   max-width: 1240px;
@@ -576,7 +799,7 @@ export default {
   }
 
   &-download {
-    margin: 48px auto 0;
+    margin: 30px auto 0;
     max-width: 240px;
     p {
       text-align: center;
@@ -586,7 +809,48 @@ export default {
       line-height: 20px;
       margin: 0 0 8px;
     }
+    .free-text {
+      color: #66BB6A;
+    }
   }
+
+  &-await {
+    margin: 30px auto 0;
+    max-width: 588px;
+    display: flex;
+    background: #7e7e7e4d;
+    box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 10px;
+    &-progress {
+      min-height: 66px;
+      min-width: 66px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 5px;
+    }
+    &-text {
+      text-align: left;
+      h4 {
+        text-align: left;
+        font-size: 16px;
+        color: white;
+        padding: 0;
+        margin: 0 0 10px;
+      }
+      p {
+        text-align: left;
+        font-size: 14px;
+        color: white;
+        padding: 0;
+        margin: 0 0 0 6px;
+      }
+    }
+  }
+
   &-sold {
     margin-top: 24px;
     &-title {
@@ -680,6 +944,30 @@ export default {
   &-container {
     display: flex;
     align-items: center;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
+    text-align: left;
+    .music-title-genre {
+      text-decoration: none;
+      margin-right: 8px;
+      padding: 8px 16px 8px;
+      background-color: #FAE5ED;
+      border-radius: 10px;
+      font-weight: 700;
+      color: #D85C8B;
+      white-space: nowrap;
+      font-size: 16px;
+      display: inline-block;
+      &.no-click {
+        cursor: default;
+      }
+    }
   }
   &-album {
     margin-top: 10px;
@@ -694,28 +982,14 @@ export default {
       }
     }
   }
-  &-genre {
-    margin-right: 8px;
-    padding: 8px 16px 8px;
-    background-color: #FAE5ED;
-    border-radius: 10px;
-    font-weight: 700;
-    color: #D85C8B;
-  }
-  &-text {
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    overflow: hidden;
-    word-break: break-all;
+
+  &-artist {
+    width: fit-content;
   }
 
   &-artist a {
     text-decoration: none;
-    margin-top: 10px;
+    margin-top: 16px;
     font-size: 20px;
     color: #FFF;
     display: -webkit-box;
@@ -730,12 +1004,13 @@ export default {
     }
   }
   &-desp {
-    margin-top: 16px;
+    margin-top: 10px;
   }
   &-desp > span {
     color: white;
     font-size: 16px;
     text-align: left;
+    display: block;
   }
 }
 
@@ -805,14 +1080,50 @@ export default {
       margin-left: 0px;
     }
   }
-  .music-title {
-    &-genre {
-      padding: 5px 10px 5px !important;
-      font-size: 14px !important;
-      border-radius: 5px !important;
+
+  .mobile-music-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .genre {
+      margin-right: 8px;
+      padding: 5px 10px 5px;
+      background-color: #FAE5ED;
+      border-radius: 5px;
+      font-weight: 700;
+      color: #D85C8B;
+      font-size: 14px;
+      white-space: nowrap;
     }
-    &-text {
-      font-size: 20px !important;
+    .title {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      text-align: left;
+      word-break: break-all;
+    }
+  }
+
+  .music-title {
+    display: none;
+    &-container {
+      display: none;
+      line-height: 30px;
+      font-size: 18px !important;
+      -webkit-line-clamp: 3;
+      margin-bottom: 10px;
+      text-align: left;
+      .music-title {
+        padding: 5px 10px 5px !important;
+        font-size: 14px !important;
+        border-radius: 5px !important;
+        font-size: 14px !important;
+      }
     }
     &-artist {
       .music-artist-username {

@@ -5,11 +5,11 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Sound Effect Cover</div>
+          <div class="cover-title side-title">{{ $t('soundEffectCover') }}</div>
           <div style="display: flex; align-items: flex-end;">
             <img-upload
             :img-upload-done="imgUploadDone"
@@ -23,7 +23,7 @@
               >
                 <div class="edit">
                   <v-icon color="#FFF">mdi-camera</v-icon>
-                  Sound Effect Cover
+                  {{ $t('soundEffectCover') }}
                 </div>
                 <img
                   id="avatar"
@@ -36,44 +36,46 @@
               </div>
             </img-upload>
           </div>
-          <div class="name-title side-title">Sound Effect Name</div>
+          <div class="name-title side-title">{{ $t('soundEffectName') }}</div>
           <v-text-field
             v-model="soundeffectTitle"
             label="Solo"
-            placeholder="Enter Your Sound Effect Title..."
+            :placeholder="$t('enterYourSoundEffectTitle')"
             solo
+            dark
             color="#FFF"
             style="margin-top: 16px;"
+            counter
+            maxlength="100"
           ></v-text-field>
-          <div class="name-desp side-title">Description</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="soundeffectDesp"
             solo
-            name="input-7-4"
-            label="Your Sound Effect Description..."
-          ></v-textarea>
-          <div class="name-desp side-title">Demo Duration</div>
-          <v-select
             dark
-            v-model="duration"
-            :items="durationSelection"
-            label="Select Demo duration"
-            solo
-          ></v-select>
-          <div class="name-desp side-title">Price</div>
+            name="input-7-4"
+            :label="$t('yourSoundEffectDescription')"
+            counter
+            maxlength="1000"
+          ></v-textarea>
+          <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
             v-model="price"
             class="price"
             id="price"
             solo
-            label="Prepend"
+            dark
+            type="number"
+            :label="$t('price')"
             prepend-inner-icon="mdi-cash-multiple"
+            maxlength="12"
           ></v-text-field>
           <v-file-input
+            class="finput"
             v-model="file"
             color="#FFF"
             chips
-            placeholder="Select your file"
+            :placeholder="$t('selectYourFile')"
             prepend-icon="mdi-paperclip"
             outlined
             accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -99,7 +101,18 @@
               </span>
             </template>
           </v-file-input>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
+          <v-select
+            dark
+            :disabled="disableDuration"
+            color="#E56D9B"
+            v-model="duration"
+            :items="durationSelection"
+            :label="durationSelectStr"
+            :loading="disableDuration"
+            solo
+          ></v-select>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -108,7 +121,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -117,26 +130,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="soundeffectSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Sound Effect Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="soundeffectSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -156,7 +150,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -171,8 +165,6 @@ import imgUpload from '@/components/imgUpload/imgUpload.vue'
 import spaceLayout from '@/components/Layout/Space.vue'
 
 import soundeffectDefault from '@/assets/image/soundeffect.png'
-
-import { getCookie } from '@/util/cookie'
 
 export default {
   components: {
@@ -198,56 +190,146 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      soundeffectSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
-      durationSelection: ['10s', '30s', '60s', 'Off']
+      shouldLoad: true,
+      durationSelection: ['10s', '30s', '60s', 'Off', 'Allow Full'],
+      maxDuration: 0,
+      disableDuration: true,
+      durationSelectStr: 'Please Upload Your Artwork...'
     }
   },
   computed: {
-    ...mapState(['soundEffectCoverFile', 'isLoggedIn', 'keyFileContent', 'soundEffectLink'])
+    ...mapState(['soundEffectCoverFile', 'soundEffectCoverRaw', 'isLoggedIn', 'keyFileContent', 'soundEffectLink', 'userType', 'soundEffectInfo'])
+  },
+  watch: {
+    userType (val) {
+      if (this.userType === 'guest') {
+        this.failSnackbar = true
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
+    wallet (val) {
+      if (!val) {
+        this.failMessage = this.$t('loginIsRequiredToUpload')
+        this.failSnackbar = true
+
+        setTimeout(() => {
+          this.$router.push({ name: 'Landing' })
+        }, 3000)
+      }
+    },
+    file (val, oldVal) {
+      if (val && val !== oldVal && this.shouldLoad) {
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(val)
+        reader.onload = async (e) => {
+          const data = e.target.result
+          let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          let source
+
+          audioCtx.createBufferSource()
+          source = await audioCtx.decodeAudioData(data.slice())
+          let duration = source.duration
+          let index = 0
+          if (duration < 60 && duration >= 30) {
+            index = this.durationSelection.indexOf('60s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+            }
+          }
+          if (duration < 30 && duration >= 15) {
+            index = this.durationSelection.indexOf('30s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+            }
+          }
+          if (duration < 15) {
+            index = this.durationSelection.indexOf('30s')
+            if (index > -1) {
+              this.durationSelection = this.durationSelection.filter(item => item !== '30s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '60s')
+              this.durationSelection = this.durationSelection.filter(item => item !== '15s')
+            }
+          }
+          this.durationSelectStr = this.$t('selectDemoDuration')
+          this.disableDuration = false
+        }
+      }
+    }
   },
   methods: {
     ...mapActions(['setSoundEffectCoverFile', 'reviewSoundEffect']),
     submit () {
       this.submitBtnLoading = true
       if (this.soundEffectCover === '') {
-        this.failMessage = 'A cover for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.soundeffectTitle === '') {
-        this.failMessage = 'A title for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.soundeffectDesp === '') {
-        this.failMessage = 'A description for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
+      if (this.duration !== 'Off' && this.duration !== 'Allow Full') {
+        this.duration = (this.duration + '').replace('s', '')
+        this.duration = parseInt(this.duration)
+      } else if (this.duration === 'Allow Full') {
+        this.duration = -1
+      } else {
+        this.duration = 0
+      }
+
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
         this.failSnackbar = true
         this.submitBtnLoading = false
+        return
+      }
+
+      if (parseFloat(this.price) < 0) {
+        this.failMessage = this.$t('priceCantBeNegative')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        return
+      } else {
+        this.price = parseFloat((this.price + '').replace(/-/gm, ''))
+      }
+
+      if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
+        this.failSnackbar = true
+        this.submitBtnLoading = false
+        // eslint-disable-next-line no-useless-return
         return
       }
 
       if (!this.file) {
-        this.failMessage = 'A source music file for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectSourceFileIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -277,11 +359,9 @@ export default {
         this.music = e.target.result
         this.musicContent = this.file
 
+        this.soundeffectDesp = this.soundeffectDesp.replace(/<.*>/gmu, '')
         this.soundeffectDesp = this.soundeffectDesp.replace(/\\n/g, '<br>')
-        this.soundeffectDesp = this.soundeffectDesp.replace(/(<script>|<script src=.*>)(.*)(<\/script>)/, '')
-        this.soundeffectDesp = this.soundeffectDesp.replace(/(<img src=.*(\/)?>)/, '')
-        this.soundeffectDesp = this.soundeffectDesp.replace(/<audio>.*<\/audio>/, '')
-        this.soundeffectDesp = '<p>' + this.soundeffectDesp + '</p>'
+        this.soundeffectDesp = this.soundeffectDesp
 
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
@@ -319,12 +399,66 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Upload a new Sound Effect - ArcLight'
+    this.$nextTick(() => {
+      this.durationSelectStr = this.$t('pleaseUploadYourArtwork')
+    })
 
-    const c = getCookie('arclight_userkey')
+    if (this.singleInfo) {
+      this.shouldLoad = false
+    }
+    if (this.$route.params.file) {
+      this.file = this.$route.params.file
+      let audioType = {
+        mp3: 'audio/mp3',
+        flac: 'audio/flac',
+        wav: 'audio/wav',
+        ogg: 'audio/ogg'
+      }
+
+      let aext = this.file.name.split('.').pop()
+      console.log('Content-Type:', audioType[aext])
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(this.file)
+      reader.onload = async (e) => {
+        this.music = e.target.result
+        this.musicContent = this.file
+      }
+    }
+
+    if (this.soundEffectCoverRaw) {
+      this.soundEffectCover = this.soundEffectCoverRaw
+      this.fileRaw = this.soundEffectCoverRaw
+    }
+
+    if (this.soundEffectInfo) {
+      this.disableDuration = false
+      this.durationSelectStr = this.$t('selectDemoDuration')
+      this.soundeffectTitle = this.soundEffectInfo.title
+      this.soundeffectDesp = this.soundEffectInfo.desp
+      if (this.soundEffectInfo.duration !== 0 && this.soundEffectInfo.duration !== -1) {
+        this.duration = this.soundEffectInfo.duration + 's'
+      } else if (this.soundEffectInfo.duration === -1) {
+        this.duration = 'Allow Full'
+      } else {
+        this.duration = 'Off'
+      }
+      this.price = this.soundEffectInfo.price
+    }
+
+    this.shouldLoad = true
+
+    if (this.userType === 'guest') {
+      this.failSnackbar = true
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
+
+      setTimeout(() => {
+        this.$router.push({ name: 'Landing' })
+      }, 3000)
+    }
+    document.title = this.$t('uploadNewSoundEffect') + ' - ArcLight'
     setTimeout(() => {
-      if (!this.isLoggedIn || c) {
-        this.failMessage = 'Login is required to upload'
+      if (!this.isLoggedIn) {
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -332,6 +466,13 @@ export default {
         }, 3000)
       }
     }, 3000)
+    window.onbeforeunload = function (e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = 'You sure you want to leave?'
+      }
+      return 'You sure you want to leave?'
+    }
   }
 }
 </script>
@@ -436,25 +577,33 @@ export default {
 }
 
 /deep/ .v-text-field__slot > input {
-  color: white;
+  color: white !important;
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: white;
+    color: white !important;
     opacity: 1; /* Firefox */
   }
 }
 
 /deep/ .v-text-field__slot > textarea {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field__slot > label {
-  color: white;
+  color: white !important;
 }
 
 .price {
   /deep/ &.v-text-field {
     .v-input__control .v-input__slot .v-text-field__slot {
       margin-left: 10px;
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
       &::after {
         content: 'AR';
         color: white;
@@ -465,8 +614,19 @@ export default {
   }
 }
 
+.finput {
+  /deep/ .v-input__control {
+    .v-input__slot {
+      fieldset {
+        color: rgba(254, 118, 164, 0.7) !important;
+        border: 3px solid !important;
+      }
+    }
+  }
+}
+
 /deep/ .v-icon--link {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-select__selection {
@@ -474,23 +634,23 @@ export default {
 }
 
 /deep/ .v-select__slot > label {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-input__icon > i {
-  color: white;
+  color: white !important;
 }
 
 /deep/ .v-text-field--is-booted {
   color: #E56D9B;
-  border-color: white;
+  border-color: white !important;
 }
 
 /deep/ .v-file-input__text.v-file-input__text--placeholder {
-  color: white;
+  color: white !important;
 }
 
-/deep/ .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+/deep/ .v-text-field--solo>.v-input__control>.v-input__slot {
   background-color: rgba(51,51,51,0.8);
 }
 </style>

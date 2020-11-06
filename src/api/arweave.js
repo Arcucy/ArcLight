@@ -4,6 +4,7 @@ import Axios from 'axios'
 
 import { decryptBuffer } from '../util/encrypt'
 import decode from '../util/decode'
+import stringUtil from '../util/string'
 
 const arweaveHost = 'https://arweave.net/'
 
@@ -30,9 +31,25 @@ const AUDIO_TYPE = {
   soundEffect: 'soundeffect-info'
 }
 
-const APP_NAME = 'arclight-test'
+const AUDIO_ICON = {
+  'single-info': 'mdi-music-circle',
+  'album-info': 'mdi-album',
+  'podcast-info': 'mdi-podcast',
+  'soundeffect-info': 'mdi-waveform'
+}
+
+const REVERSED_AUDIO_TYPE = {
+  'single-info': 'Single',
+  'album-info': 'Album',
+  'podcast-info': 'Podcast',
+  'soundeffect-info': 'Sound Effect'
+}
+
+const APP_NAME = 'arclight-app'
 
 let arweave = {
+  breakOnCall: false,
+  timerInterval: undefined,
 
   /**
    * Get user address based on key file content input   
@@ -47,6 +64,22 @@ let arweave = {
         reject(err)
       })
     })
+  },
+
+  /**
+   * 转换 AR 为 Winston
+   * @param {} ar   - AR 币值
+   */
+  getWinstonFromAr (arprice) {
+    return ar.ar.arToWinston(arprice)
+  },
+
+  /**
+   * 转换 Winston 为 AR
+   * @param {*} winston 
+   */
+  getArFromWinston (winston) {
+    return ar.ar.winstonToAr(winston)
   },
 
   /**
@@ -129,7 +162,7 @@ let arweave = {
         // Init a object to be resolved later
         // 初始化要稍后返回的对象
         const res = {
-          type: '',
+          type: 'User',
           data: ''
         }
 
@@ -142,35 +175,31 @@ let arweave = {
           resolve(res)
         }
 
-        // If the user has multiple records, use for go through
-        // 如果用户有多个记录，使用 for 循环遍历
-        for (let i = 0; i < ids.length; i++) {
-          const id = ids[i]
+        const id = ids[0]
 
-          // Get transaction detial
-          // 获取交易明细
-          this.getTransactionDetail(id).then(transaction => {
-            // Go through for each id to find the tag
-            // 遍历每个id来找到标签
-            transaction.get('tags').forEach(tag => {
-              let key = tag.get('name', { decode: true, string: true })
-              let value = tag.get('value', { decode: true, string: true })
-              if (key === 'Type') {
-                res.type = value
-              }
-            })
-
-            // Get the encoded data from transaction
-            // 从交易中获取编码数据
-            this.getTransactionDataDecodedString(id).then(data => {
-              res.data = data
-              // resolve data on finish
-              // 完成时返回数据
-              resolve(res)
-            })
+        // Get transaction detial
+        // 获取交易明细
+        this.getTransactionDetail(id).then(transaction => {
+          // Go through for each id to find the tag
+          // 遍历每个id来找到标签
+          transaction.get('tags').forEach(tag => {
+            let key = tag.get('name', { decode: true, string: true })
+            let value = tag.get('value', { decode: true, string: true })
+            if (key === 'Type') {
+              res.type = value
+            }
           })
-        }
-      })
+
+          // Get the encoded data from transaction
+          // 从交易中获取编码数据
+          this.getTransactionDataDecodedString(id).then(data => {
+            res.data = data
+            // resolve data on finish
+            // 完成时返回数据
+            resolve(res)
+          }).catch(err => reject(err))
+        }).catch(() => reject(new Error('Account has errored transactions, check your balance')))
+      }).catch(err => reject(err))
     })
   },
 
@@ -207,8 +236,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -254,7 +282,7 @@ let arweave = {
         if (ids.length === 0) {
           resolve([])
         } else {
-          resolve(ids)
+          resolve(stringUtil.getBlockedArray(ids, type))
         }
       })
     })
@@ -308,7 +336,7 @@ let arweave = {
         if (ids.length === 0) {
           resolve([])
         } else {
-          resolve(ids)
+          resolve(stringUtil.getBlockedArray(ids, type))
         }
       })
     })
@@ -393,11 +421,837 @@ let arweave = {
         responseType: 'arraybuffer',
         onDownloadProgress
       }).then(res => {
-        if (callback) callback()
         const data = decryptBuffer(Buffer.from(res.data))
         resolve({ data: data, type: res.headers['content-type'] })
       })
     })
+  },
+
+  /**
+   * 获取已购买的音频
+   * @param {String} address 用户的钱包地址
+   * @param {String} type 音频类型
+   */
+  getPurchasedItems (address, type) {
+    const typeString = AUDIO_TYPE[type]
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Purchase-Type',
+            expr2: typeString
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve([])
+          return
+        }
+        resolve(ids)
+      })
+    })
+  },
+
+  /**
+   * 获取用户购买物品的状态
+   * @param {*} address   - 用户钱包地址
+   * @param {*} item      - 购买物品地址
+   */
+  getItemPurchaseStatus (address, item) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Item',
+            expr2: item
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids[0])
+      })
+    })
+  },
+
+  /**
+   * 获取用户购买完整专辑的状态
+   * @param {*} address   - 用户钱包地址
+   * @param {*} item      - 购买物品地址
+   */
+  getAlbumPurchaseStatus (address, item) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Album-Type',
+              expr2: 'full'
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Item',
+              expr2: item
+            }
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids[0])
+      })
+    })
+  },
+
+  /**
+   * 获取用户购买物品的状态
+   * @param {*} address   - 用户钱包地址
+   * @param {*} item      - 购买物品地址
+   */
+  getAlbumItemPurchaseStatus (address, item, trackNumber) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Source',
+              expr2: address
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Type',
+              expr2: 'Purchase'
+            }
+          },
+          expr2: {
+            op: 'and',
+            expr1: {
+              op: 'equals',
+              expr1: 'Item',
+              expr2: item
+            },
+            expr2: {
+              op: 'equals',
+              expr1: 'Track-Number',
+              expr2: trackNumber + ''
+            }
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+        resolve(ids[0])
+      })
+    })
+  },
+
+  querySearch (val, callback) {
+    return new Promise(async (resolve, reject) => {
+      this.breakOnCall = false
+      let res = []
+      let singleData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.single
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let albumData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.album
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let podcastData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.podcast
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let soundeffectData = await ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: AUDIO_TYPE.soundEffect
+          }
+        },
+        expr2: {
+          op: 'or',
+          expr1: {
+            op: 'equals',
+            expr1: 'Title',
+            expr2: val
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Author-Username',
+            expr2: val
+          }
+        }
+      })
+      let data = []
+      data = data.concat(singleData).concat(albumData).concat(podcastData).concat(soundeffectData)
+      for (let i = 0; i < data.length; i++) {
+        if (this.breakOnCall) {
+          break
+        }
+        const tx = await this.getTransactionDetail(data[i])
+        const tags = await this.getTagsByTransaction(tx)
+        const type = REVERSED_AUDIO_TYPE[tags['Type']]
+        const icon = AUDIO_ICON[tags['Type']]
+
+        const id = data[i]
+        const title = tags['Title']
+        const artist = tags['Author-Username']
+        const final = { searchType: 'Music', id: id, title: title, artist: artist, type: type, icon: icon }
+        if (icon !== undefined) callback(final)
+        else continue
+      }
+      resolve(res)
+    })
+  },
+
+  getAllInfo (arr, type, icon) {
+    return new Promise(async (resolve, reject) => {
+      let res = []
+      for (let i = 0; i < arr.length; i++) {
+        const tx = await this.getTransactionDetail(arr[i].id)
+        const tags = await this.getTagsByTransaction(tx)
+        res.push({ id: arr[i].id, title: tags['Title'], artist: tags['Author-Username'] })
+      }
+    })
+  },
+
+  /**
+   * Get user's location settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getLocationFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-location'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's website settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getWebsiteFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-website'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's introduction settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getIntroFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-introduction'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's netease id settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getNeteaseIdFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-neteaseid'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * Get user's soundcloud id settings from given address
+   * @param {String} address  - 用户的钱包地址 
+   */
+  getSoundCloudIdFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-soundcloudid'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * 获取与提供的类型标签最相似的用户类型（一种类型符合目标的一级类型）。
+   * @param {Number} genre1 歌曲类型
+   */
+  getTheMostSimilarUsers (genre1) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          },
+          expr2: { // 匹配歌曲类型
+            op: 'equals',
+            expr1: 'Top1-Genre',
+            expr2: genre1 || 'noGenreData'
+          }
+        }
+      }).then(ids => { resolve(ids || []) })
+    })
+  },
+
+  /**
+   * 获取与提供的类型标签相似的用户类型(两种类型的任意一种符合目标的一或二级类型)。
+   * @param {Number} genre1 歌曲类型
+   */
+  GetTheSimilarUsers (genre1, genre2) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          },
+          expr2: { // 匹配歌曲类型
+            op: 'or',
+            expr1: { // Top1 类型
+              op: 'or',
+              expr1: {
+                op: 'equals',
+                expr1: 'Top1-Genre',
+                expr2: genre1 || 'noGenreData'
+              },
+              expr2: {
+                op: 'equals',
+                expr1: 'Top1-Genre',
+                expr2: genre2 || 'noGenreData'
+              }
+            },
+            expr2: { // Top2 类型
+              op: 'or',
+              expr1: {
+                op: 'equals',
+                expr1: 'Top2-Genre',
+                expr2: genre1 || 'noGenreData'
+              },
+              expr2: {
+                op: 'equals',
+                expr1: 'Top2-Genre',
+                expr2: genre2 || 'noGenreData'
+              }
+            }
+          }
+        }
+      }).then(ids => { resolve(ids || []) })
+    })
+  },
+
+  /**
+   * 获取与提供的类型标签有些相似的用户类型(三种类型的任意一种符合目标的一或二或三级类型)。
+   * @param {Number} genre1 歌曲类型
+   */
+  getSomewhatSimilarUsers (excluded, genre1, genre2, genre3) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'App-Name',
+          expr2: APP_NAME
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          },
+          expr2: { // 匹配歌曲类型
+            op: 'or',
+            expr1: { // Top1 类型
+              op: 'or',
+              expr1: {
+                op: 'equals',
+                expr1: 'Top1-Genre',
+                expr2: genre1 || 'noGenreData'
+              },
+              expr2: {
+                op: 'or',
+                expr1: {
+                  op: 'equals',
+                  expr1: 'Top1-Genre',
+                  expr2: genre2 || 'noGenreData'
+                },
+                expr2: {
+                  op: 'equals',
+                  expr1: 'Top1-Genre',
+                  expr2: genre3 || 'noGenreData'
+                }
+              }
+            },
+            expr2: {
+              op: 'or',
+              expr1: { // Top2 类型
+                op: 'or',
+                expr1: {
+                  op: 'equals',
+                  expr1: 'Top2-Genre',
+                  expr2: genre1 || 'noGenreData'
+                },
+                expr2: {
+                  op: 'or',
+                  expr1: {
+                    op: 'equals',
+                    expr1: 'Top2-Genre',
+                    expr2: genre2 || 'noGenreData'
+                  },
+                  expr2: {
+                    op: 'equals',
+                    expr1: 'Top2-Genre',
+                    expr2: genre3 || 'noGenreData'
+                  }
+                }
+              },
+              expr2: { // Top3 类型
+                op: 'or',
+                expr1: {
+                  op: 'equals',
+                  expr1: 'Top3-Genre',
+                  expr2: genre1 || 'noGenreData'
+                },
+                expr2: {
+                  op: 'or',
+                  expr1: {
+                    op: 'equals',
+                    expr1: 'Top3-Genre',
+                    expr2: genre2 || 'noGenreData'
+                  },
+                  expr2: {
+                    op: 'equals',
+                    expr1: 'Top3-Genre',
+                    expr2: genre3 || 'noGenreData'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }).then(ids => { resolve(ids || []) })
+    })
+  },
+
+  /**
+   * Get user's Bandcamp Id settings from given address
+   * @param {String} address  - 用户的钱包地址s 
+   */
+  getBandCampFromAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'profile-bandcampid'
+          }
+        }
+      }).then(async ids => {
+        if (ids.length === 0) {
+          resolve(false)
+          return
+        }
+
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+          resolve(data)
+        })
+      })
+    })
+  },
+
+  /**
+   * 获取用户上传的所有 post info 的 txid 列表
+   * @param {*} address 
+   */
+  getPostInfosByAddress (address) {
+    return new Promise((resolve, reject) => {
+      ar.arql({
+        op: 'and',
+        expr1: {
+          op: 'equals',
+          expr1: 'from',
+          expr2: address
+        },
+        expr2: {
+          op: 'and',
+          expr1: {
+            op: 'equals',
+            expr1: 'App-Name',
+            expr2: APP_NAME
+          },
+          expr2: {
+            op: 'equals',
+            expr1: 'Type',
+            expr2: 'post-info'
+          }
+        }
+      }).then(async ids => { resolve(ids || []) })
+    })
+  },
+
+  getDataForPost (address) {
+    return new Promise(async (resolve, reject) => {
+      const list = await this.getPostInfosByAddress(address)
+      if (!list.length) {
+        resolve(null)
+      } else {
+        let data = await this.getPostData(list[0], address)
+        if (!data) {
+          resolve(false)
+        } else {
+          clearTimeout(this.timerInterval)
+          data = decode.uint8ArrayToString(data.data)
+          resolve(data)
+        }
+      }
+    })
+  },
+
+  async getPostData (txid, address) {
+    let transaction
+    try {
+      transaction = await this.getTransactionDetail(txid)
+    } catch (e) {
+      if (e.type === 'TX_PENDING') {
+        this.timerInterval = setTimeout(() => { 
+          console.log('retry')
+          this.getDataForPost(address) 
+        }, 2000)
+      } else {
+        console.log(e)
+      }
+    }
+    return transaction
   },
 
   getPostFromAddress (address) {
@@ -414,7 +1268,7 @@ let arweave = {
           expr1: {
             op: 'equals',
             expr1: 'App-Name',
-            expr2: 'arclight'
+            expr2: APP_NAME
           },
           expr2: {
             op: 'equals',
@@ -423,15 +1277,26 @@ let arweave = {
           }
         }
       }).then(async ids => {
-        if (ids.length === 0) {
-          resolve(false)
+        if (!ids.length) {
+          resolve(null)
           return
         }
-
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
-          resolve(data)
-        })
+        // 有可能查到正在等待确认的交易所以需要通过循环尝试另一个交易地址，直到成功或者遍历了所有的地址。
+        let detail
+        for (let i = 0; i < ids.length; i++) {
+          try {
+            detail = await this.getTransactionDetail(ids[i])
+            break
+          } catch (e) {
+            if (e.type !== 'TX_PENDING') {
+              reject(new Error(e))
+            }
+          }
+        }
+        if (!detail) resolve(false)
+        let tags = this.getTagsByTransaction(detail)
+        let data = JSON.parse(decode.uint8ArrayToString(detail.data))
+        resolve({ data, tags, tx: detail })
       })
     })
   },
@@ -451,8 +1316,7 @@ let arweave = {
           return
         }
 
-        let detail = await this.getTransactionDetail(ids[0])
-        ar.transactions.getData(detail.id, {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
           resolve(data)
         })
       })
@@ -460,36 +1324,36 @@ let arweave = {
   },
 
   /**
-   * Publish a single based on the given address and key file   
-   * 根据给定的钱包地址和密钥文件发布音乐（单曲）
-   * @param {String} address              - 用户的钱包地址
-   * @param {JSON Object} key             - 使用 keyFileContent，不是原始文件
-   * @param {SingleMusic Object} single   - Single 单曲音乐的 data obejct 对象
+   * 获取上传给定大小的文件需要支付多少 Winston。
+   * 注意：在展示时请使用 winstonToAr 转换为 AR 在显示，在运算时，请保持在 Winston 单位运算，以保证精确。
+   * @param {*} byte 
    */
-  postSingleFromAddress (address, key, single) {
-
+  async getUploadPrice (byte) {
+    const res = await Axios.get(`${arweaveHost}/price/${Number(byte)}`)
+    if (res && res.data) return res.data
+    else return 0
   },
 
-  /**
-   * Publish an album based on the given address and key file   
-   * 根据给定的地址和密钥文件发布专辑
-   * @param {*} address                   - 用户的钱包地址
-   * @param {*} key                       - 使用 keyFileContent，不是原始文件
-   * @param {*} single                    - Album 专辑音乐的 data object 对象
-   */
-  postAlbumFromAddress (address, key, single) {
-
+  async getPaymentPrice (address) {
+    const res = await Axios.get(`${arweaveHost}/price/1/${address}`)
+    if (res && res.data) return res.data
+    else return 0
   },
 
-  /**
-   * Publish a podcast based on the given address and key file   
-   * 根据给定的地址和密钥文件发布播客
-   * @param {*} address                   - 用户的钱包地址
-   * @param {*} key                       - 使用 keyFileContent，不是原始文件
-   * @param {*} podcast                   - Podcast 播客的 data object 对象
-   */
-  postPodcastFromAddress (address, key, podcast) {
+  winstonToAr (winston) {
+    return ar.ar.winstonToAr(winston)
+  },
 
+  getBalance (key) {
+    return new Promise((resolve, reject) => {
+      ar.wallets.jwkToAddress(key).then(address => {
+        ar.wallets.getBalance(address).then((balance) => {
+          resolve(ar.ar.winstonToAr(balance))
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    })
   }
 }
 
