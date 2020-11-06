@@ -32,6 +32,13 @@ export default {
         }
       ]
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.tabs[0].label = this.$t('navSONG')
+      this.tabs[1].label = this.$t('navSOUND')
+      this.tabs[2].label = this.$t('navPODCAST')
+    })
   }
 }
 </script>

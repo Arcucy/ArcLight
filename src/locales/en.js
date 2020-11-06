@@ -97,14 +97,20 @@ export default {
   newAlbumSelling: 'New Albums Sellings',
   newPodcastSelling: 'New Podcast Sellings',
   newSoundEffectSelling: 'New Sound Sellings',
+  navSONG: 'SONG',
+  navSOUND: 'SOUND',
+  navPODCAST: 'PODCAST',
   // music
   titleLoading: 'Title loading...',
   awaitData: 'Await Data...',
   musicLoading: 'Music loading...',
   genreFilter: 'Genre Filter',
+  genreFilterEmpty: 'The filter result is empty',
   // profile
   similarAuthors: 'Similar authors',
   editProfile: 'EDIT PROFILE',
+  noIntroductionYet: 'No Introduction Yet',
+  accountInvalid: 'Account Invalid',
   // profile edit
   backToProfile: 'Back to Profile',
   avatarEditInfo1: `Sorry, we don't provide any avatar storage option here`,

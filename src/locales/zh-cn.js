@@ -101,14 +101,20 @@ export default {
   newAlbumSelling: '最新发布专辑',
   newPodcastSelling: '最新发布播客',
   newSoundEffectSelling: '最新发布音效',
+  navSONG: '音乐',
+  navSOUND: '音效',
+  navPODCAST: '播客',
   // music
   titleLoading: '名称加载中...',
   awaitData: '等待数据...',
   musicLoading: '音乐加载中...',
   genreFilter: '音乐流派过滤',
+  genreFilterEmpty: 'The filter result is empty',
   // profile
   similarAuthors: '相似作曲家',
   editProfile: '编辑个人主页',
+  noIntroductionYet: '暂无个人简介',
+  accountInvalid: '账号无效',
   // profile edit
   backToProfile: '返回个人主页',
   avatarEditInfo1: `很抱歉，我们在这里不提供任何头像存储的功能`,

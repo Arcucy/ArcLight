@@ -129,7 +129,7 @@ export default {
       })
       API.arweave.getIntroFromAddress(this.id).then(introduction => {
         if (!introduction) {
-          introduction = 'No Introduction Yet'
+          introduction = this.$t('noIntroductionYet')
         } else {
           introduction = introduction.replace(/<br>/gm, '\\n')
           introduction = introduction.replace(/<[^>]*>/gmu, '')
@@ -148,7 +148,7 @@ export default {
       })
       API.arweave.getIdFromAddress(this.id).catch(() => {
         this.user.avatar = ''
-        this.user.introduction = 'Account Invalid'
+        this.user.introduction = this.$t('accountInvalid')
       }).then(async user => {
         this.user.nickname = user.data
         this.user.type = user.type
