@@ -106,7 +106,7 @@ export default {
       return Math.ceil(this.addressList.length / this.pagesize)
     },
     noDataLabel () {
-      return this.genreFilter ? 'The filter result is empty' : 'No data'
+      return this.genreFilter ? this.$t('genreFilterEmpty') : this.$t('noData')
     }
   },
   watch: {

@@ -6,12 +6,12 @@
     <v-card dark>
       <div class="receipt">
         <h3 class="receipt-title">
-          Fee to Upload:
+          {{ $t('feeToUpload') }}:
         </h3>
         <div class="receipt-content">
           <p class="receipt-content-price">
             <span class="receipt-content-price-label">
-              Audio
+              {{ $t('audio') }}
             </span>
             <span>
               {{ audioPrice }} AR
@@ -19,7 +19,7 @@
           </p>
           <p class="receipt-content-price">
             <span class="receipt-content-price-label">
-              Cover
+              {{ $t('cover') }}
             </span>
             <span>
               {{ coverPrice }} AR
@@ -27,7 +27,7 @@
           </p>
           <p class="receipt-content-price">
             <span class="receipt-content-price-label">
-              Transaction Info
+              {{ $t('txInfo') }}
             </span>
             <span>
               {{ infoPrice }} AR
@@ -36,7 +36,7 @@
           <v-divider dark />
           <p class="receipt-content-price">
             <span class="receipt-content-price-label">
-              Total
+              {{ $t('total') }}
             </span>
             <span>
               {{ totalPrice }} AR
@@ -44,7 +44,7 @@
           </p>
         </div>
         <v-btn class="receipt-button" depressed color="#E56D9B" block @click="confirmClick">
-          CONFIRM
+          {{ $t('confirm') }}
         </v-btn>
       </div>
     </v-card>
@@ -75,19 +75,19 @@ export default {
       if (this.bill && this.bill.audioPrice) {
         return api.arweave.winstonToAr(this.bill.audioPrice)
       }
-      return 'Loading...'
+      return this.$t('loading')
     },
     coverPrice () {
       if (this.bill && this.bill.coverPrice) {
         return api.arweave.winstonToAr(this.bill.coverPrice)
       }
-      return 'Loading...'
+      return this.$t('loading')
     },
     infoPrice () {
       if (this.bill && this.bill.infoPrice) {
         return api.arweave.winstonToAr(this.bill.infoPrice)
       }
-      return 'Loading...'
+      return this.$t('loading')
     },
     totalPrice () {
       if (this.bill && this.bill.audioPrice && this.bill.coverPrice && this.bill.infoPrice) {
@@ -95,7 +95,7 @@ export default {
         const total = audioPrice + coverPrice + infoPrice
         return api.arweave.winstonToAr(total)
       }
-      return 'Loading...'
+      return this.$t('loading')
     }
   },
   watch: {

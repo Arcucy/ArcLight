@@ -44,35 +44,36 @@
           </p>
         </div>
         <div class="about-title">
-          <span class="pink-text">Ensure</span> your <span class="pink-text">rewards</span>
+          <span class="pink-text">{{ $t('ensure') }}</span>{{ $t('yourWithSpace') }}<span class="pink-text">{{ $t('rewards') }}</span>
         </div>
         <div class="about-subtitle">
-          <span class="pink-text">validation</span> of the payments
+          <span class="pink-text">{{ $t('validation') }}</span> {{ $t('ofThePayments') }}
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            When customers paying the AR to your account, we will generate a receipt transaction to the customer side, including the UNIX timestamp information, the price paid to you,
-            the target music or album custom bought, and your address. All the information will be saved into the receipt transaction.
+            {{ $t('about4P1Part1') }}
           </p>
           <p id="p2" class="about-p">
-            We will look back for the transactions for users, in order to prevent unauthorized official sign to the transactions, check the timestamp is correct to the payment, check the price and
-            the price you required is right, after all the process is done and validated, the music source file will be able to deliver to the customers. And you will receive the transaction as well.
+            {{ $t('about4P2Part1') }}
           </p>
         </div>
         <div class="about-subtitle">
-          <span class="pink-text">Thank you for choosing ArcLight!</span>
+          <span class="pink-text">{{ $t('thankYouForChoosingArcLight') }}</span>
         </div>
       </div>
     </spaceLayout>
+    <Version />
   </div>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
+import Version from '@/components/Version.vue'
 
 export default {
   components: {
-    spaceLayout
+    spaceLayout,
+    Version
   },
   mounted () {
     document.title = 'Why Choose ArcLight - ArcLight Music Distribution Platform'

@@ -25,10 +25,10 @@
         {{ card.authorUsername }}
       </a>
       <p v-if="card.price != 0" class="card-price">
-        pay {{ card.price }} AR
+        {{ $t('pay') }} {{ card.price }} AR
       </p>
       <p v-else class="card-price free-song">
-        Free
+        {{ $t('free') }}
       </p>
       <p class="card-time">
         {{ time }}
