@@ -6,7 +6,6 @@ export default {
   forProject: 'for Project',
   // about
   why: 'Why',
-  about: 'about',
   arcLightLocalized: 'ArcLight',
   aboutP1Part1: 'Project ArcLight first started as an Arweave storage solution dapp, after the ',
   aboutP2Part2: ' was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.',
@@ -26,7 +25,6 @@ export default {
   profit: 'Profit',
   secureWay: 'secure way',
   toStoreYourArtworks: 'to store your artworks',
-
   about3P1Part1: 'A great chance we can introduce our technic to have your artwork safe.',
   about3P2Part1: 'Different from the DRM system, we simply encrypt your audio after you upload it into the broswer, after the encryption of our own, Arweave API will encrypt it again before uploading it to the Permaweb. Your listener can only get the source file after they pay to you, otherwise, they can only get a small amount of music demo or the full trial (if you wish to disable the demo function). After the customers decided to pay for your work, they will use the official token AR pay to your account.',
   // header
@@ -122,6 +120,13 @@ export default {
   priceMustBeNumber: 'The price must be numbers',
   priceCantBeNegative: `Price can't be negative`,
   demoCantBeSetToFreeMusic: `You can't set demo for free music`,
+  // image upload
+  editCover: 'Edit Cover',
+  adjustSizeAndPositionOfImage: 'Adjust size and position of image',
+  selectImage: 'Select Image',
+  imageTooBig: 'Imgae Too Big',
+  autoCompressImageFail: 'Auto Compress Image Failed',
+  imageUploadFail: 'Upload Failed',
   // single
   singleCoverIsRequiredToUpload: 'A cover for a single release is required',
   singleTitleIsRequiredToUpload: 'A title for a single release is required',

@@ -7,7 +7,6 @@ export default {
   developedApp: '计划而开发',
   // about
   why: '为什么选择',
-  about: '关于',
   arcLightLocalized: 'ArcLight (弧光)',
   about1P1Part1: 'Project ArcLight（弧光计划）最初是以 Arweave 平台的存储系统来设计和构建的，在',
   about1P1Part2: ' 公布之后，我们把目光放在了打造一个真正开放和自由的音乐分发平台来完成这个 GitCoin Bounty 所需的要求。',
@@ -123,6 +122,13 @@ export default {
   priceMustBeNumber: '价格必须设置为数字',
   priceCantBeNegative: `价格不可以为负值`,
   demoCantBeSetToFreeMusic: `你不可以给免费音乐设置试听时长`,
+  // image upload
+  editCover: '编辑封面',
+  adjustSizeAndPositionOfImage: '调整图片的缩放大小和位置',
+  selectImage: '选择图片',
+  imageTooBig: '图片大小太大',
+  autoCompressImageFail: '自动压缩图片失败，再试一次',
+  imageUploadFail: '上传失败',
   // single
   singleCoverIsRequiredToUpload: '需要设置封面才能发布单曲',
   singleTitleIsRequiredToUpload: '需要填写标题才能发布单曲',
