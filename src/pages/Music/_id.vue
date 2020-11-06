@@ -1099,6 +1099,7 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       overflow: hidden;
+      text-align: left;
       word-break: break-all;
     }
   }

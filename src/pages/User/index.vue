@@ -195,7 +195,7 @@ export default {
     username (val) {
       if (this.wallet === this.$route.params.id) {
         this.setIsMe(true)
-        document.title = val + this.$t('profileOf') +' - ArcLight'
+        document.title = val + this.$t('profileOf') + ' - ArcLight'
       } else {
         document.title = this.$t('profile') + ' - ArcLight'
       }
