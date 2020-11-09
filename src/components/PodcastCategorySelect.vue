@@ -9,7 +9,7 @@
       flat
       hide-no-data
       hide-details
-      label="Search Category"
+      :label="$t('searchCategory')"
       solo-inverted
       background-color="#333333"
     >

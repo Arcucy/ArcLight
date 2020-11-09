@@ -5,47 +5,47 @@
         <div class="edit-header">
           <a @click="backPage()" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Profile
+            {{ $t('backToProfile') }}
           </a>
         </div>
         <div class="container">
           <div class="avatar input-box">
-            <span class="edit-title">Avatar</span>
+            <span class="edit-title">{{ $t('avatar') }}</span>
             <avatar class="edit-avatar" :src="userAvatar" :size="140" />
-            <span class="edit-content">Sorry, we don't provide any avatar storage option here<br>
-            To change your avatar, please go to <a href="https://arweave.net/d9SXf_N32hAm3cygt1btmPC-7Dg460VhQEtW8I-cfvU">Arweave Avatar</a></span>
+            <span class="edit-content">{{ $t('avatarEditInfo1') }}<br>
+            {{ $t('avatarEditInfo2') }}<a href="https://arweave.net/d9SXf_N32hAm3cygt1btmPC-7Dg460VhQEtW8I-cfvU">Arweave Avatar</a></span>
           </div>
           <div class="username input-box">
-            <span class="edit-title">Username</span>
+            <span class="edit-title">{{ $t('username') }}</span>
             <span class="username-text">{{ username }}</span>
-            <span class="edit-content">Sorry, we don't provide any arweave id storage option here<br>
-            To change your avatar, please go to <a href="https://mtfvznw2pwxykoicvxpoe7ao5rp4nhaueueux2bbe4klxankdhra.arweave.net/fGUdNmXFmflBMGI2f9vD7KzsrAc1s1USQgQLgAVT0W0">Arweave ID</a></span>
+            <span class="edit-content">{{ $t('usernameEditInfo1') }}<br>
+            {{ $t('usernameEditInfo2') }}<a href="https://mtfvznw2pwxykoicvxpoe7ao5rp4nhaueueux2bbe4klxankdhra.arweave.net/fGUdNmXFmflBMGI2f9vD7KzsrAc1s1USQgQLgAVT0W0">Arweave ID</a></span>
           </div>
           <div class="location input-box">
-            <span class="edit-title">Location</span>
+            <span class="edit-title">{{ $t('location') }}</span>
             <v-text-field
               v-model="location"
-              placeholder="Where do you live?"
+              :placeholder="$t('whereDoYouLive')"
               solo
               dark
             ></v-text-field>
           </div>
           <div class="website input-box">
-            <span class="edit-title">Personal / Band Website</span>
+            <span class="edit-title">{{ $t('officialWebsite') }}</span>
             <v-text-field
               v-model="website"
-              placeholder="Website address..."
+              :placeholder="$t('websiteAddress')"
               solo
               dark
             ></v-text-field>
           </div>
           <div class="introduction input-box">
-            <span class="edit-title">Introduction</span>
+            <span class="edit-title">{{ $t('introduction') }}</span>
             <v-textarea
               dark
               solo
               name="introduction"
-              label="How do you describe your self?"
+              :label="$t('howDoYouDescribeYourSelf')"
               auto-grow
               :rules="rules"
               counter
@@ -55,11 +55,11 @@
           <div class="netease-id input-box">
             <span class="edit-title">
               <img :src="neteaseLogo" class="id-logo" />
-              Netease CloudMusic ID
+              {{ $t('neteaseCloudMusic') }} ID
             </span>
             <v-text-field
               v-model="neteaseId"
-              placeholder="The digits of your id"
+              :placeholder="$t('digitsOfYourId')"
               solo
               dark
             ></v-text-field>
@@ -71,7 +71,7 @@
             </span>
             <v-text-field
               v-model="soundcloudId"
-              placeholder="User id is is after the soundcloud.com/"
+              :placeholder="$t('usernameOfSoundCloud')"
               solo
               dark
             ></v-text-field>
@@ -83,13 +83,13 @@
             </span>
             <v-text-field
               v-model="bandcampId"
-              placeholder="Username as the username.bandcamp.com"
+              :placeholder="$t('usernameOfBandcamp')"
               solo
               dark
             ></v-text-field>
           </div>
           <div class="submit-btn">
-            <v-btn color="#E56D9B" depressed light class="side-title" large :loading="submitBtnLoading" @click="submit">Save</v-btn>
+            <v-btn color="#E56D9B" depressed light class="side-title" large :loading="submitBtnLoading" @click="submit">{{ $t('save') }}</v-btn>
           </div>
         </div>
       </div>
@@ -109,7 +109,7 @@
             v-bind="attrs"
             @click="successSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -129,7 +129,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -191,7 +191,7 @@ export default {
     wallet (val) {
       if (!val) {
         this.failSnackbar = true
-        this.failMessage = 'Please Login First'
+        this.failMessage = this.$t('pleaseLoginFirst')
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
         }, 2000)
@@ -204,27 +204,27 @@ export default {
         console.log(val)
         if (val === 'location') {
           this.successSnackbar = true
-          this.successMessage = 'Location Update Successfully'
+          this.successMessage = this.$t('locationUpdateSuccess')
         }
         if (val === 'website') {
           this.successSnackbar = true
-          this.successMessage = 'Website Update Successfully'
+          this.successMessage = this.$t('websiteUpdateSuccess')
         }
         if (val === 'intro') {
           this.successSnackbar = true
-          this.successMessage = 'Introduction Update Successfully'
+          this.successMessage = this.$t('introductionUpdateSuccess')
         }
         if (val === 'neteaseId') {
           this.successSnackbar = true
-          this.successMessage = 'Netease CloudMusic ID Update Successfully'
+          this.successMessage = this.$t('neteaseIdUpdateSuccess')
         }
         if (val === 'soundcloudId') {
           this.successSnackbar = true
-          this.successMessage = 'SoundCloud ID Update Successfully'
+          this.successMessage = this.$t('soundCloudIdUpdateSuccess')
         }
         if (val === 'bandcampId') {
           this.successSnackbar = true
-          this.successMessage = 'Bandcamp ID Update Successfully'
+          this.successMessage = this.$t('bandcampIdUpdateSuccess')
         }
       }
     }
@@ -240,7 +240,7 @@ export default {
           this.updateWebsite({ key: this.keyFileContent, value: this.website })
         } else {
           this.failSnackbar = true
-          this.failMessage = 'Invalid Website URL'
+          this.failMessage = this.$t('websiteUrlInvalid')
         }
       }
       if (this.intro && this.intro !== this.user.introduction) {
@@ -254,7 +254,7 @@ export default {
           this.updateIntro({ key: this.keyFileContent, value: intro })
         } else {
           this.failSnackbar = true
-          this.failMessage = 'Introduction Length has 1000 characters limit'
+          this.failMessage = this.$t('introductionHasLimit')
         }
       }
       if (this.neteaseId && this.neteaseId !== this.user.neteaseId) {
@@ -262,7 +262,7 @@ export default {
           this.updateNeteaseId({ key: this.keyFileContent, value: this.neteaseId })
         } else {
           this.failSnackbar = true
-          this.failMessage = 'Invalid Netease CloudMusic User ID'
+          this.failMessage = this.$t('neteaseCloudMusicIdInvalid')
         }
       }
       if (this.soundcloudId && this.soundcloudId !== this.user.soundcloudId) {
@@ -312,13 +312,13 @@ export default {
     }
   },
   created () {
-    document.title = 'Edit Profile - ArcLight'
+    document.title = this.$t('editProfile') + ' - ArcLight'
   },
   mounted () {
     const c = getCookie('arclight_userkey')
     if (!c && !this.wallet) {
       this.failSnackbar = true
-      this.failMessage = 'Please Login First'
+      this.failMessage = this.$t('pleaseLoginFirst')
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 2000)

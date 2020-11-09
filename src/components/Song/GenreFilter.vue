@@ -10,7 +10,7 @@
       outlined
       dense
       clearable
-      label="Genre Filter"
+      :label="$t('genreFilter')"
       dark
       color="#E56D9B"
     />

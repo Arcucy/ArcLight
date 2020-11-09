@@ -9,7 +9,7 @@
       flat
       hide-no-data
       hide-details
-      label="Search Genre"
+      :label="$t('searchGenre')"
       solo-inverted
       background-color="#333333"
     >

@@ -14,11 +14,53 @@
         {{ $t('about') }}
       </router-link>
     </div>
+
+    <v-menu offset-y dark class="localization-menu">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="mx-2 mobile-nav mobile-localization"
+          x-small
+          fab
+          dark
+          color="#E56D9B"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon dark>
+            mdi-earth
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="mx-2 localization"
+          small
+          fab
+          dark
+          color="#E56D9B"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon dark>
+            mdi-earth
+          </v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in localizationItems"
+          :key="index"
+          @click="setLang(item)"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
     <div class="mobile-nav mobile-search-bar">
       <v-btn icon color="white" @click="mobileDialog = true">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </div>
+
     <Search class="search-bar"/>
     <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}</v-btn>
     <v-btn v-if="isLoggedIn" class="mobile-nav mobile-upload" fab dark x-small color="#E56D9B" @click="uploadMusic">
@@ -228,6 +270,12 @@ export default {
         { title: this.$t('myLibrary'), path: '/library' },
         { title: this.$t('signOut'), type: 'danger' }
       ],
+      localizationItems: [
+        'English',
+        '中文 (简体)',
+        '中文 (繁体)'
+      ],
+      lang: 'English',
       frosted: false,
       mobileDialog: false,
       showPosition: 1
@@ -251,6 +299,22 @@ export default {
       if (val) {
         this.failSnackbar = true
         this.failMessage = this.$t('accountHasErroredTx')
+      }
+    },
+    lang (val) {
+      switch (val) {
+        case 'zh-CN':
+          this.$i18n.locale('zhCN')
+          this.$moment.locale('zh-cn')
+          break
+        case 'zh-TW':
+          this.$i18n.locale('zhTW')
+          this.$moment.locale('zh-tw')
+          break
+        case 'en-US':
+          this.$i18n.locale('en')
+          this.$moment.locale('en-US')
+          break
       }
     }
   },
@@ -324,6 +388,23 @@ export default {
         this.logout()
       } else {
         this.$router.push({ path: item.path })
+      }
+    },
+    setLang (item) {
+      const localStore = window.localStorage || localStorage
+      switch (item) {
+        case '中文 (简体)':
+          localStore.setItem('locale_lang', 'zh-CN')
+          this.lang = 'zh-CN'
+          break
+        case '中文 (繁体)':
+          localStore.setItem('locale_lang', 'zh-TW')
+          this.lang = 'zh-TW'
+          break
+        case 'English':
+          localStore.setItem('locale_lang', 'en-US')
+          this.lang = 'en-US'
+          break
       }
     },
     uploadMusic () {
@@ -503,6 +584,13 @@ export default {
   .mobile-search-bar {
     display: block;
     margin-right: 10px;
+  }
+
+  .localization {
+    display: none;
+  }
+  .mobile-localization {
+    display: block;
   }
 }
 

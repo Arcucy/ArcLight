@@ -36,7 +36,7 @@
           </template>
           <span>View similar artwork</span>
         </v-tooltip>
-        {{ album.name || 'Loading...' }}
+        {{ album.name || $t('loading') }}
       </h3>
       <div class="mobile mobile-albuminfo-right">
         <span class="genre">{{ album.genre }}</span>
@@ -46,7 +46,7 @@
         by {{ album.artist }}
       </router-link>
       <p class="albuminfo-right-time">
-        Time: {{ time }}
+        {{ $t('time') }}: {{ time }}
       </p>
       <p class="albuminfo-right-desp" v-html="album.desp" />
     </div>
@@ -76,7 +76,7 @@ export default {
       return this.album.unixTime ? this.$moment(this.album.unixTime).format('MMMDo HH:mm:ss') : '--:--:--'
     },
     toGenre () {
-      if (!this.album || !this.album.genre || this.album.genre === 'Await Data...') return {}
+      if (!this.album || !this.album.genre || this.album.genre === this.$t('awaitData')) return {}
       return { name: 'SongsAlbums', query: { genre: this.album.genre } }
     }
   },
