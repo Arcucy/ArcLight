@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import api from '@/api/api'
 import decode from '@/util/decode'
@@ -309,6 +309,7 @@ export default {
     if (this.timerIndex) clearTimeout(this.timerIndex)
   },
   methods: {
+    ...mapActions(['playMusicSingle']),
     async getItemStatus (address, itemAddress, price) {
       if (!address) {
         this.loading = false
@@ -384,6 +385,7 @@ export default {
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
         this.type = tags.Type
+        console.log('歌曲信息：', tags, data)
         // 根据类型进行初始化
         switch (tags.Type) {
           case 'single-info': // 单曲
@@ -405,6 +407,7 @@ export default {
             return
         }
         this.pct = 0
+        this.playMusicSingle({ ...this.completeAudio, fileId: this.info.id, infoId: id, src: '' })
         this.getItemStatus(this.wallet, this.$route.params.id, this.price)
       } catch (e) {
         console.error('[Failed to get music information]', e)
