@@ -1,12 +1,18 @@
 <template>
   <div id="app" v-if="routerAlive">
     <router-view/>
+    <Player />
   </div>
 </template>
 
 <script>
+import Player from '@/components/Player'
+
 export default {
   name: 'App',
+  components: {
+    Player
+  },
   data () {
     return {
       routerAlive: true
@@ -81,7 +87,7 @@ export default {
         this.$moment.locale('zh-cn')
         break
       case 'zh-TW':
-        this.$i18n.locale = 'zhCN'
+        this.$i18n.locale = 'zhTW'
         this.$moment.locale('zh-tw')
         break
       case 'en-US':
