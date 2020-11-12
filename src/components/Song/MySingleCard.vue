@@ -225,7 +225,7 @@ export default {
     getAudio (id) {
       return new Promise(async (resolve, reject) => {
         try {
-          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+          const music = await api.arweave.getMusic(id, undefined, pct => { this.pct = pct })
           this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
           const reader = new FileReader()

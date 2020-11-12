@@ -476,7 +476,7 @@ export default {
       return new Promise(async (resolve, reject) => {
         try {
           this.pctArray[index] = 0
-          const music = await api.arweave.getMusic(id, pct => { this.info.list[index].pct = pct })
+          const music = await api.arweave.getMusic(id, undefined, pct => { this.info.list[index].pct = pct })
           this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
           const reader = new FileReader()
@@ -535,9 +535,7 @@ export default {
     },
     getMusicRaw (item) {
       return new Promise(async (resolve, reject) => {
-        const music = await api.arweave.getMusic(item.id, pct => {
-          this.singlePct = pct
-        })
+        const music = await api.arweave.getMusic(item.id, undefined, pct => { this.singlePct = pct })
         this.tempPct += 100
         this.musicType = music.type
         // 挂载音频到一个 URL，并指定给 audio.pic
