@@ -1,16 +1,21 @@
 <template>
   <div v-if="playingAudio && playingAudio.fileId" class="player">
-    <aplayer v-if="showAplayer && !loading && music" :music="music" :lrcType="0" class="player-container" theme="#E56D9B" />
-    <div v-if="loading" class="player-loading">
-      <p>
-        {{ pct ? `(${pct}%) ` : '' }}{{ $t('musicLoading') }}
-      </p>
-      <v-progress-linear
-        :indeterminate="!pct"
-        v-model="pct"
-        color="#E56D9B"
-        rounded
-      />
+    <div class="player-close" @click="close">
+      <v-icon color="white" size="15px">mdi-close-thick</v-icon>
+    </div>
+    <div class="player-main">
+      <aplayer v-if="showAplayer && !loading && music" :music="music" :lrcType="0" class="player-main-container" theme="#E56D9B" autoplay />
+      <div v-if="loading" class="player-main-loading">
+        <p>
+          {{ pct ? `(${pct}%) ` : '' }}{{ $t('musicLoading') }}
+        </p>
+        <v-progress-linear
+          :indeterminate="!pct"
+          v-model="pct"
+          color="#E56D9B"
+          rounded
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -19,6 +24,7 @@
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import audioUtil from '@/util/audio'
 import api from '@/api/api'
+import Axios from 'axios'
 
 export default {
   components: {
@@ -29,7 +35,8 @@ export default {
     return {
       showAplayer: true,
       loading: true,
-      pct: 0
+      pct: 0,
+      cancelTokenSource: null
     }
   },
   computed: {
@@ -37,36 +44,29 @@ export default {
     ...mapGetters(['playingAudio']),
     music () {
       if (this.audioFileCache && this.audioFileCache.fileId === this.playingAudio.fileId) {
-        return this.audioFileCache.fullAudio
+        const { unlock, duration } = this.playingAudio
+        const { fullAudio, auditionClip } = this.audioFileCache
+        return unlock || duration === -1 ? fullAudio : auditionClip
       } else return null
     }
   },
   watch: {
     async playingAudio (val) {
-      console.log('新音乐', val)
-      // this.reloadPlayer()
       if (val && val.fileId) {
-        this.clearOld()
-        const res = await this.initAudio(val)
-        if (res && res.fullAudio) {
-          this.setAudioFileCache({fileId: val.fileId, audioData: res})
-        }
+        await this.initAudio(val)
       }
     }
   },
   async mounted () {
     if (this.playingAudio && this.playingAudio.fileId) {
-      const res = await this.initAudio(this.playingAudio)
-      if (res && res.fullAudio) {
-        this.setAudioFileCache({fileId: this.playingAudio.fileId, audioData: res})
-      }
+      await this.initAudio(this.playingAudio)
     }
   },
   // 取消侦测器
   destroyed () {
   },
   methods: {
-    ...mapMutations(['setAudioFileCache']),
+    ...mapMutations(['setAudioFileCache', 'setPlayList']),
     reloadPlayer () {
       this.showAplayer = false
       setTimeout(() => {
@@ -74,6 +74,8 @@ export default {
       })
     },
     async initAudio (audioInfo) {
+      if ({ ...this.audioFileCache }.fileId === audioInfo.fileId) return
+      this.clearOld()
       this.loading = true
       const audio = {
         title: audioInfo.title,
@@ -92,27 +94,34 @@ export default {
         }
       }
       this.loading = false
-      return {
-        fullAudio,
-        auditionClip,
-        audioType
+
+      if (fullAudio) {
+        this.setAudioFileCache({fileId: audioInfo.fileId, audioData: { fullAudio, auditionClip, audioType }})
       }
     },
     /** 获取音频 */
     async getAudio (id, duration) {
-      // try {
-      const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
-      // 完整版的 Url
-      const fullUrl = await this.getBase64Url(music)
-      // 试听版的 Url
-      let trialUrl
-      if (duration && duration > 0) trialUrl = await this.getAuditionClip(music.data.buffer, duration)
-      return { fullUrl, trialUrl, audioType: music.type }
-      // } catch (e) {
-      //   console.error('[Failed to get audio data]', e)
-      //   this.$message.error('Failed to get audio data')
-      //   return { fullUrl: '', audioType: '' }
-      // }
+      try {
+        if (this.cancelTokenSource) {
+          this.cancelTokenSource.cancel()
+          this.cancelTokenSource = null
+          this.pct = 0
+        }
+        this.cancelTokenSource = Axios.CancelToken.source()
+        const music = await api.arweave.getMusic(id, this.cancelTokenSource.token, pct => { this.pct = pct })
+        this.cancelTokenSource = null
+        if (!music) return
+        // 完整版的 Url
+        const fullUrl = await this.getBase64Url(music)
+        // 试听版的 Url
+        let trialUrl
+        if (duration && duration > 0) trialUrl = await this.getAuditionClip(music.data.buffer, duration)
+        return { fullUrl, trialUrl, audioType: music.type }
+      } catch (e) {
+        console.error('[Failed to get audio data]', e)
+        this.$message.error('Failed to get audio data')
+        return { fullUrl: '', audioType: '' }
+      }
     },
     /** 将资源加载到一个 url */
     getBase64Url (buffer) {
@@ -135,6 +144,15 @@ export default {
     clearOld () {
       this.pct = 0
       this.setAudioFileCache({fileId: '', audioData: undefined})
+    },
+    close () {
+      if (this.cancelTokenSource) {
+        this.cancelTokenSource.cancel()
+        this.cancelTokenSource = null
+      }
+      this.pct = 0
+      this.loading = false
+      this.setPlayList([])
     }
   }
 }
@@ -147,64 +165,97 @@ export default {
   right: 0;
   left: 0;
   height: 66px;
-  border-radius: 5px 5px 0 0;
-  background: #adadad4d;
   box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  &-container {
-    max-width: 1200px;
+  &-main {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: 0;
+    border-radius: 5px 5px 0 0;
+    background: #adadad4d;
+    backdrop-filter: blur(20px);
     width: 100%;
-    margin: 0 auto;
-    background: #ffffff00;
-    box-shadow: none;
-    /deep/ &.aplayer .aplayer-info {
-      padding: 14px 7px 5px 10px;
-      .aplayer-music {
-        .aplayer-title {
-          color: #E56D9B;
+    &-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      background: #ffffff00;
+      overflow: hidden;
+      box-shadow: none;
+      /deep/ &.aplayer .aplayer-info {
+        padding: 14px 7px 5px 10px;
+        .aplayer-music {
+          .aplayer-title {
+            color: #E56D9B;
+          }
+          .aplayer-author {
+            color: white;
+          }
         }
-        .aplayer-author {
+        .aplayer-controller .aplayer-time {
           color: white;
-        }
-      }
-      .aplayer-controller .aplayer-time {
-        color: white;
-        .aplayer-icon {
-          path {
-            fill: white;
+          .aplayer-icon {
+            path {
+              fill: white;
+            }
+            &:hover path {
+              fill: #E56D9B;
+            }
+            &.inactive {
+              opacity: 0.5;
+            }
+            &.aplayer-icon-mode {
+              display: none;
+            }
           }
-          &:hover path {
-            fill: #E56D9B;
-          }
-          &.inactive {
-            opacity: 0.5;
-          }
-          &.aplayer-icon-mode {
-            display: none;
-          }
-        }
-        .aplayer-volume-wrap .aplayer-volume-bar-wrap {
-          &:after {
-            background-color: #0000;
-            box-shadow: none;
+          .aplayer-volume-wrap .aplayer-volume-bar-wrap {
+            &:after {
+              background-color: #0000;
+              box-shadow: none;
+            }
           }
         }
       }
     }
+
+    &-loading {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 10px;
+      background: #ffffff00;
+      p {
+        text-align: center;
+        margin: 16px 0 10px;
+        color: white;
+        font-size: 16px;
+      }
+    }
   }
 
-  &-loading {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 10px;
-    background: #ffffff00;
-    p {
-      text-align: center;
-      margin: 16px 0 10px;
+  &-close {
+    position: absolute;
+    right: 30px;
+    top: -20px;
+    height: 20px;
+    width: 40px;
+    border-radius: 5px 5px 0 0;
+    background: #adadad4d;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    i {
       color: white;
-      font-size: 16px;
+    }
+
+    &:hover {
+      i {
+        color: #ff6161;
+      }
     }
   }
 }
