@@ -2,26 +2,20 @@
   <div class="payment-container">
     <div class="music">
       <div class="music-download">
-        <div v-if="$route.name === 'Music' || type !== 'album-full'" class="music-download-price">
-          <p v-if="artist.id !== wallet && price" class="music-download-price-text">
-            {{ purchaseSlogan }}
-          </p>
-          <p v-else class="free-text music-download-price-text">
-            {{ $t('free') }}
-          </p>
-        </div>
-        <v-btn
-          block
-          large
-          light
-          outlined
-          rounded
-          color="#E56D9B"
-          :height="44"
-          @click.stop="buyClick"
-        >
-          {{ $t('buy') }}
-        </v-btn>
+        <slot :callback="buyClick">
+          <v-btn
+            block
+            large
+            light
+            outlined
+            rounded
+            color="#E56D9B"
+            :height="44"
+            @click.stop="buyClick"
+          >
+            {{ $t('buy') }}
+          </v-btn>
+        </slot>
       </div>
     </div>
     <v-dialog
@@ -497,19 +491,6 @@ export default {
   &-download {
     margin: 0 auto 0;
     max-width: 240px;
-    &-price {
-      p {
-      text-align: center;
-      font-size: 14px;
-      font-weight: 500;
-      color: #E56D9B;
-      line-height: 20px;
-      margin: 0 0 8px;
-      }
-      .free-text {
-        color: #66BB6A;
-      }
-    }
   }
 }
 
