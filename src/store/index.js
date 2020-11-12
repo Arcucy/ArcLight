@@ -249,7 +249,6 @@ export default new Vuex.Store({
       state.playIndex = index
     },
     setAudioFileCache (state, {fileId, audioData}) {
-      console.log('设置缓存', audioData)
       state.audioFileCache = {
         ...audioData,
         fileId
