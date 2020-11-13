@@ -21,6 +21,11 @@
   <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
 </p>
 
+---
+
+[简体中文](https://github.com/Arcucy/ArcLight/blob/master/doc/zh-cn.md)
+
+---
 
 ## Why ArcLight ?
 > about Project ArcLight
@@ -80,11 +85,5 @@ yarn build
 
 # build for production and view the bundle analyzer report
 yarn build --report
-
-# run unit tests
-yarn unit
-
-# run all tests
-yarn test
 ```
 
