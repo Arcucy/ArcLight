@@ -3,7 +3,7 @@
     <spaceLayout>
       <div class="about-container">
         <div class="about-title">
-          {{ $t('why') }} <span class="pink-text">ArcLight</span> ?
+          {{ $t('whyArcLight') }} <span class="pink-text">ArcLight</span> ?
         </div>
         <div class="about-subtitle">
           {{ $t('about') }} Project <span class="pink-text">{{ $t('arcLightLocalized') }}</span>
