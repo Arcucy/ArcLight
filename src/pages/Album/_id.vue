@@ -30,13 +30,20 @@
             <router-link :to="{ name: 'Music', params: { id: $route.params.id }, query: { album: index + 1 } }">
               <div class="music-left">
                 <h3>
-                  #{{ index+1 }} {{ music.title }} {{ pctArray[index] }}
+                  #{{ index+1 }} {{ music.title }}
                 </h3>
                 <p>
                   by {{ info.artist }}
                 </p>
               </div>
             </router-link>
+            <div
+              v-if="(music.unlock || info.duration !== 0) && !loading"
+              class="music-play"
+              @click="playAudio(music, index)"
+            >
+              <v-icon>mdi-play</v-icon>
+            </div>
             <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="downloadAudio(music, index)">
               <v-progress-circular
                 v-if="music.downloadAwait"
@@ -168,12 +175,12 @@ import JSZip from 'jszip'
 import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 let zip = new JSZip()
 
 export default {
-  inject: ['backPage'],
+  inject: ['backPage', 'routerRefresh'],
   components: {
     spaceLayout,
     albumInfo,
@@ -189,6 +196,7 @@ export default {
         desp: '',
         genre: 'Await Data...',
         unixTime: 0,
+        duration: 0,
         list: []
       },
       artist: {
@@ -243,6 +251,7 @@ export default {
     })
   },
   watch: {
+    $route (val) { this.routerRefresh() },
     wallet (val) {
       this.awaitConfirm = false
       if (this.timerIndex) clearTimeout(this.timerIndex)
@@ -268,29 +277,6 @@ export default {
         }
       }
     },
-    $route (val) {
-      this.count = 0
-      this.owned = false
-      this.info = {
-        name: '',
-        cover: 'Loading',
-        artist: '',
-        authorAddress: '',
-        desp: '',
-        genre: '',
-        unixTime: 0,
-        list: []
-      }
-      this.artist = {
-        id: '',
-        avatar: 'loading',
-        username: 'Artist loading...'
-      }
-      this.audio = []
-      this.awaitConfirm = false
-      if (this.timerIndex) clearTimeout(this.timerIndex)
-      this.getAlbum(this.$route.params.id)
-    },
     albumPct (val) {
       this.albumPctDisplay = val
       if (val === 100) {
@@ -301,6 +287,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['playMusicSingle']),
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
@@ -347,12 +334,14 @@ export default {
         const transaction = await api.arweave.getTransactionDetail(id)
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const albumData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        console.log('专辑信息：', albumData)
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
         this.info.genre = tags['Genre']
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
+        this.info.duration = Number(albumData.duration) || 0
 
         document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
         document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -587,6 +576,18 @@ export default {
     purchaseComplete () {
       this.awaitConfirm = true
       this.getItemStatus(this.wallet, this.$route.params.id, this.price)
+    },
+    playAudio (music, index) {
+      this.playMusicSingle({
+        fileId: music.id,
+        musicIndex: index,
+        infoId: this.$route.params.id,
+        title: music.title,
+        artist: this.artist.username !== 'Artist loading...' ? this.artist.username : '',
+        pic: this.info.cover,
+        duration: this.info.duration,
+        unlock: this.unlock
+      })
     }
   }
 }
@@ -820,6 +821,17 @@ a {
         i {
           color: #B2B2B2;
         }
+      }
+    }
+    &-play {
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      i {
+        color: white;
+        font-size: 30px;
       }
     }
   }
