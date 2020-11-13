@@ -6,7 +6,6 @@ export default {
   forProject: '为',
   developedApp: '计划而开发',
   // about
-  why: '为什么选择',
   arcLightLocalized: 'ArcLight (弧光)',
   about1P1Part1: 'Project ArcLight（弧光计划）最初是以 Arweave 平台的存储系统来设计和构建的，在',
   about1P1Part2: ' 公布之后，我们把目光放在了打造一个真正开放和自由的音乐分发平台来完成这个 GitCoin Bounty 所需的要求。',
