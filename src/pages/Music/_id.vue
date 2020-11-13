@@ -206,7 +206,7 @@ import miniAvatar from '@/components/User/MiniAvatar'
 import payment from '@/components/Payment'
 
 export default {
-  inject: ['backPage'],
+  inject: ['backPage', 'routerRefresh'],
   components: {
     payment,
     spaceLayout,
@@ -216,8 +216,6 @@ export default {
     return {
       type: '',
       musicId: '',
-      auditionClip: '',
-      completeAudio: '',
       imgShoudLoad: true,
       awaitConfirm: false,
       info: {
@@ -261,9 +259,6 @@ export default {
     unlock () {
       return this.owned || this.artist.id === this.wallet || !this.price
     },
-    audio () {
-      return this.unlock || this.info.duration === -1 ? this.completeAudio : this.auditionClip
-    },
     toGenre () {
       if (!this.info.genre) return {}
       switch (this.type) {
@@ -284,23 +279,11 @@ export default {
     })
   },
   watch: {
-    $route (val) {
-      this.loading = true
-      this.imgShoudLoad = false
-      this.auditionClip = ''
-      this.completeAudio = ''
-      this.info.cover = 'undefined'
-      this.pct = 0
-      this.owned = false
-      setTimeout(() => {
-        this.imgShoudLoad = true
-      })
-      this.getMusicInfo(this.$route.params.id)
-    },
+    $route (val) { this.routerRefresh() },
     wallet (val) {
       if (this.info.artistId === val) {
         this.owned = true
-      } else if (this.completeAudio && !this.loading) {
+      } else if (!this.loading) {
         // 需要确保歌曲已经获取完成才可以进行这些操作，避免用户在刷新页面后触发这边的代码。
         this.owned = false
         this.awaitConfirm = false
@@ -311,8 +294,7 @@ export default {
   },
   destroyed () {
     // 释放 webkitURL
-    if (this.auditionClip && this.auditionClip.url) window.webkitURL.revokeObjectURL(this.auditionClip.url)
-    if (this.completeAudio && this.completeAudio.url) window.webkitURL.revokeObjectURL(this.completeAudio.url)
+    if (this.audioData && this.audioData.src) window.webkitURL.revokeObjectURL(this.audioData.src)
     // 卡片或者页面被销毁时清除定时器
     if (this.timerIndex) clearTimeout(this.timerIndex)
   },
@@ -434,7 +416,7 @@ export default {
       this.price = data.price
       this.info.id = data.music
       // 获取封面和音频
-      this.info.cover = await this.getCover(data.cover)
+      this.getCover(data.cover)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -455,7 +437,7 @@ export default {
       this.info.id = data.music[index].id
       this.albumPrice = tags['Price']
       // 获取封面和音频
-      this.info.cover = await this.getCover(data.cover)
+      await this.getCover(data.cover)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -473,7 +455,7 @@ export default {
       this.price = data.price
       this.info.id = data.program
       // 获取封面和音频
-      this.info.cover = await this.getCover(data.cover)
+      await this.getCover(data.cover)
 
       document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${data.podcast} \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -490,7 +472,7 @@ export default {
       this.price = data.price
       this.info.id = data.audio
       // 获取封面和音频
-      this.info.cover = await this.getCover(data.cover)
+      await this.getCover(data.cover)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -547,11 +529,11 @@ export default {
     async getCover (id) {
       try {
         const cover = await api.arweave.getCover(id)
-        return cover
+        this.info.cover = cover
       } catch (e) {
         console.error('[Failed to get cover]', e)
         this.$message.error('Failed to get cover')
-        return ''
+        this.info.cover = ''
       }
     },
     getTag (data, key) {
