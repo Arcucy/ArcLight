@@ -5,7 +5,6 @@ export default {
   developedBy: 'Developed by',
   forProject: 'for Project',
   // about
-  why: 'Why',
   arcLightLocalized: 'ArcLight',
   aboutP1Part1: 'Project ArcLight first started as an Arweave storage solution dapp, after the ',
   aboutP2Part2: ' was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.',
