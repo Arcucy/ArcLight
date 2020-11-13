@@ -416,7 +416,7 @@ export default {
       this.price = data.price
       this.info.id = data.music
       // 获取封面和音频
-      this.getCover(data.cover)
+      await this.getCover(data.cover)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
