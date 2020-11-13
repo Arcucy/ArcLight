@@ -281,6 +281,7 @@ export default {
       showPosition: 1
     }
   },
+  inject: ['routerRefresh'],
   computed: {
     ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
   },
@@ -304,15 +305,15 @@ export default {
     lang (val) {
       switch (val) {
         case 'zh-CN':
-          this.$i18n.locale('zhCN')
+          this.$i18n.locale = 'zhCN'
           this.$moment.locale('zh-cn')
           break
         case 'zh-TW':
-          this.$i18n.locale('zhTW')
+          this.$i18n.locale = 'zhTW'
           this.$moment.locale('zh-tw')
           break
         case 'en-US':
-          this.$i18n.locale('en')
+          this.$i18n.locale = 'en'
           this.$moment.locale('en-US')
           break
       }

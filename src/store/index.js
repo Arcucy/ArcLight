@@ -74,7 +74,10 @@ export default new Vuex.Store({
     singleObj: '',
     singleInfoId: '',
     purchaseComplete: false,
-    paymentId: ''
+    paymentId: '',
+    playList: [],
+    playIndex: 0,
+    audioFileCache: null
   },
   mutations: {
     setIsLoggedIn (state, status) {
@@ -235,9 +238,39 @@ export default new Vuex.Store({
     },
     setPaymentId (state, id) {
       state.paymentId = id
+    },
+    setPlayList (state, list) {
+      state.playList = list
+    },
+    pushPlayList (state, audio) {
+      state.playList.push(audio)
+    },
+    setPlayIndex (state, index) {
+      state.playIndex = index
+    },
+    setAudioFileCache (state, {fileId, audioData}) {
+      state.audioFileCache = {
+        ...audioData,
+        fileId
+      }
     }
+
   },
   getters: {
+    playingAudio (state) {
+      if (state.playList && state.playList.length && state.playList[state.playIndex]) {
+        return state.playList[state.playIndex]
+      } else {
+        return {
+          fileId: '',
+          infoId: '',
+          title: '',
+          artist: '',
+          pic: '',
+          duration: -1
+        }
+      }
+    }
   },
   actions: {
     setKey ({ commit }, data) {
@@ -1202,6 +1235,16 @@ export default new Vuex.Store({
 
       commit('setPaymentId', transaction.id)
       commit('setPurchaseComplete', true)
+    },
+    playMusicSingle ({ commit, state }, audio) {
+      console.log('正在设定需要播放的歌曲')
+      const sameAudio = state.playList.findIndex(item => item.fileId === audio.fileId)
+      if (sameAudio === -1) {
+        commit('pushPlayList', { ...audio })
+        commit('setPlayIndex', state.playList.length - 1)
+      } else {
+        commit('setPlayIndex', sameAudio)
+      }
     }
   }
 })
