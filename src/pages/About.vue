@@ -62,18 +62,15 @@
         </div>
       </div>
     </spaceLayout>
-    <Version />
   </div>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
-import Version from '@/components/Version.vue'
 
 export default {
   components: {
-    spaceLayout,
-    Version
+    spaceLayout
   },
   mounted () {
     document.title = 'Why Choose ArcLight - ArcLight Music Distribution Platform'

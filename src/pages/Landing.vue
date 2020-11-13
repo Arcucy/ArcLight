@@ -12,18 +12,15 @@
         <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">{{ $t('whyArcLight') }}</v-btn>
       </div>
     </div>
-    <Version class="version-container" />
   </spaceLayout>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
-import Version from '@/components/Version.vue'
 
 export default {
   components: {
-    spaceLayout,
-    Version
+    spaceLayout
   },
   mounted () {
     this.$nextTick(() => {
@@ -42,7 +39,7 @@ export default {
 #title {
   position: absolute;
   font-weight: 300;
-  top: 60%;
+  top: 63%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -61,7 +58,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 82%;
+  top: 89%;
   left: 0;
   right: 0;
   font-size: 25px;
@@ -85,7 +82,7 @@ export default {
 
 .btn-group {
   position: absolute;
-  top: 88%;
+  top: 100%;
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -105,12 +102,6 @@ export default {
   &:hover {
     transform: scale(1.15);
   }
-}
-
-.version-container {
-  position: relative;
-  bottom: -79vh;
-  margin: 0 auto 0;
 }
 
 @keyframes fadeInOpacity {
