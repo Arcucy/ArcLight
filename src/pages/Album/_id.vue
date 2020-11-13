@@ -334,7 +334,6 @@ export default {
         const transaction = await api.arweave.getTransactionDetail(id)
         const tags = await api.arweave.getTagsByTransaction(transaction)
         const albumData = JSON.parse(decode.uint8ArrayToString(transaction.data))
-        console.log('专辑信息：', albumData)
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
