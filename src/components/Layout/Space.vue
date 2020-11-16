@@ -56,7 +56,6 @@ export default {
 
 <style scoped>
 .layout {
-  height: 100%;
   display: flex;
   flex-direction: column;
   background: #0000 !important;
@@ -76,7 +75,7 @@ export default {
   animation-iteration-count: 1;
   animation-timing-function: ease;
   animation-duration: 4s;
-  padding-bottom: 50px;
+  padding-bottom: 116px;
 }
 
 @keyframes fadeInOpacity {
