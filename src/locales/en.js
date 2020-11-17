@@ -254,5 +254,7 @@ export default {
   uploadPendingInfo: 'Your artwork has been uploaded to Arweave Permaweb Storage. Your work may not be available soon after you uploaded, It will need a short time of mining for miners to help you save to next block. Be patient, your wonderful will be forever stored!',
   unknownErrorOccurred: 'Unknown Error Occurred',
   play: 'Play',
-  playDemo: 'Play demo'
+  playDemo: 'Play demo',
+  clear: 'Clear',
+  playlist: 'Playlist'
 }

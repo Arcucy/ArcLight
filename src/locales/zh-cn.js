@@ -255,5 +255,7 @@ export default {
   uploadPendingInfo: '你的作品已经被提交至 Arweave Permaweb Storage（永存网存储中心）。你的作品在上传结束之后可能不会立即可用，数据需要区块链上的矿工进行数据处理后帮你存储至下一个区块。请耐心等待，你的作品将会被永远存储起来！',
   unknownErrorOccurred: '发生了未知错误',
   play: '播放',
-  playDemo: '试听'
+  playDemo: '试听',
+  clear: '清除',
+  playlist: '播放列表'
 }
