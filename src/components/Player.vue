@@ -3,6 +3,9 @@
     <div class="player-close" @click="close">
       <v-icon color="white" size="15px">mdi-close-thick</v-icon>
     </div>
+    <div class="player-playlist">
+      <PlayerPlaylist v-if="showPlaylist" @close="showPlaylist = false" />
+    </div>
     <div class="player-main">
       <div class="player-main-skip">
         <div class="player-main-skip-button" :class="playIndex > playList.length - 2 && 'skip-disable'" @click="skip(1)">
@@ -12,7 +15,18 @@
           <v-icon>mdi-skip-previous</v-icon>
         </div>
       </div>
-      <aplayer v-if="showAplayer && !loading && music" :music="music" :lrcType="0" class="player-main-container" theme="#E56D9B" autoplay />
+
+      <!-- Player -->
+      <aplayer
+        v-if="showAplayer && !loading && music"
+        :music="music"
+        :lrcType="0"
+        @ended="playEnded"
+        class="player-main-container"
+        theme="#E56D9B"
+        autoplay
+      />
+
       <div v-if="loading" class="player-main-loading">
         <div class="player-main-loading-cover">
           <img :src="playingAudio.pic" alt="cover">
@@ -40,7 +54,7 @@
           />
         </div>
       </div>
-      <div class="player-main-playlist">
+      <div class="player-main-playlist" @click="showPlaylist = !showPlaylist">
         <v-icon>mdi-playlist-music</v-icon>
         <p>
           {{ playList.length > 99 ? '99+' : playList.length }}
@@ -56,8 +70,11 @@ import audioUtil from '@/util/audio'
 import api from '@/api/api'
 import Axios from 'axios'
 
+import PlayerPlaylist from '@/components/PlayerPlaylist.vue'
+
 export default {
   components: {
+    PlayerPlaylist
   },
   props: {
   },
@@ -66,7 +83,9 @@ export default {
       showAplayer: true,
       loading: true,
       pct: 0,
-      cancelTokenSource: null
+      cancelTokenSource: null,
+      showPlaylist: false,
+      getFileId: ''
     }
   },
   computed: {
@@ -105,6 +124,7 @@ export default {
     },
     async initAudio (audioInfo) {
       if ({ ...this.audioFileCache }.fileId === audioInfo.fileId) return
+      if (this.getFileId === audioInfo.fileId) return
       this.clearOld()
       this.loading = true
       const audio = {
@@ -137,6 +157,7 @@ export default {
           this.cancelTokenSource = null
           this.pct = 0
         }
+        this.getFileId = id
         this.cancelTokenSource = Axios.CancelToken.source()
         const music = await api.arweave.getMusic(id, this.cancelTokenSource.token, pct => { this.pct = pct })
         this.cancelTokenSource = null
@@ -146,6 +167,7 @@ export default {
         // 试听版的 Url
         let trialUrl
         if (duration && duration > 0) trialUrl = await this.getAuditionClip(music.data.buffer, duration)
+        this.getFileId = ''
         return { fullUrl, trialUrl, audioType: music.type }
       } catch (e) {
         console.error('[Failed to get audio data]', e)
@@ -193,6 +215,9 @@ export default {
       this.pct = 0
       this.loading = false
       this.setPlayList([])
+    },
+    playEnded (val) {
+      this.skip(1)
     }
   }
 }
@@ -206,6 +231,7 @@ export default {
   left: 0;
   height: 66px;
   box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
+  z-index: 1;
   &-main {
     position: absolute;
     bottom: 0;
@@ -220,8 +246,8 @@ export default {
     display: flex;
     justify-content: center;
     &-container {
-      max-width: 1200px;
-      width: 100%;
+      flex: 1;
+      max-width: 1134px;
       margin: 0;
       background: #ffffff00;
       overflow: hidden;
@@ -311,6 +337,7 @@ export default {
       &-button {
         height: 33px;
         width: 33px;
+        min-width: 33px;
         border-radius: 5px;
         display: flex;
         justify-content: center;
@@ -340,6 +367,7 @@ export default {
     &-playlist {
       height: 66px;
       width: 33px;
+      min-width: 33px;
       border-radius: 5px;
       display: flex;
       flex-direction: column;
@@ -391,6 +419,14 @@ export default {
         color: #ff6161;
       }
     }
+  }
+
+  &-playlist {
+    max-width: 1220px;
+    padding: 0 10px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
   }
 }
 </style>
