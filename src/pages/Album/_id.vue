@@ -583,6 +583,7 @@ export default {
         infoId: this.$route.params.id,
         title: music.title,
         artist: this.artist.username !== 'Artist loading...' ? this.artist.username : '',
+        artistId: this.artist.id,
         pic: this.info.cover,
         duration: this.info.duration,
         unlock: this.unlock

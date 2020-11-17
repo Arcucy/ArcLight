@@ -245,6 +245,14 @@ export default new Vuex.Store({
     pushPlayList (state, audio) {
       state.playList.push(audio)
     },
+    deletePlayList (state, index) {
+      state.playList.splice(index, 1)
+      if (state.playIndex > index) {
+        state.playIndex--
+      } else if (state.playIndex === state.playList.length && state.playIndex !== 0) {
+        state.playIndex--
+      }
+    },
     setPlayIndex (state, index) {
       state.playIndex = index
     },
