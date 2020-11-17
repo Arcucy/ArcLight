@@ -553,6 +553,7 @@ export default {
         infoId: this.$route.params.id,
         title: this.info.name,
         artist: this.info.artist,
+        artistId: this.info.artistId,
         pic: this.info.cover,
         duration: this.info.duration,
         unlock: this.unlock
