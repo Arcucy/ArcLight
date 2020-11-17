@@ -281,6 +281,7 @@ export default {
       showPosition: 1
     }
   },
+  inject: ['routerRefresh'],
   computed: {
     ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
   },
@@ -302,15 +303,17 @@ export default {
       }
     },
     lang (val) {
-      this.$i18n.locale = val
       switch (val) {
-        case 'zhCN':
+        case 'zh-CN':
+          this.$i18n.locale = 'zhCN'
           this.$moment.locale('zh-cn')
           break
-        case 'zhTW':
+        case 'zh-TW':
+          this.$i18n.locale = 'zhTW'
           this.$moment.locale('zh-tw')
           break
-        case 'en':
+        case 'en-US':
+          this.$i18n.locale = 'en'
           this.$moment.locale('en-US')
           break
       }
@@ -392,16 +395,16 @@ export default {
       const localStore = window.localStorage || localStorage
       switch (item) {
         case '中文 (简体)':
-          localStore.setItem('locale_lang', 'zhCN')
-          this.lang = 'zhCN'
+          localStore.setItem('locale_lang', 'zh-CN')
+          this.lang = 'zh-CN'
           break
         case '中文 (繁体)':
-          localStore.setItem('locale_lang', 'zhTW')
-          this.lang = 'zhTW'
+          localStore.setItem('locale_lang', 'zh-TW')
+          this.lang = 'zh-TW'
           break
         case 'English':
-          localStore.setItem('locale_lang', 'en')
-          this.lang = 'en'
+          localStore.setItem('locale_lang', 'en-US')
+          this.lang = 'en-US'
           break
       }
     },

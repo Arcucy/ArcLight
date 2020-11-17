@@ -12,10 +12,17 @@
       <div id='earth' />
     </div>
     <Header />
-    <div class="slot-shell" id="slot-shell">
+    <div class="slot-shell">
       <slot />
     </div>
-    <div class="notice-space" id="notice-space">
+    <div class="notice">
+      {{ $t('developedBy') }}
+      <a href="https://github.com/Arcucy" target="_blank" >Arcucy</a>
+      {{ $t('forProject') }}
+      <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
+      <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
+      <br>
+      Version {{ version }} {{ detailVersion }}
     </div>
   </v-app>
 </template>
@@ -24,9 +31,21 @@
 
 import Header from '@/components/Header.vue'
 
+import packageJson from '../../../package.json'
+
 export default {
   components: {
     Header
+  },
+  data () {
+    return {
+      version: '',
+      detailVersion: ''
+    }
+  },
+  mounted () {
+    this.version = packageJson.version
+    this.detailVersion = packageJson.detailVersion
   }
 }
 </script>
@@ -37,7 +56,6 @@ export default {
 
 <style scoped>
 .layout {
-  height: 100%;
   display: flex;
   flex-direction: column;
   background: #0000 !important;
@@ -47,13 +65,27 @@ export default {
   position: relative;
   width: 100%;
   flex: 1;
-  margin-bottom: 50px;
 }
 
-.notice-space {
-  margin: 0 auto 0;
+.notice {
+  color: rgb(177, 177, 177);
+  margin: 50px auto 0;
   text-align: center;
-  padding-bottom: 50px;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+  animation-duration: 4s;
+  padding-bottom: 116px;
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @media screen and (max-width: 400px){

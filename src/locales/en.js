@@ -5,11 +5,10 @@ export default {
   developedBy: 'Developed by',
   forProject: 'for Project',
   // about
-  why: 'Why',
   arcLightLocalized: 'ArcLight',
-  aboutP1Part1: 'Project ArcLight first started as an Arweave storage solution dapp, after the ',
-  aboutP2Part2: ' was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.',
-  aboutP2Part1: `Why choose ArcLight? We use Arweave's Permaweb as our storage for your wonderful artworks, we try everything to protect your copyright to your music, including encrypting your music to an unreadable source on Arweave network explorer, so the people must pay to you as your price defined for your project to get the download source of your music.`,
+  about1P1Part1: 'Project ArcLight first started as an Arweave storage solution dapp, after the ',
+  about1P2Part2: ' was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.',
+  about1P2Part1: 'Why choose ArcLight? We use Arweave\'s Permaweb as our storage for your wonderful artworks, we try everything to protect your copyright to your music, including encrypting your music to an unreadable source on Arweave network explorer, so the people must pay to you as your price defined for your project to get the download source of your music.',
   allDifferent: 'All different',
   sound: 'Sound',
   weSupport: 'we support',
@@ -253,5 +252,9 @@ export default {
   uploadSuccess: 'Upload Successful!',
   uploadPending: 'Upload Pending',
   uploadPendingInfo: 'Your artwork has been uploaded to Arweave Permaweb Storage. Your work may not be available soon after you uploaded, It will need a short time of mining for miners to help you save to next block. Be patient, your wonderful will be forever stored!',
-  unknownErrorOccurred: 'Unknown Error Occurred'
+  unknownErrorOccurred: 'Unknown Error Occurred',
+  play: 'Play',
+  playDemo: 'Play demo',
+  clear: 'Clear',
+  playlist: 'Playlist'
 }

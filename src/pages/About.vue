@@ -3,7 +3,7 @@
     <spaceLayout>
       <div class="about-container">
         <div class="about-title">
-          {{ $t('why') }} <span class="pink-text">ArcLight</span> ?
+          {{ $t('whyArcLight') }} <span class="pink-text">ArcLight</span> ?
         </div>
         <div class="about-subtitle">
           {{ $t('about') }} Project <span class="pink-text">{{ $t('arcLightLocalized') }}</span>
@@ -62,18 +62,15 @@
         </div>
       </div>
     </spaceLayout>
-    <Version />
   </div>
 </template>
 
 <script>
 import spaceLayout from '@/components/Layout/Space'
-import Version from '@/components/Version.vue'
 
 export default {
   components: {
-    spaceLayout,
-    Version
+    spaceLayout
   },
   mounted () {
     document.title = 'Why Choose ArcLight - ArcLight Music Distribution Platform'

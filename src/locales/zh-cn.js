@@ -6,7 +6,6 @@ export default {
   forProject: '为',
   developedApp: '计划而开发',
   // about
-  why: '为什么选择',
   arcLightLocalized: 'ArcLight (弧光)',
   about1P1Part1: 'Project ArcLight（弧光计划）最初是以 Arweave 平台的存储系统来设计和构建的，在',
   about1P1Part2: ' 公布之后，我们把目光放在了打造一个真正开放和自由的音乐分发平台来完成这个 GitCoin Bounty 所需的要求。',
@@ -38,6 +37,7 @@ export default {
   thankYouForChoosingArcLight: '感谢你选择 ArcLight！',
   // header
   music: '音乐',
+  about: '关于',
   login: '登录',
   uploadYourKey: '提供你的私钥',
   insertYourKey: '选择你的私钥文件',
@@ -253,5 +253,9 @@ export default {
   uploadSuccess: '上传成功！',
   uploadPending: '上传正在等待确定',
   uploadPendingInfo: '你的作品已经被提交至 Arweave Permaweb Storage（永存网存储中心）。你的作品在上传结束之后可能不会立即可用，数据需要区块链上的矿工进行数据处理后帮你存储至下一个区块。请耐心等待，你的作品将会被永远存储起来！',
-  unknownErrorOccurred: '发生了未知错误'
+  unknownErrorOccurred: '发生了未知错误',
+  play: '播放',
+  playDemo: '试听',
+  clear: '清除',
+  playlist: '播放列表'
 }
