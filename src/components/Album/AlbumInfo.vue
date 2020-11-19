@@ -72,12 +72,7 @@
 </template>
 
 <script>
-import avatar from '@/components/User/Avatar'
-
 export default {
-  components: {
-    avatar
-  },
   props: {
     album: {
       type: Object,

@@ -3,8 +3,8 @@
     <div class="home">
       <div id="title">ArcLight</div>
       <div id="subtitle">
-        <span>Store</span>
-        <span>In</span>
+        <span>Store </span>
+        <span>In </span>
         <span>Permaweb</span>
       </div>
       <div class="btn-group">
@@ -39,7 +39,7 @@ export default {
 #title {
   position: absolute;
   font-weight: 300;
-  top: 63%;
+  top: 70%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -58,7 +58,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 89%;
+  top: 92%;
   left: 0;
   right: 0;
   font-size: 25px;

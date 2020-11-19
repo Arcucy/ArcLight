@@ -172,6 +172,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
 import decode from '@/util/decode'
 
@@ -182,7 +183,7 @@ import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
 import { mapState, mapActions, mapMutations } from 'vuex'
 
-let zip = new JSZip()
+const zip = new JSZip()
 
 export default {
   inject: ['backPage', 'routerRefresh'],
@@ -231,7 +232,7 @@ export default {
   computed: {
     ...mapState(['wallet']),
     albumPct () {
-      let res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
+      const res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
       return res
     },
     discountDisplay () {
@@ -346,7 +347,7 @@ export default {
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
-        this.info.genre = tags['Genre']
+        this.info.genre = tags.Genre
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
         this.info.duration = Number(albumData.duration) || 0
@@ -549,7 +550,7 @@ export default {
       this.tempPct = 0
       this.downloading = true
       this.shouldWait = false
-      let urlArray = []
+      const urlArray = []
       this.fenduanPct = 100 / this.info.list.length / 100
 
       for (let i = 0; i < this.info.list.length; i++) {
@@ -565,7 +566,7 @@ export default {
         zip.file(title + ' by ' + this.info.artist + '.' + getExt[data.type], new Blob([data.data], { type: data.type }))
       }
       zip.generateAsync({ type: 'blob' }).then((blob) => {
-        let url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
+        const url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
         const div = document.getElementById('album')
         const a = document.createElement('a')
         a.href = url

@@ -140,9 +140,9 @@ export default {
   accountInvalid: '账号无效',
   // profile edit
   backToProfile: '返回个人主页',
-  avatarEditInfo1: `很抱歉，我们在这里不提供任何头像存储的功能`,
+  avatarEditInfo1: '很抱歉，我们在这里不提供任何头像存储的功能',
   avatarEditInfo2: '要变更你的头像，请前往 ',
-  usernameEditInfo1: `很抱歉，我们在这里不提供任何用户名存储的功能`,
+  usernameEditInfo1: '很抱歉，我们在这里不提供任何用户名存储的功能',
   usernameEditInfo2: '要变更你的用户名，请前往 ',
   location: '地点',
   whereDoYouLive: '你居住在哪里？',
@@ -198,8 +198,8 @@ export default {
   genreIsRequiredToUpload: '请为你的作品选择你的音乐流派 (None 为留空)',
   demoDurationIsRequiredToUpload: '请选择试听长度',
   priceMustBeNumber: '价格必须设置为数字',
-  priceCantBeNegative: `价格不可以为负值`,
-  demoCantBeSetToFreeMusic: `你不可以给免费音乐设置试听时长`,
+  priceCantBeNegative: '价格不可以为负值',
+  demoCantBeSetToFreeMusic: '你不可以给免费音乐设置试听时长',
   // upload fee
   feeToUpload: '上传所需费用',
   audio: '音频',

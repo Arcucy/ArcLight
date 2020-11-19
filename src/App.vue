@@ -60,7 +60,7 @@ export default {
     getBrowserLangCode () {
       const lang = navigator.languages
       for (let i = 0; i < lang.length; i++) {
-        let item = lang[i]
+        const item = lang[i]
         if (item === 'zh-CN') return item
         if (item === 'zh-TW') return item
         if (item === 'en-US') return item

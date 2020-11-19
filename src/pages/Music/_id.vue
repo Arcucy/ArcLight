@@ -196,6 +196,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import { mapState, mapActions } from 'vuex'
 
 import api from '@/api/api'
@@ -412,7 +413,7 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags['Genre']
+      this.info.genre = tags.Genre
       this.price = data.price
       this.info.id = data.music
       // 获取封面和音频
@@ -432,10 +433,10 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags['Genre']
+      this.info.genre = tags.Genre
       this.price = data.music[index].price
       this.info.id = data.music[index].id
-      this.albumPrice = tags['Price']
+      this.albumPrice = tags.Price
       // 获取封面和音频
       await this.getCover(data.cover)
 
@@ -451,7 +452,7 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags['Category']
+      this.info.genre = tags.Category
       this.price = data.price
       this.info.id = data.program
       // 获取封面和音频
@@ -539,7 +540,7 @@ export default {
     getTag (data, key) {
       const tags = data.get('tags')
       for (let i = 0; i < tags.length; i++) {
-        let newKey = tags[i].get('name', { decode: true, string: true })
+        const newKey = tags[i].get('name', { decode: true, string: true })
         if (newKey === key) return tags[i].get('value', { decode: true, string: true })
       }
     },

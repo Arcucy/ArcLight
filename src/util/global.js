@@ -5,7 +5,7 @@ const Log = require('./log')
 const ignoraceNotice = 'Ignore this message if this is working as intended.'
 
 // Global Data
-let Storage = new Map()
+const Storage = new Map()
 
 // Global Control
 function Add (name, reference) {
