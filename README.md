@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="https://i.loli.net/2020/10/09/BJeO3aLY6lHqs7z.png" />
+   <img src="https://i.loli.net/2020/11/06/XcozLBJFPHQ9gkD.png" />
 </p>
 <h1 align="center">ArcLight</h1>
 <p align="center">

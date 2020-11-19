@@ -404,9 +404,10 @@ let arweave = {
   /**
    * Get audio data based on given txid (transaction id)
    * @param {String} txid(TransactionId)  - 音频的交易地址
+   * @param {any} cancelToken - 取消标记（用来取消下载）
    * @param {Function} callback - 如果需要获取加载进度，请使用这个回调方法
    */
-  getMusic (txid, callback) {
+  getMusic (txid, cancelToken, callback) {
     return new Promise((resolve, reject) => {
       // 加载进度回调
       let onDownloadProgress
@@ -419,6 +420,7 @@ let arweave = {
       // get
       Axios.get(arweaveHost + txid, {
         responseType: 'arraybuffer',
+        cancelToken,
         onDownloadProgress
       }).then(res => {
         const data = decryptBuffer(Buffer.from(res.data))

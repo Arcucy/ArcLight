@@ -9,7 +9,7 @@ export default {
   arcLightLocalized: 'ArcLight (弧光)',
   about1P1Part1: 'Project ArcLight（弧光计划）最初是以 Arweave 平台的存储系统来设计和构建的，在',
   about1P1Part2: ' 公布之后，我们把目光放在了打造一个真正开放和自由的音乐分发平台来完成这个 GitCoin Bounty 所需的要求。',
-  about1P2Part1: `为什么选择 ArcLight？我们使用 Arweave 的永存网作为我们的储存空间来存放你的精美作品，我们尽全力去保护你对你作品的版权所有信息，这当然就包括把你的音乐作品加密为在开放的区块链浏览器中无法被直接解码的数据，这样一来，用户必须支付你所指定的价格来获取下载信息，当然你也可以设置试听时长来防止音乐录制盗用。`,
+  about1P2Part1: '为什么选择 ArcLight？我们使用 Arweave 的永存网作为我们的储存空间来存放你的精美作品，我们尽全力去保护你对你作品的版权所有信息，这当然就包括把你的音乐作品加密为在开放的区块链浏览器中无法被直接解码的数据，这样一来，用户必须支付你所指定的价格来获取下载信息，当然你也可以设置试听时长来防止音乐录制盗用。',
   allDifferent: '所有你能想到的',
   sound: '声音',
   weSupport: '我们支持',
@@ -18,7 +18,7 @@ export default {
   podcasts: '播客电台',
   andWithComma: '，以及',
   soundEffects: '音效',
-  about2P1Part1: `我们支持各种类型的作品可供你上传，就如同标题内容所述，你可以上传单曲、专辑、播客、音效到 ArcLight 平台上，有了强大的知识库，您可以使用多达 913 种不同类型的音乐和专辑的流派类别，并且播客的类别与 Apple Podcast 类别完全一致。`,
+  about2P1Part1: '我们支持各种类型的作品可供你上传，就如同标题内容所述，你可以上传单曲、专辑、播客、音效到 ArcLight 平台上，有了强大的知识库，您可以使用多达 913 种不同类型的音乐和专辑的流派类别，并且播客的类别与 Apple Podcast 类别完全一致。',
   about2P1Part2: '发挥你所有的创造力，创作你能想到的任何东西，ArcLight 能帮你把它们都储存起来。',
   encryption: '加密',
   andWithSpace: ' 和 ',
@@ -67,7 +67,7 @@ export default {
   browseAllPodcast: '所有播客',
   browseAllSound: '所有音效',
   profile: '个人主页',
-  profileOf: ` 的个人主页`,
+  profileOf: '的个人主页',
   // general
   cacheLogin: '登录',
   cacheUpload: '本地保存',
@@ -253,5 +253,9 @@ export default {
   uploadSuccess: '上传成功！',
   uploadPending: '上传正在等待确定',
   uploadPendingInfo: '你的作品已经被提交至 Arweave Permaweb Storage（永存网存储中心）。你的作品在上传结束之后可能不会立即可用，数据需要区块链上的矿工进行数据处理后帮你存储至下一个区块。请耐心等待，你的作品将会被永远存储起来！',
-  unknownErrorOccurred: '发生了未知错误'
+  unknownErrorOccurred: '发生了未知错误',
+  play: '播放',
+  playDemo: '试听',
+  clear: '清除',
+  playlist: '播放列表'
 }
