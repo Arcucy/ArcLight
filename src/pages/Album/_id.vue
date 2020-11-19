@@ -15,7 +15,12 @@
           </span>
         </a>
       </div>
-      <albumInfo :album="info" />
+      <albumInfo
+        :album="info"
+        :unlock="unlock"
+        @play-album="playAlbum"
+        @add-album="addAlbum"
+      />
       <div class="album-box">
         <!-- left -->
         <div class="album-box-col">
@@ -64,7 +69,7 @@
         <!-- right -->
         <div class="album-box-col">
           <!-- Download -->
-          <div v-if="!downloading && !loading && (owned || info.authorAddress === wallet)" class="album-download">
+          <div v-if="!downloading && unlock" class="album-download">
             <v-btn
               block
               large
@@ -175,7 +180,7 @@ import JSZip from 'jszip'
 import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 let zip = new JSZip()
 
@@ -236,6 +241,9 @@ export default {
       if (isNaN(res)) return 0
       if (res > 99) return 99
       return res || 0
+    },
+    unlock () {
+      return !this.loading && (this.owned || this.info.authorAddress === this.wallet)
     }
   },
   mounted () {
@@ -287,7 +295,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['playMusicSingle']),
+    ...mapMutations(['setPlayList', 'setPlayIndex']),
+    ...mapActions(['playMusicSingle', 'addMusicAlbum']),
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
@@ -341,6 +350,7 @@ export default {
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
         this.info.duration = Number(albumData.duration) || 0
+        // this.info.duration = 30
 
         document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
         document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -582,12 +592,43 @@ export default {
         musicIndex: index,
         infoId: this.$route.params.id,
         title: music.title,
-        artist: this.artist.username !== 'Artist loading...' ? this.artist.username : '',
-        artistId: this.artist.id,
+        artist: this.info.artist,
+        artistId: this.info.authorAddress,
         pic: this.info.cover,
         duration: this.info.duration,
         unlock: this.unlock
       })
+    },
+    playAlbum () {
+      this.setPlayList(this.info.list.map((music, index) => {
+        return {
+          fileId: music.id,
+          musicIndex: index,
+          infoId: this.$route.params.id,
+          title: music.title,
+          artist: this.info.artist,
+          artistId: this.info.authorAddress,
+          pic: this.info.cover,
+          duration: this.info.duration,
+          unlock: this.unlock
+        }
+      }))
+      this.setPlayIndex(0)
+    },
+    addAlbum () {
+      this.addMusicAlbum(this.info.list.map((music, index) => {
+        return {
+          fileId: music.id,
+          musicIndex: index,
+          infoId: this.$route.params.id,
+          title: music.title,
+          artist: this.info.artist,
+          artistId: this.info.authorAddress,
+          pic: this.info.cover,
+          duration: this.info.duration,
+          unlock: this.unlock
+        }
+      }))
     }
   }
 }

@@ -100,7 +100,9 @@ export default {
   text-align: left;
   color: white;
   max-width: 400px;
+  width: calc(100% - 20px);
   margin: 10px;
+  box-sizing: border-box;
 
   &-topbar {
     height: 33px;
