@@ -229,12 +229,13 @@ export default {
         reader.readAsArrayBuffer(val)
         reader.onload = async (e) => {
           const data = e.target.result
-          let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
           let source
 
           audioCtx.createBufferSource()
+          // eslint-disable-next-line prefer-const
           source = await audioCtx.decodeAudioData(data.slice())
-          let duration = source.duration
+          const duration = source.duration
           let index = 0
           if (duration < 60 && duration >= 30) {
             index = this.durationSelection.indexOf('60s')
@@ -335,23 +336,23 @@ export default {
         return
       }
 
-      let imgType = {
+      const imgType = {
         png: 'image/png',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
-      let ext = this.soundEffectCoverFile.name.split('.').pop()
+      const ext = this.soundEffectCoverFile.name.split('.').pop()
       console.log('Content-Type:', imgType[ext])
 
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let aext = this.file.name.split('.').pop()
+      const aext = this.file.name.split('.').pop()
       console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
@@ -361,6 +362,7 @@ export default {
 
         this.soundeffectDesp = this.soundeffectDesp.replace(/<.*>/gmu, '')
         this.soundeffectDesp = this.soundeffectDesp.replace(/\\n/g, '<br>')
+        // eslint-disable-next-line no-self-assign
         this.soundeffectDesp = this.soundeffectDesp
 
         const dataObj = {
@@ -408,14 +410,14 @@ export default {
     }
     if (this.$route.params.file) {
       this.file = this.$route.params.file
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let aext = this.file.name.split('.').pop()
+      const aext = this.file.name.split('.').pop()
       console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)

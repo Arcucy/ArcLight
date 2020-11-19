@@ -284,7 +284,7 @@ export default {
 
             audioCtx.createBufferSource()
             source = await audioCtx.decodeAudioData(data.slice())
-            let duration = source.duration
+            const duration = source.duration
             audioCtx = null
             source = null
             let index = 0
@@ -441,26 +441,26 @@ export default {
         }
       }
 
-      let imgType = {
+      const imgType = {
         png: 'image/png',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
-      let ext = this.albumCoverFile.name.split('.').pop()
+      const ext = this.albumCoverFile.name.split('.').pop()
       console.log('Content-Type:', imgType[ext])
 
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let musicList = []
+      const musicList = []
 
       for (let i = 0; i < this.fileList.length; i++) {
-        let aext = this.fileList[i].music.name.split('.').pop()
+        const aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
         console.log('Content-Type:', audioType[aext])
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
@@ -468,6 +468,7 @@ export default {
 
       this.albumDesp = this.albumDesp.replace(/<.*>/gmu, '')
       this.albumDesp = this.albumDesp.replace(/\\n/g, '<br>')
+      // eslint-disable-next-line no-self-assign
       this.albumDesp = this.albumDesp
 
       const dataObj = {

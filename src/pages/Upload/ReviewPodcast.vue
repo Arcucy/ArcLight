@@ -150,6 +150,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
 import stringUtil from '@/util/string'
 import { mapActions, mapState } from 'vuex'

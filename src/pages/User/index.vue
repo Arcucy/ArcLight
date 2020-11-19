@@ -114,8 +114,6 @@ import api from '@/api/api'
 import decode from '@/util/decode'
 import { mapActions, mapState } from 'vuex'
 
-import spaceLayout from '@/components/Layout/Space'
-import userInfo from '@/components/User/UserInfo'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import scrollXBox from '@/components/ScrollXBox'
@@ -124,8 +122,6 @@ import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {
-    spaceLayout,
-    userInfo,
     singleCard,
     albumCard,
     scrollXBox,
@@ -237,7 +233,7 @@ export default {
     },
     async getInfoByTxid (aObject, txid) {
       // 添加对应的卡片并进入加载状态
-      aObject.list.push({...this.loadingCard, txid: txid})
+      aObject.list.push({ ...this.loadingCard, txid: txid })
       try {
         const transaction = await api.arweave.getTransactionDetail(txid)
         if (transaction) {
@@ -284,8 +280,8 @@ export default {
           this.newUserInfoByPostInfoTxid(this.similar, this.similar.addresses.shift())
         }
       } catch (e) {
-        console.error(`[Failed to get similar users list]`, e)
-        this.$message.error(`Failed to get similar users list`)
+        console.error('[Failed to get similar users list]', e)
+        this.$message.error('Failed to get similar users list')
       }
       this.similar.loading = false
     },
@@ -307,7 +303,7 @@ export default {
         if (addresse) this.newUserInfoByPostInfoTxid(aObject, addresse)
       }
 
-      aObject.list.push({...aObject.cardTemplate, postInfoTxid: txid})
+      aObject.list.push({ ...aObject.cardTemplate, postInfoTxid: txid })
       try {
         const transaction = await api.arweave.getTransactionDetail(txid)
         if (transaction) {

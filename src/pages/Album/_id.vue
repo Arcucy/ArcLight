@@ -15,7 +15,12 @@
           </span>
         </a>
       </div>
-      <albumInfo :album="info" />
+      <albumInfo
+        :album="info"
+        :unlock="unlock"
+        @play-album="playAlbum"
+        @add-album="addAlbum"
+      />
       <div class="album-box">
         <!-- left -->
         <div class="album-box-col">
@@ -64,7 +69,7 @@
         <!-- right -->
         <div class="album-box-col">
           <!-- Download -->
-          <div v-if="!downloading && !loading && (owned || info.authorAddress === wallet)" class="album-download">
+          <div v-if="!downloading && unlock" class="album-download">
             <v-btn
               block
               large
@@ -167,6 +172,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
 import decode from '@/util/decode'
 
@@ -175,9 +181,9 @@ import JSZip from 'jszip'
 import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
-let zip = new JSZip()
+const zip = new JSZip()
 
 export default {
   inject: ['backPage', 'routerRefresh'],
@@ -226,7 +232,7 @@ export default {
   computed: {
     ...mapState(['wallet']),
     albumPct () {
-      let res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
+      const res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
       return res
     },
     discountDisplay () {
@@ -236,6 +242,9 @@ export default {
       if (isNaN(res)) return 0
       if (res > 99) return 99
       return res || 0
+    },
+    unlock () {
+      return !this.loading && (this.owned || this.info.authorAddress === this.wallet)
     }
   },
   mounted () {
@@ -287,7 +296,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['playMusicSingle']),
+    ...mapMutations(['setPlayList', 'setPlayIndex']),
+    ...mapActions(['playMusicSingle', 'addMusicAlbum']),
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
@@ -337,10 +347,11 @@ export default {
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
-        this.info.genre = tags['Genre']
+        this.info.genre = tags.Genre
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
         this.info.duration = Number(albumData.duration) || 0
+        // this.info.duration = 30
 
         document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
         document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -539,7 +550,7 @@ export default {
       this.tempPct = 0
       this.downloading = true
       this.shouldWait = false
-      let urlArray = []
+      const urlArray = []
       this.fenduanPct = 100 / this.info.list.length / 100
 
       for (let i = 0; i < this.info.list.length; i++) {
@@ -555,7 +566,7 @@ export default {
         zip.file(title + ' by ' + this.info.artist + '.' + getExt[data.type], new Blob([data.data], { type: data.type }))
       }
       zip.generateAsync({ type: 'blob' }).then((blob) => {
-        let url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
+        const url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
         const div = document.getElementById('album')
         const a = document.createElement('a')
         a.href = url
@@ -582,12 +593,43 @@ export default {
         musicIndex: index,
         infoId: this.$route.params.id,
         title: music.title,
-        artist: this.artist.username !== 'Artist loading...' ? this.artist.username : '',
-        artistId: this.artist.id,
+        artist: this.info.artist,
+        artistId: this.info.authorAddress,
         pic: this.info.cover,
         duration: this.info.duration,
         unlock: this.unlock
       })
+    },
+    playAlbum () {
+      this.setPlayList(this.info.list.map((music, index) => {
+        return {
+          fileId: music.id,
+          musicIndex: index,
+          infoId: this.$route.params.id,
+          title: music.title,
+          artist: this.info.artist,
+          artistId: this.info.authorAddress,
+          pic: this.info.cover,
+          duration: this.info.duration,
+          unlock: this.unlock
+        }
+      }))
+      this.setPlayIndex(0)
+    },
+    addAlbum () {
+      this.addMusicAlbum(this.info.list.map((music, index) => {
+        return {
+          fileId: music.id,
+          musicIndex: index,
+          infoId: this.$route.params.id,
+          title: music.title,
+          artist: this.info.artist,
+          artistId: this.info.authorAddress,
+          pic: this.info.cover,
+          duration: this.info.duration,
+          unlock: this.unlock
+        }
+      }))
     }
   }
 }

@@ -130,7 +130,7 @@ export default {
     async getList (type) {
       this.loading = true
       try {
-        let res = await api.arweave.getPurchasedItems(this.wallet, type)
+        const res = await api.arweave.getPurchasedItems(this.wallet, type)
         this.addressList = res || []
       } catch (e) {
         console.error(`[Failed to get ${type} list] wallet:`, this.wallet, e)

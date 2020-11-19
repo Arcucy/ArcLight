@@ -85,7 +85,7 @@ export default {
   methods: {
     async getAllAudioList (type) {
       try {
-        let res = await api.arweave.getAllAudioList(type)
+        const res = await api.arweave.getAllAudioList(type)
         // 循环一些数据方便测试
         // let res2 = []
         // for (let i = 0; i < 20; i++) {

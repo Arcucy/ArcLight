@@ -1,11 +1,6 @@
 <template>
   <v-app class="layout appstyle">
     <div class="layout-bg">
-      <div class="stars">
-        <div id='stars' />
-        <div id='stars2' />
-        <div id='stars3' />
-      </div>
       <div id='horizon'>
         <div class='glow' />
       </div>
@@ -17,7 +12,7 @@
     </div>
     <div class="notice">
       {{ $t('developedBy') }}
-      <a href="https://github.com/Arcucy" target="_blank" >Arcucy</a>
+      <a href="https://github.com/Arcucy" target="_blank" >Arcucy Team</a>
       {{ $t('forProject') }}
       <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
       <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>

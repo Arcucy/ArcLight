@@ -67,6 +67,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
 import decode from '@/util/decode'
 
@@ -148,7 +149,7 @@ export default {
           this.album.index = Number(history['Track-Number'] - 1 || 0)
         }
         // 根据 tags 中歌曲信息的 txid 获取到歌曲信息
-        this.infoTxid = history['Item']
+        this.infoTxid = history.Item
         const info = await this.getInfo(this.infoTxid)
         if (info) {
           this.card = info
