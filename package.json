@@ -1,7 +1,7 @@
 {
   "name": "arclight",
-  "version": "1.1.0",
-  "detailVersion": "(15ad736)",
+  "version": "1.2.0",
+  "detailVersion": "(c5b4568)",
   "description": "A Arweave Storage App",
   "author": "Ayaka Neko <neko@ayaka.moe>",
   "scripts": {
