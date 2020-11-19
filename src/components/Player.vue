@@ -65,6 +65,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import audioUtil from '@/util/audio'
 import api from '@/api/api'
@@ -146,7 +147,7 @@ export default {
       this.loading = false
 
       if (fullAudio) {
-        this.setAudioFileCache({fileId: audioInfo.fileId, audioData: { fullAudio, auditionClip, audioType }})
+        this.setAudioFileCache({ fileId: audioInfo.fileId, audioData: { fullAudio, auditionClip, audioType } })
       }
     },
     /** 获取音频 */
@@ -205,7 +206,7 @@ export default {
     },
     clearOld () {
       this.pct = 0
-      this.setAudioFileCache({fileId: '', audioData: undefined})
+      this.setAudioFileCache({ fileId: '', audioData: undefined })
     },
     close () {
       if (this.cancelTokenSource) {

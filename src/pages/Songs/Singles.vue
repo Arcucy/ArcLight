@@ -100,7 +100,7 @@ export default {
       this.page = 1
       const genreFilter = this.genreFilter
       try {
-        let res = await api.arweave.getAllAudioList(type, genreFilter)
+        const res = await api.arweave.getAllAudioList(type, genreFilter)
         if (genreFilter !== this.genreFilter) return
         this.addressList = res || []
       } catch (e) {

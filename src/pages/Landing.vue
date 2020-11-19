@@ -3,8 +3,8 @@
     <div class="home">
       <div id="title">ArcLight</div>
       <div id="subtitle">
-        <span>Store</span>
-        <span>In</span>
+        <span>Store </span>
+        <span>In </span>
         <span>Permaweb</span>
       </div>
       <div class="btn-group">

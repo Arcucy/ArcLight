@@ -85,7 +85,7 @@ export default {
   methods: {
     async getAllAudioList (type) {
       try {
-        let res = await api.arweave.getAllAudioList(type)
+        const res = await api.arweave.getAllAudioList(type)
         this.addressList = res || []
       } catch (e) {
         console.error(`[Failed to get ${type} list]`, e)
