@@ -4,7 +4,7 @@
       <router-link :to="{ name: 'Landing' }" class="link">
         <img src="../assets/logo.png">
       </router-link>
-      <router-link :to="{ name: 'Landing' }" class="link text-link">
+      <router-link :to="{ name: 'Landing' }" class="link text-link main-link">
         ArcLight
       </router-link>
       <router-link :to="{ name: 'Songs' }" class="link text-link">
@@ -598,6 +598,9 @@ export default {
 @media screen and (max-width: 768px) {
   .link {
     font-size: 16px;
+  }
+  .main-link {
+    display: none;
   }
   .upload {
     display: none;
