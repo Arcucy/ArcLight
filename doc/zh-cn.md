@@ -14,11 +14,15 @@
   <a href="https://t.me/ArclightMusic">
     <img src="https://img.shields.io/badge/Chat%20on-Telegram-%235AA9E6?logo=telegram" />
   </a>
-  <a href="https://discord.gg/bGZ2ZQ">
+    <a href="https://discord.gg/3zUXrnXyFv">
     <img src="https://img.shields.io/discord/766689493435678770.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2" />
   </a><br>
-  <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
-  <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
+  <a href="https://github.com/Arcucy/ArcLight/actions?query=workflow%3A%22Node+Build+Test%22">
+    <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
+  </a>
+  <a href="https://github.com/Arcucy/ArcLight/actions?query=workflow%3A%22Production+CI+Build+Test%22">
+    <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
+  </a>
 </p>
 
 
