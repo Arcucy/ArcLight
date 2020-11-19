@@ -142,7 +142,7 @@ export default {
   avatarEditInfo1: `Sorry, we don't provide any avatar storage option here`,
   avatarEditInfo2: 'To change your avatar, please go to ',
   usernameEditInfo1: `Sorry, we don't provide any arweave id storage option here`,
-  usernameEditInfo2: 'To change your avatar, please go to ',
+  usernameEditInfo2: 'To change your username, please go to ',
   location: 'Location',
   whereDoYouLive: 'Where do you live?',
   officialWebsite: 'Personal / Band Website',
