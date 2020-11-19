@@ -52,7 +52,7 @@ let arweave = {
   timerInterval: undefined,
 
   /**
-   * Get user address based on key file content input   
+   * Get user address based on key file content input
    * 根据密钥文件内容获取用户地址
    * @param {String} key      - 使用 keyFileContent，不是原始文件
    */
@@ -76,14 +76,14 @@ let arweave = {
 
   /**
    * 转换 Winston 为 AR
-   * @param {*} winston 
+   * @param {*} winston
    */
   getArFromWinston (winston) {
     return ar.ar.winstonToAr(winston)
   },
 
   /**
-   * Get transaction detail entirely based on given txid   
+   * Get transaction detail entirely based on given txid
    * 根据给定的 txid (交易ID) 获取完整的交易明细
    * @param {String} txid     - 交易编号
    */
@@ -98,7 +98,7 @@ let arweave = {
   },
 
   /**
-   * Get the decoded data and buffer to string from the given transaction id   
+   * Get the decoded data and buffer to string from the given transaction id
    * 根据给定的 txid (交易ID) 获取解码的数据并缓冲为字符串
    * @param {String} txid     - 交易编号
    */
@@ -114,7 +114,7 @@ let arweave = {
 
   /**
    * 提取给定的交易对象中的所有标签
-   * @param {Object} transaction 
+   * @param {Object} transaction
    */
   getTagsByTransaction (transaction) {
     const tags = transaction.get('tags')
@@ -128,7 +128,7 @@ let arweave = {
   },
 
   /**
-   * Get user's Arweave Id based on the input wallet address   
+   * Get user's Arweave Id based on the input wallet address
    * 根据输入的钱包地址获取用户的 Arweave ID
    * @param {String} address  - 用户的钱包地址
    */
@@ -172,7 +172,7 @@ let arweave = {
           res.type = 'guest'
           res.data = 'Guest'
           // resolve data on finish
-          resolve(res)
+          return resolve(res)
         }
 
         const id = ids[0]
@@ -204,7 +204,7 @@ let arweave = {
   },
 
   /**
-   * Get user's Arweave Avatar based on the input wallet address   
+   * Get user's Arweave Avatar based on the input wallet address
    * 根据输入的钱包地址获取用户的 Arweave 头像
    * @param {String} address    - 用户的钱包地址
    */
@@ -781,7 +781,7 @@ let arweave = {
 
   /**
    * Get user's location settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getLocationFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -820,7 +820,7 @@ let arweave = {
 
   /**
    * Get user's website settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getWebsiteFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -859,7 +859,7 @@ let arweave = {
 
   /**
    * Get user's introduction settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getIntroFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -898,7 +898,7 @@ let arweave = {
 
   /**
    * Get user's netease id settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getNeteaseIdFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -937,7 +937,7 @@ let arweave = {
 
   /**
    * Get user's soundcloud id settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getSoundCloudIdFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -1154,7 +1154,7 @@ let arweave = {
 
   /**
    * Get user's Bandcamp Id settings from given address
-   * @param {String} address  - 用户的钱包地址s 
+   * @param {String} address  - 用户的钱包地址s
    */
   getBandCampFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -1193,7 +1193,7 @@ let arweave = {
 
   /**
    * 获取用户上传的所有 post info 的 txid 列表
-   * @param {*} address 
+   * @param {*} address
    */
   getPostInfosByAddress (address) {
     return new Promise((resolve, reject) => {
@@ -1245,9 +1245,9 @@ let arweave = {
       transaction = await this.getTransactionDetail(txid)
     } catch (e) {
       if (e.type === 'TX_PENDING') {
-        this.timerInterval = setTimeout(() => { 
+        this.timerInterval = setTimeout(() => {
           console.log('retry')
-          this.getDataForPost(address) 
+          this.getDataForPost(address)
         }, 2000)
       } else {
         console.log(e)
@@ -1328,7 +1328,7 @@ let arweave = {
   /**
    * 获取上传给定大小的文件需要支付多少 Winston。
    * 注意：在展示时请使用 winstonToAr 转换为 AR 在显示，在运算时，请保持在 Winston 单位运算，以保证精确。
-   * @param {*} byte 
+   * @param {*} byte
    */
   async getUploadPrice (byte) {
     const res = await Axios.get(`${arweaveHost}/price/${Number(byte)}`)
