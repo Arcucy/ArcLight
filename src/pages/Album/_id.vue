@@ -360,7 +360,13 @@ export default {
           }
         })
 
-        this.originalPrice = this.originalPrice.toFixed(12)
+        if (isNaN(this.originalPrice)) {
+          // eslint-disable-next-line no-self-assign
+          this.originalPrice = this.originalPrice
+        } else {
+          this.originalPrice = Number(this.originalPrice).toFixed(12)
+        }
+
         this.info.list = this.info.list.map(item => {
           return { ...item, downloadAwait: false }
         })
