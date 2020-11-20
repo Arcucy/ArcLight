@@ -55,6 +55,7 @@
 </template>
 
 <script>
+/* eslint-disable vue/custom-event-name-casing */
 import VueUploadComponent from 'vue-upload-component'
 import Cropper from 'cropperjs'
 import Compressor from 'compressorjs'
