@@ -144,30 +144,6 @@
         </div>
       </div>
     </div>
-    <!-- Pay Dialog -->
-    <v-dialog
-      v-model="showDialog"
-      width="360"
-    >
-      <v-card dark>
-        <div class="pay">
-          <h3 class="pay-title">
-            Payment of 「{{ info.name }}」
-          </h3>
-          <div class="pay-icon">
-            <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
-          </div>
-          <p class="pay-intro">
-            Succeed to unlock the album！
-          </p>
-
-          <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
-            BACK TO ALBUM PLAYER
-            <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
-          </v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
   </spaceLayout>
 </template>
 
@@ -215,7 +191,6 @@ export default {
       price: 0,
       originalPrice: 0,
       owned: false,
-      showDialog: false,
       count: 0,
       downloading: false,
       pct: 0,
