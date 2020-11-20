@@ -14,7 +14,7 @@
       {{ $t('developedBy') }}
       <a href="https://github.com/Arcucy" target="_blank" >Arcucy Team</a>
       {{ $t('forProject') }}
-      <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
+      <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight </a>
       <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
       <br>
       Version {{ version }} {{ detailVersion }}
