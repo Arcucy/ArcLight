@@ -11,7 +11,7 @@
       </div>
       <div class="playlist-topbar-divider" />
       <div @click="$emit('close')" class="playlist-topbar-close">
-        <v-icon>mdi-close-thick</v-icon>
+        <v-icon style="-webkit-text-stroke: 1.25px white;">mdi-close</v-icon>
       </div>
     </div>
     <div class="playlist-list">
