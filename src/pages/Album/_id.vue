@@ -225,6 +225,10 @@ export default {
   mounted () {
     this.getAlbum(this.$route.params.id)
     this.count = 0
+
+    this.info.genre = this.$t('awaitData')
+    this.info.artist = this.$t('artistLoading')
+    this.artist.username = this.$t('artistLoading')
   },
   destroyed () {
     // 卡片或者页面被销毁时清除定时器
