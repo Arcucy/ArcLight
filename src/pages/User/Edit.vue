@@ -322,6 +322,8 @@ export default {
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 2000)
+    } else {
+      this.getUserInfo()
     }
     window.onbeforeunload = function (e) {
       e = e || window.event
