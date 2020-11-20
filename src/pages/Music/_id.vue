@@ -142,56 +142,7 @@
           </div>
         </div>
       </div>
-      <!-- Payed Users -->
-      <!-- <div class="music-sold">
-        <p class="music-sold-title">
-          These users have already bought this song.
-        </p>
-        <div class="music-sold-users">
-          <div
-            class="user-card"
-            v-for="(user, index) in users"
-            :key="index"
-            :style="'z-index:' + -index"
-          >
-            <miniAvatar :size="38" :src="user.avatar" />
-          </div>
-        </div>
-      </div> -->
-      <!-- Artist -->
-      <div class="music-artist">
-        <router-link :to="{ name: 'User', params: { id: artist.id } }">
-          <miniAvatar :size="64" color="#E56D9B" :src="artist.avatar" />
-        </router-link>
-        <router-link class="music-artist-username" :to="{ name: 'User', params: { id: artist.id } }">
-          {{ artist.username }}
-        </router-link>
-      </div>
     </div>
-    <!-- Pay Dialog -->
-    <v-dialog
-      v-model="showDialog"
-      width="360"
-    >
-      <v-card dark>
-        <div class="pay">
-          <h3 class="pay-title">
-            {{ $t('paymentOf') }} 「{{ info.name }}」
-          </h3>
-          <div class="pay-icon">
-            <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
-          </div>
-          <p class="pay-intro">
-            {{ $t('succeedToUnlockMusic') }}
-          </p>
-
-          <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
-            {{ $t('backToMusicPlayer') }}
-            <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
-          </v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
   </spaceLayout>
 </template>
 
@@ -203,15 +154,13 @@ import api from '@/api/api'
 import decode from '@/util/decode'
 
 import spaceLayout from '@/components/Layout/Space'
-import miniAvatar from '@/components/User/MiniAvatar'
 import payment from '@/components/Payment'
 
 export default {
   inject: ['backPage', 'routerRefresh'],
   components: {
     payment,
-    spaceLayout,
-    miniAvatar
+    spaceLayout
   },
   data () {
     return {
@@ -239,7 +188,6 @@ export default {
       price: 0,
       albumPrice: 0,
       owned: false,
-      showDialog: false,
       loading: true,
       timerIndex: null,
       downloadLoading: false,

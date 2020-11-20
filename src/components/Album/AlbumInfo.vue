@@ -34,7 +34,7 @@
               </router-link>
             </span>
           </template>
-          <span>View similar artwork</span>
+          <span>{{ $t('viewSimilarArtwork') }}</span>
         </v-tooltip>
         {{ album.name || $t('loading') }}
       </h3>
@@ -97,7 +97,7 @@ export default {
       return { name: 'SongsAlbums', query: { genre: this.album.genre } }
     },
     loaded () {
-      return this.album && this.album.name && this.album.artist !== 'Artist loading...' && this.album.cover !== 'Loading'
+      return this.album && this.album.name && this.album.artist !== this.$t('artistLoading') && this.album.cover !== this.$t('loading')
     }
   },
   watch: {
