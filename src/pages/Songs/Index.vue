@@ -127,7 +127,7 @@ export default {
     },
     async getInfoByTxid (aObject, txid) {
       // 添加对应的卡片并进入加载状态
-      aObject.list.push({...this.loadingCard, txid: txid})
+      aObject.list.push({ ...this.loadingCard, txid: txid })
       try {
         const transaction = await api.arweave.getTransactionDetail(txid)
         if (transaction) {

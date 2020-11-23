@@ -218,8 +218,8 @@ export default {
     showWallet (val) {
       if (val) {
         setTimeout(() => {
-          let fileInput = document.getElementById('file-input')
-          let droparea = document.getElementById('file-input-area')
+          const fileInput = document.getElementById('file-input')
+          const droparea = document.getElementById('file-input-area')
 
           fileInput.addEventListener('dragenter', () => {
             this.addClass(droparea, 'is-active')
@@ -358,8 +358,8 @@ export default {
       elem.classList.remove(className)
     },
     outsideReset () {
-      let fileInput = document.getElementById('file-input')
-      let droparea = document.getElementById('file-input-area')
+      const fileInput = document.getElementById('file-input')
+      const droparea = document.getElementById('file-input-area')
       fileInput.removeEventListener('dragenter', () => {})
       fileInput.removeEventListener('click', () => {})
       fileInput.removeEventListener('focus', () => {})

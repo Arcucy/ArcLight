@@ -13,13 +13,13 @@
             <span class="edit-title">{{ $t('avatar') }}</span>
             <avatar class="edit-avatar" :src="userAvatar" :size="140" />
             <span class="edit-content">{{ $t('avatarEditInfo1') }}<br>
-            {{ $t('avatarEditInfo2') }}<a href="https://arweave.net/d9SXf_N32hAm3cygt1btmPC-7Dg460VhQEtW8I-cfvU">Arweave Avatar</a></span>
+            {{ $t('avatarEditInfo2') }}<a href="https://arweave.net/d9SXf_N32hAm3cygt1btmPC-7Dg460VhQEtW8I-cfvU" target="_blank" rel="noopener noreferrer">Arweave Avatar</a></span>
           </div>
           <div class="username input-box">
             <span class="edit-title">{{ $t('username') }}</span>
             <span class="username-text">{{ username }}</span>
             <span class="edit-content">{{ $t('usernameEditInfo1') }}<br>
-            {{ $t('usernameEditInfo2') }}<a href="https://mtfvznw2pwxykoicvxpoe7ao5rp4nhaueueux2bbe4klxankdhra.arweave.net/fGUdNmXFmflBMGI2f9vD7KzsrAc1s1USQgQLgAVT0W0">Arweave ID</a></span>
+            {{ $t('usernameEditInfo2') }}<a href="https://mtfvznw2pwxykoicvxpoe7ao5rp4nhaueueux2bbe4klxankdhra.arweave.net/fGUdNmXFmflBMGI2f9vD7KzsrAc1s1USQgQLgAVT0W0" target="_blank" rel="noopener noreferrer">Arweave ID</a></span>
           </div>
           <div class="location input-box">
             <span class="edit-title">{{ $t('location') }}</span>
@@ -322,6 +322,8 @@ export default {
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 2000)
+    } else {
+      this.getUserInfo()
     }
     window.onbeforeunload = function (e) {
       e = e || window.event

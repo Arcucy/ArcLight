@@ -1,6 +1,6 @@
 const arweave = require('./arweave')
 
-let API = {
+const API = {
   arweave: arweave.default
 }
 

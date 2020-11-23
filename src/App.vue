@@ -60,7 +60,7 @@ export default {
     getBrowserLangCode () {
       const lang = navigator.languages
       for (let i = 0; i < lang.length; i++) {
-        let item = lang[i]
+        const item = lang[i]
         if (item === 'zh-CN') return item
         if (item === 'zh-TW') return item
         if (item === 'en-US') return item
@@ -101,7 +101,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'lato', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

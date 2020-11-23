@@ -34,7 +34,7 @@
               </router-link>
             </span>
           </template>
-          <span>View similar artwork</span>
+          <span>{{ $t('viewSimilarArtwork') }}</span>
         </v-tooltip>
         {{ album.name || $t('loading') }}
       </h3>
@@ -48,22 +48,39 @@
       <p class="albuminfo-right-time">
         {{ $t('time') }}: {{ time }}
       </p>
+      <!-- 播放 -->
+      <div v-if="unlock || album.duration !== 0" class="albuminfo-right-control">
+        <v-btn
+          class="albuminfo-right-control-play"
+          color="#e56d9b"
+          @click="$emit('play-album')"
+        >
+          <v-icon color="white" size="20px">mdi-play</v-icon>
+          {{ unlock || album.duration === -1 ? $t('play') : $t('playDemo') }}
+        </v-btn>
+        <v-btn
+          class="albuminfo-right-control-plus"
+          color="#e56d9b"
+          @click="$emit('add-album')"
+        >
+          <v-icon color="white" size="20px">mdi-plus</v-icon>
+        </v-btn>
+      </div>
       <p class="albuminfo-right-desp" v-html="album.desp" />
     </div>
   </div>
 </template>
 
 <script>
-import avatar from '@/components/User/Avatar'
-
 export default {
-  components: {
-    avatar
-  },
   props: {
     album: {
       type: Object,
       required: true
+    },
+    unlock: {
+      type: Boolean,
+      required: false
     }
   },
   data () {
@@ -78,6 +95,9 @@ export default {
     toGenre () {
       if (!this.album || !this.album.genre || this.album.genre === this.$t('awaitData')) return {}
       return { name: 'SongsAlbums', query: { genre: this.album.genre } }
+    },
+    loaded () {
+      return this.album && this.album.name && this.album.artist !== this.$t('artistLoading') && this.album.cover !== this.$t('loading')
     }
   },
   watch: {
@@ -195,6 +215,32 @@ export default {
       .content();
       .word-limit();
     }
+
+    &-control {
+      box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+      display: inline-block;
+      border-radius: 4px;
+      margin: 10px 0 0;
+
+      &-play {
+        color: white;
+        padding: 0 16px 0 13px !important;
+        border-radius: 4px 0 0 4px;
+        margin-right: -5px;
+        box-shadow: none;
+        border-right: 1px solid #c75e86 !important;
+      }
+
+      &-plus {
+        color: white;
+        border-radius: 0 4px 4px 0;
+        box-shadow: none;
+        padding: 0 0px !important;
+        min-width: 40px !important;
+        width: 40px !important;
+      }
+    }
+
     &-desp {
       .content();
       margin-top: 20px;

@@ -142,75 +142,25 @@
           </div>
         </div>
       </div>
-      <!-- Payed Users -->
-      <!-- <div class="music-sold">
-        <p class="music-sold-title">
-          These users have already bought this song.
-        </p>
-        <div class="music-sold-users">
-          <div
-            class="user-card"
-            v-for="(user, index) in users"
-            :key="index"
-            :style="'z-index:' + -index"
-          >
-            <miniAvatar :size="38" :src="user.avatar" />
-          </div>
-        </div>
-      </div> -->
-      <!-- Artist -->
-      <div class="music-artist">
-        <router-link :to="{ name: 'User', params: { id: artist.id } }">
-          <miniAvatar :size="64" color="#E56D9B" :src="artist.avatar" />
-        </router-link>
-        <router-link class="music-artist-username" :to="{ name: 'User', params: { id: artist.id } }">
-          {{ artist.username }}
-        </router-link>
-      </div>
     </div>
-    <!-- Pay Dialog -->
-    <v-dialog
-      v-model="showDialog"
-      width="360"
-    >
-      <v-card dark>
-        <div class="pay">
-          <h3 class="pay-title">
-            {{ $t('paymentOf') }} 「{{ info.name }}」
-          </h3>
-          <div class="pay-icon">
-            <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
-          </div>
-          <p class="pay-intro">
-            {{ $t('succeedToUnlockMusic') }}
-          </p>
-
-          <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
-            {{ $t('backToMusicPlayer') }}
-            <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
-          </v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
   </spaceLayout>
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import { mapState, mapActions } from 'vuex'
 
 import api from '@/api/api'
 import decode from '@/util/decode'
 
 import spaceLayout from '@/components/Layout/Space'
-import miniAvatar from '@/components/User/MiniAvatar'
 import payment from '@/components/Payment'
 
 export default {
   inject: ['backPage', 'routerRefresh'],
   components: {
     payment,
-    spaceLayout,
-    miniAvatar
+    spaceLayout
   },
   data () {
     return {
@@ -238,7 +188,6 @@ export default {
       price: 0,
       albumPrice: 0,
       owned: false,
-      showDialog: false,
       loading: true,
       timerIndex: null,
       downloadLoading: false,
@@ -412,7 +361,7 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags['Genre']
+      this.info.genre = tags.Genre
       this.price = data.price
       this.info.id = data.music
       // 获取封面和音频
@@ -432,10 +381,10 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags['Genre']
+      this.info.genre = tags.Genre
       this.price = data.music[index].price
       this.info.id = data.music[index].id
-      this.albumPrice = tags['Price']
+      this.albumPrice = tags.Price
       // 获取封面和音频
       await this.getCover(data.cover)
 
@@ -451,7 +400,7 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags['Category']
+      this.info.genre = tags.Category
       this.price = data.price
       this.info.id = data.program
       // 获取封面和音频
@@ -539,7 +488,7 @@ export default {
     getTag (data, key) {
       const tags = data.get('tags')
       for (let i = 0; i < tags.length; i++) {
-        let newKey = tags[i].get('name', { decode: true, string: true })
+        const newKey = tags[i].get('name', { decode: true, string: true })
         if (newKey === key) return tags[i].get('value', { decode: true, string: true })
       }
     },
@@ -553,6 +502,7 @@ export default {
         infoId: this.$route.params.id,
         title: this.info.name,
         artist: this.info.artist,
+        artistId: this.info.artistId,
         pic: this.info.cover,
         duration: this.info.duration,
         unlock: this.unlock

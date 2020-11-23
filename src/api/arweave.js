@@ -1,4 +1,4 @@
-/* eslint-disable no-trailing-spaces */
+/* eslint-disable no-async-promise-executor */
 import Arweave from 'arweave'
 import Axios from 'axios'
 
@@ -8,7 +8,7 @@ import stringUtil from '../util/string'
 
 const arweaveHost = 'https://arweave.net/'
 
-let ar = Arweave.init({
+const ar = Arweave.init({
   host: 'arweave.net',
   port: 443,
   protocol: 'https',
@@ -47,12 +47,12 @@ const REVERSED_AUDIO_TYPE = {
 
 const APP_NAME = 'arclight-app'
 
-let arweave = {
+const arweave = {
   breakOnCall: false,
   timerInterval: undefined,
 
   /**
-   * Get user address based on key file content input   
+   * Get user address based on key file content input
    * 根据密钥文件内容获取用户地址
    * @param {String} key      - 使用 keyFileContent，不是原始文件
    */
@@ -76,14 +76,14 @@ let arweave = {
 
   /**
    * 转换 Winston 为 AR
-   * @param {*} winston 
+   * @param {*} winston
    */
   getArFromWinston (winston) {
     return ar.ar.winstonToAr(winston)
   },
 
   /**
-   * Get transaction detail entirely based on given txid   
+   * Get transaction detail entirely based on given txid
    * 根据给定的 txid (交易ID) 获取完整的交易明细
    * @param {String} txid     - 交易编号
    */
@@ -98,13 +98,13 @@ let arweave = {
   },
 
   /**
-   * Get the decoded data and buffer to string from the given transaction id   
+   * Get the decoded data and buffer to string from the given transaction id
    * 根据给定的 txid (交易ID) 获取解码的数据并缓冲为字符串
    * @param {String} txid     - 交易编号
    */
   getTransactionDataDecodedString (txid) {
     return new Promise((resolve, reject) => {
-      ar.transactions.getData(txid, {decode: true, string: true}).then(data => {
+      ar.transactions.getData(txid, { decode: true, string: true }).then(data => {
         resolve(data)
       }).catch(err => {
         reject(err)
@@ -114,21 +114,21 @@ let arweave = {
 
   /**
    * 提取给定的交易对象中的所有标签
-   * @param {Object} transaction 
+   * @param {Object} transaction
    */
   getTagsByTransaction (transaction) {
     const tags = transaction.get('tags')
-    let ret = {}
+    const ret = {}
     for (let i = 0; i < tags.length; i++) {
-      let key = tags[i].get('name', { decode: true, string: true })
-      let value = tags[i].get('value', { decode: true, string: true })
+      const key = tags[i].get('name', { decode: true, string: true })
+      const value = tags[i].get('value', { decode: true, string: true })
       ret[key] = value
     }
     return ret
   },
 
   /**
-   * Get user's Arweave Id based on the input wallet address   
+   * Get user's Arweave Id based on the input wallet address
    * 根据输入的钱包地址获取用户的 Arweave ID
    * @param {String} address  - 用户的钱包地址
    */
@@ -172,7 +172,7 @@ let arweave = {
           res.type = 'guest'
           res.data = 'Guest'
           // resolve data on finish
-          resolve(res)
+          return resolve(res)
         }
 
         const id = ids[0]
@@ -183,8 +183,8 @@ let arweave = {
           // Go through for each id to find the tag
           // 遍历每个id来找到标签
           transaction.get('tags').forEach(tag => {
-            let key = tag.get('name', { decode: true, string: true })
-            let value = tag.get('value', { decode: true, string: true })
+            const key = tag.get('name', { decode: true, string: true })
+            const value = tag.get('value', { decode: true, string: true })
             if (key === 'Type') {
               res.type = value
             }
@@ -204,7 +204,7 @@ let arweave = {
   },
 
   /**
-   * Get user's Arweave Avatar based on the input wallet address   
+   * Get user's Arweave Avatar based on the input wallet address
    * 根据输入的钱包地址获取用户的 Arweave 头像
    * @param {String} address    - 用户的钱包地址
    */
@@ -236,7 +236,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -260,7 +260,7 @@ let arweave = {
         expr1: 'Type',
         expr2: typeString
       }
-      let hasTypedSearch = style ? {
+      const hasTypedSearch = style ? {
         op: 'and', // 使用相等运算符
         expr1: ordinary,
         expr2: {
@@ -314,7 +314,7 @@ let arweave = {
           expr2: typeString
         }
       }
-      let hasTypedSearch = style ? {
+      const hasTypedSearch = style ? {
         op: 'and', // 使用相等运算符
         expr1: ordinary,
         expr2: {
@@ -387,7 +387,7 @@ let arweave = {
    */
   getCover (txid) {
     return new Promise((resolve, reject) => {
-      ar.transactions.getData(txid, {decode: true, string: true}).then(data => {
+      ar.transactions.getData(txid, { decode: true, string: true }).then(data => {
         resolve(data)
       })
     })
@@ -413,7 +413,7 @@ let arweave = {
       let onDownloadProgress
       if (callback) {
         onDownloadProgress = progressEvent => {
-          let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           callback(percentCompleted)
         }
       }
@@ -629,8 +629,8 @@ let arweave = {
   querySearch (val, callback) {
     return new Promise(async (resolve, reject) => {
       this.breakOnCall = false
-      let res = []
-      let singleData = await ar.arql({
+      const res = []
+      const singleData = await ar.arql({
         op: 'and',
         expr1: {
           op: 'and',
@@ -659,7 +659,7 @@ let arweave = {
           }
         }
       })
-      let albumData = await ar.arql({
+      const albumData = await ar.arql({
         op: 'and',
         expr1: {
           op: 'and',
@@ -688,7 +688,7 @@ let arweave = {
           }
         }
       })
-      let podcastData = await ar.arql({
+      const podcastData = await ar.arql({
         op: 'and',
         expr1: {
           op: 'and',
@@ -717,7 +717,7 @@ let arweave = {
           }
         }
       })
-      let soundeffectData = await ar.arql({
+      const soundeffectData = await ar.arql({
         op: 'and',
         expr1: {
           op: 'and',
@@ -754,11 +754,11 @@ let arweave = {
         }
         const tx = await this.getTransactionDetail(data[i])
         const tags = await this.getTagsByTransaction(tx)
-        const type = REVERSED_AUDIO_TYPE[tags['Type']]
-        const icon = AUDIO_ICON[tags['Type']]
+        const type = REVERSED_AUDIO_TYPE[tags.Type]
+        const icon = AUDIO_ICON[tags.Type]
 
         const id = data[i]
-        const title = tags['Title']
+        const title = tags.Title
         const artist = tags['Author-Username']
         const final = { searchType: 'Music', id: id, title: title, artist: artist, type: type, icon: icon }
         if (icon !== undefined) callback(final)
@@ -770,18 +770,18 @@ let arweave = {
 
   getAllInfo (arr, type, icon) {
     return new Promise(async (resolve, reject) => {
-      let res = []
+      const res = []
       for (let i = 0; i < arr.length; i++) {
         const tx = await this.getTransactionDetail(arr[i].id)
         const tags = await this.getTagsByTransaction(tx)
-        res.push({ id: arr[i].id, title: tags['Title'], artist: tags['Author-Username'] })
+        res.push({ id: arr[i].id, title: tags.Title, artist: tags['Author-Username'] })
       }
     })
   },
 
   /**
    * Get user's location settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getLocationFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -811,7 +811,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -820,7 +820,7 @@ let arweave = {
 
   /**
    * Get user's website settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getWebsiteFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -850,7 +850,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -859,7 +859,7 @@ let arweave = {
 
   /**
    * Get user's introduction settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getIntroFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -889,7 +889,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -898,7 +898,7 @@ let arweave = {
 
   /**
    * Get user's netease id settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getNeteaseIdFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -928,7 +928,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -937,7 +937,7 @@ let arweave = {
 
   /**
    * Get user's soundcloud id settings from given address
-   * @param {String} address  - 用户的钱包地址 
+   * @param {String} address  - 用户的钱包地址
    */
   getSoundCloudIdFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -967,7 +967,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -1154,7 +1154,7 @@ let arweave = {
 
   /**
    * Get user's Bandcamp Id settings from given address
-   * @param {String} address  - 用户的钱包地址s 
+   * @param {String} address  - 用户的钱包地址s
    */
   getBandCampFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -1184,7 +1184,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -1193,7 +1193,7 @@ let arweave = {
 
   /**
    * 获取用户上传的所有 post info 的 txid 列表
-   * @param {*} address 
+   * @param {*} address
    */
   getPostInfosByAddress (address) {
     return new Promise((resolve, reject) => {
@@ -1245,9 +1245,9 @@ let arweave = {
       transaction = await this.getTransactionDetail(txid)
     } catch (e) {
       if (e.type === 'TX_PENDING') {
-        this.timerInterval = setTimeout(() => { 
+        this.timerInterval = setTimeout(() => {
           console.log('retry')
-          this.getDataForPost(address) 
+          this.getDataForPost(address)
         }, 2000)
       } else {
         console.log(e)
@@ -1296,8 +1296,8 @@ let arweave = {
           }
         }
         if (!detail) resolve(false)
-        let tags = this.getTagsByTransaction(detail)
-        let data = JSON.parse(decode.uint8ArrayToString(detail.data))
+        const tags = this.getTagsByTransaction(detail)
+        const data = JSON.parse(decode.uint8ArrayToString(detail.data))
         resolve({ data, tags, tx: detail })
       })
     })
@@ -1318,7 +1318,7 @@ let arweave = {
           return
         }
 
-        ar.transactions.getData(ids[0], {decode: true, string: true}).then(data => {
+        ar.transactions.getData(ids[0], { decode: true, string: true }).then(data => {
           resolve(data)
         })
       })
@@ -1328,7 +1328,7 @@ let arweave = {
   /**
    * 获取上传给定大小的文件需要支付多少 Winston。
    * 注意：在展示时请使用 winstonToAr 转换为 AR 在显示，在运算时，请保持在 Winston 单位运算，以保证精确。
-   * @param {*} byte 
+   * @param {*} byte
    */
   async getUploadPrice (byte) {
     const res = await Axios.get(`${arweaveHost}/price/${Number(byte)}`)

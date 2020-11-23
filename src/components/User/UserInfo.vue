@@ -155,7 +155,7 @@ export default {
         if (user.type === 'guest') {
           document.title = this.$t('profile') + ' - ArcLight'
         } else {
-          document.title = user.data + this.$t('profileOf') + ` - ArcLight`
+          document.title = user.data + this.$t('profileOf') + ' - ArcLight'
         }
         if (user.type !== 'guest') {
           const avatar = await API.arweave.getAvatarFromAddress(this.id)

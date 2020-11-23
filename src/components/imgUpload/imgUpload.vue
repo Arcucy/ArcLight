@@ -259,7 +259,7 @@ export default {
         file = new File([arr], oldFile.name, { type: oldFile.type })
       }
       try {
-        let res = { data: { code: 0 } }
+        const res = { data: { code: 0 } }
         res.data.code = 0
         switch (this.updateType) {
           case 'single':

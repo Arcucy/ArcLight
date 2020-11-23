@@ -21,7 +21,7 @@ export default class StringUtil {
 
   static getBlockedArray (array, type) {
     let res = []
-    let filterList = [ ...blockList[type] ]
+    const filterList = [...blockList[type]]
     res = array.filter(item => !filterList.find(elem => elem === item))
 
     return res

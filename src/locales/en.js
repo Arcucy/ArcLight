@@ -17,7 +17,7 @@ export default {
   podcasts: 'podcasts',
   andWithComma: ', and ',
   soundEffects: 'sound effects',
-  about2P1Part1: `We support many types of artworks to upload, same as the title has been said, you can upload single music, album, podcast, sound effect to the ArcLight platform, with the powerful knowledge base we could get, you can have up to <strong>913</strong> different genres for single music and album to use, and the category for the podcast is same as the Apple Podcast category.`,
+  about2P1Part1: 'We support many types of artworks to upload, same as the title has been said, you can upload single music, album, podcast, sound effect to the ArcLight platform, with the powerful knowledge base we could get, you can have up to <strong>913</strong> different genres for single music and album to use, and the category for the podcast is same as the Apple Podcast category.',
   about2P1Part2: 'Express all your creativity to produce whatever you can think of, ArcLight helps you to store them up.',
   encryption: 'Encryption',
   andWithSpace: ' and ',
@@ -66,7 +66,7 @@ export default {
   browseAllPodcast: 'Browse all selling Podcast',
   browseAllSound: 'Browse all selling Sound',
   profile: 'Profile',
-  profileOf: `'s Profile`,
+  profileOf: '\'s Profile',
   // general
   cacheLogin: 'Login',
   cacheUpload: 'Upload',
@@ -139,10 +139,10 @@ export default {
   accountInvalid: 'Account Invalid',
   // profile edit
   backToProfile: 'Back to Profile',
-  avatarEditInfo1: `Sorry, we don't provide any avatar storage option here`,
+  avatarEditInfo1: 'Sorry, we don\'t provide any avatar storage option here',
   avatarEditInfo2: 'To change your avatar, please go to ',
-  usernameEditInfo1: `Sorry, we don't provide any arweave id storage option here`,
-  usernameEditInfo2: 'To change your avatar, please go to ',
+  usernameEditInfo1: 'Sorry, we don\'t provide any arweave id storage option here',
+  usernameEditInfo2: 'To change your username, please go to ',
   location: 'Location',
   whereDoYouLive: 'Where do you live?',
   officialWebsite: 'Personal / Band Website',
@@ -197,8 +197,8 @@ export default {
   genreIsRequiredToUpload: 'Please select the genre of your music (None for blank)',
   demoDurationIsRequiredToUpload: 'The demo duration is required',
   priceMustBeNumber: 'The price must be numbers',
-  priceCantBeNegative: `Price can't be negative`,
-  demoCantBeSetToFreeMusic: `You can't set demo for free music`,
+  priceCantBeNegative: 'Price can\'t be negative',
+  demoCantBeSetToFreeMusic: 'You can\'t set demo for free music',
   // upload fee
   feeToUpload: 'Fee to Upload',
   audio: 'Audio',
@@ -254,5 +254,7 @@ export default {
   uploadPendingInfo: 'Your artwork has been uploaded to Arweave Permaweb Storage. Your work may not be available soon after you uploaded, It will need a short time of mining for miners to help you save to next block. Be patient, your wonderful will be forever stored!',
   unknownErrorOccurred: 'Unknown Error Occurred',
   play: 'Play',
-  playDemo: 'Play demo'
+  playDemo: 'Play demo',
+  clear: 'Clear',
+  playlist: 'Playlist'
 }

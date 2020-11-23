@@ -140,9 +140,9 @@ export default {
   accountInvalid: '账号无效',
   // profile edit
   backToProfile: '返回个人主页',
-  avatarEditInfo1: `很抱歉，我们在这里不提供任何头像存储的功能`,
+  avatarEditInfo1: '很抱歉，我们在这里不提供任何头像存储的功能',
   avatarEditInfo2: '要变更你的头像，请前往 ',
-  usernameEditInfo1: `很抱歉，我们在这里不提供任何用户名存储的功能`,
+  usernameEditInfo1: '很抱歉，我们在这里不提供任何用户名存储的功能',
   usernameEditInfo2: '要变更你的用户名，请前往 ',
   location: '地点',
   whereDoYouLive: '你居住在哪里？',
@@ -198,8 +198,8 @@ export default {
   genreIsRequiredToUpload: '请为你的作品选择你的音乐流派 (None 为留空)',
   demoDurationIsRequiredToUpload: '请选择试听长度',
   priceMustBeNumber: '价格必须设置为数字',
-  priceCantBeNegative: `价格不可以为负值`,
-  demoCantBeSetToFreeMusic: `你不可以给免费音乐设置试听时长`,
+  priceCantBeNegative: '价格不可以为负值',
+  demoCantBeSetToFreeMusic: '你不可以给免费音乐设置试听时长',
   // upload fee
   feeToUpload: '上传所需费用',
   audio: '音频',
@@ -255,5 +255,7 @@ export default {
   uploadPendingInfo: '你的作品已经被提交至 Arweave Permaweb Storage（永存网存储中心）。你的作品在上传结束之后可能不会立即可用，数据需要区块链上的矿工进行数据处理后帮你存储至下一个区块。请耐心等待，你的作品将会被永远存储起来！',
   unknownErrorOccurred: '发生了未知错误',
   play: '播放',
-  playDemo: '试听'
+  playDemo: '试听',
+  clear: '清除',
+  playlist: '播放列表'
 }
