@@ -254,5 +254,9 @@ export default {
   uploadSuccess: '上傳成功！',
   uploadPending: '上傳正在等待確認',
   uploadPendingInfo: '你的作品已提交至 Arweave Permaweb Storage（永存網存儲中心）。你的作品在上傳結束之後可能不會立即可用，數據需要區塊鏈上的礦工進行數據處理後幫你存儲至下一個區塊。請耐心等待，你的作品將會被永遠存儲起來！',
-  unknownErrorOccurred: '發生了未知錯誤'
+  unknownErrorOccurred: '發生了未知錯誤',
+  play: '播放',
+  playDemo: '試聽',
+  clear: '清除',
+  playlist: '播放列表'
 }
