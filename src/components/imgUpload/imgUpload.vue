@@ -276,7 +276,7 @@ export default {
             break
         }
         if (res.data.code === 0 || res.data.code === 1) {
-          this.$emit('doneImageUpload', {
+          this.$emit('done-image-upload', {
             type: this.updateType,
             data: res
           })

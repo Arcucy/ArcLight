@@ -1,7 +1,6 @@
 /* eslint-disable no-async-promise-executor */
 import Vue from 'vue'
 import Vuex from 'vuex'
-
 import Arweave from 'arweave'
 
 import { encryptBuffer } from '../util/encrypt'
@@ -245,7 +244,12 @@ export default new Vuex.Store({
       state.playList = list
     },
     pushPlayList (state, audio) {
-      state.playList.push(audio)
+      if (Array.isArray(audio)) state.playList.push(...audio)
+      else state.playList.push(audio)
+    },
+    updatePlayList (state, [index, value]) {
+      state.playList[index] = value
+      state.playList = [...state.playList]
     },
     deletePlayList (state, index) {
       state.playList.splice(index, 1)
@@ -1247,13 +1251,15 @@ export default new Vuex.Store({
       commit('setPurchaseComplete', true)
     },
     playMusicSingle ({ commit, state }, audio) {
-      console.log('正在设定需要播放的歌曲')
       const sameAudio = state.playList.findIndex(item => item.fileId === audio.fileId)
       if (sameAudio === -1) {
         commit('pushPlayList', { ...audio })
         commit('setPlayIndex', state.playList.length - 1)
       } else {
         commit('setPlayIndex', sameAudio)
+        if (state.playList[sameAudio].duration !== audio.duration) {
+          commit('updatePlayList', [sameAudio, audio])
+        }
       }
     },
     addMusicAlbum ({ commit, state }, album) {

@@ -1,7 +1,7 @@
 <template>
   <div v-if="playingAudio && playingAudio.fileId" class="player">
     <div class="player-close" @click="close">
-      <v-icon color="white" size="15px">mdi-close-thick</v-icon>
+      <v-icon color="white" size="15px" style="-webkit-text-stroke: 1.25px white;">mdi-close</v-icon>
     </div>
     <div class="player-playlist">
       <PlayerPlaylist v-if="showPlaylist" @close="showPlaylist = false" />
