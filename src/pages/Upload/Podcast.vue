@@ -11,10 +11,10 @@
         <div class="container">
           <div class="cover-title side-title">{{ $t('podcastCover') }}</div>
           <img-upload
-          :img-upload-done="imgUploadDone"
-          :update-type="'podcast'"
-          class="app-icon"
-          @doneImageUpload="doneImageUpload"
+            :img-upload-done="imgUploadDone"
+            :update-type="'podcast'"
+            class="app-icon"
+            @done-image-upload="doneImageUpload"
           >
             <div
               slot="uploadButton"

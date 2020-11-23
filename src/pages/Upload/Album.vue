@@ -11,10 +11,10 @@
         <div class="container">
           <div class="cover-title side-title">{{ $t('albumCover') }}</div>
           <img-upload
-          :img-upload-done="imgUploadDone"
-          :update-type="'album'"
-          class="app-icon"
-          @doneImageUpload="doneImageUpload"
+            :img-upload-done="imgUploadDone"
+            :update-type="'album'"
+            class="app-icon"
+            @done-image-upload="doneImageUpload"
           >
             <div
               slot="uploadButton"
