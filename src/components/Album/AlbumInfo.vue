@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     album: {
@@ -89,8 +90,9 @@ export default {
     }
   },
   computed: {
+    ...mapState(['appLang']),
     time () {
-      return this.album.unixTime ? this.$moment(this.album.unixTime).format('MMMDo HH:mm:ss') : '--:--:--'
+      return this.album.unixTime ? this.$moment(this.album.unixTime).locale(this.appLang).format('MMMDo HH:mm:ss') : '--:--:--'
     },
     toGenre () {
       if (!this.album || !this.album.genre || this.album.genre === this.$t('awaitData')) return {}
