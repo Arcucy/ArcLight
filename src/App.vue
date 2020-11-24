@@ -90,19 +90,15 @@ export default {
     switch (lang) {
       case 'zh-CN':
         this.$i18n.locale = 'zhCN'
-        this.$moment.locale('zh-cn')
         break
       case 'zh-TW':
         this.$i18n.locale = 'zhTW'
-        this.$moment.locale('zh-tw')
         break
       case 'en-US':
         this.$i18n.locale = 'en'
-        this.$moment.locale('en-us')
         break
       case 'ja-JP':
         this.$i18n.locale = 'jaJP'
-        this.$moment.locale('ja-JP')
         break
     }
   }
