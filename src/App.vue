@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 import Player from '@/components/Player'
 
 export default {
@@ -26,6 +28,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAppLang']),
     /** 对页面进行软刷新，不会丢失 vuex 中的数据 */
     routerRefresh () {
       this.routerAlive = false
@@ -69,6 +72,7 @@ export default {
     },
     getLangCode () {
       const localStore = window.localStorage || localStorage
+      this.setAppLang(localStore.getItem('locale_lang'))
       return localStore.getItem('locale_lang')
     },
     setLangCode () {
