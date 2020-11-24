@@ -261,6 +261,5 @@ export default {
   play: '播放',
   playDemo: '試聽',
   clear: '清除',
-  playlist: '播放列表',
-  
+  playlist: '播放列表'
 }
