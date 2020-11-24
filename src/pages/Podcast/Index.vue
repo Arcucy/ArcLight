@@ -79,7 +79,9 @@ export default {
     }
   },
   mounted () {
-    document.title = this.$t('browseAllPodcast') + ' - ArcLight'
+    this.$nextTick(() => {
+      document.title = this.$t('browseAllPodcast') + ' - ArcLight'
+    })
     this.getAllAudioList('podcast')
   },
   methods: {
