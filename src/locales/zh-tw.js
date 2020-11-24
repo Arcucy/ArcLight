@@ -67,6 +67,7 @@ export default {
   browseAllMusic: '所有曲目',
   browseAllPodcast: '所有播客',
   browseAllSound: '所有音效',
+  browseAllPlaylist: '所有歌單',
   profile: '個人主頁',
   profileOf: '的個人主頁',
   // general
@@ -121,8 +122,10 @@ export default {
   navSONG: '音樂',
   navSOUND: '音效',
   navPODCAST: '播客',
+  navPLAYLIST: '歌單',
   podcastSelling: '所有播客作品',
   soundSelling: '所有音效作品',
+  playlistOnline: '在線上的歌單',
   // music
   titleLoading: '名稱載入中...',
   awaitData: '等待數據...',
@@ -258,5 +261,6 @@ export default {
   play: '播放',
   playDemo: '試聽',
   clear: '清除',
-  playlist: '播放列表'
+  playlist: '播放列表',
+  
 }
