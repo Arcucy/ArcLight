@@ -91,7 +91,9 @@ export default {
     }
   },
   mounted () {
-    document.title = this.$t('browseAllAlbum') + ' - ArcLight'
+    this.$nextTick(() => {
+      document.title = this.$t('browseAllAlbum') + ' - ArcLight'
+    })
     this.getAllAudioList('album')
   },
   methods: {

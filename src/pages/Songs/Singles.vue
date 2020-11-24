@@ -90,7 +90,9 @@ export default {
     }
   },
   mounted () {
-    document.title = this.$t('browseAllSingle') + ' - ArcLight'
+    this.$nextTick(() => {
+      document.title = this.$t('browseAllSingle') + ' - ArcLight'
+    })
     this.getAllAudioList('single')
   },
   methods: {

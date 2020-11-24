@@ -28,7 +28,8 @@ const AUDIO_TYPE = {
   single: 'single-info',
   album: 'album-info',
   podcast: 'podcast-info',
-  soundEffect: 'soundeffect-info'
+  soundEffect: 'soundeffect-info',
+  playlist: 'playlist-info'
 }
 
 const AUDIO_ICON = {
@@ -42,7 +43,8 @@ const REVERSED_AUDIO_TYPE = {
   'single-info': 'Single',
   'album-info': 'Album',
   'podcast-info': 'Podcast',
-  'soundeffect-info': 'Sound Effect'
+  'soundeffect-info': 'Sound Effect',
+  'playlist-info': 'Playlist'
 }
 
 const APP_NAME = 'arclight-app'

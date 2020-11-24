@@ -4,7 +4,7 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            {{ $t('podcastSelling') }}
+            {{ $t('playlistOnline') }}
           </h4>
         </div>
         <div class="songs-list">
@@ -80,9 +80,9 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      document.title = this.$t('browseAllPodcast') + ' - ArcLight'
+      document.title = this.$t('browseAllPlaylist') + ' - ArcLight'
     })
-    this.getAllAudioList('podcast')
+    this.getAllAudioList('playlist')
   },
   methods: {
     async getAllAudioList (type) {
