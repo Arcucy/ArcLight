@@ -1,6 +1,9 @@
 <template>
   <v-app class="layout appstyle">
     <div class="layout-bg">
+      <div class="stars">
+        <img id='stars' :src="backgroundStar" />
+      </div>
       <div id='horizon'>
         <div class='glow' />
       </div>
@@ -26,6 +29,7 @@
 
 import Header from '@/components/Header.vue'
 
+import backgroundStar from '@/assets/image/star.png'
 import packageJson from '../../../package.json'
 
 export default {
@@ -35,7 +39,8 @@ export default {
   data () {
     return {
       version: '',
-      detailVersion: ''
+      detailVersion: '',
+      backgroundStar: backgroundStar
     }
   },
   mounted () {
