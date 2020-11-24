@@ -239,7 +239,7 @@
 
 <script>
 
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 
 import Search from './Search.vue'
 import miniAvatar from '@/components/User/MiniAvatar'
@@ -273,7 +273,8 @@ export default {
       localizationItems: [
         'English',
         '中文 (简体)',
-        '中文 (繁体)'
+        '中文 (繁体)',
+        '日本語'
       ],
       lang: 'English',
       frosted: false,
@@ -281,7 +282,6 @@ export default {
       showPosition: 1
     }
   },
-  inject: ['routerRefresh'],
   computed: {
     ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
   },
@@ -302,19 +302,19 @@ export default {
         this.failMessage = this.$t('accountHasErroredTx')
       }
     },
-    lang (val) {
+    async lang (val) {
       switch (val) {
         case 'zh-CN':
           this.$i18n.locale = 'zhCN'
-          this.$moment.locale('zh-cn')
           break
         case 'zh-TW':
           this.$i18n.locale = 'zhTW'
-          this.$moment.locale('zh-tw')
           break
         case 'en-US':
           this.$i18n.locale = 'en'
-          this.$moment.locale('en-US')
+          break
+        case 'ja-JP':
+          this.$i18n.locale = 'jaJP'
           break
       }
     }
@@ -346,6 +346,7 @@ export default {
   },
   methods: {
     ...mapActions(['setKey', 'logout']),
+    ...mapMutations(['setAppLang']),
     scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
       if (currentTop > this.showPosition) this.frosted = true
@@ -391,20 +392,25 @@ export default {
         this.$router.push({ path: item.path })
       }
     },
-    setLang (item) {
+    setLangAs (lang) {
       const localStore = window.localStorage || localStorage
+      localStore.setItem('locale_lang', lang)
+      this.setAppLang(lang)
+      this.lang = lang
+    },
+    setLang (item) {
       switch (item) {
         case '中文 (简体)':
-          localStore.setItem('locale_lang', 'zh-CN')
-          this.lang = 'zh-CN'
+          this.setLangAs('zh-CN')
           break
         case '中文 (繁体)':
-          localStore.setItem('locale_lang', 'zh-TW')
-          this.lang = 'zh-TW'
+          this.setLangAs('zh-TW')
           break
         case 'English':
-          localStore.setItem('locale_lang', 'en-US')
-          this.lang = 'en-US'
+          this.setLangAs('en-US')
+          break
+        case '日本語':
+          this.setLangAs('ja-JP')
           break
       }
     },

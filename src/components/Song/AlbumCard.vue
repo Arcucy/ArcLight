@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import api from '@/api/api'
 import { isNDaysAgo } from '@/util/momentFun'
 
@@ -62,9 +63,10 @@ export default {
     }
   },
   computed: {
+    ...mapState(['appLang']),
     time () {
       if (!this.card) return '--:--:--'
-      const time = this.$moment(this.card.unixTime)
+      const time = this.$moment(this.card.unixTime).locale(this.appLang)
       return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
     }
   },
