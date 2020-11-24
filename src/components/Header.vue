@@ -273,7 +273,8 @@ export default {
       localizationItems: [
         'English',
         '中文 (简体)',
-        '中文 (繁体)'
+        '中文 (繁体)',
+        '日本語'
       ],
       lang: 'English',
       frosted: false,
@@ -302,7 +303,7 @@ export default {
         this.failMessage = this.$t('accountHasErroredTx')
       }
     },
-    lang (val) {
+    async lang (val) {
       switch (val) {
         case 'zh-CN':
           this.$i18n.locale = 'zhCN'
@@ -316,7 +317,12 @@ export default {
           this.$i18n.locale = 'en'
           this.$moment.locale('en-US')
           break
+        case 'ja-JP':
+          this.$i18n.locale = 'jaJP'
+          this.$moment.locale('ja-JP')
+          break
       }
+      console.log(this.$moment().format('MMMDo HH:mm:ss'))
     }
   },
   mounted () {
@@ -406,6 +412,9 @@ export default {
           localStore.setItem('locale_lang', 'en-US')
           this.lang = 'en-US'
           break
+        case '日本語':
+          localStore.setItem('locale_lang', 'ja-JP')
+          this.lang = 'ja-JP'
       }
     },
     uploadMusic () {
