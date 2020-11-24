@@ -12,10 +12,10 @@
           <div class="cover-title side-title">{{ $t('soundEffectCover') }}</div>
           <div style="display: flex; align-items: flex-end;">
             <img-upload
-            :img-upload-done="imgUploadDone"
-            :update-type="'soundeffect'"
-            class="app-icon"
-            @doneImageUpload="doneImageUpload"
+              :img-upload-done="imgUploadDone"
+              :update-type="'soundeffect'"
+              class="app-icon"
+              @done-image-upload="doneImageUpload"
             >
               <div
                 slot="uploadButton"
