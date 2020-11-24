@@ -223,18 +223,18 @@ export default {
       margin: 10px 0 0;
 
       &-play {
-        color: white;
+        color: white !important;
         padding: 0 16px 0 13px !important;
-        border-radius: 4px 0 0 4px;
-        margin-right: -5px;
-        box-shadow: none;
+        border-radius: 4px 0 0 4px !important;
+        margin-right: 0 !important;
+        box-shadow: none !important;
         border-right: 1px solid #c75e86 !important;
       }
 
       &-plus {
-        color: white;
-        border-radius: 0 4px 4px 0;
-        box-shadow: none;
+        color: white !important;
+        border-radius: 0 4px 4px 0 !important;
+        box-shadow: none !important;
         padding: 0 0px !important;
         min-width: 40px !important;
         width: 40px !important;
