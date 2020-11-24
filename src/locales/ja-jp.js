@@ -66,6 +66,7 @@ export default {
   browseAllMusic: 'すべてのトラック',
   browseAllPodcast: 'すべてのポッドキャスト',
   browseAllSound: 'すべての効果音',
+  browseAllPlaylist: 'すべてのプレイリスト',
   profile: '個人ホームページ',
   profileOf: '個人ホームページ',
   // general
@@ -120,8 +121,10 @@ export default {
   navSONG: '音楽',
   navSOUND: '効果音',
   navPODCAST: 'ポッドキャスト',
+  navPLAYLIST: 'プレイリスト',
   podcastSelling: 'すべてのポッドキャストエントリー',
   soundSelling: 'すべてのオーディオ作品',
+  playlistOnline: 'オンラインのプレイリスト',
   // music
   titleLoading: '名前の読み込み...',
   awaitData: 'データ待ち...',
