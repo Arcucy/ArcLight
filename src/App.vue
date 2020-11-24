@@ -64,6 +64,7 @@ export default {
         if (item === 'zh-CN') return item
         if (item === 'zh-TW') return item
         if (item === 'en-US') return item
+        if (item === 'ja-JP') return item
       }
     },
     getLangCode () {
@@ -72,6 +73,7 @@ export default {
     },
     setLangCode () {
       const localStore = window.localStorage || localStorage
+      console.log(this.getBrowserLangCode())
       localStore.setItem('locale_lang', this.getBrowserLangCode())
     }
   },
@@ -93,6 +95,10 @@ export default {
       case 'en-US':
         this.$i18n.locale = 'en'
         this.$moment.locale('en-us')
+        break
+      case 'ja-JP':
+        this.$i18n.locale = 'jaJP'
+        this.$moment.locale('ja-JP')
         break
     }
   }

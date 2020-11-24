@@ -66,6 +66,7 @@ export default {
   browseAllMusic: '所有曲目',
   browseAllPodcast: '所有播客',
   browseAllSound: '所有音效',
+  browseAllPlaylist: '所有歌单',
   profile: '个人主页',
   profileOf: '的个人主页',
   // general
@@ -120,8 +121,10 @@ export default {
   navSONG: '音乐',
   navSOUND: '音效',
   navPODCAST: '播客',
+  navPLAYLIST: '歌单',
   podcastSelling: '所有播客作品',
   soundSelling: '所有音效作品',
+  playlistOnline: '线上的歌单',
   // music
   titleLoading: '名称加载中...',
   awaitData: '等待数据...',

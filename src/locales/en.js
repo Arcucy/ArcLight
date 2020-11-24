@@ -65,6 +65,7 @@ export default {
   browseAllMusic: 'Browse All Seling Music',
   browseAllPodcast: 'Browse all selling Podcast',
   browseAllSound: 'Browse all selling Sound',
+  browseAllPlaylist: 'Browse all available Playlist',
   profile: 'Profile',
   profileOf: '\'s Profile',
   // general
@@ -119,8 +120,10 @@ export default {
   navSONG: 'SONG',
   navSOUND: 'SOUND',
   navPODCAST: 'PODCAST',
+  navPLAYLIST: 'PLAYLIST',
   podcastSelling: 'Podcasts Sellings',
   soundSelling: 'Sounds Sellings',
+  playlistOnline: 'Available Playlists',
   // music
   titleLoading: 'Title loading...',
   awaitData: 'Await Data...',

@@ -10,6 +10,7 @@ import SongsSingles from '../pages/Songs/Singles'
 import SongsAlbums from '../pages/Songs/Albums'
 import Sound from '../pages/Sound/Index'
 import Podcast from '../pages/Podcast/Index'
+import Playlist from '../pages/Playlist/index'
 
 import User from '../pages/User/_id'
 import UserIndex from '../pages/User/index'
@@ -116,6 +117,11 @@ const routes = [
     path: '/podcast',
     name: 'Podcast',
     component: Podcast
+  },
+  {
+    path: '/playlist',
+    name: 'Playlist',
+    component: Playlist
   },
   {
     path: '/user/:id',

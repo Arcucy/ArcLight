@@ -4,6 +4,7 @@ import VueI18n from 'vue-i18n'
 import en from './en'
 import zhTW from './zh-tw'
 import zhCN from './zh-cn'
+import jaJP from './ja-jp'
 
 Vue.use(VueI18n)
 
@@ -13,6 +14,7 @@ export default new VueI18n({
   messages: {
     en,
     zhCN,
-    zhTW
+    zhTW,
+    jaJP
   }
 })

@@ -79,7 +79,9 @@ export default {
     }
   },
   mounted () {
-    document.title = this.$t('browseAllSound') + ' - ArcLight'
+    this.$nextTick(() => {
+      document.title = this.$t('browseAllSound') + ' - ArcLight'
+    })
     this.getAllAudioList('soundEffect')
   },
   methods: {
