@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 import Player from '@/components/Player'
 
 export default {
@@ -26,6 +28,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAppLang']),
     /** 对页面进行软刷新，不会丢失 vuex 中的数据 */
     routerRefresh () {
       this.routerAlive = false
@@ -64,14 +67,17 @@ export default {
         if (item === 'zh-CN') return item
         if (item === 'zh-TW') return item
         if (item === 'en-US') return item
+        if (item === 'ja-JP') return item
       }
     },
     getLangCode () {
       const localStore = window.localStorage || localStorage
+      this.setAppLang(localStore.getItem('locale_lang'))
       return localStore.getItem('locale_lang')
     },
     setLangCode () {
       const localStore = window.localStorage || localStorage
+      console.log(this.getBrowserLangCode())
       localStore.setItem('locale_lang', this.getBrowserLangCode())
     }
   },
@@ -84,15 +90,15 @@ export default {
     switch (lang) {
       case 'zh-CN':
         this.$i18n.locale = 'zhCN'
-        this.$moment.locale('zh-cn')
         break
       case 'zh-TW':
         this.$i18n.locale = 'zhTW'
-        this.$moment.locale('zh-tw')
         break
       case 'en-US':
         this.$i18n.locale = 'en'
-        this.$moment.locale('en-us')
+        break
+      case 'ja-JP':
+        this.$i18n.locale = 'jaJP'
         break
     }
   }

@@ -11,6 +11,7 @@ import '@babel/polyfill'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 import './plugins/element.js'
+import '@/icons'
 
 Vue.component('aplayer', Aplayer)
 

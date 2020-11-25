@@ -10,9 +10,32 @@ module.exports = {
       assetFilter: function (assetFilename) {
         return assetFilename.endsWith('.js')
       }
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(svg)(\?.*)?$/,
+          use: [
+            {
+              loader: 'svg-sprite-loader',
+              options: {
+                limit: 10000,
+                name: 'assets/img/[name].[hash:7].[ext]',
+                symbolId: 'icon-[name]'
+              }
+            }
+          ]
+        }
+      ]
     }
   },
   publicPath: process.env.NODE_ENV === 'production'
     ? '././'
-    : './'
+    : './',
+  chainWebpack: config => {
+    config.module
+      .rule('svg')
+      .test(() => false)
+      .use('file-loader')
+  }
 }

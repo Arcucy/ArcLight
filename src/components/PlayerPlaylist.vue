@@ -11,7 +11,7 @@
       </div>
       <div class="playlist-topbar-divider" />
       <div @click="$emit('close')" class="playlist-topbar-close">
-        <v-icon style="-webkit-text-stroke: 1.25px white;">mdi-close</v-icon>
+        <svg-icon icon-class="close-thick" />
       </div>
     </div>
     <div class="playlist-list">
@@ -154,17 +154,12 @@ export default {
       justify-content: center;
       align-items: center;
       cursor: pointer;
-
-      i {
-        color: #b2b2b2;
-        font-size: 16px;
-      }
+      color: #b2b2b2;
+      font-size: 16px;
 
       &:hover {
         background: #ffffff20;
-        i {
-          color: white;
-        }
+        color: white;
       }
     }
 

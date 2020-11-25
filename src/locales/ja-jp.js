@@ -66,6 +66,7 @@ export default {
   browseAllMusic: 'すべてのトラック',
   browseAllPodcast: 'すべてのポッドキャスト',
   browseAllSound: 'すべての効果音',
+  browseAllPlaylist: 'すべてのプレイリスト',
   profile: '個人ホームページ',
   profileOf: '個人ホームページ',
   // general
@@ -120,8 +121,10 @@ export default {
   navSONG: '音楽',
   navSOUND: '効果音',
   navPODCAST: 'ポッドキャスト',
+  navPLAYLIST: 'プレイリスト',
   podcastSelling: 'すべてのポッドキャストエントリー',
   soundSelling: 'すべてのオーディオ作品',
+  playlistOnline: 'オンラインのプレイリスト',
   // music
   titleLoading: '名前の読み込み...',
   awaitData: 'データ待ち...',
@@ -253,7 +256,7 @@ export default {
   uploadSuccess: 'アップロード成功',
   uploadPending: 'アップロードは確認中',
   uploadPendingInfo: 'あなたの作品はArweave Permaweb Storageに投稿されています。 あなたの作品はアップロード終了後すぐに利用できなくなる可能性があり、データはブロックチェーン上の採掘者によって処理され、次のブロックに保存されるのを助ける必要があります。 あなたの作品は永遠に保存されますので、気長にお待ちください',
-  unknownErrorOccurred: '未知のエラーがありました。' ,
+  unknownErrorOccurred: '未知のエラーがありました。',
   play: 'ラジオで',
   playDemo: 'オーディション',
   clear: 'クリア',
