@@ -7,8 +7,8 @@
   Great Thanks to ❤️ <a href="https://github.com/LittleSound">@LittleSound</a> ❤️ for contributing this project
 </p>
 <p align="center">
-  <a href="https://arweave.net/CUdQRumObOi5zDefzLzsdz6U_LTcM5EMRzjemiiIJ_U">Live Permaweb</a> for ArcLight<br>
-  <strong>Now 1.1.0 Online</strong>
+  <a href="https://arweave.net/LTNJ2HFOM2n1n6xlppD-pzw5_ab9AAO7bphPtWLju-0">Live Permaweb</a> for ArcLight<br>
+  <strong>Now 1.2.0 Online</strong>
 </p>
 <p align="center">
   <a href="https://t.me/ArclightMusic">
