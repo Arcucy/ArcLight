@@ -7,8 +7,8 @@
   感谢 ❤️ <a href="https://github.com/LittleSound">@LittleSound</a> ❤️ 为本项目作出的贡献
 </p>
 <p align="center">
-  <a href="https://arweave.net/CUdQRumObOi5zDefzLzsdz6U_LTcM5EMRzjemiiIJ_U">永存网在线演示 </a>ArcLight<br>
-  <strong>现在 1.1.0 在线</strong>
+  <a href="https://arweave.net/LTNJ2HFOM2n1n6xlppD-pzw5_ab9AAO7bphPtWLju-0">永存网在线演示 </a>ArcLight<br>
+  <strong>现在 1.2.0 在线</strong>
 </p>
 <p align="center">
   <a href="https://t.me/ArclightMusic">
