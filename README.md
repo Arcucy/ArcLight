@@ -29,23 +29,23 @@
 ---
 
 ## **A Peer-to-Peer Artwork Distribution Platform Built on the Permaweb**
-> the goal of project ArcLight is to create a truly free music distribution platform.
+> the goal of project ArcLight is to create a truly free artwork distribution platform.
 
-We use __[Arweave’s](https://www.arweave.org/) permaweb__, a permanent and decentralized type of data storage built with blockchain technology. By encrypting your music to an unreadable source on the Arweave network, you are given full ownership of your intellectual property. Artists define the price for downloading their work, and users are able to support them directly. 
+We use __[Arweave’s](https://www.arweave.org/) permaweb__, a permanent and decentralized type of data storage built with blockchain technology. By encrypting your artworks to an unreadable source on the Arweave network, you are given full ownership of your intellectual property. Artists define the price for downloading their work, and users are able to support them directly. 
 
 With ArcLight, we cut out the middleman so that we can give the power back to the artists.  
 
 ## **Wide Range of Content**
-> we support single music, albums, podcasts, and sound effects
+> we support singles, albums, podcasts, and sound effects, event paintings
 
-Upload your artwork in multiple different formats! ArcLight supports singles, albums, podcasts, and sound effects. 
+Upload your artwork in multiple different formats! ArcLight supports singles, albums, podcasts, sound effects, and paintings in digital format
 Express your creativity in whichever medium suits you best. ArcLight will give you the means to store and monetize your creations.    
 
 ## **Data Security and Compensation**
 > a secure way to store your artwork
 
-Through encryption and the decentralized storage mechanism of Arweave, the only way your listener has access to the source file is by payment. 
-Payments are facilitated in Ar token, the native currency of the permaweb. Once the payment is made, we will generate a receipt including the UNIX timestamp, the price paid to you, the target music purchased, and your address. 
+Through encryption and the decentralized storage mechanism of Arweave, the only way your follower has access to the source file is by payment. 
+Payments are facilitated in Ar token, the native currency of the permaweb. Once the payment is made, we will generate a receipt including the UNIX timestamp, the price paid to you, the target artwork purchased, and your address. 
 
 **Thank you for choosing ArcLight!**
 
