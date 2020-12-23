@@ -28,7 +28,7 @@
 
 ---
 
-## **A Peer-to-Peer Music Distribution Platform Built on the Permaweb**
+## **A Peer-to-Peer Artwork Distribution Platform Built on the Permaweb**
 > the goal of project ArcLight is to create a truly free music distribution platform.
 
 We use __[Arweave’s](https://www.arweave.org/) permaweb__, a permanent and decentralized type of data storage built with blockchain technology. By encrypting your music to an unreadable source on the Arweave network, you are given full ownership of your intellectual property. Artists define the price for downloading their work, and users are able to support them directly. 
