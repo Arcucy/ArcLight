@@ -3,58 +3,38 @@
     <spaceLayout>
       <div class="about-container">
         <div class="about-title">
-          {{ $t('whyArcLight') }} ?
+          {{ $t('title1') }}
         </div>
         <div class="about-subtitle">
-          {{ $t('about') }} Project <span class="pink-text">{{ $t('arcLightLocalized') }}</span>
+          {{ $t('subtitle1') }} <span class="pink-text">{{ $t('arclight') }}</span> {{ $t('subtitle1part2') }}
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            {{ $t('about1P1Part1') }} <a href="https://gitcoin.co/issue/ArweaveTeam/Bounties/32/100023546">Gitcoin bounty</a> {{ $t('about1P1Part2') }}
+            {{ $t('desp1part1') }}
           </p>
           <p id="p2" class="about-p">
-            {{ $t('about1P2Part1') }}
+            {{ $t('desp1part2') }}
           </p>
         </div><div class="about-title">
-          {{ $t('allDifferent') }} <span class="pink-text">{{ $t('sound') }}</span>
+          {{ $t('title2') }}
         </div>
         <div class="about-subtitle">
-          {{ $t('weSupport') }} <span class="pink-text">{{ $t('singleMusic') }}</span>, <span class="pink-text">{{ $t('albums') }}</span>, <span class="pink-text">{{ $t('podcasts') }}</span>{{ $t('andWithComma') }}<span class="pink-text">{{ $t('soundEffects') }}</span>
+          {{ $t('weSupport') }} <span class="pink-text">{{ $t('singleMusic') }}</span>, <span class="pink-text">{{ $t('albums') }}</span>, <span class="pink-text">{{ $t('podcasts') }}, <span class="pink-text">{{ $t('soundEffects') }}</span></span>{{ $t('andWithComma') }}<span class="pink-text">{{ $t('paintings') }}</span>
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            {{ $t('about2P1Part1') }}
-          </p>
-          <p id="p2" class="about-p">
-            {{ $t('about2P1Part2') }}
+            {{ $t('desp2part1') }}
           </p>
         </div>
         <div class="about-title">
-          <span class="pink-text">{{ $t('encryption') }}</span>{{ $t('andWithSpace') }}<span class="pink-text">{{ $t('profit') }}</span>
+          {{ $t('title3') }}
         </div>
         <div class="about-subtitle">
-          <span class="pink-text">{{ $t('secureWay') }}</span> {{ $t('toStoreYourArtworks') }}
+          {{ $t('subtitle3') }} <span class="pink-text">{{ $t('secureWay') }}</span> {{ $t('toStoreYourArtworks') }}
         </div>
         <div class="about-content">
           <p id="p1" class="about-p">
-            {{ $t('about3P1Part1') }}
-          </p>
-          <p id="p2" class="about-p">
-            {{ $t('about3P2Part1') }}
-          </p>
-        </div>
-        <div class="about-title">
-          <span class="pink-text">{{ $t('ensure') }}</span>{{ $t('yourWithSpace') }}<span class="pink-text">{{ $t('rewards') }}</span>
-        </div>
-        <div class="about-subtitle">
-          <span class="pink-text">{{ $t('validation') }}</span> {{ $t('ofThePayments') }}
-        </div>
-        <div class="about-content">
-          <p id="p1" class="about-p">
-            {{ $t('about4P1Part1') }}
-          </p>
-          <p id="p2" class="about-p">
-            {{ $t('about4P2Part1') }}
+            {{ $t('desp3part1') }}
           </p>
         </div>
         <div class="about-subtitle">

@@ -32,7 +32,7 @@ export default {
 
 <style lang="less" scoped>
 .home {
-  font-family: "lato", sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   color: #FFF;
   background: radial-gradient(ellipse at bottom, #0c1116 0%, #090a0f 100%);
 }
