@@ -1,13 +1,13 @@
 <template>
   <spaceLayout>
-    <div class="album" id="album">
+    <div class="playlist" id="playlist">
       <!-- Back Button -->
-      <div class="album-header">
+      <div class="playlist-header">
         <a @click="backPage({ name: 'Songs' })">
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
-              {{ $t('album') }}
+              {{ $t('playlist') }}
             </span>
             <span class="header-title-back">
               {{ $t('back') }}
@@ -15,15 +15,15 @@
           </span>
         </a>
       </div>
-      <albumInfo
+      <playlistInfo
         :album="info"
         :unlock="unlock"
-        @play-album="playAlbum"
-        @add-album="addAlbum"
+        @play-album="playPlaylist"
+        @add-album="addPlaylist"
       />
-      <div class="album-box">
+      <div class="playlist-box">
         <!-- left -->
-        <div class="album-box-col">
+        <div class="playlist-box-col">
           <h4 class="music-title">
             Music list
           </h4>
@@ -67,9 +67,9 @@
           </div>
         </div>
         <!-- right -->
-        <div class="album-box-col">
+        <div class="playlist-box-col">
           <!-- Download -->
-          <div v-if="!downloading && unlock" class="album-download">
+          <div v-if="!downloading && unlock" class="playlist-download">
             <v-btn
               block
               large
@@ -78,7 +78,7 @@
               rounded
               color="#E56D9B"
               :height="44"
-              @click="downloadAlbum"
+              @click="downloadPlaylist"
             >
               DOWNLOAD
             </v-btn>
@@ -87,32 +87,32 @@
           <v-progress-linear
             v-else-if="downloading"
             :indeterminate="shouldWait"
-            v-model="albumPct"
+            v-model="playlistPct"
             color="#E56D9B"
             height="44"
             background-color="#303437"
             style="border-radius: 999px; color: white; margin: 49px auto 0px;width: 240px;"
           >
-            <strong v-if="!isNaN(parseInt(albumPctDisplay))"> {{ albumPctDisplay }}%</strong>
-            <strong v-else>{{ albumPctDisplay }}</strong>
+            <strong v-if="!isNaN(parseInt(playlistPctDisplay))"> {{ playlistPctDisplay }}%</strong>
+            <strong v-else>{{ playlistPctDisplay }}</strong>
           </v-progress-linear>
           <!-- Buy -->
-          <div v-else-if="!awaitConfirm" class="album-buy">
+          <div v-else-if="!awaitConfirm" class="playlist-buy">
             <h4>
               Buy 「{{ info.name }}」
             </h4>
-            <div class="album-buy-label">
+            <div class="playlist-buy-label">
               <div
-                class="album-buy-label-discount"
+                class="playlist-buy-label-discount"
                 v-if="price <= originalPrice && discountDisplay"
               >
                 -{{ discountDisplay }}%
               </div>
-              <div class="album-buy-label-price">
-                <p class="album-buy-label-price-original">
+              <div class="playlist-buy-label-price">
+                <p class="playlist-buy-label-price-original">
                   AR$: {{ originalPrice }}
                 </p>
-                <p class="album-buy-label-price-now">
+                <p class="playlist-buy-label-price-now">
                   AR$: {{ price }}
                 </p>
               </div>
@@ -122,17 +122,17 @@
                 :price="parseFloat(price)"
                 :item="info"
                 :itemId="$route.params.id"
-                :type="'album-full'"
+                :type="'playlist-full'"
                 @purchase-complete="purchaseComplete"
               />
             </div>
           </div>
           <!-- Await confirm -->
-          <div v-if="awaitConfirm" class="album-await">
-            <div class="album-await-progress">
+          <div v-if="awaitConfirm" class="playlist-await">
+            <div class="playlist-await-progress">
               <v-progress-circular indeterminate color="#E56D9B" />
             </div>
-            <div class="album-await-text">
+            <div class="playlist-await-text">
               <h4>
                 「Buy」please wait. . .
               </h4>
@@ -155,7 +155,7 @@ import decode from '@/util/decode'
 import JSZip from 'jszip'
 
 import spaceLayout from '@/components/Layout/Space'
-import albumInfo from '@/components/Album/AlbumInfo'
+import playlistInfo from '@/components/Playlist/PlaylistInfo'
 import payment from '@/components/Payment'
 import { mapState, mapActions, mapMutations } from 'vuex'
 
@@ -165,7 +165,7 @@ export default {
   inject: ['backPage', 'routerRefresh'],
   components: {
     spaceLayout,
-    albumInfo,
+    playlistInfo,
     payment
   },
   data () {
@@ -198,7 +198,7 @@ export default {
       singlePct: 0,
       tempPct: 0,
       fenduanPct: 0,
-      albumPctDisplay: '',
+      playlistPctDisplay: '',
       shouldWait: false,
       awaitConfirm: false,
       timerIndex: null
@@ -206,7 +206,7 @@ export default {
   },
   computed: {
     ...mapState(['wallet']),
-    albumPct () {
+    playlistPct () {
       const res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
       return res
     },
@@ -223,7 +223,7 @@ export default {
     }
   },
   mounted () {
-    this.getAlbum(this.$route.params.id)
+    this.getPlaylist(this.$route.params.id)
     this.count = 0
 
     this.info.genre = this.$t('awaitData')
@@ -253,7 +253,7 @@ export default {
           item.unlock = false
           this.owned = false
         })
-        if (!this.loading) this.getAlbum(this.$route.params.id)
+        if (!this.loading) this.getPlaylist(this.$route.params.id)
       }
     },
     async price (val) {
@@ -265,24 +265,24 @@ export default {
         }
       }
     },
-    albumPct (val) {
-      this.albumPctDisplay = val
+    playlistPct (val) {
+      this.playlistPctDisplay = val
       if (val === 100) {
-        this.albumPct = 0
-        this.albumPctDisplay = 'Zipping your files'
+        this.playlistPct = 0
+        this.playlistPctDisplay = 'Zipping your files'
         this.shouldWait = true
       }
     }
   },
   methods: {
     ...mapMutations(['setPlayList', 'setPlayIndex']),
-    ...mapActions(['playMusicSingle', 'addMusicAlbum']),
+    ...mapActions(['playMusicSingle', 'addMusicPlaylist']),
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
           const transaction = await api.arweave.getTransactionDetail(txid)
           const tags = await api.arweave.getTagsByTransaction(transaction)
-          const type = tags['Album-Type']
+          const type = tags['Playlist-Type']
           if (type === 'full') {
             const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(price)))
             const ar = api.arweave.getArFromWinston(transaction.quantity)
@@ -301,13 +301,13 @@ export default {
         }
       }
 
-      const res = await api.arweave.getAlbumPurchaseStatus(address, itemAddress)
+      const res = await api.arweave.getPlaylistPurchaseStatus(address, itemAddress)
       if (res) await getPaymentResult(res)
       else this.awaitConfirm = false
     },
     async getIndividualStatus (address, itemAddress, price) {
       this.info.list.forEach(async (item, index) => {
-        const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, itemAddress, index + 1 + '')
+        const res1 = await api.arweave.getPlaylistItemPurchaseStatus(this.wallet, itemAddress, index + 1 + '')
         if (res1) {
           const transaction = await api.arweave.getTransactionDetail(res1)
           const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
@@ -316,32 +316,32 @@ export default {
         }
       })
     },
-    async getAlbum (id) {
+    async getPlaylist (id) {
       this.loading = true
       try {
         // 获取数据
         const transaction = await api.arweave.getTransactionDetail(id)
         const tags = await api.arweave.getTagsByTransaction(transaction)
-        const albumData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        const playlistData = JSON.parse(decode.uint8ArrayToString(transaction.data))
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
         this.info.genre = tags.Genre
         this.info.unixTime = Number(tags['Unix-Time'])
-        this.info.name = albumData.title
-        this.info.duration = Number(albumData.duration) || 0
+        this.info.name = playlistData.title
+        this.info.duration = Number(playlistData.duration) || 0
         // this.info.duration = 30
 
         document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
         document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
 
-        albumData.desp = albumData.desp.replace(/<br>/gm, '\\n')
-        albumData.desp = albumData.desp.replace(/<[^>]*>/gmu, '')
-        albumData.desp = albumData.desp.replace(/\\n/gmu, '<br>')
+        playlistData.desp = playlistData.desp.replace(/<br>/gm, '\\n')
+        playlistData.desp = playlistData.desp.replace(/<[^>]*>/gmu, '')
+        playlistData.desp = playlistData.desp.replace(/\\n/gmu, '<br>')
 
-        this.info.desp = albumData.desp
-        this.info.list = albumData.music
-        this.price = albumData.price.toFixed(12)
+        this.info.desp = playlistData.desp
+        this.info.list = playlistData.music
+        this.price = playlistData.price.toFixed(12)
 
         this.info.list.forEach(item => {
           item.pct = 0
@@ -381,7 +381,7 @@ export default {
           for (let index = 0; index < this.info.list.length; index++) {
             try {
               const item = this.info.list[index]
-              const res1 = await api.arweave.getAlbumItemPurchaseStatus(this.wallet, id, index + 1 + '')
+              const res1 = await api.arweave.getPlaylistItemPurchaseStatus(this.wallet, id, index + 1 + '')
               if (res1) {
                 const transaction = await api.arweave.getTransactionDetail(res1)
                 const finalPrice = api.arweave.getArFromWinston(api.arweave.getWinstonFromAr(parseFloat(item.price)))
@@ -389,10 +389,10 @@ export default {
                 if (ar === finalPrice) item.unlock = true
 
                 const winstonPriceSingle = api.arweave.getWinstonFromAr(parseFloat(item.price))
-                const winstonPriceAlbum = api.arweave.getWinstonFromAr(parseFloat(this.price))
-                let newAlbumPrice = winstonPriceAlbum / 0.8
-                newAlbumPrice = (newAlbumPrice - parseInt(winstonPriceSingle)) * 0.8
-                this.price = api.arweave.getArFromWinston(newAlbumPrice)
+                const winstonPricePlaylist = api.arweave.getWinstonFromAr(parseFloat(this.price))
+                let newPlaylistPrice = winstonPricePlaylist / 0.8
+                newPlaylistPrice = (newPlaylistPrice - parseInt(winstonPriceSingle)) * 0.8
+                this.price = api.arweave.getArFromWinston(newPlaylistPrice)
               }
             } catch (e) {
               if (e.type !== 'TX_PENDING') {
@@ -415,11 +415,11 @@ export default {
         }
 
         // 获取封面
-        this.info.cover = await this.getCover(albumData.cover)
+        this.info.cover = await this.getCover(playlistData.cover)
         // 获取作者信息
         this.getArtist(this.info.authorAddress)
       } catch (e) {
-        this.$message.error('Failed to get album information')
+        this.$message.error('Failed to get playlist information')
         console.error('An Error Occured', e.type, e)
       }
       this.loading = false
@@ -493,7 +493,7 @@ export default {
       }
 
       this.audio[index] = ({ src: res.src, name: music.title + ' - ' + this.artist.username + '.' + getExt[res.type] })
-      const div = document.getElementById('album')
+      const div = document.getElementById('playlist')
       const a = document.createElement('a')
       a.href = this.audio[index].src
       a.download = this.audio[index].name
@@ -507,7 +507,7 @@ export default {
         type: 'success',
         title: `Downloaded: ${this.audio[index].name}`,
         dangerouslyUseHTMLString: true,
-        message: `<span class="album-click-download">
+        message: `<span class="playlist-click-download">
           If your download didn't started,
           <a href="${this.audio[index].src}" download="${this.audio[index].name}">click here</a>
         <span>`
@@ -530,8 +530,8 @@ export default {
         }
       })
     },
-    async downloadAlbum () {
-      this.albumPct = 0
+    async downloadPlaylist () {
+      this.playlistPct = 0
       this.tempPct = 0
       this.downloading = true
       this.shouldWait = false
@@ -552,7 +552,7 @@ export default {
       }
       zip.generateAsync({ type: 'blob' }).then((blob) => {
         const url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
-        const div = document.getElementById('album')
+        const div = document.getElementById('playlist')
         const a = document.createElement('a')
         a.href = url
         a.download = this.info.name + ' by ' + this.info.artist + '.zip'
@@ -585,7 +585,7 @@ export default {
         unlock: this.unlock
       })
     },
-    playAlbum () {
+    playPlaylist () {
       this.setPlayList(this.info.list.map((music, index) => {
         return {
           fileId: music.id,
@@ -601,8 +601,8 @@ export default {
       }))
       this.setPlayIndex(0)
     },
-    addAlbum () {
-      this.addMusicAlbum(this.info.list.map((music, index) => {
+    addPlaylist () {
+      this.addMusicPlaylist(this.info.list.map((music, index) => {
         return {
           fileId: music.id,
           musicIndex: index,
@@ -634,7 +634,7 @@ a {
   color: white;
 }
 
-.album {
+.playlist {
   margin: 48px auto 20px;
   max-width: 1240px;
   width: 100%;
@@ -905,7 +905,7 @@ a {
 }
 
 @media screen and (max-width: 992px) {
-  .album-box {
+  .playlist-box {
     flex-direction: column-reverse;
     &-col {
       margin: 0 0 40px;
@@ -913,14 +913,14 @@ a {
   }
 }
 @media screen and (max-width: 640px) {
-  .album-buy-label button {
+  .playlist-buy-label button {
     width: 120px;
   }
 }
 </style>
 
 <style lang="less">
-.album-click-download {
+.playlist-click-download {
   text-align: left;
   display: inline-block;
 }

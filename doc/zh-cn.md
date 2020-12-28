@@ -1,14 +1,14 @@
 <p align="center">
-   <img src="https://i.loli.net/2020/10/09/BJeO3aLY6lHqs7z.png" />
+   <img src="https://i.loli.net/2020/12/23/dwGqcLs1vObkg6Y.png" />
 </p>
 <h1 align="center">ArcLight</h1>
 <p align="center">
-  一个 Arweave 音乐和播客分发应用程序，供用户发布，收听和支付加密音乐<br>
+  一个艺术家可以获得所有权和合理收益的艺术品发布平台<br>
   感谢 ❤️ <a href="https://github.com/LittleSound">@LittleSound</a> ❤️ 为本项目作出的贡献
 </p>
 <p align="center">
-  <a href="https://arweave.net/CUdQRumObOi5zDefzLzsdz6U_LTcM5EMRzjemiiIJ_U">永存网在线演示 </a>ArcLight<br>
-  <strong>现在 1.1.0 在线</strong>
+  <a href="https://arweave.net/LTNJ2HFOM2n1n6xlppD-pzw5_ab9AAO7bphPtWLju-0">永存网在线演示 </a>ArcLight<br>
+  <strong>现在 1.2.0 在线</strong>
 </p>
 <p align="center">
   <a href="https://t.me/ArclightMusic">
@@ -22,47 +22,54 @@
 </p>
 
 
-## 为什么选择 ArcLight ?
-> ArcLight (弧光) 计划
 
-Project ArcLight（弧光计划）最初是以 Arweave 平台的存储系统来设计和构建的，在 [Gitcoin bounty](https://gitcoin.co/issue/ArweaveTeam/Bounties/32/100023546) 公布之后，我们把目光放在了打造一个真正开放和自由的音乐分发平台来完成这个 GitCoin Bounty 所需的要求。
+---
 
-为什么选择 ArcLight？我们使用 Arweave 的永存网作为我们的储存空间来存放你的精美作品，我们尽全力去保护你对你作品的版权所有信息，这当然就包括把你的音乐作品加密为在开放的区块链浏览器中无法被直接解码的数据，这样一来，用户必须支付你所指定的价格来获取下载信息，当然你也可以设置试听时长来防止音乐录制盗用。   
+[English](https://github.com/Arcucy/ArcLight/blob/master/README.md)
 
-## 所有你能想到的声音
-> 我们支持单曲音乐, 专辑发布, 播客电台，以及音效
+---
 
-我们支持各种类型的作品可供你上传，就如同标题内容所述，你可以上传单曲、专辑、播客、音效到 ArcLight 平台上，有了强大的知识库，您可以使用多达 913 种不同类型的音乐和专辑的流派类别，并且播客的类别与 Apple Podcast 类别完全一致。   
-   
-发挥你所有的创造力，创作你能想到的任何东西，ArcLight 能帮你把它们都储存起来。
+## **基于永存网的艺术品发布平台**
+> ArcLight 的目标旨在创造一个完全公平自由的艺术品发布平台
 
-## Encryption and Profit
-> 安全的策略 来储存和共享你的作品
+我们使用的是 Arweave（区块纺）提供的永存网，这是一种采用区块链技术构建的永久性和分散式的数据存储类型。在您上传您的作品前，我们会对您提交到浏览器的作品进行加密，使其成为在区块链上不可直接读取的文件类型，您将获得知识产权的完全所有权。作为艺术家，您甚至可以自定义属于你的价格来鼓励用户通过购买来支持您。 
 
-一次不错的机会来介绍我们的技术是如何来确保您的艺术品安全的   
-   
-与 DRM 系统不同的是，我们只是在您上传到浏览器内部后对您的音频进行简单的加密，经过我们自己的加密后，Arweave API 会再次加密后再上传到 Permaweb（永存网）。您的听众只有在向您付费后才能获得源文件，否则只能获得少量的音乐试听或完整的试用版（如果您想关闭试听功能）。客户决定为你的作品付费后，会使用官方代币 AR 支付到你的账户。   
+在 ArcLight 平台上，我们可以省去中间人和经纪人带来的抽成，以此来把收益的所有权还给作者。
 
-## 确保 你的 收益
-> 验证 所有支付交易
+## **多种作品类型的支持**
+> 我们支持单曲、专辑、播客、音效，以及任意的绘画作品
 
-当客户向您的帐户支付 AR 时，我们将向客户方生成收据交易，包括 UNIX 时间戳信息，支付给您的价格，购买的目标音乐或专辑以及您的地址。所有信息将被保存到收据交易中。   
-   
-我们会为用户找回交易，以防止未经授权的官方签名进行交易，检查时间戳是否正确，检查价格和所需价格是否正确，在所有过程都经过验证之后，音乐源文件将能够交付给客户。您也会收到交易所支付的帐额。   
+上传多种不同格式的作品！ArcLight 支持从单曲到博客，甚至是您录制的音效，以及精美的电子绘画作品，只要是能够授予（不包含版权）用户拥有的电子媒体格式通通都可以被支持。在最适合您的媒体中表达您的创造力。ArcLight 将为您提供存储创作并从中获得收益的办法！    
 
-**感谢你选择 ArcLight！!**
+## **数据安全与补偿**
+> 储存作品的安全方案
 
-### 与 Arweave 互动
+通过加密和 Arweave 的分散储存机制，我们可以限制用户通过区块链数据访问来获得需要付费的项目，获得原文件的唯一方法是通过付费来完成。
+
+交易都必须通过 AR 代币或是将来支持的内部代币进行，AR 代币是 Arweave 永存网的流通货币。在用户付款后，我们将生成一个特定的收据来证明你拥有这个作品，包括 UNIX 时间戳，已经支付给您的价格，购买的目标作品以及您的钱包地址。
+
+**感谢您选择 ArcLight**
+
+## 感谢
+
+[@LittleSound](https://github.com/LittleSound) - 主要开发者
+
+[@Garfield550](https://github.com/Garfield550) - 主要开发者
+
+[@KagurazakaIzumi](https://github.com/KagurazakaIzumi) - 简体中文、繁体中文、日本語的本地化作者
+
+
+### 与 Arweave 交互
 ```
 yarn dev
 ```
 
-### 使用 钱包密钥 来部署一个实例
+### 使用钱包密钥进行部署操作
 ```
 arweave deploy-dir ./dist --key-file ./secrets/key.json
 ```
 
-### 参考
+### 引用
 [arweave interface](https://www.arweave.org/build)    
 [Arweave.js](https://github.com/ArweaveTeam/arweave-js): A library for interacting with the Arweave network from web applications and node.js programs.    
 [Arweave Deploy](https://github.com/ArweaveTeam/arweave-deploy): A simple command line tool for deploying web apps, pages, and other files to the permaweb.    
@@ -82,4 +89,3 @@ yarn build
 # 构建实例并查看构建分析
 yarn build --report
 ```
-

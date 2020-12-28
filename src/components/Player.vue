@@ -1,7 +1,7 @@
 <template>
   <div v-if="playingAudio && playingAudio.fileId" class="player">
     <div class="player-close" @click="close">
-      <v-icon color="white" size="15px" style="-webkit-text-stroke: 1.25px white;">mdi-close</v-icon>
+      <svg-icon icon-class="close-thick" />
     </div>
     <div class="player-playlist">
       <PlayerPlaylist v-if="showPlaylist" @close="showPlaylist = false" />
@@ -411,12 +411,15 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    i {
+
+    color: white;
+    svg {
       color: white;
     }
 
     &:hover {
-      i {
+      color: #ff6161;
+      svg {
         color: #ff6161;
       }
     }

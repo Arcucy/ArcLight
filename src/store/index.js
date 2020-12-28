@@ -24,6 +24,7 @@ export default new Vuex.Store({
   modules: {
   },
   state: {
+    appLang: 'en-US',
     isLoggedIn: false,
     keyFile: '',
     keyFileRaw: '',
@@ -81,6 +82,9 @@ export default new Vuex.Store({
     audioFileCache: null
   },
   mutations: {
+    setAppLang (state, lang) {
+      state.appLang = lang
+    },
     setIsLoggedIn (state, status) {
       state.isLoggedIn = status
     },
