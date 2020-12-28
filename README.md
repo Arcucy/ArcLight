@@ -1,14 +1,14 @@
 <p align="center">
-   <img src="https://i.loli.net/2020/11/06/XcozLBJFPHQ9gkD.png" />
+   <img src="https://i.loli.net/2020/12/23/dwGqcLs1vObkg6Y.png" />
 </p>
 <h1 align="center">ArcLight</h1>
 <p align="center">
-  An Arweave Music and Podcast Distribution App for users to publish, listen and pay to the encrypted music<br>
+  An artwork distribution platform where artists are given ownership and fair compensation<br>
   Great Thanks to ❤️ <a href="https://github.com/LittleSound">@LittleSound</a> ❤️ for contributing this project
 </p>
 <p align="center">
-  <a href="https://arweave.net/CUdQRumObOi5zDefzLzsdz6U_LTcM5EMRzjemiiIJ_U">Live Permaweb</a> for ArcLight<br>
-  <strong>Now 1.1.0 Online</strong>
+  <a href="https://arweave.net/LTNJ2HFOM2n1n6xlppD-pzw5_ab9AAO7bphPtWLju-0">Live Permaweb</a> for ArcLight<br>
+  <strong>Now 1.2.0 Online</strong>
 </p>
 <p align="center">
   <a href="https://t.me/ArclightMusic">
@@ -17,9 +17,10 @@
   <a href="https://discord.gg/bGZ2ZQ">
     <img src="https://img.shields.io/discord/766689493435678770.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2" />
   </a><br>
-  <img src="https://github.com/AyakaLab/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
-  <img src="https://github.com/AyakaLab/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
+  <img src="https://github.com/Arcucy/ArcLight/workflows/Node%20Build%20Test/badge.svg" />
+  <img src="https://github.com/Arcucy/ArcLight/workflows/Production%20CI%20Build%20Test/badge.svg">
 </p>
+
 
 ---
 
@@ -27,35 +28,35 @@
 
 ---
 
-## Why ArcLight ?
-> about Project ArcLight
+## **A Peer-to-Peer Artwork Distribution Platform Built on the Permaweb**
+> the goal of project ArcLight is to create a truly free artwork distribution platform.
 
-Project ArcLight first started as an Arweave storage solution dapp, after the [Gitcoin bounty](https://gitcoin.co/issue/ArweaveTeam/Bounties/32/100023546) was announced, we transferred our objective to make a truly free music distribution platform for the Hackathon project.    
+We use __[Arweave’s](https://www.arweave.org/) permaweb__, a permanent and decentralized type of data storage built with blockchain technology. By encrypting your artworks to an unreadable source on the Arweave network, you are given full ownership of your intellectual property. Artists define the price for downloading their work, and users are able to support them directly. 
 
-Why choose ArcLight? We use Arweave's Permaweb as our storage for your wonderful artworks, we try everything to protect your copyright to your music, including encrypting your music to an unreadable source on Arweave network explorer, so the people must pay to you as your price defined for your project to get the download source of your music.    
+With ArcLight, we cut out the middleman so that we can give the power back to the artists.  
 
-## All different Sound
-> we support single music, albums, podcasts, and sound effects
+## **Wide Range of Content**
+> we support singles, albums, podcasts, and sound effects, event paintings
 
-We support many types of artworks to upload, same as the title has been said, you can upload single music, album, podcast, sound effect to the ArcLight platform, with the powerful knowledge base we could get, you can have up to 913 different genres for single music and album to use, and the category for the podcast is same as the Apple Podcast category.    
+Upload your artwork in multiple different formats! ArcLight supports singles, albums, podcasts, sound effects, and paintings in digital format
+Express your creativity in whichever medium suits you best. ArcLight will give you the means to store and monetize your creations.    
 
-Express all your creativity to produce whatever you can think of, ArcLight helps you to store them up.    
+## **Data Security and Compensation**
+> a secure way to store your artwork
 
-## Encryption and Profit
-> a secure way to store your artworks
-
-A great chance we can introduce our technic to have your artwork safe.    
-
-Different from the DRM system, we simply encrypt your audio after you upload it into the broswer, after the encryption of our own, Arweave API will encrypt it again before uploading it to the Permaweb. Your listener can only get the source file after they pay to you, otherwise, they can only get a small amount of music demo or the full trial (if you wish to disable the demo function). After the customers decided to pay for your work, they will use the official token AR pay to your account.    
-
-## Ensure your rewards
-> validation of the payments
-
-When customers paying the AR to your account, we will generate a receipt transaction to the customer side, including the UNIX timestamp information, the price paid to you, the target music or album custom bought, and your address. All the information will be saved into the receipt transaction.    
-
-We will look back for the transactions for users, in order to prevent unauthorized official sign to the transactions, check the timestamp is correct to the payment, check the price and the price you required is right, after all the process is done and validated, the music source file will be able to deliver to the customers. And you will receive the transaction as well.    
+Through encryption and the decentralized storage mechanism of Arweave, the only way your follower has access to the source file is by payment. 
+Payments are facilitated in Ar token, the native currency of the permaweb. Once the payment is made, we will generate a receipt including the UNIX timestamp, the price paid to you, the target artwork purchased, and your address. 
 
 **Thank you for choosing ArcLight!**
+
+## Credits
+
+[@LittleSound](https://github.com/LittleSound) - Major Developer   
+
+[@Garfield550](https://github.com/Garfield550) - Major Developer   
+
+[@KagurazakaIzumi](https://github.com/KagurazakaIzumi) - Localization for Simplified/Traditional Chinese, Japanese   
+
 
 ### Interact with Arweave
 ```
@@ -86,4 +87,3 @@ yarn build
 # build for production and view the bundle analyzer report
 yarn build --report
 ```
-
