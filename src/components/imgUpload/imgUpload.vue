@@ -78,7 +78,7 @@ export default {
     // 显示上传图片大小 单位 M
     imgSize: {
       type: Number,
-      default: 5
+      default: 2
     },
     // 是否上传完成
     imgUploadDone: {
@@ -189,7 +189,7 @@ export default {
       }
       // 限定最大字节
       const maxSize = (size) => {
-        if (newFile.file.size >= 0 && newFile.file.size > 1024 * 1024 * size) {
+        if (newFile.file.size >= 0 && newFile.file.size > 500 * 500 * size) {
           this.$message.error({
             duration: 2000,
             message: this.$t('imageTooBig')
