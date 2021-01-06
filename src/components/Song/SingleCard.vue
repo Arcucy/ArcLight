@@ -15,13 +15,13 @@
         </template>
       </v-img>
       <div v-else class="card-img-blink" />
-      <p class="card-title">
+      <p class="card-title" :title="card.title">
         {{ card.title }}
       </p>
-      <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
+      <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }" :title="card.authorUsername">
         by {{ card.authorUsername }}
       </router-link>
-      <a v-else class="card-artist">
+      <a v-else class="card-artist" :title="card.authorUsername">
         {{ card.authorUsername }}
       </a>
       <p v-if="card.price != 0" class="card-price">
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import api from '@/api/api'
 import { isNDaysAgo } from '@/util/momentFun'
 
@@ -57,9 +58,10 @@ export default {
     }
   },
   computed: {
+    ...mapState(['appLang']),
     time () {
       if (!this.card) return '--:--:--'
-      const time = this.$moment(this.card.unixTime)
+      const time = this.$moment(this.card.unixTime).locale(this.appLang)
       return isNDaysAgo(3, this.card.unixTime) ? time.format('MMMDo HH:mm') : time.fromNow()
     }
   },

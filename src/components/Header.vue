@@ -239,7 +239,7 @@
 
 <script>
 
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 
 import Search from './Search.vue'
 import miniAvatar from '@/components/User/MiniAvatar'
@@ -282,7 +282,6 @@ export default {
       showPosition: 1
     }
   },
-  inject: ['routerRefresh'],
   computed: {
     ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
   },
@@ -307,22 +306,17 @@ export default {
       switch (val) {
         case 'zh-CN':
           this.$i18n.locale = 'zhCN'
-          this.$moment.locale('zh-cn')
           break
         case 'zh-TW':
           this.$i18n.locale = 'zhTW'
-          this.$moment.locale('zh-tw')
           break
         case 'en-US':
           this.$i18n.locale = 'en'
-          this.$moment.locale('en-US')
           break
         case 'ja-JP':
           this.$i18n.locale = 'jaJP'
-          this.$moment.locale('ja-JP')
           break
       }
-      console.log(this.$moment().format('MMMDo HH:mm:ss'))
     }
   },
   mounted () {
@@ -352,6 +346,7 @@ export default {
   },
   methods: {
     ...mapActions(['setKey', 'logout']),
+    ...mapMutations(['setAppLang']),
     scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
       if (currentTop > this.showPosition) this.frosted = true
@@ -397,24 +392,26 @@ export default {
         this.$router.push({ path: item.path })
       }
     },
-    setLang (item) {
+    setLangAs (lang) {
       const localStore = window.localStorage || localStorage
+      localStore.setItem('locale_lang', lang)
+      this.setAppLang(lang)
+      this.lang = lang
+    },
+    setLang (item) {
       switch (item) {
         case '中文 (简体)':
-          localStore.setItem('locale_lang', 'zh-CN')
-          this.lang = 'zh-CN'
+          this.setLangAs('zh-CN')
           break
         case '中文 (繁体)':
-          localStore.setItem('locale_lang', 'zh-TW')
-          this.lang = 'zh-TW'
+          this.setLangAs('zh-TW')
           break
         case 'English':
-          localStore.setItem('locale_lang', 'en-US')
-          this.lang = 'en-US'
+          this.setLangAs('en-US')
           break
         case '日本語':
-          localStore.setItem('locale_lang', 'ja-JP')
-          this.lang = 'ja-JP'
+          this.setLangAs('ja-JP')
+          break
       }
     },
     uploadMusic () {

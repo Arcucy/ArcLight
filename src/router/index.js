@@ -11,6 +11,7 @@ import SongsAlbums from '../pages/Songs/Albums'
 import Sound from '../pages/Sound/Index'
 import Podcast from '../pages/Podcast/Index'
 import Playlist from '../pages/Playlist/index'
+import PlaylistItems from '../pages/Playlist/_id'
 
 import User from '../pages/User/_id'
 import UserIndex from '../pages/User/index'
@@ -122,6 +123,12 @@ const routes = [
     path: '/playlist',
     name: 'Playlist',
     component: Playlist
+  },
+  {
+    path: '/playlist/:id',
+    name: 'PlaylistItem',
+    component: PlaylistItems,
+    props: true
   },
   {
     path: '/user/:id',
