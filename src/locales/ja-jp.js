@@ -255,5 +255,7 @@ export default {
   play: 'ラジオで',
   playDemo: 'オーディション',
   clear: 'クリア',
-  playlist: 'プレイリスト'
+  playlist: 'プレイリスト',
+  // login
+  thisIsNotArweaveKey: 'これは正しいArweaveキーではありません。正しいキーを再アップロードしてください'
 }

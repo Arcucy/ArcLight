@@ -255,5 +255,5 @@ export default {
   clear: 'Clear',
   playlist: 'Playlist',
   // login
-  thisIsNotArweaveKey: 'This key is invalid, please upload an Arweave key.'
+  thisIsNotArweaveKey: 'This key is invalid, please upload correct Arweave key.'
 }

@@ -255,5 +255,7 @@ export default {
   play: '播放',
   playDemo: '试听',
   clear: '清除',
-  playlist: '播放列表'
+  playlist: '播放列表',
+  // login
+  thisIsNotArweaveKey: '这不是正确的Arweave密钥，请重新上传一个正确的密钥'
 }

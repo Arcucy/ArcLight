@@ -255,5 +255,7 @@ export default {
   play: '播放',
   playDemo: '試聽',
   clear: '清除',
-  playlist: '播放列表'
+  playlist: '播放列表',
+  // login
+  thisIsNotArweaveKey: '這不是正確的Arweave密鑰，請重新上傳一個正確的密鑰'
 }

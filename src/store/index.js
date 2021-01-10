@@ -10,7 +10,7 @@ import Community from 'community-js'
 
 Vue.use(Vuex)
 
-const APP_NAME = 'arclight-alpha'
+const APP_NAME = 'arclight-app'
 
 const ar = Arweave.init({
   host: 'arweave.arcucy.io',
@@ -299,12 +299,7 @@ export default new Vuex.Store({
         commit('setKeyFileContent', data.content)
 
         try {
-          let shouldContinue = true
-          const res = await API.arweave.getAddress(data.content).catch((err) => {
-            console.log(err.message)
-            shouldContinue = false
-          })
-          if (!shouldContinue) return
+          const res = await API.arweave.getAddress(data.content) // 已经检查过地址了无需再次catch
           commit('setWallet', res)
           const res2 = await API.arweave.getIdFromAddress(res).catch(() => {
             commit('setUserAccountFailure', true)

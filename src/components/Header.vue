@@ -246,7 +246,7 @@ import Search from './Search.vue'
 import miniAvatar from '@/components/User/MiniAvatar'
 
 import { clearCookie, getCookie, setCookie } from '@/util/cookie'
-import { FileUtil } from '@/util/file'
+import API from '@/api/api'
 
 export default {
   components: {
@@ -351,8 +351,7 @@ export default {
     ...mapMutations(['setAppLang']),
     scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
-      if (currentTop > this.showPosition) this.frosted = true
-      else this.frosted = false
+      this.frosted = currentTop > this.showPosition // IDE提示这行可以简化
     },
     submit () {
       this.loginBtnLoading = true
@@ -363,13 +362,17 @@ export default {
       reader.onload = async (e) => {
         try {
           const fileContent = JSON.parse(e.target.result)
-          if (!FileUtil.isValidKeyFile(fileContent)) { // 提前检查是否是Arweave的key
+
+          let shouldContinue = true
+          await API.arweave.getAddress(fileContent).catch(() => { // 提前检查是否是Arweave的key
             this.show = false
             this.loginBtnLoading = false
             this.failSnackbar = true
             this.failMessage = this.$t('thisIsNotArweaveKey')
-            return
-          }
+            shouldContinue = false
+          })
+          if (!shouldContinue) return
+
           this.fileContent = fileContent
           this.fileRaw = JSON.stringify(this.fileContent)
           const data = {
