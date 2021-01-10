@@ -47,7 +47,7 @@ const REVERSED_AUDIO_TYPE = {
   'playlist-info': 'Playlist'
 }
 
-const APP_NAME = 'arclight-app'
+const APP_NAME = 'arclight-alpha'
 
 const arweave = {
   breakOnCall: false,

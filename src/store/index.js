@@ -3,14 +3,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Arweave from 'arweave'
 
-import { encryptBuffer } from '../util/encrypt'
+import { encryptBuffer } from '@/util/encrypt'
 import config from '../config/index'
 import API from '../api/api'
 import Community from 'community-js'
 
 Vue.use(Vuex)
 
-const APP_NAME = 'arclight-app'
+const APP_NAME = 'arclight-alpha'
 
 const ar = Arweave.init({
   host: 'arweave.arcucy.io',
@@ -298,31 +298,36 @@ export default new Vuex.Store({
         commit('setKeyFileName', data.name)
         commit('setKeyFileContent', data.content)
 
-        const balance = await API.arweave.getBalance(data.content)
-        if (parseFloat(balance) <= 0) {
-          commit('setUserNoBalanceFailure', true)
-          return
-        }
-
-        const res = await API.arweave.getAddress(data.content)
-        commit('setWallet', res)
-        const res2 = await API.arweave.getIdFromAddress(res).catch(() => {
-          commit('setUserAccountFailure', true)
-          commit('setUsername', 'guest')
-          commit('setUserType', 'Guest')
-          commit('setIsLoggedIn', true)
-          resolve(true)
-        })
-        commit('setUsername', res2.data)
-        commit('setUserType', res2.type)
-        commit('setIsLoggedIn', true)
-        if (res2.type !== 'guest') {
-          API.arweave.getAvatarFromAddress(res).then(data => {
-            if (data) {
-              commit('setUserAvatar', data)
-            }
+        try {
+          let shouldContinue = true
+          const res = await API.arweave.getAddress(data.content).catch((err) => {
+            console.log(err.message)
+            shouldContinue = false
           })
-          resolve(true)
+          if (!shouldContinue) return
+          commit('setWallet', res)
+          const res2 = await API.arweave.getIdFromAddress(res).catch(() => {
+            commit('setUserAccountFailure', true)
+            commit('setUsername', 'guest')
+            commit('setUserType', 'Guest')
+            commit('setIsLoggedIn', true)
+            resolve(true)
+          })
+          if (res2) {
+            commit('setUsername', res2.data)
+            commit('setUserType', res2.type)
+            commit('setIsLoggedIn', true)
+            if (res2.type !== 'guest') {
+              API.arweave.getAvatarFromAddress(res).then(data => {
+                if (data) {
+                  commit('setUserAvatar', data)
+                }
+              })
+              resolve(true)
+            }
+          }
+        } catch (err) {
+          console.log(err.message)
         }
       })
     },

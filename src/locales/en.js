@@ -253,5 +253,7 @@ export default {
   play: 'Play',
   playDemo: 'Play demo',
   clear: 'Clear',
-  playlist: 'Playlist'
+  playlist: 'Playlist',
+  // login
+  thisIsNotArweaveKey: 'This key is invalid, please upload an Arweave key.'
 }

@@ -62,7 +62,9 @@
     </div>
 
     <Search class="search-bar"/>
-    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}</v-btn>
+    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true"
+           :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}
+    </v-btn>
     <v-btn v-if="isLoggedIn" class="mobile-nav mobile-upload" fab dark x-small color="#E56D9B" @click="uploadMusic">
       <v-icon dark>mdi-upload</v-icon>
     </v-btn>
@@ -192,7 +194,7 @@
           <v-toolbar-title style="margin-right: 10px;">{{ $t('search') }}</v-toolbar-title>
         </v-toolbar>
         <v-list three-line subheader>
-          <Search @should-close="closeMobileDialog" class="mobile-search" />
+          <Search @should-close="closeMobileDialog" class="mobile-search"/>
         </v-list>
       </v-card>
     </v-dialog>
@@ -238,13 +240,13 @@
 </template>
 
 <script>
-
 import { mapActions, mapState, mapMutations } from 'vuex'
 
 import Search from './Search.vue'
 import miniAvatar from '@/components/User/MiniAvatar'
 
-import { clearCookie, getCookie, setCookie } from '../util/cookie'
+import { clearCookie, getCookie, setCookie } from '@/util/cookie'
+import { FileUtil } from '@/util/file'
 
 export default {
   components: {
@@ -289,7 +291,7 @@ export default {
     wallet (val) {
       this.menuItems[0].path = '/user/' + val
     },
-    userNoBalanceFailure (val) {
+    userNoBalanceFailure (val) { // val: boolean
       if (val) {
         this.loginBtnLoading = false
         this.failSnackbar = true
@@ -360,7 +362,15 @@ export default {
       reader.readAsText(this.keyFile)
       reader.onload = async (e) => {
         try {
-          this.fileContent = JSON.parse(e.target.result)
+          const fileContent = JSON.parse(e.target.result)
+          if (!FileUtil.isValidKeyFile(fileContent)) { // 提前检查是否是Arweave的key
+            this.show = false
+            this.loginBtnLoading = false
+            this.failSnackbar = true
+            this.failMessage = this.$t('thisIsNotArweaveKey')
+            return
+          }
+          this.fileContent = fileContent
           this.fileRaw = JSON.stringify(this.fileContent)
           const data = {
             file: this.file,
@@ -442,6 +452,7 @@ export default {
   overflow: hidden;
   transition: all 0.3s;
   backdrop-filter: blur(0px);
+
   &.frosted {
     padding: 5px 0;
     background: #adadad4d;
@@ -461,6 +472,7 @@ export default {
   margin-left: .75rem;
   font-size: 1.2rem;
   color: white;
+
   img {
     height: 2.2rem;
   }
@@ -497,6 +509,7 @@ export default {
 .sign {
   margin-left: 1rem;
   margin-right: 2rem;
+
   /deep/ .v-btn__content {
     color: white;
   }
@@ -505,9 +518,11 @@ export default {
 .user {
   margin-left: 1rem;
   margin-right: 2rem;
+
   /deep/ .v-btn__content {
     color: white;
     max-width: 200px;
+
     .username {
       margin: 0;
       overflow: hidden;
@@ -540,6 +555,7 @@ export default {
 
 .upload {
   margin-left: 1rem;
+
   /deep/ i {
     color: white;
   }
@@ -551,12 +567,13 @@ export default {
 }
 
 .autocomplete {
-  /deep/ .v-label.theme--light{
+  /deep/ .v-label.theme--light {
     color: white;
   }
 
   /deep/ .v-icon.mdi-menu-down.theme--light {
     color: white;
+
     &.primary--text {
       color: #E56D9B !important;
       caret-color: #E56D9B !important;
@@ -567,23 +584,28 @@ export default {
 @media screen and (max-width: 1200px) {
   .link {
     font-size: 20px;
+
     img {
       height: 2rem;
     }
   }
+
   .upload {
     padding: 0 10px !important;
     height: 38px !important;
     font-size: 12px;
+
     /deep/ i {
       font-size: 18px !important;
     }
   }
+
   .user {
     padding: 0 10px !important;
     height: 38px !important;
     font-size: 12px;
   }
+
   .search-bar {
     display: none;
   }
@@ -596,6 +618,7 @@ export default {
   .localization {
     display: none;
   }
+
   .mobile-localization {
     display: block;
   }
@@ -605,26 +628,33 @@ export default {
   .link {
     font-size: 16px;
   }
+
   .main-link {
     display: none;
   }
+
   .upload {
     display: none;
   }
+
   .mobile-upload {
     display: block;
     margin-right: 16px;
   }
+
   .user {
     display: none;
   }
+
   .mobile-user {
     display: block;
     margin-right: .75rem;
   }
+
   .sign {
     display: none;
   }
+
   .mobile-sign {
     display: block;
     margin-right: .75rem;
@@ -640,10 +670,12 @@ export default {
 @media screen and (max-width: 480px) {
   .link {
     font-size: 15px;
+
     img {
       height: 1.8rem;
     }
   }
+
   .link-container {
     margin-left: 8px;
     margin-top: 5px;
