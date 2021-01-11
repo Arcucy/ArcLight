@@ -246,7 +246,7 @@ import Search from './Search.vue'
 import miniAvatar from '@/components/User/MiniAvatar'
 
 import { clearCookie, getCookie, setCookie } from '@/util/cookie'
-import API from '@/api/api'
+import { FileUtil } from '@/util/file'
 
 export default {
   components: {
@@ -363,15 +363,13 @@ export default {
         try {
           const fileContent = JSON.parse(e.target.result)
 
-          let shouldContinue = true
-          await API.arweave.getAddress(fileContent).catch(() => { // 提前检查是否是Arweave的key
+          if (!await FileUtil.isValidKeyFile(fileContent)) { // 提前检查是否是Arweave的Key
             this.show = false
             this.loginBtnLoading = false
             this.failSnackbar = true
             this.failMessage = this.$t('thisIsNotArweaveKey')
-            shouldContinue = false
-          })
-          if (!shouldContinue) return
+            return
+          }
 
           this.fileContent = fileContent
           this.fileRaw = JSON.stringify(this.fileContent)

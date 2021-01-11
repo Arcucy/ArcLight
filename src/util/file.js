@@ -1,7 +1,13 @@
+import API from '@/api/api'
+
 class FileUtil {
   // 检查是否是Arweave的key文件
-  static isValidKeyFile (content) {
-    return content.kty && content.e && content.n && content.d && content.p && content.q && content.dp && content.dq && content.qi
+  static async isValidKeyFile (content) {
+    let shouldContinue = true
+    await API.arweave.getAddress(content).catch(() => { // 提前检查是否是Arweave的key
+      shouldContinue = false
+    })
+    return shouldContinue
   }
 }
 
