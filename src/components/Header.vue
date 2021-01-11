@@ -236,6 +236,25 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar
+      v-model="warningSnackbar"
+      color="#E53935"
+      timeout="3000"
+      top="top"
+    >
+      {{ warningMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          dark
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -267,6 +286,8 @@ export default {
       snackbar: false,
       failSnackbar: false,
       failMessage: '',
+      warningSnackbar: false,
+      warningMessage: '',
       menuItems: [
         { title: this.$t('myProfile'), path: '/user/' },
         { title: this.$t('myLibrary'), path: '/library' },
@@ -285,7 +306,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'loginConnectionTimeoutFailure', 'userAccountFailure'])
+    ...mapState([
+      'gettingUserAvatarTimeoutFailure',
+      'isLoggedIn',
+      'username',
+      'userAvatar',
+      'wallet',
+      'userNoBalanceFailure',
+      'loginConnectionTimeoutFailure',
+      'userAccountFailure'])
   },
   watch: {
     wallet (val) {
@@ -310,6 +339,12 @@ export default {
         this.failMessage = this.$t('loginConnectionTimeout')
         this.show = false
         this.loginBtnLoading = false
+      }
+    },
+    gettingUserAvatarTimeoutFailure (val) { // val: boolean
+      if (val) {
+        this.warningSnackbar = true
+        this.warningMessage = this.$t('gettingAvatarTimeout')
       }
     },
     async lang (val) {
@@ -389,6 +424,7 @@ export default {
           }
           await this.setKey(data)
           this.needUpload = false
+
           this.snackbar = true
           this.show = false
           if (this.writeCookie) {

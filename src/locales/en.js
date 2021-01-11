@@ -256,5 +256,6 @@ export default {
   playlist: 'Playlist',
   // login
   thisIsNotArweaveKey: 'This key is invalid, please upload correct Arweave key.',
-  loginConnectionTimeout: 'Connection time out while logging in, please check your connection and try again.'
+  loginConnectionTimeout: 'Connection time out while logging in, please check your connection and try again.',
+  gettingAvatarTimeout: 'Error getting avatar'
 }

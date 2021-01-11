@@ -38,6 +38,7 @@ export default new Vuex.Store({
     userInfoUpdateComplete: '',
     userNoBalanceFailure: false,
     loginConnectionTimeoutFailure: false,
+    gettingUserAvatarTimeoutFailure: false,
     isMe: false,
     userPageLoading: true,
     singleCoverFile: '',
@@ -124,6 +125,9 @@ export default new Vuex.Store({
     },
     setLoginConnectionTimeoutFailure (state, status) {
       state.loginConnectionTimeoutFailure = status
+    },
+    setGettingUserAvatarTimeoutFailure (state, status) {
+      state.gettingUserAvatarTimeoutFailure = status
     },
     setUserAccountFailure (state, status) {
       state.userAccountFailure = status
@@ -311,6 +315,7 @@ export default new Vuex.Store({
               commit('setLoginConnectionTimeoutFailure', true)
               errorCaught = true
             } else {
+              console.warn('uncaught error: ' + err)
               commit('setUserAccountFailure', true)
               commit('setUsername', 'guest')
               commit('setUserType', 'Guest')
@@ -318,7 +323,10 @@ export default new Vuex.Store({
             }
             resolve(true)
           })
+
           if (errorCaught) return
+          commit('setLoginConnectionTimeoutFailure', false)
+
           if (res2) {
             commit('setUsername', res2.data)
             commit('setUserType', res2.type)
@@ -328,12 +336,16 @@ export default new Vuex.Store({
                 if (data) {
                   commit('setUserAvatar', data)
                 }
+              }).catch((err) => {
+                if (err.message.startsWith('timeout')) {
+                  commit('setGettingUserAvatarTimeoutFailure', true)
+                }
               })
               resolve(true)
             }
           }
         } catch (err) {
-          console.log(err.message)
+          console.warn('uncaught error: ' + err)
         }
       })
     },
