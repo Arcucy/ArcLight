@@ -257,5 +257,6 @@ export default {
   clear: '清除',
   playlist: '播放列表',
   // login
-  thisIsNotArweaveKey: '這不是正確的Arweave密鑰，請重新上傳一個正確的密鑰'
+  thisIsNotArweaveKey: '這不是正確的Arweave密鑰，請重新上傳一個正確的密鑰',
+  loginConnectionTimeout: '登錄時連接超時，請檢查您的網絡連接，然後重試'
 }

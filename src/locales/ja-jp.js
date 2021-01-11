@@ -257,5 +257,6 @@ export default {
   clear: 'クリア',
   playlist: 'プレイリスト',
   // login
-  thisIsNotArweaveKey: 'これは正しいArweaveキーではありません。正しいキーを再アップロードしてください'
+  thisIsNotArweaveKey: 'これは正しいArweaveキーではありません。正しいキーを再アップロードしてください',
+  loginConnectionTimeout: 'ログイン中に接続がタイムアウトしました。ネットワーク接続を確認して、再試行してください'
 }

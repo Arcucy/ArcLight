@@ -37,6 +37,7 @@ export default new Vuex.Store({
     userIntroduction: '',
     userInfoUpdateComplete: '',
     userNoBalanceFailure: false,
+    loginConnectionTimeoutFailure: false,
     isMe: false,
     userPageLoading: true,
     singleCoverFile: '',
@@ -120,6 +121,9 @@ export default new Vuex.Store({
     },
     setUserNoBalanceFailure (state, status) {
       state.userNoBalanceFailure = status
+    },
+    setLoginConnectionTimeoutFailure (state, status) {
+      state.loginConnectionTimeoutFailure = status
     },
     setUserAccountFailure (state, status) {
       state.userAccountFailure = status
@@ -299,15 +303,22 @@ export default new Vuex.Store({
         commit('setKeyFileContent', data.content)
 
         try {
+          let errorCaught = false
           const res = await API.arweave.getAddress(data.content) // 已经检查过地址了无需再次catch
           commit('setWallet', res)
-          const res2 = await API.arweave.getIdFromAddress(res).catch(() => {
-            commit('setUserAccountFailure', true)
-            commit('setUsername', 'guest')
-            commit('setUserType', 'Guest')
-            commit('setIsLoggedIn', true)
+          const res2 = await API.arweave.getIdFromAddress(res).catch((err) => {
+            if (err.message.startsWith('timeout')) {
+              commit('setLoginConnectionTimeoutFailure', true)
+              errorCaught = true
+            } else {
+              commit('setUserAccountFailure', true)
+              commit('setUsername', 'guest')
+              commit('setUserType', 'Guest')
+              commit('setIsLoggedIn', true)
+            }
             resolve(true)
           })
+          if (errorCaught) return
           if (res2) {
             commit('setUsername', res2.data)
             commit('setUserType', res2.type)

@@ -257,5 +257,6 @@ export default {
   clear: '清除',
   playlist: '播放列表',
   // login
-  thisIsNotArweaveKey: '这不是正确的Arweave密钥，请重新上传一个正确的密钥'
+  thisIsNotArweaveKey: '这不是正确的Arweave密钥，请重新上传一个正确的密钥',
+  loginConnectionTimeout: '登录时连接超时，请检查您的网络连接，然后重试'
 }

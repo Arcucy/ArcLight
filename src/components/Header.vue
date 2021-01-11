@@ -285,7 +285,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
+    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'loginConnectionTimeoutFailure', 'userAccountFailure'])
   },
   watch: {
     wallet (val) {
@@ -302,6 +302,14 @@ export default {
       if (val) {
         this.failSnackbar = true
         this.failMessage = this.$t('accountHasErroredTx')
+      }
+    },
+    loginConnectionTimeoutFailure (val) { // val: boolean
+      if (val) {
+        this.failSnackbar = true
+        this.failMessage = this.$t('loginConnectionTimeout')
+        this.show = false
+        this.loginBtnLoading = false
       }
     },
     async lang (val) {
