@@ -12,8 +12,15 @@ Vue.use(Vuex)
 
 const APP_NAME = 'arclight-app'
 
+// const ar = Arweave.init({
+//   host: 'arweave.arcucy.io',
+//   port: 443,
+//   protocol: 'https',
+//   timeout: 10000,
+//   logging: false
+// })
 const ar = Arweave.init({
-  host: 'arweave.arcucy.io',
+  host: 'arweave.net',
   port: 443,
   protocol: 'https',
   timeout: 10000,

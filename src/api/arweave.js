@@ -6,10 +6,18 @@ import { decryptBuffer } from '../util/encrypt'
 import decode from '../util/decode'
 import stringUtil from '../util/string'
 
-const arweaveHost = 'https://arweave.arcucy.io/'
+// const arweaveHost = 'https://arweave.arcucy.io/'
+const arweaveHost = 'https://arweave.net/'
 
+// const ar = Arweave.init({
+//   host: 'arweave.arcucy.io',
+//   port: 443,
+//   protocol: 'https',
+//   timeout: 20000,
+//   logging: false
+// })
 const ar = Arweave.init({
-  host: 'arweave.arcucy.io',
+  host: 'arweave.net',
   port: 443,
   protocol: 'https',
   timeout: 20000,
