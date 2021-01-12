@@ -3,7 +3,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Arweave from 'arweave'
 
-import { encryptBuffer } from '../util/encrypt'
+import { encryptBuffer } from '@/util/encrypt'
 import config from '../config/index'
 import API from '../api/api'
 import Community from 'community-js'
@@ -44,6 +44,8 @@ export default new Vuex.Store({
     userIntroduction: '',
     userInfoUpdateComplete: '',
     userNoBalanceFailure: false,
+    loginConnectionTimeoutFailure: false,
+    gettingUserAvatarTimeoutFailure: false,
     isMe: false,
     userPageLoading: true,
     singleCoverFile: '',
@@ -127,6 +129,12 @@ export default new Vuex.Store({
     },
     setUserNoBalanceFailure (state, status) {
       state.userNoBalanceFailure = status
+    },
+    setLoginConnectionTimeoutFailure (state, status) {
+      state.loginConnectionTimeoutFailure = status
+    },
+    setGettingUserAvatarTimeoutFailure (state, status) {
+      state.gettingUserAvatarTimeoutFailure = status
     },
     setUserAccountFailure (state, status) {
       state.userAccountFailure = status
@@ -305,31 +313,46 @@ export default new Vuex.Store({
         commit('setKeyFileName', data.name)
         commit('setKeyFileContent', data.content)
 
-        const balance = await API.arweave.getBalance(data.content)
-        if (parseFloat(balance) <= 0) {
-          commit('setUserNoBalanceFailure', true)
-          return
-        }
-
-        const res = await API.arweave.getAddress(data.content)
-        commit('setWallet', res)
-        const res2 = await API.arweave.getIdFromAddress(res).catch(() => {
-          commit('setUserAccountFailure', true)
-          commit('setUsername', 'guest')
-          commit('setUserType', 'Guest')
-          commit('setIsLoggedIn', true)
-          resolve(true)
-        })
-        commit('setUsername', res2.data)
-        commit('setUserType', res2.type)
-        commit('setIsLoggedIn', true)
-        if (res2.type !== 'guest') {
-          API.arweave.getAvatarFromAddress(res).then(data => {
-            if (data) {
-              commit('setUserAvatar', data)
+        try {
+          let errorCaught = false
+          const res = await API.arweave.getAddress(data.content) // 已经检查过地址了无需再次catch
+          commit('setWallet', res)
+          const res2 = await API.arweave.getIdFromAddress(res).catch((err) => {
+            if (err.message.startsWith('timeout')) {
+              commit('setLoginConnectionTimeoutFailure', true)
+              errorCaught = true
+            } else {
+              console.warn('uncaught error: ' + err)
+              commit('setUserAccountFailure', true)
+              commit('setUsername', 'guest')
+              commit('setUserType', 'Guest')
+              commit('setIsLoggedIn', true)
             }
+            resolve(true)
           })
-          resolve(true)
+
+          if (errorCaught) return
+          commit('setLoginConnectionTimeoutFailure', false)
+
+          if (res2) {
+            commit('setUsername', res2.data)
+            commit('setUserType', res2.type)
+            commit('setIsLoggedIn', true)
+            if (res2.type !== 'guest') {
+              API.arweave.getAvatarFromAddress(res).then(data => {
+                if (data) {
+                  commit('setUserAvatar', data)
+                }
+              }).catch((err) => {
+                if (err.message.startsWith('timeout')) {
+                  commit('setGettingUserAvatarTimeoutFailure', true)
+                }
+              })
+              resolve(true)
+            }
+          }
+        } catch (err) {
+          console.warn('uncaught error: ' + err)
         }
       })
     },

@@ -253,5 +253,9 @@ export default {
   play: 'Play',
   playDemo: 'Play demo',
   clear: 'Clear',
-  playlist: 'Playlist'
+  playlist: 'Playlist',
+  // login
+  thisIsNotArweaveKey: 'This key is invalid, please upload correct Arweave key.',
+  loginConnectionTimeout: 'Connection time out while logging in, please check your connection and try again.',
+  gettingAvatarTimeout: 'Error getting avatar'
 }
