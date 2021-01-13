@@ -22,33 +22,10 @@
       <br>
       Version {{ version }} {{ detailVersion }}
     </div>
-
-    <div>
-      <div class="arcLight">
-        <img :src="arcLight" alt="">
-        <span>ArcLight</span>
-      </div>
-      <div class="arcucy">
-        <img :src="arcucy" alt="">
-        <span>Arcucy Team</span>
-      </div>
-    </div>
-
-    <div class="arcLight-link">
-      <a href="https://github.com/Arcucy/ArcLight" target="_blank">GitHub 源码</a>
-      <a href="https://update.arcucy.io" target="_blank">官方博客</a>
-      <a href="https://t.me/ArclightMusic" target="_blank">Telegram 群组</a>
-      <a href="https://discord.gg/3zUXrnXyFv" target="_blank">Discord 群组</a>
-      <a href="mailto:contact@arcucy.io" target="_blank">联系我们</a>
-    </div>
-
   </v-app>
 </template>
 
 <script>
-
-import arcLight from '@/assets/image/ArcLight.png'
-import arcucy from '@/assets/image/Arcucy.png'
 
 import backgroundStar from '@/assets/image/star.png'
 import Header from '@/components/Header.vue'
@@ -62,9 +39,7 @@ export default {
     return {
       version: '',
       detailVersion: '',
-      backgroundStar: backgroundStar,
-      arcLight: arcLight,
-      arcucy: arcucy
+      backgroundStar: backgroundStar
     }
   },
   mounted () {
@@ -127,56 +102,6 @@ html, body {
 
 #app {
   height: 100%;
-}
-
-.arcLight {
-  line-height: 60px;
-  vertical-align: middle;
-}
-
-.arcLight img {
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: middle;
-}
-
-.arcLight span {
-  line-height: 60px;
-  vertical-align: middle;
-  font-size: 40px;
-  color: white;
-  margin: 0 20px 5px 20px;
-}
-
-.arcucy {
-  line-height: 50px;
-  vertical-align: middle;
-}
-
-.arcucy img {
-  vertical-align: middle;
-  width: 40px;
-  height: 40px;
-}
-
-.arcucy span {
-  font-size: 20px;
-  color: white;
-  margin: 0 20px 5px 20px;
-}
-
-.arcLight-link {
-  margin: 20px 0;
-}
-
-.arcLight-link a {
-  margin-right: 20px;
-  color: white !important;
-}
-
-.arcLight-link a:hover {
-  color: #FA589A !important;
 }
 
 </style>
