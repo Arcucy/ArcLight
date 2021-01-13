@@ -11,6 +11,16 @@
     </div>
     <Header/>
     <div class="slot-shell">
+      <div>
+        <div class="arcLight">
+          <img :src="arcLight" alt="">
+          <span>ArcLight</span>
+        </div>
+        <div class="arcucy">
+          <img :src="arcucy" alt="">
+          <span>Arcucy Team</span>
+        </div>
+      </div>
       <slot/>
     </div>
     <div class="notice">
@@ -92,16 +102,6 @@ export default {
   .notice {
     font-size: 12px;
   }
-}
-</style>
-
-<style>
-html, body {
-  height: 100%;
-}
-
-#app {
-  height: 100%;
 }
 
 </style>
