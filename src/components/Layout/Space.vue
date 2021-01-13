@@ -137,7 +137,7 @@ html, body {
   vertical-align: middle;
   font-size: 40px;
   color: white;
-  margin: 0 20px;
+  margin: 0 20px 5px 20px;
 }
 
 .arcucy {
@@ -154,7 +154,7 @@ html, body {
 .arcucy span {
   font-size: 20px;
   color: white;
-  margin: 0 20px;
+  margin: 0 20px 5px 20px;
 }
 
 </style>
