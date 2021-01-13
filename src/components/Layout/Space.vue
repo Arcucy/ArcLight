@@ -2,34 +2,47 @@
   <v-app class="layout appstyle">
     <div class="layout-bg">
       <div class="stars">
-        <img id='stars' :src="backgroundStar" />
+        <img id='stars' :src="backgroundStar"/>
       </div>
       <div id='horizon'>
-        <div class='glow' />
+        <div class='glow'/>
       </div>
-      <div id='earth' />
+      <div id='earth'/>
     </div>
-    <Header />
+    <Header/>
     <div class="slot-shell">
-      <slot />
+      <slot/>
     </div>
     <div class="notice">
       {{ $t('developedBy') }}
-      <a href="https://github.com/Arcucy" target="_blank" >Arcucy Team</a>
+      <a href="https://github.com/Arcucy" target="_blank">Arcucy Team</a>
       {{ $t('forProject') }}
       <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight </a>
       <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
       <br>
       Version {{ version }} {{ detailVersion }}
     </div>
+
+    <div>
+      <div class="arcLight">
+        <img :src="arcLight" alt="">
+        <span>ArcLight</span>
+      </div>
+      <div class="arcucy">
+        <img :src="arcucy" alt="">
+        <span>Arcucy Team</span>
+      </div>
+    </div>
   </v-app>
 </template>
 
 <script>
 
-import Header from '@/components/Header.vue'
+import arcLight from '@/assets/image/ArcLight.png'
+import arcucy from '@/assets/image/Arcucy.png'
 
 import backgroundStar from '@/assets/image/star.png'
+import Header from '@/components/Header.vue'
 import packageJson from '../../../package.json'
 
 export default {
@@ -40,7 +53,9 @@ export default {
     return {
       version: '',
       detailVersion: '',
-      backgroundStar: backgroundStar
+      backgroundStar: backgroundStar,
+      arcLight: arcLight,
+      arcucy: arcucy
     }
   },
   mounted () {
@@ -50,9 +65,9 @@ export default {
 }
 </script>
 
-<style scoped src="./Space.css" />
+<style scoped src="./Space.css"/>
 
-<style lang="less" scoped src="./AppStyle.less" />
+<style lang="less" scoped src="./AppStyle.less"/>
 
 <style scoped>
 .layout {
@@ -60,6 +75,7 @@ export default {
   flex-direction: column;
   background: #0000 !important;
 }
+
 .slot-shell {
   margin-top: 73px;
   position: relative;
@@ -88,7 +104,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 400px){
+@media screen and (max-width: 400px) {
   .notice {
     font-size: 12px;
   }
@@ -103,4 +119,42 @@ html, body {
 #app {
   height: 100%;
 }
+
+.arcLight {
+  line-height: 60px;
+  vertical-align: middle;
+}
+
+.arcLight img {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: middle;
+}
+
+.arcLight span {
+  line-height: 60px;
+  vertical-align: middle;
+  font-size: 40px;
+  color: white;
+  margin: 0 20px;
+}
+
+.arcucy {
+  line-height: 50px;
+  vertical-align: middle;
+}
+
+.arcucy img {
+  vertical-align: middle;
+  width: 40px;
+  height: 40px;
+}
+
+.arcucy span {
+  font-size: 20px;
+  color: white;
+  margin: 0 20px;
+}
+
 </style>
