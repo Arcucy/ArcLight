@@ -118,16 +118,6 @@ export default {
     font-size: 12px;
   }
 }
-</style>
-
-<style>
-html, body {
-  height: 100%;
-}
-
-#app {
-  height: 100%;
-}
 
 .arcLight {
   line-height: 60px;
@@ -177,6 +167,16 @@ html, body {
 
 .arcLight-link a:hover {
   color: #FA589A !important;
+}
+</style>
+
+<style>
+html, body {
+  height: 100%;
+}
+
+#app {
+  height: 100%;
 }
 
 </style>
