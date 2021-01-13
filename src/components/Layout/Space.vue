@@ -11,6 +11,16 @@
     </div>
     <Header/>
     <div class="slot-shell">
+      <div>
+        <div class="arcLight">
+          <img :src="arcLight" alt="">
+          <span>ArcLight</span>
+        </div>
+        <div class="arcucy">
+          <img :src="arcucy" alt="">
+          <span>Arcucy Team</span>
+        </div>
+      </div>
       <slot/>
     </div>
     <div class="notice">
@@ -21,17 +31,6 @@
       <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
       <br>
       Version {{ version }} {{ detailVersion }}
-    </div>
-
-    <div>
-      <div class="arcLight">
-        <img :src="arcLight" alt="">
-        <span>ArcLight</span>
-      </div>
-      <div class="arcucy">
-        <img :src="arcucy" alt="">
-        <span>Arcucy Team</span>
-      </div>
     </div>
 
     <div class="arcLight-link">
