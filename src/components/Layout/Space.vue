@@ -33,6 +33,15 @@
         <span>Arcucy Team</span>
       </div>
     </div>
+
+    <div class="arcLight-link">
+      <a href="https://github.com/Arcucy/ArcLight" target="_blank">GitHub 源码</a>
+      <a href="https://update.arcucy.io" target="_blank">官方博客</a>
+      <a href="https://t.me/ArclightMusic" target="_blank">Telegram 群组</a>
+      <a href="https://discord.gg/3zUXrnXyFv" target="_blank">Discord 群组</a>
+      <a href="mailto:contact@arcucy.io" target="_blank">联系我们</a>
+    </div>
+
   </v-app>
 </template>
 
@@ -155,6 +164,19 @@ html, body {
   font-size: 20px;
   color: white;
   margin: 0 20px 5px 20px;
+}
+
+.arcLight-link {
+  margin: 20px 0;
+}
+
+.arcLight-link a {
+  margin-right: 20px;
+  color: white !important;
+}
+
+.arcLight-link a:hover {
+  color: #FA589A !important;
 }
 
 </style>
