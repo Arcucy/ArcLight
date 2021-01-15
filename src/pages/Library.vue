@@ -2,7 +2,7 @@
   <spaceLayout>
     <div class="library">
       <h4 class="library-title">
-        My Library
+        {{ $t('myLibrary') }}
       </h4>
       <div class="library-box">
         <div class="library-box-col">
@@ -25,7 +25,7 @@
             <div v-if="loading || addressList.length === 0" class="list-loading">
               <v-progress-circular v-if="loading" indeterminate color="#E56D9B" />
               <p v-else>
-                No data
+                {{ $t('noData') }}
               </p>
             </div>
           </div>
@@ -118,13 +118,19 @@ export default {
   },
   mounted () {
     if (this.wallet) this.getList(this.tab || this.defaultTab)
-    document.title = 'My Library - ArcLight'
+    document.title = this.$t('myLibrary') + ' - ArcLight'
+    this.$nextTick(() => {
+      this.tabs[0].label = this.$t('single')
+      this.tabs[1].label = this.$t('album')
+      this.tabs[2].label = this.$t('podcast')
+      this.tabs[3].label = this.$t('soundEffect')
+    })
   },
   methods: {
     async getList (type) {
       this.loading = true
       try {
-        let res = await api.arweave.getPurchasedItems(this.wallet, type)
+        const res = await api.arweave.getPurchasedItems(this.wallet, type)
         this.addressList = res || []
       } catch (e) {
         console.error(`[Failed to get ${type} list] wallet:`, this.wallet, e)

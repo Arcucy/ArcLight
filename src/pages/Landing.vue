@@ -3,13 +3,13 @@
     <div class="home">
       <div id="title">ArcLight</div>
       <div id="subtitle">
-        <span>Store</span>
-        <span>In</span>
+        <span>Store </span>
+        <span>In </span>
         <span>Permaweb</span>
       </div>
       <div class="btn-group">
-        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">Start Browsing</v-btn>
-        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">Why ArcLight</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="start-btn" @click="$router.push({ name: 'Songs' })">{{ $t('startBrowsing') }}</v-btn>
+        <v-btn :outlined="true" color="#E56D9B" class="about-btn" @click="$router.push({ name: 'About' })">{{ $t('whyArcLight') }}</v-btn>
       </div>
     </div>
   </spaceLayout>
@@ -23,21 +23,23 @@ export default {
     spaceLayout
   },
   mounted () {
-    document.title = 'ArcLight - Music Distribution Platform'
+    this.$nextTick(() => {
+      document.title = 'ArcLight - ' + this.$t('mainTitle')
+    })
   }
 }
 </script>
 
 <style lang="less" scoped>
 .home {
-  font-family: "lato", sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   color: #FFF;
   background: radial-gradient(ellipse at bottom, #0c1116 0%, #090a0f 100%);
 }
 #title {
   position: absolute;
   font-weight: 300;
-  top: 63%;
+  top: 70%;
   left: 0;
   right: 0;
   margin-top: -80px;
@@ -56,7 +58,7 @@ export default {
 #subtitle {
   position: absolute;
   font-weight: 300;
-  top: 89%;
+  top: 92%;
   left: 0;
   right: 0;
   font-size: 25px;

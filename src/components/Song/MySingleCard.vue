@@ -30,9 +30,9 @@
         </div>
         <div v-else class="music-info">
           <p class="music-info-title">
-            {{ title || 'Loading...' }}
+            {{ title || $t('loading') }}
             <span v-if="!loading && audioType === 'album-info' && isSingle">
-              From: {{ card.title }}
+              {{ $t('from') }}: {{ card.title }}
             </span>
           </p>
           <p
@@ -42,7 +42,7 @@
             by {{ card.authorUsername || 'Anonymity' }}
           </p>
           <p v-else class="music-info-artist">
-            {{ card.authorUsername || 'Artist loading...' }}
+            {{ card.authorUsername || $t('artistLoading') }}
           </p>
         </div>
         <router-link v-if="canDownload" to="">
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
 import decode from '@/util/decode'
 
@@ -148,7 +149,7 @@ export default {
           this.album.index = Number(history['Track-Number'] - 1 || 0)
         }
         // 根据 tags 中歌曲信息的 txid 获取到歌曲信息
-        this.infoTxid = history['Item']
+        this.infoTxid = history.Item
         const info = await this.getInfo(this.infoTxid)
         if (info) {
           this.card = info
@@ -172,7 +173,7 @@ export default {
         }
       } catch (e) {
         if (e.type === 'TX_PENDING') {
-          this.errorMessage = 'Transaction pending, please wait'
+          this.errorMessage = this.$t('txPendingPleaseWait')
           // 如果交易待确认会自动重试
           this.timerIndex = setTimeout(() => { this.get() }, 2000)
           return false
@@ -225,7 +226,7 @@ export default {
     getAudio (id) {
       return new Promise(async (resolve, reject) => {
         try {
-          const music = await api.arweave.getMusic(id, pct => { this.pct = pct })
+          const music = await api.arweave.getMusic(id, undefined, pct => { this.pct = pct })
           this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
           const reader = new FileReader()

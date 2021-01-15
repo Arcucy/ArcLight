@@ -2,9 +2,7 @@
   <v-app class="layout appstyle">
     <div class="layout-bg">
       <div class="stars">
-        <div id='stars' />
-        <div id='stars2' />
-        <div id='stars3' />
+        <img id='stars' :src="backgroundStar" />
       </div>
       <div id='horizon'>
         <div class='glow' />
@@ -16,10 +14,13 @@
       <slot />
     </div>
     <div class="notice">
-      Developed by
-      <a href="https://github.com/AyakaLab" target="_blank" >Ayaka Lab</a>
-      for Project
-      <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight</a>
+      {{ $t('developedBy') }}
+      <a href="https://github.com/Arcucy" target="_blank" >Arcucy Team</a>
+      {{ $t('forProject') }}
+      <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight </a>
+      <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
+      <br>
+      Version {{ version }} {{ detailVersion }}
     </div>
   </v-app>
 </template>
@@ -28,9 +29,23 @@
 
 import Header from '@/components/Header.vue'
 
+import backgroundStar from '@/assets/image/star.png'
+import packageJson from '../../../package.json'
+
 export default {
   components: {
     Header
+  },
+  data () {
+    return {
+      version: '',
+      detailVersion: '',
+      backgroundStar: backgroundStar
+    }
+  },
+  mounted () {
+    this.version = packageJson.version
+    this.detailVersion = packageJson.detailVersion
   }
 }
 </script>
@@ -41,7 +56,6 @@ export default {
 
 <style scoped>
 .layout {
-  height: 100%;
   display: flex;
   flex-direction: column;
   background: #0000 !important;
@@ -61,7 +75,7 @@ export default {
   animation-iteration-count: 1;
   animation-timing-function: ease;
   animation-duration: 4s;
-  padding-bottom: 50px;
+  padding-bottom: 116px;
 }
 
 @keyframes fadeInOpacity {

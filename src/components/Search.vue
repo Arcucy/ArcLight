@@ -12,7 +12,7 @@
       class="mx-4 autocomplete"
       flat
       hide-details
-      label="Search address / user / music"
+      :label="$t('searchPlaceholder')"
       solo-inverted
       background-color="#333333"
       color="primary"
@@ -86,12 +86,12 @@ export default {
       this.loading = true
 
       if (typeof (v) === 'string' && v.length === 43) {
-        let tx = await api.arweave.getTransactionDetail(v)
+        const tx = await api.arweave.getTransactionDetail(v)
 
         if (tx) {
           const tags = await api.arweave.getTagsByTransaction(tx)
           const data = JSON.parse(decode.uint8ArrayToString(tx.data))
-          this.items.push({ searchType: 'Tx', id: tx.id, title: data.title, artist: tags['Author-Username'], type: this.REVERSED_AUDIO_TYPE[tags['Type']], icon: this.AUDIO_ICON[tags['Type']] })
+          this.items.push({ searchType: 'Tx', id: tx.id, title: data.title, artist: tags['Author-Username'], type: this.REVERSED_AUDIO_TYPE[tags.Type], icon: this.AUDIO_ICON[tags.Type] })
         }
       } else {
         api.arweave.breakOnCall = true

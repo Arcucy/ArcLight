@@ -5,16 +5,16 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Single Cover</div>
+          <div class="cover-title side-title">{{ $t('singleCover') }}</div>
           <img-upload
-          :img-upload-done="imgUploadDone"
-          :update-type="'single'"
-          class="app-icon"
-          @doneImageUpload="doneImageUpload"
+            :img-upload-done="imgUploadDone"
+            :update-type="'single'"
+            class="app-icon"
+            @done-image-upload="doneImageUpload"
           >
             <div
               slot="uploadButton"
@@ -22,7 +22,7 @@
             >
               <div class="edit">
                 <v-icon color="#FFF">mdi-camera</v-icon>
-                Single Cover
+                {{ $t('singleCover') }}
               </div>
               <img
                 id="avatar"
@@ -34,11 +34,11 @@
               <img v-else id="new-logo" src="../../assets/image/single.png" style="margin-top: 10px;"/>
             </div>
           </img-upload>
-          <div class="name-title side-title">Music Name</div>
+          <div class="name-title side-title">{{ $t('musicName') }}</div>
           <v-text-field
             v-model="singleTitle"
             label="Solo"
-            placeholder="Enter Your Music Title..."
+            :placeholder="$t('enterYourMusicTitle')"
             solo
             dark
             color="#FFF"
@@ -46,19 +46,19 @@
             counter
             maxlength="100"
           ></v-text-field>
-          <div class="name-desp side-title">Description (use \n for new line)</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="singleDesp"
             solo
             dark
             name="input-7-4"
-            label="Your Single Description..."
+            :label="$t('yourSingleDescription')"
             counter
             maxlength="1000"
           ></v-textarea>
-          <div class="name-desp side-title">Genre</div>
+          <div class="name-desp side-title">{{ $t('genre') }}</div>
           <genreSelect v-model="genre" style="margin-bottom: 16px;" />
-          <div class="name-desp side-title">Price</div>
+          <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
             v-model="price"
             class="price"
@@ -66,7 +66,7 @@
             solo
             dark
             type="number"
-            label="Price"
+            :label="$t('price')"
             maxlength="12"
             prepend-inner-icon="mdi-cash-multiple"
           ></v-text-field>
@@ -75,7 +75,7 @@
             v-model="file"
             color="#FFF"
             chips
-            placeholder="Select your file"
+            :placeholder="$t('selectYourFile')"
             prepend-icon="mdi-paperclip"
             outlined
             accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -101,7 +101,7 @@
               </span>
             </template>
           </v-file-input>
-          <div class="name-desp side-title">Demo Duration</div>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
           <v-select
             dark
             :disabled="disableDuration"
@@ -113,7 +113,7 @@
 
             solo
           ></v-select>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -122,7 +122,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -131,26 +131,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="singleSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Single Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="singleSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -170,7 +151,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -213,7 +194,6 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      singleSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
       shouldLoad: true,
@@ -232,7 +212,7 @@ export default {
     },
     wallet (val) {
       if (!val) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -243,7 +223,7 @@ export default {
     userType (val) {
       if (this.userType === 'guest') {
         this.failSnackbar = true
-        this.failMessage = 'You must have a username in order to upload'
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
 
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
@@ -256,12 +236,13 @@ export default {
         reader.readAsArrayBuffer(val)
         reader.onload = async (e) => {
           const data = e.target.result
-          let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
           let source
 
           audioCtx.createBufferSource()
+          // eslint-disable-next-line prefer-const
           source = await audioCtx.decodeAudioData(data.slice())
-          let duration = source.duration
+          const duration = source.duration
           let index = 0
           if (duration < 60 && duration >= 30) {
             index = this.durationSelection.indexOf('60s')
@@ -284,7 +265,7 @@ export default {
               this.durationSelection = this.durationSelection.filter(item => item !== '15s')
             }
           }
-          this.durationSelectStr = 'Select Demo duration'
+          this.durationSelectStr = this.$t('selectDemoDuration')
           this.disableDuration = false
         }
       }
@@ -295,35 +276,35 @@ export default {
     submit () {
       this.submitBtnLoading = true
       if (this.singleCover === '') {
-        this.failMessage = 'A cover for a single release is required'
+        this.failMessage = this.$t('singleCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.singleTitle === '') {
-        this.failMessage = 'A title for a single release is required'
+        this.failMessage = this.$t('singleTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.singleDesp === '') {
-        this.failMessage = 'A description for a single release is required'
+        this.failMessage = this.$t('singleDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.genre) {
-        this.failMessage = 'Please select the genre of your music (None for blank)'
+        this.failMessage = this.$t('genreIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -339,14 +320,14 @@ export default {
       }
 
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (parseFloat(this.price) < 0) {
-        this.failMessage = `Price can't be negative`
+        this.failMessage = this.$t('priceCantBeNegative')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -355,36 +336,36 @@ export default {
       }
 
       if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
-        this.failMessage = `You can't set demo for free music`
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.file) {
-        this.failMessage = 'A source music file for a single release is required'
+        this.failMessage = this.$t('singleSourceFileIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
-      let imgType = {
+      const imgType = {
         png: 'image/png',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
-      let ext = this.singleCoverFile.name.split('.').pop()
+      const ext = this.singleCoverFile.name.split('.').pop()
       console.log('Content-Type:', imgType[ext])
 
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let aext = this.file.name.split('.').pop()
+      const aext = this.file.name.split('.').pop()
       console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
@@ -394,6 +375,7 @@ export default {
 
         this.singleDesp = this.singleDesp.replace(/<.*>/gmu, '')
         this.singleDesp = this.singleDesp.replace(/\\n/g, '<br>')
+        // eslint-disable-next-line no-self-assign
         this.singleDesp = this.singleDesp
 
         const dataObj = {
@@ -433,19 +415,23 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      this.durationSelectStr = this.$t('pleaseUploadYourArtwork')
+    })
+
     if (this.singleInfo) {
       this.shouldLoad = false
     }
     if (this.$route.params.file) {
       this.file = this.$route.params.file
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let aext = this.file.name.split('.').pop()
+      const aext = this.file.name.split('.').pop()
       console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
@@ -462,7 +448,7 @@ export default {
 
     if (this.singleInfo) {
       this.disableDuration = false
-      this.durationSelectStr = 'Select Demo duration'
+      this.durationSelectStr = this.$t('selectDemoDuration')
       this.singleTitle = this.singleInfo.title
       this.singleDesp = this.singleInfo.desp
       this.genre = this.singleInfo.genre
@@ -480,16 +466,16 @@ export default {
 
     if (this.userType === 'guest') {
       this.failSnackbar = true
-      this.failMessage = 'You must have a username in order to upload'
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
 
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Single - ArcLight'
+    document.title = this.$t('uploadNewSingle') + ' - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {

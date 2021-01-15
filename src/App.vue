@@ -1,12 +1,20 @@
 <template>
   <div id="app" v-if="routerAlive">
     <router-view/>
+    <Player />
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
+import Player from '@/components/Player'
+
 export default {
   name: 'App',
+  components: {
+    Player
+  },
   data () {
     return {
       routerAlive: true
@@ -20,6 +28,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAppLang']),
     /** 对页面进行软刷新，不会丢失 vuex 中的数据 */
     routerRefresh () {
       this.routerAlive = false
@@ -50,6 +59,47 @@ export default {
           this.$router.push(pushLink)
         }
       })
+    },
+    getBrowserLangCode () {
+      const lang = navigator.languages
+      for (let i = 0; i < lang.length; i++) {
+        const item = lang[i]
+        if (item === 'zh-CN') return item
+        if (item === 'zh-TW') return item
+        if (item === 'en-US') return item
+        if (item === 'ja-JP') return item
+      }
+    },
+    getLangCode () {
+      const localStore = window.localStorage || localStorage
+      this.setAppLang(localStore.getItem('locale_lang'))
+      return localStore.getItem('locale_lang')
+    },
+    setLangCode () {
+      const localStore = window.localStorage || localStorage
+      console.log(this.getBrowserLangCode())
+      localStore.setItem('locale_lang', this.getBrowserLangCode())
+    }
+  },
+  mounted () {
+    let lang = this.getLangCode()
+    if (!lang) {
+      this.setLangCode()
+      lang = this.getLangCode()
+    }
+    switch (lang) {
+      case 'zh-CN':
+        this.$i18n.locale = 'zhCN'
+        break
+      case 'zh-TW':
+        this.$i18n.locale = 'zhTW'
+        break
+      case 'en-US':
+        this.$i18n.locale = 'en'
+        break
+      case 'ja-JP':
+        this.$i18n.locale = 'jaJP'
+        break
     }
   }
 }
@@ -57,7 +107,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

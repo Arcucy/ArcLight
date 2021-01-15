@@ -4,7 +4,7 @@
       <div class="songs">
         <div class="songs-header">
           <h4>
-            Sounds Sellings
+            {{ $t('soundSelling') }}
           </h4>
         </div>
         <div class="songs-list">
@@ -79,13 +79,15 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Browse All Selling Singles - ArcLight'
+    this.$nextTick(() => {
+      document.title = this.$t('browseAllSound') + ' - ArcLight'
+    })
     this.getAllAudioList('soundEffect')
   },
   methods: {
     async getAllAudioList (type) {
       try {
-        let res = await api.arweave.getAllAudioList(type)
+        const res = await api.arweave.getAllAudioList(type)
         // 循环一些数据方便测试
         // let res2 = []
         // for (let i = 0; i < 20; i++) {

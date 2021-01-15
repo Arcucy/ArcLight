@@ -11,7 +11,7 @@
       @input-filter="inputFilter"
     >
       <slot name="uploadButton">
-        <Button>Upload</Button>
+        <Button>{{ $t('upload') }}</Button>
       </slot>
     </FileUpload>
 
@@ -25,9 +25,9 @@
     >
       <v-card class="img-upload-card">
         <v-card-title class="headline" style="text-align: center; display: block; margin-top: 10px;">
-          <p class="modal-header-title" style="margin-bottom: 0px;">Edit Cover</p>
+          <p class="modal-header-title" style="margin-bottom: 0px;">{{ $t('editCover') }}</p>
         </v-card-title>
-        <p class="modal-header-subtitle" style="margin-bottom: 10px;">Adjust size and position of image</p>
+        <p class="modal-header-subtitle" style="margin-bottom: 10px;">{{ $t('adjustSizeAndPositionOfImage') }}</p>
         <div
           :style="computedStyleContent"
           class="modal-content"
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+/* eslint-disable vue/custom-event-name-casing */
 import VueUploadComponent from 'vue-upload-component'
 import Cropper from 'cropperjs'
 import Compressor from 'compressorjs'
@@ -71,13 +72,13 @@ export default {
     buttonText: {
       type: String,
       default: function () {
-        return 'Save'
+        return this.$t('confirm')
       }
     },
     // 显示上传图片大小 单位 M
     imgSize: {
       type: Number,
-      default: 5
+      default: 2
     },
     // 是否上传完成
     imgUploadDone: {
@@ -181,17 +182,17 @@ export default {
         if (!/\.(gif|jpg|jpeg|png|webp)$/i.test(newFile.name)) {
           this.$message.error({
             duration: 1000,
-            message: 'Select Image'
+            message: this.$t('selectImage')
           })
           return prevent()
         }
       }
       // 限定最大字节
       const maxSize = (size) => {
-        if (newFile.file.size >= 0 && newFile.file.size > 1024 * 1024 * size) {
+        if (newFile.file.size >= 0 && newFile.file.size > 500 * 500 * size) {
           this.$message.error({
             duration: 2000,
-            message: 'Imgae Too Big'
+            message: this.$t('imageTooBig')
           })
           prevent()
           return false
@@ -214,7 +215,7 @@ export default {
               console.log(err)
               this.$message.error({
                 duration: 1000,
-                message: 'Auto Compress Image Failed'
+                message: this.$t('autoCompressImageFail')
               })
             }
           })
@@ -259,7 +260,7 @@ export default {
         file = new File([arr], oldFile.name, { type: oldFile.type })
       }
       try {
-        let res = { data: { code: 0 } }
+        const res = { data: { code: 0 } }
         res.data.code = 0
         switch (this.updateType) {
           case 'single':
@@ -276,7 +277,7 @@ export default {
             break
         }
         if (res.data.code === 0 || res.data.code === 1) {
-          this.$emit('doneImageUpload', {
+          this.$emit('done-image-upload', {
             type: this.updateType,
             data: res
           })
@@ -284,7 +285,7 @@ export default {
           this.modalLoading = false
           this.$message.error({
             duration: 1000,
-            message: 'Upload Failed'
+            message: this.$t('imageUploadFail')
           })
         }
 
@@ -296,7 +297,7 @@ export default {
         this.$message({
           showClose: true,
           duration: 1000,
-          message: 'Upload Failed'
+          message: this.$t('imageUploadFail')
         })
       }
     },

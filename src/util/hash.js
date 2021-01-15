@@ -5,7 +5,7 @@ function sha256 (string) {
   for (let i = 0; i < 4; i++) {
     str += Math.floor(Math.random() * Math.floor(9))
   }
-  let hash = crypto.createHash('sha256').update(str, 'utf8').digest('hex')
+  const hash = crypto.createHash('sha256').update(str, 'utf8').digest('hex')
   return hash
 }
 

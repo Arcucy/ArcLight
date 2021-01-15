@@ -1,8 +1,9 @@
+/* eslint-disable no-async-promise-executor */
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Arweave from 'arweave'
 
-import { encryptBuffer } from '../util/encrypt'
+import { encryptBuffer } from '@/util/encrypt'
 import config from '../config/index'
 import API from '../api/api'
 import Community from 'community-js'
@@ -11,7 +12,14 @@ Vue.use(Vuex)
 
 const APP_NAME = 'arclight-app'
 
-let ar = Arweave.init({
+// const ar = Arweave.init({
+//   host: 'arweave.arcucy.io',
+//   port: 443,
+//   protocol: 'https',
+//   timeout: 10000,
+//   logging: false
+// })
+const ar = Arweave.init({
   host: 'arweave.net',
   port: 443,
   protocol: 'https',
@@ -23,6 +31,7 @@ export default new Vuex.Store({
   modules: {
   },
   state: {
+    appLang: 'en-US',
     isLoggedIn: false,
     keyFile: '',
     keyFileRaw: '',
@@ -35,6 +44,8 @@ export default new Vuex.Store({
     userIntroduction: '',
     userInfoUpdateComplete: '',
     userNoBalanceFailure: false,
+    loginConnectionTimeoutFailure: false,
+    gettingUserAvatarTimeoutFailure: false,
     isMe: false,
     userPageLoading: true,
     singleCoverFile: '',
@@ -74,9 +85,15 @@ export default new Vuex.Store({
     singleObj: '',
     singleInfoId: '',
     purchaseComplete: false,
-    paymentId: ''
+    paymentId: '',
+    playList: [],
+    playIndex: 0,
+    audioFileCache: null
   },
   mutations: {
+    setAppLang (state, lang) {
+      state.appLang = lang
+    },
     setIsLoggedIn (state, status) {
       state.isLoggedIn = status
     },
@@ -112,6 +129,12 @@ export default new Vuex.Store({
     },
     setUserNoBalanceFailure (state, status) {
       state.userNoBalanceFailure = status
+    },
+    setLoginConnectionTimeoutFailure (state, status) {
+      state.loginConnectionTimeoutFailure = status
+    },
+    setGettingUserAvatarTimeoutFailure (state, status) {
+      state.gettingUserAvatarTimeoutFailure = status
     },
     setUserAccountFailure (state, status) {
       state.userAccountFailure = status
@@ -235,9 +258,52 @@ export default new Vuex.Store({
     },
     setPaymentId (state, id) {
       state.paymentId = id
+    },
+    setPlayList (state, list) {
+      state.playList = list
+    },
+    pushPlayList (state, audio) {
+      if (Array.isArray(audio)) state.playList.push(...audio)
+      else state.playList.push(audio)
+    },
+    updatePlayList (state, [index, value]) {
+      state.playList[index] = value
+      state.playList = [...state.playList]
+    },
+    deletePlayList (state, index) {
+      state.playList.splice(index, 1)
+      if (state.playIndex > index) {
+        state.playIndex--
+      } else if (state.playIndex === state.playList.length && state.playIndex !== 0) {
+        state.playIndex--
+      }
+    },
+    setPlayIndex (state, index) {
+      state.playIndex = index
+    },
+    setAudioFileCache (state, { fileId, audioData }) {
+      state.audioFileCache = {
+        ...audioData,
+        fileId
+      }
     }
+
   },
   getters: {
+    playingAudio (state) {
+      if (state.playList && state.playList.length && state.playList[state.playIndex]) {
+        return state.playList[state.playIndex]
+      } else {
+        return {
+          fileId: '',
+          infoId: '',
+          title: '',
+          artist: '',
+          pic: '',
+          duration: -1
+        }
+      }
+    }
   },
   actions: {
     setKey ({ commit }, data) {
@@ -247,31 +313,46 @@ export default new Vuex.Store({
         commit('setKeyFileName', data.name)
         commit('setKeyFileContent', data.content)
 
-        const balance = await API.arweave.getBalance(data.content)
-        if (parseFloat(balance) <= 0) {
-          commit('setUserNoBalanceFailure', true)
-          return
-        }
-
-        const res = await API.arweave.getAddress(data.content)
-        commit('setWallet', res)
-        const res2 = await API.arweave.getIdFromAddress(res).catch(() => {
-          commit('setUserAccountFailure', true)
-          commit('setUsername', 'guest')
-          commit('setUserType', 'Guest')
-          commit('setIsLoggedIn', true)
-          resolve(true)
-        })
-        commit('setUsername', res2.data)
-        commit('setUserType', res2.type)
-        commit('setIsLoggedIn', true)
-        if (res2.type !== 'guest') {
-          API.arweave.getAvatarFromAddress(res).then(data => {
-            if (data) {
-              commit('setUserAvatar', data)
+        try {
+          let errorCaught = false
+          const res = await API.arweave.getAddress(data.content) // 已经检查过地址了无需再次catch
+          commit('setWallet', res)
+          const res2 = await API.arweave.getIdFromAddress(res).catch((err) => {
+            if (err.message.startsWith('timeout')) {
+              commit('setLoginConnectionTimeoutFailure', true)
+              errorCaught = true
+            } else {
+              console.warn('uncaught error: ' + err)
+              commit('setUserAccountFailure', true)
+              commit('setUsername', 'guest')
+              commit('setUserType', 'Guest')
+              commit('setIsLoggedIn', true)
             }
+            resolve(true)
           })
-          resolve(true)
+
+          if (errorCaught) return
+          commit('setLoginConnectionTimeoutFailure', false)
+
+          if (res2) {
+            commit('setUsername', res2.data)
+            commit('setUserType', res2.type)
+            commit('setIsLoggedIn', true)
+            if (res2.type !== 'guest') {
+              API.arweave.getAvatarFromAddress(res).then(data => {
+                if (data) {
+                  commit('setUserAvatar', data)
+                }
+              }).catch((err) => {
+                if (err.message.startsWith('timeout')) {
+                  commit('setGettingUserAvatarTimeoutFailure', true)
+                }
+              })
+              resolve(true)
+            }
+          }
+        } catch (err) {
+          console.warn('uncaught error: ' + err)
         }
       })
     },
@@ -366,7 +447,7 @@ export default new Vuex.Store({
       imgTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(imgTransaction, data.key)
-      let imgUploader = await ar.transactions.getUploader(imgTransaction)
+      const imgUploader = await ar.transactions.getUploader(imgTransaction)
 
       while (!imgUploader.isComplete) {
         await imgUploader.uploadChunk()
@@ -389,7 +470,7 @@ export default new Vuex.Store({
       musicTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(musicTransaction, data.key)
-      let musicUploader = await ar.transactions.getUploader(musicTransaction)
+      const musicUploader = await ar.transactions.getUploader(musicTransaction)
       while (!musicUploader.isComplete) {
         await musicUploader.uploadChunk()
         commit('setUploadMusicPct', musicUploader.pctComplete)
@@ -424,7 +505,7 @@ export default new Vuex.Store({
       singleTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(singleTransaction, data.key)
-      let singleUploader = await ar.transactions.getUploader(singleTransaction)
+      const singleUploader = await ar.transactions.getUploader(singleTransaction)
 
       while (!singleUploader.isComplete) {
         await singleUploader.uploadChunk()
@@ -443,9 +524,9 @@ export default new Vuex.Store({
         postInfo = []
       }
 
-      let final = []
-      let final2 = []
-      postInfo.push({ typs: 'single', id: singleTransaction.id, genre: data.single.genre, 'timestamp': Date.now() })
+      const final = []
+      const final2 = []
+      postInfo.push({ typs: 'single', id: singleTransaction.id, genre: data.single.genre, timestamp: Date.now() })
       postInfo.forEach(item => {
         if (item.genre) {
           const res = final.find(val => val.genre === item.genre)
@@ -479,7 +560,7 @@ export default new Vuex.Store({
       postInfoTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(postInfoTransaction, data.key)
-      let postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
+      const postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
 
       while (!postInfoUploader.isComplete) {
         await postInfoUploader.uploadChunk()
@@ -517,7 +598,7 @@ export default new Vuex.Store({
       imgTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(imgTransaction, data.key)
-      let imgUploader = await ar.transactions.getUploader(imgTransaction)
+      const imgUploader = await ar.transactions.getUploader(imgTransaction)
 
       while (!imgUploader.isComplete) {
         await imgUploader.uploadChunk()
@@ -528,7 +609,7 @@ export default new Vuex.Store({
       console.log(imgTransaction.id + ': ', imgRes)
 
       // // Upload Music
-      let musicList = []
+      const musicList = []
       const musicFileList = data.music.data.music
 
       for (let i = 0; i < musicFileList.length; i++) {
@@ -548,7 +629,7 @@ export default new Vuex.Store({
         musicTransaction.addTag('Author-Username', user.data)
 
         await ar.transactions.sign(musicTransaction, data.key)
-        let musicUploader = await ar.transactions.getUploader(musicTransaction)
+        const musicUploader = await ar.transactions.getUploader(musicTransaction)
         while (!musicUploader.isComplete) {
           await musicUploader.uploadChunk()
           commit('setUploadMusicNumber', i + 1)
@@ -587,7 +668,7 @@ export default new Vuex.Store({
       albumTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(albumTransaction, data.key)
-      let albumUploader = await ar.transactions.getUploader(albumTransaction)
+      const albumUploader = await ar.transactions.getUploader(albumTransaction)
 
       while (!albumUploader.isComplete) {
         await albumUploader.uploadChunk()
@@ -605,9 +686,9 @@ export default new Vuex.Store({
         postInfo = []
       }
 
-      let final = []
-      let final2 = []
-      postInfo.push({ typs: 'album', id: musicList, genre: data.album.genre, 'timestamp': Date.now() })
+      const final = []
+      const final2 = []
+      postInfo.push({ typs: 'album', id: musicList, genre: data.album.genre, timestamp: Date.now() })
 
       postInfo.forEach(item => {
         if (item.genre) {
@@ -642,7 +723,7 @@ export default new Vuex.Store({
       postInfoTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(postInfoTransaction, data.key)
-      let postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
+      const postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
 
       while (!postInfoUploader.isComplete) {
         await postInfoUploader.uploadChunk()
@@ -678,7 +759,7 @@ export default new Vuex.Store({
       imgTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(imgTransaction, data.key)
-      let imgUploader = await ar.transactions.getUploader(imgTransaction)
+      const imgUploader = await ar.transactions.getUploader(imgTransaction)
 
       while (!imgUploader.isComplete) {
         await imgUploader.uploadChunk()
@@ -701,7 +782,7 @@ export default new Vuex.Store({
       programTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(programTransaction, data.key)
-      let programUploader = await ar.transactions.getUploader(programTransaction)
+      const programUploader = await ar.transactions.getUploader(programTransaction)
       while (!programUploader.isComplete) {
         await programUploader.uploadChunk()
         commit('setUploadMusicPct', programUploader.pctComplete)
@@ -738,7 +819,7 @@ export default new Vuex.Store({
       podcastTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(podcastTransaction, data.key)
-      let podcastUploader = await ar.transactions.getUploader(podcastTransaction)
+      const podcastUploader = await ar.transactions.getUploader(podcastTransaction)
 
       while (!podcastUploader.isComplete) {
         await podcastUploader.uploadChunk()
@@ -756,9 +837,9 @@ export default new Vuex.Store({
         postInfo = []
       }
 
-      let final = []
-      let final2 = []
-      postInfo.push({ typs: 'podcast', id: podcastTransaction.id, genre: data.podcast.category, 'timestamp': Date.now() })
+      const final = []
+      const final2 = []
+      postInfo.push({ typs: 'podcast', id: podcastTransaction.id, genre: data.podcast.category, timestamp: Date.now() })
 
       postInfo.forEach(item => {
         if (item.genre) {
@@ -793,7 +874,7 @@ export default new Vuex.Store({
       postInfoTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(postInfoTransaction, data.key)
-      let postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
+      const postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
 
       while (!postInfoUploader.isComplete) {
         await postInfoUploader.uploadChunk()
@@ -830,7 +911,7 @@ export default new Vuex.Store({
       imgTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(imgTransaction, data.key)
-      let imgUploader = await ar.transactions.getUploader(imgTransaction)
+      const imgUploader = await ar.transactions.getUploader(imgTransaction)
 
       while (!imgUploader.isComplete) {
         await imgUploader.uploadChunk()
@@ -853,7 +934,7 @@ export default new Vuex.Store({
       audioTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(audioTransaction, data.key)
-      let musicUploader = await ar.transactions.getUploader(audioTransaction)
+      const musicUploader = await ar.transactions.getUploader(audioTransaction)
 
       while (!musicUploader.isComplete) {
         await musicUploader.uploadChunk()
@@ -887,7 +968,7 @@ export default new Vuex.Store({
       soundEffectTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(soundEffectTransaction, data.key)
-      let singleUploader = await ar.transactions.getUploader(soundEffectTransaction)
+      const singleUploader = await ar.transactions.getUploader(soundEffectTransaction)
 
       while (!singleUploader.isComplete) {
         await singleUploader.uploadChunk()
@@ -906,9 +987,9 @@ export default new Vuex.Store({
         postInfo = []
       }
 
-      let final = []
-      let final2 = []
-      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, 'timestamp': Date.now() })
+      const final = []
+      const final2 = []
+      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, timestamp: Date.now() })
 
       postInfo.forEach(item => {
         if (item.genre) {
@@ -928,7 +1009,7 @@ export default new Vuex.Store({
       })
       final2.sort((a, b) => b.count - a.count)
 
-      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, 'timestamp': Date.now() })
+      postInfo.push({ typs: 'soundEffect', id: soundEffectTransaction.id, timestamp: Date.now() })
 
       postInfoTransaction = await ar.createTransaction({ data: JSON.stringify(postInfo) }, data.key).catch(err => console.log('Post Info Transaction Created Failed: ', err))
 
@@ -945,7 +1026,7 @@ export default new Vuex.Store({
       postInfoTransaction.addTag('Author-Username', user.data)
 
       await ar.transactions.sign(postInfoTransaction, data.key)
-      let postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
+      const postInfoUploader = await ar.transactions.getUploader(postInfoTransaction)
 
       while (!postInfoUploader.isComplete) {
         await postInfoUploader.uploadChunk()
@@ -971,7 +1052,7 @@ export default new Vuex.Store({
       transaction.addTag('Username', user.data)
 
       await ar.transactions.sign(transaction, data.key)
-      let uploader = await ar.transactions.getUploader(transaction)
+      const uploader = await ar.transactions.getUploader(transaction)
 
       while (!uploader.isComplete) {
         await uploader.uploadChunk()
@@ -997,7 +1078,7 @@ export default new Vuex.Store({
       transaction.addTag('Username', user.data)
 
       await ar.transactions.sign(transaction, data.key)
-      let uploader = await ar.transactions.getUploader(transaction)
+      const uploader = await ar.transactions.getUploader(transaction)
 
       while (!uploader.isComplete) {
         await uploader.uploadChunk()
@@ -1023,7 +1104,7 @@ export default new Vuex.Store({
       transaction.addTag('Username', user.data)
 
       await ar.transactions.sign(transaction, data.key)
-      let uploader = await ar.transactions.getUploader(transaction)
+      const uploader = await ar.transactions.getUploader(transaction)
 
       while (!uploader.isComplete) {
         await uploader.uploadChunk()
@@ -1049,7 +1130,7 @@ export default new Vuex.Store({
       transaction.addTag('Username', user.data)
 
       await ar.transactions.sign(transaction, data.key)
-      let uploader = await ar.transactions.getUploader(transaction)
+      const uploader = await ar.transactions.getUploader(transaction)
 
       while (!uploader.isComplete) {
         await uploader.uploadChunk()
@@ -1075,7 +1156,7 @@ export default new Vuex.Store({
       transaction.addTag('Username', user.data)
 
       await ar.transactions.sign(transaction, data.key)
-      let uploader = await ar.transactions.getUploader(transaction)
+      const uploader = await ar.transactions.getUploader(transaction)
 
       while (!uploader.isComplete) {
         await uploader.uploadChunk()
@@ -1101,7 +1182,7 @@ export default new Vuex.Store({
       transaction.addTag('Username', user.data)
 
       await ar.transactions.sign(transaction, data.key)
-      let uploader = await ar.transactions.getUploader(transaction)
+      const uploader = await ar.transactions.getUploader(transaction)
 
       while (!uploader.isComplete) {
         await uploader.uploadChunk()
@@ -1123,7 +1204,7 @@ export default new Vuex.Store({
 
       let comTx = ''
       try {
-        let holder = await community.selectWeightedHolder()
+        const holder = await community.selectWeightedHolder()
         console.log(holder)
 
         comTx = await ar.createTransaction({
@@ -1177,7 +1258,7 @@ export default new Vuex.Store({
         quantity: ar.ar.arToWinston(data.price + '')
       }, data.key)
 
-      let albumType = data.type
+      const albumType = data.type
       if (data.type === 'album-full') data.type = 'album-info'
 
       transaction.addTag('App-Name', APP_NAME)
@@ -1202,6 +1283,27 @@ export default new Vuex.Store({
 
       commit('setPaymentId', transaction.id)
       commit('setPurchaseComplete', true)
+    },
+    playMusicSingle ({ commit, state }, audio) {
+      const sameAudio = state.playList.findIndex(item => item.fileId === audio.fileId)
+      if (sameAudio === -1) {
+        commit('pushPlayList', { ...audio })
+        commit('setPlayIndex', state.playList.length - 1)
+      } else {
+        commit('setPlayIndex', sameAudio)
+        if (state.playList[sameAudio].duration !== audio.duration) {
+          commit('updatePlayList', [sameAudio, audio])
+        }
+      }
+    },
+    addMusicAlbum ({ commit, state }, album) {
+      const filterAlbum = album.filter(music => !state.playList.find(item => item.fileId === music.fileId))
+      commit('pushPlayList', filterAlbum)
+      const updateAlbum = album.filter(music => state.playList.find(item => item.fileId === music.fileId && item.duration !== music.duration))
+      for (const music of updateAlbum) {
+        console.log('更新啦', music)
+        commit('updatePlayList', [state.playList.findIndex(item => item.fileId === music.fileId), music])
+      }
     }
   }
 })

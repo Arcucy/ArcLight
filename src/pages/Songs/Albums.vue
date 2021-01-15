@@ -5,7 +5,7 @@
         <div class="songs-header">
           <a @click="backPage({ name: 'Songs' })">
             <v-icon class="header-icon">mdi-chevron-left</v-icon>
-            ALL Albums Sellings
+            {{ $t('newAlbumSelling') }}
           </a>
           <genreFilter v-model="genreFilter" />
         </div>
@@ -91,7 +91,9 @@ export default {
     }
   },
   mounted () {
-    document.title = 'Browse all selling albums - ArcLight'
+    this.$nextTick(() => {
+      document.title = this.$t('browseAllAlbum') + ' - ArcLight'
+    })
     this.getAllAudioList('album')
   },
   methods: {
@@ -101,7 +103,7 @@ export default {
       this.page = 1
       const genreFilter = this.genreFilter
       try {
-        let res = await api.arweave.getAllAudioList(type, genreFilter)
+        const res = await api.arweave.getAllAudioList(type, genreFilter)
         if (genreFilter !== this.genreFilter) return
         this.addressList = res || []
       } catch (e) {

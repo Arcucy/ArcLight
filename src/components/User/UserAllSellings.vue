@@ -55,7 +55,6 @@
 <script>
 import api from '@/api/api'
 
-import spaceLayout from '@/components/Layout/Space'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import getAudioInfo from '@/components/Song/GetAudioInfo'
@@ -65,7 +64,6 @@ import genreFilter from '@/components/Song/GenreFilter'
 export default {
   inject: ['updateQuery', 'backPage'],
   components: {
-    spaceLayout,
     singleCard,
     albumCard,
     getAudioInfo,
@@ -106,7 +104,7 @@ export default {
       return Math.ceil(this.addressList.length / this.pagesize)
     },
     noDataLabel () {
-      return this.genreFilter ? 'The filter result is empty' : 'No data'
+      return this.genreFilter ? this.$t('genreFilterEmpty') : this.$t('noData')
     }
   },
   watch: {
@@ -132,7 +130,7 @@ export default {
       this.page = 1
       const genreFilter = this.genreFilter
       try {
-        let res = await api.arweave.getUserAudioList(this.$route.params.id, type, genreFilter)
+        const res = await api.arweave.getUserAudioList(this.$route.params.id, type, genreFilter)
         if (genreFilter !== this.genreFilter) return
         this.addressList = res || []
       } catch (e) {

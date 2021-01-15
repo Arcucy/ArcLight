@@ -1,36 +1,29 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './App'
+import App from './App.vue'
 import router from './router'
-import store from '@/store/index.js'
+import store from './store'
+import vuetify from './plugins/vuetify'
 import Aplayer from 'vue-aplayer'
-
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
-
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
-
+import i18n from '@/locales'
 import moment from 'moment'
-moment.locale('en-US')
 
-Vue.use(Vuetify)
-Vue.use(ElementUI)
+import '@babel/polyfill'
+import 'roboto-fontface/css/roboto/roboto-fontface.css'
+import '@mdi/font/css/materialdesignicons.css'
+import './plugins/element.js'
+import '@/icons'
+
 Vue.component('aplayer', Aplayer)
-
-Vue.prototype.$message = ElementUI.Message
-Vue.prototype.$notify = ElementUI.Notification
-Vue.prototype.$moment = moment
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
+moment.locale('en-US')
+Vue.prototype.$moment = moment
+
 new Vue({
-  el: '#app',
   router,
   store,
-  vuetify: new Vuetify(),
-  components: { App, Aplayer },
-  template: '<App/>'
-})
+  vuetify,
+  i18n,
+  render: h => h(App)
+}).$mount('#app')

@@ -5,17 +5,17 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Sound Effect Cover</div>
+          <div class="cover-title side-title">{{ $t('soundEffectCover') }}</div>
           <div style="display: flex; align-items: flex-end;">
             <img-upload
-            :img-upload-done="imgUploadDone"
-            :update-type="'soundeffect'"
-            class="app-icon"
-            @doneImageUpload="doneImageUpload"
+              :img-upload-done="imgUploadDone"
+              :update-type="'soundeffect'"
+              class="app-icon"
+              @done-image-upload="doneImageUpload"
             >
               <div
                 slot="uploadButton"
@@ -23,7 +23,7 @@
               >
                 <div class="edit">
                   <v-icon color="#FFF">mdi-camera</v-icon>
-                  Sound Effect Cover
+                  {{ $t('soundEffectCover') }}
                 </div>
                 <img
                   id="avatar"
@@ -36,11 +36,11 @@
               </div>
             </img-upload>
           </div>
-          <div class="name-title side-title">Sound Effect Name</div>
+          <div class="name-title side-title">{{ $t('soundEffectName') }}</div>
           <v-text-field
             v-model="soundeffectTitle"
             label="Solo"
-            placeholder="Enter Your Sound Effect Title..."
+            :placeholder="$t('enterYourSoundEffectTitle')"
             solo
             dark
             color="#FFF"
@@ -48,17 +48,17 @@
             counter
             maxlength="100"
           ></v-text-field>
-          <div class="name-desp side-title">Description (use \n for new line)</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="soundeffectDesp"
             solo
             dark
             name="input-7-4"
-            label="Your Sound Effect Description..."
+            :label="$t('yourSoundEffectDescription')"
             counter
             maxlength="1000"
           ></v-textarea>
-          <div class="name-desp side-title">Price</div>
+          <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
             v-model="price"
             class="price"
@@ -66,7 +66,7 @@
             solo
             dark
             type="number"
-            label="Price"
+            :label="$t('price')"
             prepend-inner-icon="mdi-cash-multiple"
             maxlength="12"
           ></v-text-field>
@@ -75,7 +75,7 @@
             v-model="file"
             color="#FFF"
             chips
-            placeholder="Select your file"
+            :placeholder="$t('selectYourFile')"
             prepend-icon="mdi-paperclip"
             outlined
             accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -101,7 +101,7 @@
               </span>
             </template>
           </v-file-input>
-          <div class="name-desp side-title">Demo Duration</div>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
           <v-select
             dark
             :disabled="disableDuration"
@@ -112,7 +112,7 @@
             :loading="disableDuration"
             solo
           ></v-select>
-          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <v-btn color="#E56D9B" depressed light class="side-title" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -121,7 +121,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -130,26 +130,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="soundeffectSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Sound Effect Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="soundeffectSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -169,7 +150,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -209,7 +190,6 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      soundeffectSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
       shouldLoad: true,
@@ -226,7 +206,7 @@ export default {
     userType (val) {
       if (this.userType === 'guest') {
         this.failSnackbar = true
-        this.failMessage = 'You must have a username in order to upload'
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
 
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
@@ -235,7 +215,7 @@ export default {
     },
     wallet (val) {
       if (!val) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -249,12 +229,13 @@ export default {
         reader.readAsArrayBuffer(val)
         reader.onload = async (e) => {
           const data = e.target.result
-          let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
           let source
 
           audioCtx.createBufferSource()
+          // eslint-disable-next-line prefer-const
           source = await audioCtx.decodeAudioData(data.slice())
-          let duration = source.duration
+          const duration = source.duration
           let index = 0
           if (duration < 60 && duration >= 30) {
             index = this.durationSelection.indexOf('60s')
@@ -277,7 +258,7 @@ export default {
               this.durationSelection = this.durationSelection.filter(item => item !== '15s')
             }
           }
-          this.durationSelectStr = 'Select Demo duration'
+          this.durationSelectStr = this.$t('selectDemoDuration')
           this.disableDuration = false
         }
       }
@@ -288,28 +269,28 @@ export default {
     submit () {
       this.submitBtnLoading = true
       if (this.soundEffectCover === '') {
-        this.failMessage = 'A cover for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.soundeffectTitle === '') {
-        this.failMessage = 'A title for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.soundeffectDesp === '') {
-        this.failMessage = 'A description for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -325,14 +306,14 @@ export default {
       }
 
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (parseFloat(this.price) < 0) {
-        this.failMessage = `Price can't be negative`
+        this.failMessage = this.$t('priceCantBeNegative')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -341,7 +322,7 @@ export default {
       }
 
       if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
-        this.failMessage = `You can't set demo for free music`
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
         this.failSnackbar = true
         this.submitBtnLoading = false
         // eslint-disable-next-line no-useless-return
@@ -349,29 +330,29 @@ export default {
       }
 
       if (!this.file) {
-        this.failMessage = 'A source music file for a soundeffect release is required'
+        this.failMessage = this.$t('soundEffectSourceFileIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
-      let imgType = {
+      const imgType = {
         png: 'image/png',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
-      let ext = this.soundEffectCoverFile.name.split('.').pop()
+      const ext = this.soundEffectCoverFile.name.split('.').pop()
       console.log('Content-Type:', imgType[ext])
 
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let aext = this.file.name.split('.').pop()
+      const aext = this.file.name.split('.').pop()
       console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
@@ -381,6 +362,7 @@ export default {
 
         this.soundeffectDesp = this.soundeffectDesp.replace(/<.*>/gmu, '')
         this.soundeffectDesp = this.soundeffectDesp.replace(/\\n/g, '<br>')
+        // eslint-disable-next-line no-self-assign
         this.soundeffectDesp = this.soundeffectDesp
 
         const dataObj = {
@@ -419,19 +401,23 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      this.durationSelectStr = this.$t('pleaseUploadYourArtwork')
+    })
+
     if (this.singleInfo) {
       this.shouldLoad = false
     }
     if (this.$route.params.file) {
       this.file = this.$route.params.file
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let aext = this.file.name.split('.').pop()
+      const aext = this.file.name.split('.').pop()
       console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
@@ -448,7 +434,7 @@ export default {
 
     if (this.soundEffectInfo) {
       this.disableDuration = false
-      this.durationSelectStr = 'Select Demo duration'
+      this.durationSelectStr = this.$t('selectDemoDuration')
       this.soundeffectTitle = this.soundEffectInfo.title
       this.soundeffectDesp = this.soundEffectInfo.desp
       if (this.soundEffectInfo.duration !== 0 && this.soundEffectInfo.duration !== -1) {
@@ -465,16 +451,16 @@ export default {
 
     if (this.userType === 'guest') {
       this.failSnackbar = true
-      this.failMessage = 'You must have a username in order to upload'
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
 
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Sound Effect - ArcLight'
+    document.title = this.$t('uploadNewSoundEffect') + ' - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {

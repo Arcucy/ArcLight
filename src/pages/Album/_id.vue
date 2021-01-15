@@ -7,15 +7,20 @@
           <v-icon>mdi-chevron-left</v-icon>
           <span class="header-title">
             <span class="header-title-text">
-              Album
+              {{ $t('album') }}
             </span>
             <span class="header-title-back">
-              Back
+              {{ $t('back') }}
             </span>
           </span>
         </a>
       </div>
-      <albumInfo :album="info" />
+      <albumInfo
+        :album="info"
+        :unlock="unlock"
+        @play-album="playAlbum"
+        @add-album="addAlbum"
+      />
       <div class="album-box">
         <!-- left -->
         <div class="album-box-col">
@@ -30,13 +35,20 @@
             <router-link :to="{ name: 'Music', params: { id: $route.params.id }, query: { album: index + 1 } }">
               <div class="music-left">
                 <h3>
-                  #{{ index+1 }} {{ music.title }} {{ pctArray[index] }}
+                  #{{ index+1 }} {{ music.title }}
                 </h3>
                 <p>
                   by {{ info.artist }}
                 </p>
               </div>
             </router-link>
+            <div
+              v-if="(music.unlock || info.duration !== 0) && !loading"
+              class="music-play"
+              @click="playAudio(music, index)"
+            >
+              <v-icon>mdi-play</v-icon>
+            </div>
             <div v-if="music.unlock" class="music-download" :id="'download' + index" @click="downloadAudio(music, index)">
               <v-progress-circular
                 v-if="music.downloadAwait"
@@ -57,7 +69,7 @@
         <!-- right -->
         <div class="album-box-col">
           <!-- Download -->
-          <div v-if="!downloading && !loading && (owned || info.authorAddress === wallet)" class="album-download">
+          <div v-if="!downloading && unlock" class="album-download">
             <v-btn
               block
               large
@@ -132,34 +144,11 @@
         </div>
       </div>
     </div>
-    <!-- Pay Dialog -->
-    <v-dialog
-      v-model="showDialog"
-      width="360"
-    >
-      <v-card dark>
-        <div class="pay">
-          <h3 class="pay-title">
-            Payment of 「{{ info.name }}」
-          </h3>
-          <div class="pay-icon">
-            <img src="@/assets/image/paymentCompleted.png" alt="Completed" />
-          </div>
-          <p class="pay-intro">
-            Succeed to unlock the album！
-          </p>
-
-          <v-btn class="pay-button" depressed color="#E56D9B" block @click="showDialog = false">
-            BACK TO ALBUM PLAYER
-            <v-icon class="pay-button-icon">mdi-arrow-right</v-icon>
-          </v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
   </spaceLayout>
 </template>
 
 <script>
+/* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
 import decode from '@/util/decode'
 
@@ -168,12 +157,12 @@ import JSZip from 'jszip'
 import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
-import { mapState } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
-let zip = new JSZip()
+const zip = new JSZip()
 
 export default {
-  inject: ['backPage'],
+  inject: ['backPage', 'routerRefresh'],
   components: {
     spaceLayout,
     albumInfo,
@@ -189,6 +178,7 @@ export default {
         desp: '',
         genre: 'Await Data...',
         unixTime: 0,
+        duration: 0,
         list: []
       },
       artist: {
@@ -201,7 +191,6 @@ export default {
       price: 0,
       originalPrice: 0,
       owned: false,
-      showDialog: false,
       count: 0,
       downloading: false,
       pct: 0,
@@ -218,7 +207,7 @@ export default {
   computed: {
     ...mapState(['wallet']),
     albumPct () {
-      let res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
+      const res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
       return res
     },
     discountDisplay () {
@@ -228,11 +217,18 @@ export default {
       if (isNaN(res)) return 0
       if (res > 99) return 99
       return res || 0
+    },
+    unlock () {
+      return !this.loading && (this.owned || this.info.authorAddress === this.wallet)
     }
   },
   mounted () {
     this.getAlbum(this.$route.params.id)
     this.count = 0
+
+    this.info.genre = this.$t('awaitData')
+    this.info.artist = this.$t('artistLoading')
+    this.artist.username = this.$t('artistLoading')
   },
   destroyed () {
     // 卡片或者页面被销毁时清除定时器
@@ -243,6 +239,7 @@ export default {
     })
   },
   watch: {
+    $route (val) { this.routerRefresh() },
     wallet (val) {
       this.awaitConfirm = false
       if (this.timerIndex) clearTimeout(this.timerIndex)
@@ -268,29 +265,6 @@ export default {
         }
       }
     },
-    $route (val) {
-      this.count = 0
-      this.owned = false
-      this.info = {
-        name: '',
-        cover: 'Loading',
-        artist: '',
-        authorAddress: '',
-        desp: '',
-        genre: '',
-        unixTime: 0,
-        list: []
-      }
-      this.artist = {
-        id: '',
-        avatar: 'loading',
-        username: 'Artist loading...'
-      }
-      this.audio = []
-      this.awaitConfirm = false
-      if (this.timerIndex) clearTimeout(this.timerIndex)
-      this.getAlbum(this.$route.params.id)
-    },
     albumPct (val) {
       this.albumPctDisplay = val
       if (val === 100) {
@@ -301,6 +275,8 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setPlayList', 'setPlayIndex']),
+    ...mapActions(['playMusicSingle', 'addMusicAlbum']),
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
@@ -350,9 +326,11 @@ export default {
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
-        this.info.genre = tags['Genre']
+        this.info.genre = tags.Genre
         this.info.unixTime = Number(tags['Unix-Time'])
         this.info.name = albumData.title
+        this.info.duration = Number(albumData.duration) || 0
+        // this.info.duration = 30
 
         document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
         document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -382,7 +360,13 @@ export default {
           }
         })
 
-        this.originalPrice = this.originalPrice.toFixed(12)
+        if (isNaN(this.originalPrice)) {
+          // eslint-disable-next-line no-self-assign
+          this.originalPrice = this.originalPrice
+        } else {
+          this.originalPrice = Number(this.originalPrice).toFixed(12)
+        }
+
         this.info.list = this.info.list.map(item => {
           return { ...item, downloadAwait: false }
         })
@@ -476,7 +460,7 @@ export default {
       return new Promise(async (resolve, reject) => {
         try {
           this.pctArray[index] = 0
-          const music = await api.arweave.getMusic(id, pct => { this.info.list[index].pct = pct })
+          const music = await api.arweave.getMusic(id, undefined, pct => { this.info.list[index].pct = pct })
           this.musicType = music.type
           // 挂载音频到一个 URL，并指定给 audio.pic
           const reader = new FileReader()
@@ -535,9 +519,7 @@ export default {
     },
     getMusicRaw (item) {
       return new Promise(async (resolve, reject) => {
-        const music = await api.arweave.getMusic(item.id, pct => {
-          this.singlePct = pct
-        })
+        const music = await api.arweave.getMusic(item.id, undefined, pct => { this.singlePct = pct })
         this.tempPct += 100
         this.musicType = music.type
         // 挂载音频到一个 URL，并指定给 audio.pic
@@ -553,7 +535,7 @@ export default {
       this.tempPct = 0
       this.downloading = true
       this.shouldWait = false
-      let urlArray = []
+      const urlArray = []
       this.fenduanPct = 100 / this.info.list.length / 100
 
       for (let i = 0; i < this.info.list.length; i++) {
@@ -569,7 +551,7 @@ export default {
         zip.file(title + ' by ' + this.info.artist + '.' + getExt[data.type], new Blob([data.data], { type: data.type }))
       }
       zip.generateAsync({ type: 'blob' }).then((blob) => {
-        let url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
+        const url = window.webkitURL.createObjectURL(blob, { type: 'application/zip' })
         const div = document.getElementById('album')
         const a = document.createElement('a')
         a.href = url
@@ -589,6 +571,50 @@ export default {
     purchaseComplete () {
       this.awaitConfirm = true
       this.getItemStatus(this.wallet, this.$route.params.id, this.price)
+    },
+    playAudio (music, index) {
+      this.playMusicSingle({
+        fileId: music.id,
+        musicIndex: index,
+        infoId: this.$route.params.id,
+        title: music.title,
+        artist: this.info.artist,
+        artistId: this.info.authorAddress,
+        pic: this.info.cover,
+        duration: this.info.duration,
+        unlock: this.unlock
+      })
+    },
+    playAlbum () {
+      this.setPlayList(this.info.list.map((music, index) => {
+        return {
+          fileId: music.id,
+          musicIndex: index,
+          infoId: this.$route.params.id,
+          title: music.title,
+          artist: this.info.artist,
+          artistId: this.info.authorAddress,
+          pic: this.info.cover,
+          duration: this.info.duration,
+          unlock: this.unlock
+        }
+      }))
+      this.setPlayIndex(0)
+    },
+    addAlbum () {
+      this.addMusicAlbum(this.info.list.map((music, index) => {
+        return {
+          fileId: music.id,
+          musicIndex: index,
+          infoId: this.$route.params.id,
+          title: music.title,
+          artist: this.info.artist,
+          artistId: this.info.authorAddress,
+          pic: this.info.cover,
+          duration: this.info.duration,
+          unlock: this.unlock
+        }
+      }))
     }
   }
 }
@@ -822,6 +848,17 @@ a {
         i {
           color: #B2B2B2;
         }
+      }
+    }
+    &-play {
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      i {
+        color: white;
+        font-size: 30px;
       }
     }
   }

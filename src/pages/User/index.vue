@@ -4,10 +4,10 @@
       <div v-if="single.loading || single.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
-            New Singles Sellings
+            {{ $t('newSingleSelling') }}
           </h4>
           <router-link :to="{ name: 'UserSingle', params: { id: $route.params.id } }">
-            All Sellings
+            {{ $t('allSelling') }}
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
@@ -26,10 +26,10 @@
       <div v-if="album.loading || album.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
-            New Albums Sellings
+            {{ $t('newAlbumSelling') }}
           </h4>
           <router-link :to="{ name: 'UserAlbum', params: { id: $route.params.id } }">
-            All Sellings
+            {{ $t('allSelling') }}
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
@@ -44,36 +44,14 @@
           <loadCard v-if="album.loading" width="188px" />
         </scrollXBox>
       </div>
-      <!-- Sound Sellings -->
-      <div v-if="sound.loading || sound.list.length > 0" class="songs">
-        <div class="songs-header">
-          <h4>
-            New Sound Sellings
-          </h4>
-          <router-link :to="{ name: 'UserSound', params: { id: $route.params.id } }">
-            All Sellings
-            <v-icon class="header-icon">mdi-chevron-right</v-icon>
-          </router-link>
-        </div>
-        <scrollXBox list-id="sound" card-id="sound-card" :list-update="sound.list">
-          <singleCard
-            id="sound-card"
-            class="single-card"
-            v-for="(item, index) in sound.list"
-            :key="index"
-            :card="item"
-          />
-          <loadCard v-if="sound.loading" />
-        </scrollXBox>
-      </div>
       <!-- Podcast Sellings -->
       <div v-if="podcast.loading || podcast.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
-            New Podcast Sellings
+            {{ $t('newPodcastSelling') }}
           </h4>
           <router-link :to="{ name: 'UserPodcast', params: { id: $route.params.id } }">
-            All Sellings
+            {{ $t('allSelling') }}
             <v-icon class="header-icon">mdi-chevron-right</v-icon>
           </router-link>
         </div>
@@ -88,22 +66,44 @@
           <loadCard v-if="podcast.loading" />
         </scrollXBox>
       </div>
-      <!-- Favourite Singers -->
-      <div v-if="sinilar.loading || sinilar.list.length > 0" class="songs">
+      <!-- Sound Sellings -->
+      <div v-if="sound.loading || sound.list.length > 0" class="songs">
         <div class="songs-header">
           <h4>
-            Similar authors
+            {{ $t('newSoundEffectSelling') }}
+          </h4>
+          <router-link :to="{ name: 'UserSound', params: { id: $route.params.id } }">
+            {{ $t('allSelling') }}
+            <v-icon class="header-icon">mdi-chevron-right</v-icon>
+          </router-link>
+        </div>
+        <scrollXBox list-id="sound" card-id="sound-card" :list-update="sound.list">
+          <singleCard
+            id="sound-card"
+            class="single-card"
+            v-for="(item, index) in sound.list"
+            :key="index"
+            :card="item"
+          />
+          <loadCard v-if="sound.loading" />
+        </scrollXBox>
+      </div>
+      <!-- Favourite Singers -->
+      <div v-if="similar.loading || similar.list.length > 0" class="songs">
+        <div class="songs-header">
+          <h4>
+            {{ $t('similarAuthors') }}
           </h4>
         </div>
         <scrollXBox list-id="singers" card-id="singers-card">
           <userCard
             id="singers-card"
             class="single-card"
-            v-for="(similarAuthor, index) in sinilar.list"
+            v-for="(similarAuthor, index) in similar.list"
             :key="index"
             :user="similarAuthor"
           />
-          <loadCard v-if="sinilar.loading"  width="140px" />
+          <loadCard v-if="similar.loading"  width="140px" />
         </scrollXBox>
       </div>
     </div>
@@ -114,8 +114,6 @@ import api from '@/api/api'
 import decode from '@/util/decode'
 import { mapActions, mapState } from 'vuex'
 
-import spaceLayout from '@/components/Layout/Space'
-import userInfo from '@/components/User/UserInfo'
 import singleCard from '@/components/Song/SingleCard'
 import albumCard from '@/components/Song/AlbumCard'
 import scrollXBox from '@/components/ScrollXBox'
@@ -124,8 +122,6 @@ import loadCard from '@/components/Song/LoadCard'
 
 export default {
   components: {
-    spaceLayout,
-    userInfo,
     singleCard,
     albumCard,
     scrollXBox,
@@ -175,12 +171,12 @@ export default {
         price: '0000',
         authorUsername: 'Artist loading...'
       },
-      sinilar: {
+      similar: {
         list: [],
         addresses: [],
         loading: true,
         size: 10,
-        cardTemplet: {
+        cardTemplate: {
           address: '',
           nickname: 'Artist loading...',
           postInfoTxid: ''
@@ -195,18 +191,24 @@ export default {
     username (val) {
       if (this.wallet === this.$route.params.id) {
         this.setIsMe(true)
-        document.title = val + '\'s Profile - ArcLight'
+        document.title = val + this.$t('profileOf') + ' - ArcLight'
       } else {
-        document.title = 'Profile - ArcLight'
+        document.title = this.$t('profile') + ' - ArcLight'
       }
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      this.loadingCard.title = this.$t('loading')
+      this.loadingCard.authorUsername = this.$t('artistLoading')
+      this.similar.cardTemplate.nickname = this.$t('artistLoading')
+    })
+
     if (this.wallet === this.$route.params.id) {
       this.setIsMe(true)
-      document.title = this.username + '\'s Profile - ArcLight'
+      document.title = this.username + this.$t('profileOf') + ' - ArcLight'
     } else {
-      document.title = 'Profile - ArcLight'
+      document.title = this.$t('profile') + ' - ArcLight'
     }
     this.getUserAudioList('single', this.single)
     this.getUserAudioList('album', this.album)
@@ -231,7 +233,7 @@ export default {
     },
     async getInfoByTxid (aObject, txid) {
       // 添加对应的卡片并进入加载状态
-      aObject.list.push({...this.loadingCard, txid: txid})
+      aObject.list.push({ ...this.loadingCard, txid: txid })
       try {
         const transaction = await api.arweave.getTransactionDetail(txid)
         if (transaction) {
@@ -265,23 +267,23 @@ export default {
     },
     /** 获取相似的用户列表 */
     async getSimilarUsers () {
-      this.sinilar.loading = true
+      this.similar.loading = true
       try {
         const res = await api.arweave.getPostFromAddress(this.$route.params.id)
         if (!res) {
-          this.sinilar.loading = false
+          this.similar.loading = false
           return
         }
         const { 'Top1-Genre': genre1, 'Top2-Genre': genre2, 'Top3-Genre': genre3 } = res.tags
-        this.sinilar.addresses = await this.getSimilarPostInfo(genre1, genre2, genre3)
-        for (let i = 0; this.sinilar.addresses.length !== 0 && i < this.sinilar.size; i++) {
-          this.newUserInfoByPostInfoTxid(this.sinilar, this.sinilar.addresses.shift())
+        this.similar.addresses = await this.getSimilarPostInfo(genre1, genre2, genre3)
+        for (let i = 0; this.similar.addresses.length !== 0 && i < this.similar.size; i++) {
+          this.newUserInfoByPostInfoTxid(this.similar, this.similar.addresses.shift())
         }
       } catch (e) {
-        console.error(`[Failed to get similar users list]`, e)
-        this.$message.error(`Failed to get similar users list`)
+        console.error('[Failed to get similar users list]', e)
+        this.$message.error('Failed to get similar users list')
       }
-      this.sinilar.loading = false
+      this.similar.loading = false
     },
     /** 获取相似的 post info 列表 */
     async getSimilarPostInfo (genre1 = 'noGenreData', genre2 = 'noGenreData', genre3 = 'noGenreData') {
@@ -301,7 +303,7 @@ export default {
         if (addresse) this.newUserInfoByPostInfoTxid(aObject, addresse)
       }
 
-      aObject.list.push({...aObject.cardTemplet, postInfoTxid: txid})
+      aObject.list.push({ ...aObject.cardTemplate, postInfoTxid: txid })
       try {
         const transaction = await api.arweave.getTransactionDetail(txid)
         if (transaction) {

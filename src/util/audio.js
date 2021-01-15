@@ -14,9 +14,9 @@ const AudioUtil = {
     // 创建同样采用率、同样声道数量的空的AudioBuffer
     const newAudioBuffer = new AudioContext().createBuffer(channels, lastOffset, rate)
     // 创建临时的Array存放复制的buffer数据
-    let anotherArray = new Float32Array(lastOffset)
+    const anotherArray = new Float32Array(lastOffset)
     // 声道的数据的复制和写入
-    let offset = 0
+    const offset = 0
     for (var channel = 0; channel < channels; channel++) {
       audioBuffer.copyFromChannel(anotherArray, channel, start)
       newAudioBuffer.copyToChannel(anotherArray, channel, offset)
@@ -29,11 +29,11 @@ const AudioUtil = {
    * @param {AudioBuffer} abuffer 需要转换的 AudioBuffer
    */
   audioBufferToWave (abuffer) {
-    let numOfChan = abuffer.numberOfChannels
-    let length = abuffer.length * numOfChan * 2 + 44
-    let buffer = new ArrayBuffer(length)
-    let view = new DataView(buffer)
-    let channels = []
+    const numOfChan = abuffer.numberOfChannels
+    const length = abuffer.length * numOfChan * 2 + 44
+    const buffer = new ArrayBuffer(length)
+    const view = new DataView(buffer)
+    const channels = []
     let i
     let sample
     let offset = 0

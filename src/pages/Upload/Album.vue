@@ -5,16 +5,16 @@
         <div class="upload-header">
           <router-link :to="{ name: 'Upload' }" class="back-link">
             <v-icon class="back-link-icon">mdi-chevron-left</v-icon>
-            Back to Selection
+            {{ $t('backToSelection') }}
           </router-link>
         </div>
         <div class="container">
-          <div class="cover-title side-title">Album Cover</div>
+          <div class="cover-title side-title">{{ $t('albumCover') }}</div>
           <img-upload
-          :img-upload-done="imgUploadDone"
-          :update-type="'album'"
-          class="app-icon"
-          @doneImageUpload="doneImageUpload"
+            :img-upload-done="imgUploadDone"
+            :update-type="'album'"
+            class="app-icon"
+            @done-image-upload="doneImageUpload"
           >
             <div
               slot="uploadButton"
@@ -22,7 +22,7 @@
             >
               <div class="edit">
                 <v-icon color="#FFF">mdi-camera</v-icon>
-                Album Cover
+                {{ $t('albumCover') }}
               </div>
               <img
                 id="avatar"
@@ -38,7 +38,7 @@
             <v-text-field
               v-model="albumTitle"
               label="Solo"
-              placeholder="Enter Your Album Title..."
+              :placeholder="$t('enterYourAlbumTitle')"
               solo
               dark
               color="#FFF"
@@ -46,24 +46,24 @@
               counter
               maxlength="100"
             ></v-text-field>
-          <div class="name-desp side-title">Description (use \n for new line)</div>
+          <div class="name-desp side-title">{{ $t('uploadDescription') }}</div>
           <v-textarea
             v-model="albumDesp"
             solo
             dark
             name="input-7-4"
-            label="Your Album Description..."
+            :label="$t('yourAlbumDescritption')"
             counter
             maxlength="1000"
           ></v-textarea>
-          <div class="name-desp side-title">Genre</div>
+          <div class="name-desp side-title">{{ $t('genre') }}</div>
           <genreSelect v-model="genre" style="margin-bottom: 16px;" />
           <div v-for="(file, index) in fileList" :key="index">
-            <div class="name-title side-title">#{{ index + 1 }} Music Name</div>
+            <div class="name-title side-title">#{{ index + 1 }} {{ $t('musicName') }}</div>
             <v-text-field
               v-model="file.title"
               label="Solo"
-              placeholder="Enter Your Music Title..."
+              :placeholder="$t('enterYourMusicTitle')"
               solo
               dark
               color="#FFF"
@@ -77,7 +77,7 @@
                 v-model="file.music"
                 color="#FFF"
                 chips
-                placeholder="Select your file"
+                :placeholder="$t('selectYourFile')"
                 prepend-icon="mdi-paperclip"
                 outlined
                 accept="audio/mp3,audio/flac,audio/wave,audio/wav,audio/ogg,audio/mpeg"
@@ -107,13 +107,13 @@
                 <v-icon>mdi-minus</v-icon>
               </v-btn>
             </div>
-            <div class="name-desp side-title">#{{ index + 1 }} Music Price</div>
+            <div class="name-desp side-title">#{{ index + 1 }} {{ $t('price') }}</div>
             <v-text-field
               v-model="file.price"
               class="price"
               solo
               dark
-              label="Price"
+              :label="$t('price')"
               type="number"
               prepend-inner-icon="mdi-cash-multiple"
               maxlength="12"
@@ -122,8 +122,8 @@
           <v-btn v-if="fileList.length < 20" @click="musicAdd" color="#EA6290" depressed small dark style="margin-bottom: 16px; height: 54px;">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="checkBtnLoading" @click="verify">Verify</v-btn>
-          <div class="name-desp side-title">Demo Duration</div>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :loading="checkBtnLoading" @click="verify">{{ $t('verify') }}</v-btn>
+          <div class="name-desp side-title">{{ $t('demoDuration') }}</div>
           <v-select
             dark
             :disabled="demoIsDisable"
@@ -134,8 +134,8 @@
             :loading="mainDisableDuration"
             solo
           ></v-select>
-          <div class="name-desp side-title">Album Price will always be 80% of your total price for each song</div>
-          <v-btn color="#E56D9B" depressed dark class="side-title" :disabled="demoIsDisable" :loading="submitBtnLoading" @click="submit">Review</v-btn>
+          <div class="name-desp side-title">{{ $t('albumPriceWillAlwaysBe80Percent') }}</div>
+          <v-btn color="#E56D9B" depressed dark class="side-title" :disabled="demoIsDisable" :loading="submitBtnLoading" @click="submit">{{ $t('review') }}</v-btn>
         </div>
       </div>
       <v-snackbar
@@ -144,7 +144,7 @@
         timeout="3000"
         top="top"
       >
-        Image Read Successful
+        {{ $t('imageReadSuccess') }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -153,26 +153,7 @@
             v-bind="attrs"
             @click="snackbar = false"
           >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      <v-snackbar
-        v-model="albumSnackbar"
-        color="#00C853"
-        timeout="3000"
-        top="top"
-      >
-        Album Release Successful
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            dark
-            text
-            v-bind="attrs"
-            @click="albumSnackbar = false"
-          >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -192,7 +173,7 @@
             v-bind="attrs"
             @click="failSnackbar = false"
           >
-            Close
+            {{ $t('close') }}
           </v-btn>
         </template>
       </v-snackbar>
@@ -237,7 +218,6 @@ export default {
       musicContent: '',
       snackbar: false,
       failSnackbar: false,
-      albumSnackbar: false,
       failMessage: '',
       submitBtnLoading: false,
       checkBtnLoading: false,
@@ -253,14 +233,14 @@ export default {
       return !this.fileList.every(item => !item.disableDuration)
     },
     durationSelectStr () {
-      return this.mainDisableDuration ? 'Please Upload Your Artwork...' : 'Select Demo duration'
+      return this.mainDisableDuration ? this.$t('pleaseUploadYourArtwork') : this.$t('selectDemoDuration')
     }
   },
   watch: {
     userType (val) {
       if (this.userType === 'guest') {
         this.failSnackbar = true
-        this.failMessage = 'You must have a username in order to upload'
+        this.failMessage = this.$t('usernameIsRequiredToUpload')
 
         setTimeout(() => {
           this.$router.push({ name: 'Landing' })
@@ -269,7 +249,7 @@ export default {
     },
     wallet (val) {
       if (!val) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {
@@ -304,7 +284,7 @@ export default {
 
             audioCtx.createBufferSource()
             source = await audioCtx.decodeAudioData(data.slice())
-            let duration = source.duration
+            const duration = source.duration
             audioCtx = null
             source = null
             let index = 0
@@ -336,7 +316,7 @@ export default {
           }
         } else {
           this.failSnackbar = true
-          this.failMessage = 'Please upload at least ' + this.fileList.length + ' files'
+          this.failMessage = this.$t('albumPleaseUploadAtLeast') + this.fileList.length + this.$t('albumPleaseUploadAtLeastFile')
           item.disableDuration = true
         }
       })
@@ -346,35 +326,35 @@ export default {
       this.submitBtnLoading = true
 
       if (this.albumCover === '') {
-        this.failMessage = 'A cover for a album release is required'
+        this.failMessage = this.$t('albumCoverIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.albumTitle === '') {
-        this.failMessage = 'A title for a album release is required'
+        this.failMessage = this.$t('albumTitleIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (this.albumDesp === '') {
-        this.failMessage = 'A description for a album release is required'
+        this.failMessage = this.$t('albumDespIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.genre) {
-        this.failMessage = 'Please select the genre of your music (None for blank)'
+        this.failMessage = this.$t('genreIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
       }
 
       if (!this.duration) {
-        this.failMessage = 'The demo duration is required'
+        this.failMessage = this.$t('demoDurationIsRequiredToUpload')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -394,12 +374,12 @@ export default {
       for (let i = 0; i < this.fileList.length; i++) {
         const item = this.fileList[i]
         if (isNaN(parseFloat(item.price))) {
-          this.failMessage = 'The price must be numbers'
+          this.failMessage = this.$t('priceMustBeNumber')
           this.failSnackbar = true
           this.submitBtnLoading = false
           shouldReturn = true
         } else if (shouldHasPrice && parseFloat(item.price) === 0) {
-          this.failMessage = 'Album Song should have price or completely free'
+          this.failMessage = this.$t('albumSongShouldHavePriceOrFree')
           this.failSnackbar = true
           this.submitBtnLoading = false
           shouldHasPrice = false
@@ -419,7 +399,7 @@ export default {
       }
 
       if (isNaN(parseFloat(this.price))) {
-        this.failMessage = 'The price must be numbers'
+        this.failMessage = this.$t('priceMustBeNumber')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -428,7 +408,7 @@ export default {
       this.price = API.arweave.getArFromWinston(this.price)
 
       if (parseFloat(this.price) < 0) {
-        this.failMessage = `Price can't be negative`
+        this.failMessage = this.$t('priceCantBeNegative')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -437,7 +417,7 @@ export default {
       }
 
       if (!isNaN(parseFloat(this.price)) && parseFloat(this.price) === 0 && this.duration !== -1) {
-        this.failMessage = `You can't set demo for free music`
+        this.failMessage = this.$t('demoCantBeSetToFreeMusic')
         this.failSnackbar = true
         this.submitBtnLoading = false
         return
@@ -445,7 +425,7 @@ export default {
 
       for (let i = 0; i < this.fileList.length; i++) {
         if (!this.fileList[i].music) {
-          this.failMessage = 'You must select sources of music file for two album release'
+          this.failMessage = this.$t('albumSourceFileIsRequiredToUpload')
           this.failSnackbar = true
           this.submitBtnLoading = false
           return
@@ -454,33 +434,33 @@ export default {
 
       for (let i = 0; i < this.fileList.length; i++) {
         if (!this.fileList[i].title) {
-          this.failMessage = 'Your music must have title for #' + (i + 1)
+          this.failMessage = this.$t('albumMusicTitleIsRequiredToUpload') + (i + 1)
           this.failSnackbar = true
           this.submitBtnLoading = false
           return
         }
       }
 
-      let imgType = {
+      const imgType = {
         png: 'image/png',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         webp: 'image/webp'
       }
-      let ext = this.albumCoverFile.name.split('.').pop()
+      const ext = this.albumCoverFile.name.split('.').pop()
       console.log('Content-Type:', imgType[ext])
 
-      let audioType = {
+      const audioType = {
         mp3: 'audio/mp3',
         flac: 'audio/flac',
         wav: 'audio/wav',
         ogg: 'audio/ogg'
       }
 
-      let musicList = []
+      const musicList = []
 
       for (let i = 0; i < this.fileList.length; i++) {
-        let aext = this.fileList[i].music.name.split('.').pop()
+        const aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
         console.log('Content-Type:', audioType[aext])
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
@@ -488,6 +468,7 @@ export default {
 
       this.albumDesp = this.albumDesp.replace(/<.*>/gmu, '')
       this.albumDesp = this.albumDesp.replace(/\\n/g, '<br>')
+      // eslint-disable-next-line no-self-assign
       this.albumDesp = this.albumDesp
 
       const dataObj = {
@@ -577,16 +558,16 @@ export default {
 
     if (this.userType === 'guest') {
       this.failSnackbar = true
-      this.failMessage = 'You must have a username in order to upload'
+      this.failMessage = this.$t('usernameIsRequiredToUpload')
 
       setTimeout(() => {
         this.$router.push({ name: 'Landing' })
       }, 3000)
     }
-    document.title = 'Upload a new Album - ArcLight'
+    document.title = this.$t('uploadNewAlbum') + ' - ArcLight'
     setTimeout(() => {
       if (!this.isLoggedIn) {
-        this.failMessage = 'Login is required to upload'
+        this.failMessage = this.$t('loginIsRequiredToUpload')
         this.failSnackbar = true
 
         setTimeout(() => {

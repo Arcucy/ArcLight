@@ -29,9 +29,21 @@ export default {
         {
           name: 'Podcast',
           label: 'PODCAST'
+        },
+        {
+          name: 'Playlist',
+          label: 'PLATLIST'
         }
       ]
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.tabs[0].label = this.$t('navSONG')
+      this.tabs[1].label = this.$t('navSOUND')
+      this.tabs[2].label = this.$t('navPODCAST')
+      this.tabs[3].label = this.$t('navPLAYLIST')
+    })
   }
 }
 </script>
