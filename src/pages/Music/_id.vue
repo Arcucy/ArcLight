@@ -61,7 +61,7 @@
           </div>
           <div class="music-title-artist">
             <router-link class="music-artist-username" :to="{ name: 'User', params: { id: artist.id } }">
-              <v-icon color="#D85C8B">mdi-account-music</v-icon>{{ artist.username }}
+              <svg-icon icon-class="artist" class="themed-icon" /> {{ artist.username }}
             </router-link>
           </div>
           <!-- 交互 -->
@@ -927,6 +927,10 @@ export default {
     transform: translateY(0px);
     opacity: 1;
   }
+}
+
+.themed-icon {
+  color: #D85C8B;
 }
 
 @media screen and (max-width: 1200px) {
