@@ -28,8 +28,7 @@ const ar = Arweave.init({
 })
 
 export default new Vuex.Store({
-  modules: {
-  },
+  modules: {},
   state: {
     appLang: 'en-US',
     isLoggedIn: false,
@@ -88,9 +87,19 @@ export default new Vuex.Store({
     paymentId: '',
     playList: [],
     playIndex: 0,
-    audioFileCache: null
+    audioFileCache: null,
+    preferredCurrency: 'USD',
+    alwaysUseAr: false
   },
   mutations: {
+    // currency: string
+    setPreferredCurrency (state, currency) {
+      state.preferredCurrency = currency
+    },
+    // val: boolean
+    setAlwaysUseAr (state, val) {
+      state.alwaysUseAr = val
+    },
     setAppLang (state, lang) {
       state.appLang = lang
     },
