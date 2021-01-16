@@ -89,12 +89,24 @@ export default new Vuex.Store({
     playIndex: 0,
     audioFileCache: null,
     preferredCurrency: 'USD',
-    alwaysUseAr: false
+    alwaysUseAr: false,
+    arToUSD: '',
+    USDToPreferredCurrency: ''
   },
   mutations: {
     // currency: string
     setPreferredCurrency (state, currency) {
       state.preferredCurrency = currency
+      API.priceGetter.getPrice('AR').then((res) => {
+        state.arToUSD = res.price
+      })
+      API.converter.convert({
+        from: 'USD',
+        to: currency,
+        amount: 1
+      }).then((res) => {
+        state.USDToPreferredCurrency = res.result
+      })
     },
     // val: boolean
     setAlwaysUseAr (state, val) {
