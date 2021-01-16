@@ -16,6 +16,7 @@
     "@mdi/font": "^3.6.95",
     "arweave": "^1.10.0",
     "axios": "^0.21.0",
+    "bignumber.js": "^9.0.1",
     "community-js": "^1.1.6",
     "compressorjs": "^1.0.6",
     "core-js": "^3.6.5",
