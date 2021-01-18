@@ -86,7 +86,7 @@ export default {
       const localStore = window.localStorage || localStorage
       // 是否始终使用AR显示价格
       const alwaysAr = localStore.getItem('always_ar')
-      if (alwaysAr === true) {
+      if (alwaysAr === 'true') {
         // 是，那就没有必要用法定货币了
         this.setAlwaysUseAr(alwaysAr)
         return

@@ -97,16 +97,7 @@ export default new Vuex.Store({
     // currency: string
     setPreferredCurrency (state, currency) {
       state.preferredCurrency = currency
-      API.priceGetter.getPrice('AR').then((res) => {
-        state.arToUSD = res.price
-      })
-      API.converter.convert({
-        from: 'USD',
-        to: currency,
-        amount: 1
-      }).then((res) => {
-        state.USDToPreferredCurrency = res.result
-      })
+      this.dispatch('updateExchangeRate', currency)
     },
     // val: boolean
     setAlwaysUseAr (state, val) {
@@ -307,8 +298,13 @@ export default new Vuex.Store({
         ...audioData,
         fileId
       }
+    },
+    setArToUsd (state, price) {
+      state.arToUSD = price
+    },
+    setUsdToPreferredCurrency (state, price) {
+      state.USDToPreferredCurrency = price
     }
-
   },
   getters: {
     playingAudio (state) {
@@ -327,6 +323,18 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    updateExchangeRate ({ commit }, currency) {
+      API.priceGetter.getPrice('AR').then((res) => {
+        commit('setArToUsd', res.price)
+      })
+      API.converter.convert({
+        from: 'USD',
+        to: currency,
+        amount: 1
+      }).then((res) => {
+        commit('setUsdToPreferredCurrency', res.result)
+      })
+    },
     setKey ({ commit }, data) {
       return new Promise(async (resolve, reject) => {
         commit('setKeyFile', data.file)

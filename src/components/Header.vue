@@ -447,10 +447,10 @@ export default {
       const localStore = window.localStorage || localStorage
       if (currency === 'AR') {
         this.setAlwaysUseAr(true)
-        localStore.setItem('always_ar', true)
+        localStore.setItem('always_ar', 'true')
       } else {
         localStore.setItem('preferred_currency', currency)
-        localStore.setItem('always_ar', false)
+        localStore.setItem('always_ar', 'false')
         this.setAlwaysUseAr(false)
         this.setPreferredCurrency(currency)
       }
@@ -531,6 +531,23 @@ export default {
           this.setLangAs('ja-JP')
           break
       }
+      this.setPreferredCurrencyByLang()
+    },
+    setPreferredCurrencyByLang () {
+      const localStore = window.localStorage || localStorage
+      if (localStore.getItem('always_ar') || localStore.getItem('preferred_currency')) {
+        return
+      }
+      let lang
+      switch (this.lang) {
+        case 'zh-CN': lang = 'CNY'; break
+        case 'en-US': lang = 'USD'; break
+        case 'ja-JP': lang = 'JPY'; break
+        case 'zh-TW': lang = 'TWD'; break
+        // 出错默认USD
+        default: lang = 'USD'; break
+      }
+      this.setPreferredCurrency(lang)
     },
     uploadMusic () {
       this.$router.push({ name: 'Upload' })
