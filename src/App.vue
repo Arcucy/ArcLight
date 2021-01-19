@@ -28,7 +28,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setAppLang']),
+    ...mapMutations(['setAppLang', 'setPreferredCurrency', 'setAlwaysUseAr']),
     /** 对页面进行软刷新，不会丢失 vuex 中的数据 */
     routerRefresh () {
       this.routerAlive = false
@@ -79,6 +79,34 @@ export default {
       const localStore = window.localStorage || localStorage
       console.log(this.getBrowserLangCode())
       localStore.setItem('locale_lang', this.getBrowserLangCode())
+    },
+    // get指的是从已保存的读取，或者自动从语言选择
+    // set指的是设置货币到界面
+    getAndSetPreferredCurrency () {
+      const localStore = window.localStorage || localStorage
+      // 是否始终使用AR显示价格
+      const alwaysAr = localStore.getItem('always_ar')
+      if (alwaysAr === 'true') {
+        // 是，那就没有必要用法定货币了
+        this.setAlwaysUseAr(alwaysAr)
+        return
+      }
+      // 尝试获取已保存的货币类型
+      let currency = localStore.getItem('preferred_currency')
+      // 没有已保存的类型，从已保存的语言自动设定
+      if (!currency) {
+        const lang = this.getLangCode()
+        switch (lang) {
+          case 'zh-CN': currency = 'CNY'; break
+          case 'en-US': currency = 'USD'; break
+          case 'ja-JP': currency = 'JPY'; break
+          case 'zh-TW': currency = 'TWD'; break
+          // 出错默认USD
+          default: currency = 'USD'; break
+        }
+      }
+      // 完成设定
+      this.setPreferredCurrency(currency)
     }
   },
   mounted () {
@@ -101,6 +129,8 @@ export default {
         this.$i18n.locale = 'jaJP'
         break
     }
+    // get and set preferred currency type
+    this.getAndSetPreferredCurrency()
   }
 }
 </script>
