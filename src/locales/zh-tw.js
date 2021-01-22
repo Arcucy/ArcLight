@@ -259,5 +259,12 @@ export default {
   // login
   thisIsNotArweaveKey: '這不是正確的Arweave密鑰，請重新上傳一個正確的密鑰',
   loginConnectionTimeout: '登錄時連接超時，請檢查您的網絡連接，然後重試',
-  gettingAvatarTimeout: '獲取頭像時出錯'
+  gettingAvatarTimeout: '獲取頭像時出錯',
+  // currency
+  AR: 'AR',
+  USD: '美元(USD)',
+  JPY: '日元(JPY)',
+  CNY: '人民幣(CNY)',
+  TWD: '新台幣(TWD)',
+  chooseCurrency: '選擇用於顯示的貨幣'
 }

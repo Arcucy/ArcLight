@@ -257,5 +257,12 @@ export default {
   // login
   thisIsNotArweaveKey: 'This key is invalid, please upload correct Arweave key.',
   loginConnectionTimeout: 'Connection time out while logging in, please check your connection and try again.',
-  gettingAvatarTimeout: 'Error getting avatar'
+  gettingAvatarTimeout: 'Error getting avatar',
+  // currency
+  AR: 'AR',
+  USD: 'USD',
+  JPY: 'JPY',
+  CNY: 'CNY',
+  TWD: 'TWD',
+  chooseCurrency: 'Select currency for display'
 }

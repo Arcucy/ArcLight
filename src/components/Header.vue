@@ -54,6 +54,33 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <!--select preferred currency-->
+    <v-menu offset-y dark>
+      <template v-slot:activator="{on, attrs}">
+        <v-btn
+          class="mx-2 currency-select"
+          small fab dark color="#E56D9B" v-bind="attrs" v-on="on">
+          <v-icon dark>mdi-cash-multiple</v-icon>
+        </v-btn>
+        <v-btn
+          class="mx-2 mobile-nav mobile-currency-select"
+          x-small fab dark color="#E56D9B" v-bind="attrs" v-on="on">
+          <v-icon dark>mdi-cash-multiple</v-icon>
+        </v-btn>
+      </template>
+      <v-list subheader>
+        <v-list-item-group v-model="selectCurrencyIndex">
+          <v-subheader>{{ $t('chooseCurrency')}}</v-subheader>
+          <v-list-item
+            @click="setPreferredCurrencyManually(item)"
+            link
+            v-for="(item, index) in currencyItems"
+            :key="index">
+            <v-list-item-title>{{ $t(item) }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-menu>
 
     <div class="mobile-nav mobile-search-bar">
       <v-btn icon color="white" @click="mobileDialog = true">
@@ -299,14 +326,25 @@ export default {
         '中文 (繁体)',
         '日本語'
       ],
+      // 所有支持的货币，以后可以添加
+      currencyItems: [
+        'AR',
+        'USD',
+        'CNY',
+        'TWD',
+        'JPY'
+      ],
       lang: 'English',
       frosted: false,
       mobileDialog: false,
-      showPosition: 1
+      showPosition: 1,
+      selectCurrencyIndex: 0
     }
   },
   computed: {
     ...mapState([
+      'alwaysUseAr',
+      'preferredCurrency',
       'gettingUserAvatarTimeoutFailure',
       'isLoggedIn',
       'username',
@@ -362,6 +400,18 @@ export default {
           this.$i18n.locale = 'jaJP'
           break
       }
+    },
+    // 检测是否始终使用AR显示变更
+    alwaysUseAr (val) {
+      if (val === true) {
+        this.selectCurrencyIndex = 0
+      } else {
+        this.selectCurrencyIndex = this.currencyItems.indexOf(this.preferredCurrency, 0)
+      }
+    },
+    // 检测货币类型变更
+    preferredCurrency (val) {
+      this.selectCurrencyIndex = this.currencyItems.indexOf(val, 0)
     }
   },
   mounted () {
@@ -391,7 +441,20 @@ export default {
   },
   methods: {
     ...mapActions(['setKey', 'logout']),
-    ...mapMutations(['setAppLang']),
+    ...mapMutations(['setAppLang', 'setPreferredCurrency', 'setAlwaysUseAr']),
+    // 在手动设置货币时将选择的货币保存起来
+    setPreferredCurrencyManually (currency) {
+      const localStore = window.localStorage || localStorage
+      if (currency === 'AR') {
+        this.setAlwaysUseAr(true)
+        localStore.setItem('always_ar', 'true')
+      } else {
+        localStore.setItem('preferred_currency', currency)
+        localStore.setItem('always_ar', 'false')
+        this.setAlwaysUseAr(false)
+        this.setPreferredCurrency(currency)
+      }
+    },
     scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
       this.frosted = currentTop > this.showPosition // IDE提示这行可以简化
@@ -468,6 +531,23 @@ export default {
           this.setLangAs('ja-JP')
           break
       }
+      this.setPreferredCurrencyByLang()
+    },
+    setPreferredCurrencyByLang () {
+      const localStore = window.localStorage || localStorage
+      if (localStore.getItem('always_ar') || localStore.getItem('preferred_currency')) {
+        return
+      }
+      let lang
+      switch (this.lang) {
+        case 'zh-CN': lang = 'CNY'; break
+        case 'en-US': lang = 'USD'; break
+        case 'ja-JP': lang = 'JPY'; break
+        case 'zh-TW': lang = 'TWD'; break
+        // 出错默认USD
+        default: lang = 'USD'; break
+      }
+      this.setPreferredCurrency(lang)
     },
     uploadMusic () {
       this.$router.push({ name: 'Upload' })
@@ -664,7 +744,15 @@ export default {
     display: none;
   }
 
+  .currency-select {
+    display: none;
+  }
+
   .mobile-localization {
+    display: block;
+  }
+
+  .mobile-currency-select {
     display: block;
   }
 }

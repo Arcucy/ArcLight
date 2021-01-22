@@ -20,8 +20,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
+      env: 
+        ENCRYPT_CODE: ${{ secrets.ENCRYPT_CODE }}
+        ENCRYPT_IV: ${{ secrets.ENCRYPT_IV }}
       with:
         node-version: ${{ matrix.node-version }}
+    - run: touch secrets/encrypt.json && printf '{"code":"%s", "iv":"%s"}' "$ENCRYPT_CODE" "$ENCRYPT_IV" > secrets/encrypt.json
     - run: npm install -g yarn
     - run: yarn install --frozen-lockfile
     - run: yarn build

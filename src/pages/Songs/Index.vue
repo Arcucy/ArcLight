@@ -68,6 +68,7 @@ import albumCard from '@/components/Song/AlbumCard'
 import categoryNav from '@/components/CategoryNav'
 import scrollXBox from '@/components/ScrollXBox'
 import loadCard from '@/components/Song/LoadCard'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -100,7 +101,8 @@ export default {
       }
     }
   },
-  created () {
+  computed: {
+    ...mapState(['preferredCurrency'])
   },
   mounted () {
     this.$nextTick(() => {
@@ -155,11 +157,11 @@ export default {
         }
       } catch (e) {
         console.error(txid, e)
+        // 失败处理：删掉这个卡片，并请求一个新的。
+        aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
+        const addresse = aObject.addresses.shift()
+        if (addresse) this.getInfoByTxid(aObject, addresse)
       }
-      // 失败处理：删掉这个卡片，并请求一个新的。
-      aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
-      const addresse = aObject.addresses.shift()
-      if (addresse) this.getInfoByTxid(aObject, addresse)
     }
   }
 }

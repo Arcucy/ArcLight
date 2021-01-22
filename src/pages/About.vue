@@ -2,6 +2,17 @@
   <div>
     <spaceLayout>
       <div class="about-container">
+        <div class="flexed">
+          <div class="arcLight">
+            <img :src="arcLight" alt="">
+            <span>ArcLight</span>
+          </div>
+          <div class="arcucy">
+            <img :src="arcucy" alt="">
+            <span>Arcucy Team</span>
+          </div>
+        </div>
+
         <div class="about-title">
           {{ $t('title1') }}
         </div>
@@ -40,6 +51,14 @@
         <div class="about-subtitle">
           <span class="pink-text">{{ $t('thankYouForChoosingArcLight') }}</span>
         </div>
+
+        <div class="arcLight-link">
+          <a href="https://github.com/Arcucy/ArcLight" target="_blank">GitHub 源码</a>
+          <a href="https://update.arcucy.io" target="_blank">官方博客</a>
+          <a href="https://t.me/ArclightMusic" target="_blank">Telegram 群组</a>
+          <a href="https://discord.gg/3zUXrnXyFv" target="_blank">Discord 群组</a>
+          <a href="mailto:contact@arcucy.io" target="_blank">联系我们</a>
+        </div>
       </div>
     </spaceLayout>
   </div>
@@ -48,9 +67,18 @@
 <script>
 import spaceLayout from '@/components/Layout/Space'
 
+import arcLight from '@/assets/image/ArcLight.png'
+import arcucy from '@/assets/image/Arcucy.png'
+
 export default {
   components: {
     spaceLayout
+  },
+  data () {
+    return {
+      arcLight: arcLight,
+      arcucy: arcucy
+    }
   },
   mounted () {
     document.title = 'Why Choose ArcLight - ArcLight Music Distribution Platform'
@@ -93,5 +121,67 @@ export default {
 
 .pink-text {
   color: #EA6290;
+}
+
+.flexed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.arcLight {
+  line-height: 60px;
+  vertical-align: middle;
+}
+
+.arcLight img {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: middle;
+}
+
+.arcLight span {
+  line-height: 60px;
+  vertical-align: middle;
+  font-size: 40px;
+  color: white;
+  margin: 0 20px 5px 20px;
+}
+
+.arcucy {
+  line-height: 50px;
+  vertical-align: middle;
+  margin-bottom: 20px;
+}
+
+.arcucy img {
+  vertical-align: middle;
+  width: 40px;
+  height: 40px;
+}
+
+.arcucy span {
+  font-size: 20px;
+  color: white;
+  margin: 0 20px 5px 20px;
+}
+
+.arcLight-link {
+  width: 100%;
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.arcLight-link a {
+  margin-right: 20px;
+  color: white !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.arcLight-link a:hover {
+  color: #FA589A !important;
 }
 </style>

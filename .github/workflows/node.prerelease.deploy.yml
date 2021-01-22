@@ -24,4 +24,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         envs: ENCRYPT_CODE, ENCRYPT_IV
-        script: cd Git/ArcLight && git pull && rm -rf secrets/encrypt.json && touch secrets/encrypt.json && printf '{"code":"%s", "iv":"%s"}' "$ENCRYPT_CODE" "$ENCRYPT_IV" > secrets/encrypt.json && yarn && rm -rf dist && yarn build
+        script: cd Git/ArcLight-Test && git pull && rm -rf secrets/encrypt.json && touch secrets/encrypt.json && printf '{"code":"%s", "iv":"%s"}' "$ENCRYPT_CODE" "$ENCRYPT_IV" > secrets/encrypt.json && yarn && rm -rf dist && yarn build
