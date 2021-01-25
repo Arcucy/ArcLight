@@ -26,7 +26,7 @@
           {{ card.authorUsername }}
         </a>
         <p v-if="card.price != 0" class="card-price">
-          {{ $t('pay') }} {{ priceInPreferredCurrency }} {{currency}}
+          {{ $t('pay') }} {{ card.price }} AR
         </p>
         <p v-else class="card-price free-song">
           {{ $t('free') }}
@@ -46,7 +46,6 @@
 import { mapState } from 'vuex'
 import api from '@/api/api'
 import { isNDaysAgo } from '@/util/momentFun'
-import BigNumber from 'bignumber.js'
 
 export default {
   components: {
@@ -60,13 +59,11 @@ export default {
   data () {
     return {
       cover: 'Loading',
-      blink: false,
-      priceInPreferredCurrency: '',
-      currency: ''
+      blink: false
     }
   },
   computed: {
-    ...mapState(['appLang', 'preferredCurrency', 'arToUSD', 'USDToPreferredCurrency', 'alwaysUseAr']),
+    ...mapState(['appLang']),
     time () {
       if (!this.card) return '--:--:--'
       const time = this.$moment(this.card.unixTime).locale(this.appLang)
@@ -75,34 +72,14 @@ export default {
   },
   watch: {
     card (val) {
-      if (val) {
-        this.getCover()
-        this.convertToFiat()
-        this.getCurrency()
-      } else this.cover = ''
+      if (val) this.getCover()
+      else this.cover = ''
     }
   },
   async mounted () {
     this.getCover()
   },
   methods: {
-    convertToFiat () {
-      if (this.alwaysUseAr) {
-        this.priceInPreferredCurrency = this.card.price
-      } else {
-        this.priceInPreferredCurrency = new BigNumber(this.card.price)
-          .times(new BigNumber(this.arToUSD))
-          .times(new BigNumber(this.USDToPreferredCurrency))
-          .toFixed(2)
-      }
-    },
-    getCurrency () {
-      if (this.alwaysUseAr) {
-        this.currency = 'AR'
-      } else {
-        this.currency = this.preferredCurrency
-      }
-    },
     async getCover () {
       if (this.card && this.card.coverTxid) {
         this.cover = 'Loading'
