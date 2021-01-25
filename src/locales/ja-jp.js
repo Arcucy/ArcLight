@@ -259,12 +259,5 @@ export default {
   // login
   thisIsNotArweaveKey: 'これは正しいArweaveキーではありません。正しいキーを再アップロードしてください',
   loginConnectionTimeout: 'ログイン中に接続がタイムアウトしました。ネットワーク接続を確認して、再試行してください',
-  gettingAvatarTimeout: 'アバターの取得中にエラーが発生しました',
-  // currency
-  AR: 'AR',
-  USD: '米ドル(USD)',
-  JPY: '日本円(JPY)',
-  CNY: '人民元(CNY)',
-  TWD: '台湾ドル(TWD)',
-  chooseCurrency: '表示する通貨を選択します'
+  gettingAvatarTimeout: 'アバターの取得中にエラーが発生しました'
 }

@@ -182,8 +182,4 @@ const router = new VueRouter({
   routes
 })
 
-router.afterEach(() => {
-  router.app.$options.store.dispatch('updateExchangeRate', router.app.$options.store.state.preferredCurrency).then(r => {})
-})
-
 export default router

@@ -110,10 +110,10 @@
               </div>
               <div class="album-buy-label-price">
                 <p class="album-buy-label-price-original">
-                  {{ currency }}: {{ originalPriceInPreferredCurrency }}
+                  AR$: {{ originalPrice }}
                 </p>
                 <p class="album-buy-label-price-now">
-                  {{ currency }}: {{ priceInPreferredCurrency }}
+                  AR$: {{ price }}
                 </p>
               </div>
               <payment
@@ -158,7 +158,6 @@ import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
 import { mapState, mapActions, mapMutations } from 'vuex'
-import BigNumber from 'bignumber.js'
 
 const zip = new JSZip()
 
@@ -202,14 +201,11 @@ export default {
       albumPctDisplay: '',
       shouldWait: false,
       awaitConfirm: false,
-      timerIndex: null,
-      priceInPreferredCurrency: '',
-      originalPriceInPreferredCurrency: '',
-      currency: ''
+      timerIndex: null
     }
   },
   computed: {
-    ...mapState(['wallet', 'preferredCurrency', 'arToUSD', 'USDToPreferredCurrency', 'alwaysUseAr']),
+    ...mapState(['wallet']),
     albumPct () {
       const res = Math.round((this.tempPct + (this.singlePct % 100)) / this.info.list.length)
       return res
@@ -281,28 +277,6 @@ export default {
   methods: {
     ...mapMutations(['setPlayList', 'setPlayIndex']),
     ...mapActions(['playMusicSingle', 'addMusicAlbum']),
-    convertToFiat () {
-      if (this.alwaysUseAr) {
-        this.priceInPreferredCurrency = this.price
-      } else {
-        this.priceInPreferredCurrency = new BigNumber(this.price)
-          .times(new BigNumber(this.arToUSD))
-          .times(new BigNumber(this.USDToPreferredCurrency))
-          .toFixed(2)
-        this.originalPriceInPreferredCurrency = new BigNumber(this.originalPrice)
-          .times(new BigNumber(this.arToUSD))
-          .times(new BigNumber(this.USDToPreferredCurrency))
-          .toFixed(2)
-        console.log(this.priceInPreferredCurrency, this.originalPriceInPreferredCurrency)
-      }
-    },
-    getCurrency () {
-      if (this.alwaysUseAr) {
-        this.currency = 'AR'
-      } else {
-        this.currency = this.preferredCurrency
-      }
-    },
     async getItemStatus (address, itemAddress, price) {
       const getPaymentResult = async (txid) => {
         try {
@@ -369,9 +343,6 @@ export default {
         this.info.list = albumData.music
         this.price = albumData.price.toFixed(12)
 
-        this.getCurrency()
-        this.convertToFiat()
-
         this.info.list.forEach(item => {
           item.pct = 0
         })
@@ -422,9 +393,6 @@ export default {
                 let newAlbumPrice = winstonPriceAlbum / 0.8
                 newAlbumPrice = (newAlbumPrice - parseInt(winstonPriceSingle)) * 0.8
                 this.price = api.arweave.getArFromWinston(newAlbumPrice)
-
-                this.getCurrency()
-                this.convertToFiat()
               }
             } catch (e) {
               if (e.type !== 'TX_PENDING') {

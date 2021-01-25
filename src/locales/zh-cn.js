@@ -259,12 +259,5 @@ export default {
   // login
   thisIsNotArweaveKey: '这不是正确的Arweave密钥，请重新上传一个正确的密钥',
   loginConnectionTimeout: '登录时连接超时，请检查您的网络连接，然后重试',
-  gettingAvatarTimeout: '获取头像时出错',
-  // currency
-  AR: 'AR',
-  USD: '美元(USD)',
-  JPY: '日元(JPY)',
-  CNY: '人民币(CNY)',
-  TWD: '新台币(TWD)',
-  chooseCurrency: '选择用于显示的货币'
+  gettingAvatarTimeout: '获取头像时出错'
 }
