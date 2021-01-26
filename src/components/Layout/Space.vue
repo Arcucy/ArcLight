@@ -2,20 +2,20 @@
   <v-app class="layout appstyle">
     <div class="layout-bg">
       <div class="stars">
-        <img id='stars' :src="backgroundStar"/>
+        <img id='stars' :src="backgroundStar" />
       </div>
       <div id='horizon'>
-        <div class='glow'/>
+        <div class='glow' />
       </div>
-      <div id='earth'/>
+      <div id='earth' />
     </div>
-    <Header/>
+    <Header />
     <div class="slot-shell">
-      <slot/>
+      <slot />
     </div>
     <div class="notice">
       {{ $t('developedBy') }}
-      <a href="https://github.com/Arcucy" target="_blank">Arcucy Team</a>
+      <a href="https://github.com/Arcucy" target="_blank" >Arcucy Team</a>
       {{ $t('forProject') }}
       <a href="https://github.com/AyakaLab/ArcLight" target="_blank">ArcLight </a>
       <span v-if="$i18n.locale === 'zhCN'">{{ $t('developedApp') }}</span>
@@ -27,8 +27,9 @@
 
 <script>
 
-import backgroundStar from '@/assets/image/star.png'
 import Header from '@/components/Header.vue'
+
+import backgroundStar from '@/assets/image/star.png'
 import packageJson from '../../../package.json'
 
 export default {
@@ -49,9 +50,9 @@ export default {
 }
 </script>
 
-<style scoped src="./Space.css"/>
+<style scoped src="./Space.css" />
 
-<style lang="less" scoped src="./AppStyle.less"/>
+<style lang="less" scoped src="./AppStyle.less" />
 
 <style scoped>
 .layout {
@@ -59,7 +60,6 @@ export default {
   flex-direction: column;
   background: #0000 !important;
 }
-
 .slot-shell {
   margin-top: 73px;
   position: relative;
@@ -88,10 +88,19 @@ export default {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 400px){
   .notice {
     font-size: 12px;
   }
 }
+</style>
 
+<style>
+html, body {
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}
 </style>

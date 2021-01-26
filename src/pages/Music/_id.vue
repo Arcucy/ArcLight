@@ -93,7 +93,7 @@
                 color="#e56d9b"
                 @click="callback"
               >
-                {{currency}}{{ priceInPreferredCurrency }}
+                AR${{ parseFloat(price) }}
               </v-btn>
             </payment>
             <!-- 下载 -->
@@ -155,7 +155,6 @@ import decode from '@/util/decode'
 
 import spaceLayout from '@/components/Layout/Space'
 import payment from '@/components/Payment'
-import BigNumber from 'bignumber.js'
 
 export default {
   inject: ['backPage', 'routerRefresh'],
@@ -192,13 +191,11 @@ export default {
       loading: true,
       timerIndex: null,
       downloadLoading: false,
-      audioData: null,
-      priceInPreferredCurrency: '',
-      currency: ''
+      audioData: null
     }
   },
   computed: {
-    ...mapState(['wallet', 'audioFileCache', 'preferredCurrency', 'arToUSD', 'USDToPreferredCurrency', 'alwaysUseAr']),
+    ...mapState(['wallet', 'audioFileCache']),
     ext () {
       const getExt = {
         'audio/mp3': 'mp3',
@@ -252,23 +249,6 @@ export default {
   },
   methods: {
     ...mapActions(['playMusicSingle']),
-    convertToFiat () {
-      if (this.alwaysUseAr) {
-        this.priceInPreferredCurrency = this.price
-      } else {
-        this.priceInPreferredCurrency = new BigNumber(this.price)
-          .times(new BigNumber(this.arToUSD))
-          .times(new BigNumber(this.USDToPreferredCurrency))
-          .toFixed(2)
-      }
-    },
-    getCurrency () {
-      if (this.alwaysUseAr) {
-        this.currency = 'AR'
-      } else {
-        this.currency = this.preferredCurrency
-      }
-    },
     async getItemStatus (address, itemAddress, price) {
       if (!address) {
         this.loading = false
@@ -383,9 +363,6 @@ export default {
       this.info.desp = this.filterHtmlTags(data.desp)
       this.info.genre = tags.Genre
       this.price = data.price
-      this.convertToFiat()
-      this.getCurrency()
-
       this.info.id = data.music
       // 获取封面和音频
       await this.getCover(data.cover)
@@ -408,8 +385,6 @@ export default {
       this.price = data.music[index].price
       this.info.id = data.music[index].id
       this.albumPrice = tags.Price
-      this.convertToFiat()
-      this.getCurrency()
       // 获取封面和音频
       await this.getCover(data.cover)
 
@@ -428,8 +403,6 @@ export default {
       this.info.genre = tags.Category
       this.price = data.price
       this.info.id = data.program
-      this.convertToFiat()
-      this.getCurrency()
       // 获取封面和音频
       await this.getCover(data.cover)
 
@@ -447,8 +420,6 @@ export default {
       this.info.desp = this.filterHtmlTags(data.desp)
       this.price = data.price
       this.info.id = data.audio
-      this.convertToFiat()
-      this.getCurrency()
       // 获取封面和音频
       await this.getCover(data.cover)
 
