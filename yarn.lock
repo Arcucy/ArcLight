@@ -6632,10 +6632,10 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-musicgenres-json@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/musicgenres-json/-/musicgenres-json-1.0.1.tgz#f0a7eeeef021c463d13557abf4ccc6fe615eff12"
-  integrity sha512-KjZGPh/TOzxIYgWZ4qGA14RzPThicGGmeC4NJywQZpVdXxA+eMUOhB6sAoeBelF/aJ8AAdphyMRv8zTlv0LlHA==
+musicgenres-json@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/musicgenres-json/-/musicgenres-json-1.0.2.tgz#6b860322e865da8f2fd0d358e34a6c98f6b093c0"
+  integrity sha512-b/RSQP5n6ilHG+1pXPitv42U6q9QTGenUE9+gz39LZT2/LcMi9DZ2TwJLOE4sR/srcXCmFKmmQ3gRgi20+ECIw==
   dependencies:
     webpack "^4.44.1"
 
