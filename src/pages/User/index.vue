@@ -111,7 +111,6 @@
 
 <script>
 import api from '@/api/api'
-import decode from '@/util/decode'
 import { mapActions, mapState } from 'vuex'
 
 import singleCard from '@/components/Song/SingleCard'
@@ -119,6 +118,7 @@ import albumCard from '@/components/Song/AlbumCard'
 import scrollXBox from '@/components/ScrollXBox'
 import userCard from '@/components/User/UserCard'
 import loadCard from '@/components/Song/LoadCard'
+import { localCache } from '@/util/cache'
 
 export default {
   components: {
@@ -235,35 +235,36 @@ export default {
       // 添加对应的卡片并进入加载状态
       aObject.list.push({ ...this.loadingCard, txid: txid })
       try {
-        const transaction = await api.arweave.getTransactionDetail(txid)
-        if (transaction) {
-          const tags = api.arweave.getTagsByTransaction(transaction)
-          const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
-          // 给 txid 相同的卡片赋予获取到的信息
-          const cardIndex = aObject.list.findIndex(item => item.txid === txid)
-          this.$set(aObject.list, cardIndex, {
-            txid,
-            authorAddress: tags['Author-Address'],
-            authorUsername: tags['Author-Username'],
-            type: tags.Type,
-            unixTime: Number(tags['Unix-Time']),
-            title: audioData.title,
-            desp: audioData.desp,
-            price: audioData.price,
-            duration: audioData.duration,
-            coverTxid: audioData.cover,
-            musicTxid: audioData.music
-          })
-          // 成功的结束
-          return
-        }
+        // const transaction = await api.arweave.getTransactionDetail(txid)
+        // if (transaction) {
+        //   const tags = api.arweave.getTagsByTransaction(transaction)
+        //   const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        //   // 给 txid 相同的卡片赋予获取到的信息
+        //   const cardIndex = aObject.list.findIndex(item => item.txid === txid)
+        //   this.$set(aObject.list, cardIndex, {
+        //     txid,
+        //     authorAddress: tags['Author-Address'],
+        //     authorUsername: tags['Author-Username'],
+        //     type: tags.Type,
+        //     unixTime: Number(tags['Unix-Time']),
+        //     title: audioData.title,
+        //     desp: audioData.desp,
+        //     price: audioData.price,
+        //     duration: audioData.duration,
+        //     coverTxid: audioData.cover,
+        //     musicTxid: audioData.music
+        //   })
+        // }
+        const info = await localCache.getInfoByTxid(txid)
+        const cardIndex = aObject.list.findIndex(item => item.txid === txid)
+        this.$set(aObject.list, cardIndex, info)
       } catch (e) {
         console.error(txid, e)
+        // 失败处理：删掉这个卡片，并请求一个新的。
+        aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
+        const addresse = aObject.addresses.shift()
+        if (addresse) this.getInfoByTxid(aObject, addresse)
       }
-      // 失败处理：删掉这个卡片，并请求一个新的。
-      aObject.list.splice(aObject.list.findIndex(item => item.txid === txid), 1)
-      const addresse = aObject.addresses.shift()
-      if (addresse) this.getInfoByTxid(aObject, addresse)
     },
     /** 获取相似的用户列表 */
     async getSimilarUsers () {

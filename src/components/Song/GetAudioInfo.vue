@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import api from '@/api/api'
-import decode from '@/util/decode'
+import { localCache } from '@/util/cache'
 
 export default {
   components: {},
@@ -50,23 +49,26 @@ export default {
   methods: {
     async getInfo () {
       try {
-        const transaction = await api.arweave.getTransactionDetail(this.txid)
-        if (transaction) {
-          const tags = api.arweave.getTagsByTransaction(transaction)
-          const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
-          this.card = {
-            txid: this.txid,
-            authorAddress: tags['Author-Address'],
-            authorUsername: tags['Author-Username'],
-            type: tags.Type,
-            unixTime: Number(tags['Unix-Time']),
-            title: audioData.title,
-            desp: audioData.desp,
-            price: audioData.price,
-            duration: audioData.duration,
-            coverTxid: audioData.cover,
-            musicTxid: audioData.music
-          }
+        // const transaction = await api.arweave.getTransactionDetail(this.txid)
+        const cachedData = await localCache.getInfoByTxid(this.txid)
+        // if (transaction) {
+        if (cachedData) {
+          // const tags = api.arweave.getTagsByTransaction(transaction)
+          // const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+          // this.card = {
+          //   txid: this.txid,
+          //   authorAddress: tags['Author-Address'],
+          //   authorUsername: tags['Author-Username'],
+          //   type: tags.Type,
+          //   unixTime: Number(tags['Unix-Time']),
+          //   title: audioData.title,
+          //   desp: audioData.desp,
+          //   price: audioData.price,
+          //   duration: audioData.duration,
+          //   coverTxid: audioData.cover,
+          //   musicTxid: audioData.music
+          // }
+          this.card = cachedData
         } else {
           this.error = true
         }

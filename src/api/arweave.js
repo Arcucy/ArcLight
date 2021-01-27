@@ -2,7 +2,7 @@
 import Arweave from 'arweave'
 import Axios from 'axios'
 
-import { decryptBuffer } from '../util/encrypt'
+import { decryptBuffer } from '@/util/encrypt'
 import decode from '../util/decode'
 import stringUtil from '../util/string'
 
