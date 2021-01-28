@@ -3,6 +3,11 @@ import decode from '@/util/decode'
 import localforage from 'localforage'
 
 class LocalCache {
+  /**
+   * 获取缓存的key
+   * @param txid 交易地址
+   * @returns {Promise<string>}如果有，返回key，如果没有，返回undefined
+   */
   async findKeyByTxid (txid) {
     let result
     const keys = await localforage.keys()
@@ -15,6 +20,12 @@ class LocalCache {
     return result
   }
 
+  /**
+   * 根据交易地址获取信息，如果有缓存则直接从缓存里读
+   * 如果没有再从Arweave读并缓存进去
+   * @param txid 交易地址
+   * @returns 各种info
+   */
   async getInfoByTxid (txid) {
     const keyName = await this.findKeyByTxid(txid)
     if (keyName) {

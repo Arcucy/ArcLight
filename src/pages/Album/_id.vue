@@ -320,9 +320,6 @@ export default {
       this.loading = true
       try {
         // 获取数据
-        // const transaction = await api.arweave.getTransactionDetail(id)
-        // const tags = await api.arweave.getTagsByTransaction(transaction)
-        // const albumData = JSON.parse(decode.uint8ArrayToString(transaction.data))
         const albumData = await localCache.getInfoByTxid(id)
         const tags = albumData.tags
         // 赋值

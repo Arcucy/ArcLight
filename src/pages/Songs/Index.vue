@@ -131,35 +131,6 @@ export default {
       // 添加对应的卡片并进入加载状态
       aObject.list.push({ ...this.loadingCard, txid: txid })
       try {
-        // const cached = localStore.get(txid)
-        // if (cached) {
-        //   const cardIndex = aObject.list.findIndex(item => item.txid === txid)
-        //   this.$set(aObject.list, cardIndex, JSON.parse(cached))
-        //   return
-        // }
-        // const transaction = await api.arweave.getTransactionDetail(txid)
-        // if (transaction) {
-        //   const tags = api.arweave.getTagsByTransaction(transaction)
-        //   const audioData = JSON.parse(decode.uint8ArrayToString(transaction.data))
-        //   // 给 txid 相同的卡片赋予获取到的信息
-        //   const cardIndex = aObject.list.findIndex(item => item.txid === txid)
-        //   const needToCache = {
-        //     txid,
-        //     authorAddress: tags['Author-Address'],
-        //     authorUsername: tags['Author-Username'],
-        //     type: tags.Type,
-        //     unixTime: Number(tags['Unix-Time']),
-        //     title: audioData.title,
-        //     desp: audioData.desp,
-        //     price: audioData.price,
-        //     duration: audioData.duration,
-        //     coverTxid: audioData.cover,a
-        //     musicTxid: audioData.music
-        //   }
-        //   this.$set(aObject.list, cardIndex, needToCache)
-        //   localStore.set(txid, JSON.stringify(needToCache))
-        //   // 成功的结束
-        // }
         const info = await localCache.getInfoByTxid(txid)
         const cardIndex = aObject.list.findIndex(item => item.txid === txid)
         this.$set(aObject.list, cardIndex, info)
