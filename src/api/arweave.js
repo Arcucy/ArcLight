@@ -5,6 +5,7 @@ import Axios from 'axios'
 import { decryptBuffer } from '@/util/encrypt'
 import decode from '../util/decode'
 import stringUtil from '../util/string'
+import placeHolder from '@/assets/image/cover_placeholder.png'
 
 // const arweaveHost = 'https://arweave.arcucy.io/'
 const arweaveHost = 'https://arweave.net/'
@@ -55,7 +56,7 @@ const REVERSED_AUDIO_TYPE = {
   'playlist-info': 'Playlist'
 }
 
-const APP_NAME = 'arclight-alpha' // TODO
+const APP_NAME = 'arclight-app'
 
 const arweave = {
   breakOnCall: false,
@@ -396,12 +397,25 @@ const arweave = {
    * @param {String} txid(TransactionId)  - 图片的交易地址
    */
   getCover (txid) {
-    return new Promise((resolve, reject) => {
-      ar.transactions.getData(txid, { decode: true, string: true }).then(data => {
+    let failedTimes = 0
+    return new Promise(async (resolve, reject) => {
+      let data
+      while (failedTimes < 3) {
+        try {
+          data = await ar.transactions.getData(txid, { decode: true, string: true })
+          if (data) {
+            break
+          }
+        } catch (e) {
+          console.log('get cover timeout, retrying...')
+          failedTimes++
+        }
+      }
+      if (data) {
         resolve(data)
-      }).catch((e) => {
-        reject(e)
-      })
+      } else {
+        resolve(placeHolder) // TODO
+      }
     })
   },
 

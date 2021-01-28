@@ -10,7 +10,7 @@ import Community from 'community-js'
 
 Vue.use(Vuex)
 
-const APP_NAME = 'arclight-alpha' // TODO
+const APP_NAME = 'arclight-app'
 
 // const ar = Arweave.init({
 //   host: 'arweave.arcucy.io',
