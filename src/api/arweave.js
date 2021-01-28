@@ -55,7 +55,7 @@ const REVERSED_AUDIO_TYPE = {
   'playlist-info': 'Playlist'
 }
 
-const APP_NAME = 'arclight-app'
+const APP_NAME = 'arclight-alpha' // TODO
 
 const arweave = {
   breakOnCall: false,
@@ -399,6 +399,8 @@ const arweave = {
     return new Promise((resolve, reject) => {
       ar.transactions.getData(txid, { decode: true, string: true }).then(data => {
         resolve(data)
+      }).catch((e) => {
+        reject(e)
       })
     })
   },

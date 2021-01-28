@@ -67,8 +67,13 @@ export default {
   },
   watch: {
     card (val) {
-      if (val) this.getCover()
-      else this.cover = ''
+      if (val) {
+        try {
+          this.getCover()
+        } catch (e) {
+          console.log(e)
+        }
+      } else this.cover = ''
     }
   },
   mounted () {
@@ -85,7 +90,8 @@ export default {
           if (txid !== this.card.coverTxid) return
           this.cover = img
         } catch (e) {
-          this.cover = ''
+          console.log('get cover failed, retrying...')
+          await this.getCover()
         }
       } else this.cover = ''
     },
