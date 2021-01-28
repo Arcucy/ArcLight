@@ -407,15 +407,11 @@ const arweave = {
             break
           }
         } catch (e) {
-          console.log('get cover timeout, retrying...')
           failedTimes++
         }
       }
-      if (data) {
-        resolve(data)
-      } else {
-        resolve(placeHolder) // TODO
-      }
+      if (data) resolve(data)
+      else resolve(placeHolder)
     })
   },
 
