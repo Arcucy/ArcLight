@@ -448,7 +448,6 @@ export default {
         webp: 'image/webp'
       }
       const ext = this.albumCoverFile.name.split('.').pop()
-      console.log('Content-Type:', imgType[ext])
 
       const audioType = {
         mp3: 'audio/mp3',
@@ -462,7 +461,6 @@ export default {
       for (let i = 0; i < this.fileList.length; i++) {
         const aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
-        console.log('Content-Type:', audioType[aext])
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
       }
 
@@ -542,7 +540,6 @@ export default {
     }
 
     if (this.albumInfo) {
-      console.log(this.albumInfo)
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre

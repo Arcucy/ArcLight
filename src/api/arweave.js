@@ -1203,6 +1203,7 @@ const arweave = {
 
   /**
    * 获取用户上传的所有 post info 的 txid 列表
+   * post-info 将会在每次上传时进行更新
    * @param {*} address
    */
   getPostInfosByAddress (address) {
@@ -1231,6 +1232,10 @@ const arweave = {
     })
   },
 
+  /**
+   * 获取 post-info 的数据
+   * @param {String} address 
+   */
   getDataForPost (address) {
     return new Promise(async (resolve, reject) => {
       const list = await this.getPostInfosByAddress(address)
@@ -1249,6 +1254,11 @@ const arweave = {
     })
   },
 
+  /**
+   * 获取 post-info 的数据的底层实现，如有需要，请直接调用 getDataForPost
+   * @param {String} txid 
+   * @param {String} address 
+   */
   async getPostData (txid, address) {
     let transaction
     try {
@@ -1256,16 +1266,19 @@ const arweave = {
     } catch (e) {
       if (e.type === 'TX_PENDING') {
         this.timerInterval = setTimeout(() => {
-          console.log('retry')
           this.getDataForPost(address)
         }, 2000)
       } else {
-        console.log(e)
+        console.error(e)
       }
     }
     return transaction
   },
 
+  /**
+   * 从账户地址中获取所有的 post-info
+   * @param {String} address 
+   */
   getPostFromAddress (address) {
     return new Promise((resolve, reject) => {
       ar.arql({
@@ -1313,6 +1326,10 @@ const arweave = {
     })
   },
 
+  /**
+   * 构建搜索对象
+   * @param {Object} data 
+   */
   getSearchObject (data) {
     return new Promise((resolve, reject) => {
       ar.arql({

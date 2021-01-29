@@ -343,7 +343,6 @@ export default {
         webp: 'image/webp'
       }
       const ext = this.soundEffectCoverFile.name.split('.').pop()
-      console.log('Content-Type:', imgType[ext])
 
       const audioType = {
         mp3: 'audio/mp3',
@@ -353,7 +352,6 @@ export default {
       }
 
       const aext = this.file.name.split('.').pop()
-      console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
       reader.onload = async (e) => {
@@ -418,7 +416,6 @@ export default {
       }
 
       const aext = this.file.name.split('.').pop()
-      console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
       reader.onload = async (e) => {

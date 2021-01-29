@@ -202,7 +202,6 @@ export default {
       // 压缩方法
       const compressorFunc = async () => {
         // 如果是 gif 跳过
-        // console.log(this.files[0].file);
         if (this.files[0].file.type !== 'image/gif') {
           await new Compressor(newFile.file, {
             quality: this.quality,
@@ -212,7 +211,7 @@ export default {
               maxSize(this.imgSize)
             },
             error (err) {
-              console.log(err)
+              console.error(err)
               this.$message.error({
                 duration: 1000,
                 message: this.$t('autoCompressImageFail')
@@ -230,7 +229,6 @@ export default {
           if (URL && URL.createObjectURL) {
             // eslint-disable-next-line no-param-reassign
             newFile.url = URL.createObjectURL(newFile.file)
-            //   console.log(this.files);
             this.modal = true // 显示 modal
           }
         }
@@ -289,10 +287,9 @@ export default {
           })
         }
 
-        // console.log(file)
       } catch (error) {
         // 捕获错误 未登录提示
-        console.log(error)
+        console.error(error)
         this.modalLoading = false
         this.$message({
           showClose: true,
