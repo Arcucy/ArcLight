@@ -151,10 +151,10 @@
 import { mapState, mapActions } from 'vuex'
 
 import api from '@/api/api'
-import decode from '@/util/decode'
 
 import spaceLayout from '@/components/Layout/Space'
 import payment from '@/components/Payment'
+import { localCache } from '@/util/cache'
 
 export default {
   inject: ['backPage', 'routerRefresh'],
@@ -320,10 +320,13 @@ export default {
     async getMusicInfo (id) {
       this.loading = true
       try {
-        const transaction = await api.arweave.getTransactionDetail(id)
-        const tags = await api.arweave.getTagsByTransaction(transaction)
-        const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
-        this.type = tags.Type
+        // const transaction = await api.arweave.getTransactionDetail(id)
+        // const tags = await api.arweave.getTagsByTransaction(transaction)
+        // const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        // this.type = tags.Type
+        const data = await localCache.getInfoByTxid(id)
+        const tags = data.tags
+        this.type = data.type
         // 根据类型进行初始化
         switch (tags.Type) {
           case 'single-info': // 单曲
@@ -361,11 +364,11 @@ export default {
       this.info.duration = data.duration
 
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags.Genre
+      this.info.genre = data.genre
       this.price = data.price
       this.info.id = data.music
       // 获取封面和音频
-      await this.getCover(data.cover)
+      await this.getCover(data.coverTxid)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -379,14 +382,13 @@ export default {
       // 标题、简介、类型
       this.info.name = data.music[index].title
       this.info.duration = data.duration
-
       this.info.desp = this.filterHtmlTags(data.desp)
-      this.info.genre = tags.Genre
+      this.info.genre = data.genre
       this.price = data.music[index].price
       this.info.id = data.music[index].id
-      this.albumPrice = tags.Price
+      this.albumPrice = data.price
       // 获取封面和音频
-      await this.getCover(data.cover)
+      await this.getCover(data.coverTxid)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -404,7 +406,7 @@ export default {
       this.price = data.price
       this.info.id = data.program
       // 获取封面和音频
-      await this.getCover(data.cover)
+      await this.getCover(data.coverTxid)
 
       document.title = data.podcast + ' | ' + this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${data.podcast} \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)
@@ -421,7 +423,7 @@ export default {
       this.price = data.price
       this.info.id = data.audio
       // 获取封面和音频
-      await this.getCover(data.cover)
+      await this.getCover(data.coverTxid)
 
       document.title = this.info.name + ' by ' + this.info.artist + ' - ArcLight'
       document.querySelector('meta[name="description"]').setAttribute('content', `ArcLight \n ${this.info.name} by ${this.info.artist} \n ${this.info.desp}`)

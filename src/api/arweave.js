@@ -2,9 +2,10 @@
 import Arweave from 'arweave'
 import Axios from 'axios'
 
-import { decryptBuffer } from '../util/encrypt'
+import { decryptBuffer } from '@/util/encrypt'
 import decode from '../util/decode'
 import stringUtil from '../util/string'
+import placeHolder from '@/assets/image/cover_placeholder.png'
 
 // const arweaveHost = 'https://arweave.arcucy.io/'
 const arweaveHost = 'https://arweave.arcucy.io/'
@@ -396,10 +397,21 @@ const arweave = {
    * @param {String} txid(TransactionId)  - 图片的交易地址
    */
   getCover (txid) {
-    return new Promise((resolve, reject) => {
-      ar.transactions.getData(txid, { decode: true, string: true }).then(data => {
-        resolve(data)
-      })
+    let failedTimes = 0
+    return new Promise(async (resolve, reject) => {
+      let data
+      while (failedTimes < 3) {
+        try {
+          data = await ar.transactions.getData(txid, { decode: true, string: true })
+          if (data) {
+            break
+          }
+        } catch (e) {
+          failedTimes++
+        }
+      }
+      if (data) resolve(data)
+      else resolve(placeHolder)
     })
   },
 
