@@ -1234,7 +1234,7 @@ const arweave = {
 
   /**
    * 获取 post-info 的数据
-   * @param {String} address 
+   * @param {String} address
    */
   getDataForPost (address) {
     return new Promise(async (resolve, reject) => {
@@ -1256,8 +1256,8 @@ const arweave = {
 
   /**
    * 获取 post-info 的数据的底层实现，如有需要，请直接调用 getDataForPost
-   * @param {String} txid 
-   * @param {String} address 
+   * @param {String} txid
+   * @param {String} address
    */
   async getPostData (txid, address) {
     let transaction
@@ -1277,7 +1277,7 @@ const arweave = {
 
   /**
    * 从账户地址中获取所有的 post-info
-   * @param {String} address 
+   * @param {String} address
    */
   getPostFromAddress (address) {
     return new Promise((resolve, reject) => {
@@ -1328,7 +1328,7 @@ const arweave = {
 
   /**
    * 构建搜索对象
-   * @param {Object} data 
+   * @param {Object} data
    */
   getSearchObject (data) {
     return new Promise((resolve, reject) => {
