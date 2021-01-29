@@ -37,9 +37,7 @@ class LocalCache {
     const transaction = await API.arweave.getTransactionDetail(txid)
     if (transaction) {
       const data = JSON.parse(decode.uint8ArrayToString(transaction.data))
-      console.log(data)
       const tags = API.arweave.getTagsByTransaction(transaction)
-      console.log(tags)
       const type = tags.Type
       const needToCache = {
         txid,
