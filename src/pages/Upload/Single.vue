@@ -422,14 +422,6 @@ export default {
     }
     if (this.$route.params.file) {
       this.file = this.$route.params.file
-      const audioType = {
-        mp3: 'audio/mp3',
-        flac: 'audio/flac',
-        wav: 'audio/wav',
-        ogg: 'audio/ogg'
-      }
-
-      const aext = this.file.name.split('.').pop()
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
       reader.onload = async (e) => {
