@@ -16,7 +16,7 @@ const ar = Arweave.init({
   host: 'arweave.arcucy.io',
   port: 443,
   protocol: 'https',
-  timeout: 10000,
+  timeout: 20000,
   logging: false
 })
 // const ar = Arweave.init({
