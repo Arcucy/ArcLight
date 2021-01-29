@@ -286,7 +286,6 @@ export default {
             message: this.$t('imageUploadFail')
           })
         }
-
       } catch (error) {
         // 捕获错误 未登录提示
         console.error(error)
