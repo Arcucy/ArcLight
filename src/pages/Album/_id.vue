@@ -150,7 +150,6 @@
 <script>
 /* eslint-disable no-async-promise-executor */
 import api from '@/api/api'
-import decode from '@/util/decode'
 
 import JSZip from 'jszip'
 
@@ -158,6 +157,7 @@ import spaceLayout from '@/components/Layout/Space'
 import albumInfo from '@/components/Album/AlbumInfo'
 import payment from '@/components/Payment'
 import { mapState, mapActions, mapMutations } from 'vuex'
+import { localCache } from '@/util/cache'
 
 const zip = new JSZip()
 
@@ -320,9 +320,8 @@ export default {
       this.loading = true
       try {
         // 获取数据
-        const transaction = await api.arweave.getTransactionDetail(id)
-        const tags = await api.arweave.getTagsByTransaction(transaction)
-        const albumData = JSON.parse(decode.uint8ArrayToString(transaction.data))
+        const albumData = await localCache.getInfoByTxid(id)
+        const tags = albumData.tags
         // 赋值
         this.info.artist = tags['Author-Username']
         this.info.authorAddress = tags['Author-Address']
@@ -415,7 +414,7 @@ export default {
         }
 
         // 获取封面
-        this.info.cover = await this.getCover(albumData.cover)
+        this.info.cover = await this.getCover(albumData.coverTxid)
         // 获取作者信息
         this.getArtist(this.info.authorAddress)
       } catch (e) {

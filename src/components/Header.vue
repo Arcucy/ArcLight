@@ -347,6 +347,9 @@ export default {
         this.warningMessage = this.$t('gettingAvatarTimeout')
       }
     },
+    isLoggedIn (val) {
+      if (val) this.show = false
+    },
     async lang (val) {
       switch (val) {
         case 'zh-CN':
