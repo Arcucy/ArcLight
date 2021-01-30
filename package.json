@@ -25,6 +25,7 @@
     "hls.js": "^0.14.16",
     "jszip": "^3.5.0",
     "jwk-to-pem": "^2.0.4",
+    "localforage": "^1.9.0",
     "moment": "^2.29.1",
     "musicgenres-json": "1.0.2",
     "roboto-fontface": "*",

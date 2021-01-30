@@ -201,7 +201,6 @@ export default {
     },
     userInfoUpdateComplete (val) {
       if (val) {
-        console.log(val)
         if (val === 'location') {
           this.successSnackbar = true
           this.successMessage = this.$t('locationUpdateSuccess')

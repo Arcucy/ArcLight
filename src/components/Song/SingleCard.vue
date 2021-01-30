@@ -41,6 +41,7 @@
 import { mapState } from 'vuex'
 import api from '@/api/api'
 import { isNDaysAgo } from '@/util/momentFun'
+import placeholder from '@/assets/image/cover_placeholder.png'
 
 export default {
   components: {
@@ -85,9 +86,9 @@ export default {
           if (txid !== this.card.coverTxid) return
           this.cover = img
         } catch (e) {
-          this.cover = ''
+          await this.getCover()
         }
-      } else this.cover = ''
+      } else this.cover = placeholder
     },
     newBlink () {
       this.blink = true

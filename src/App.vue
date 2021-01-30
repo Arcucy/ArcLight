@@ -77,7 +77,6 @@ export default {
     },
     setLangCode () {
       const localStore = window.localStorage || localStorage
-      console.log(this.getBrowserLangCode())
       localStore.setItem('locale_lang', this.getBrowserLangCode())
     }
   },

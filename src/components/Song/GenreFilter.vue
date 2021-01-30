@@ -17,10 +17,8 @@
   </div>
 </template>
 
+<script src="https://unpkg.com/musicgenres-json@latest/dist/index.js"></script>
 <script>
-
-const MusicGenres = require('musicgenres-json')
-
 export default {
   props: {
     value: {
