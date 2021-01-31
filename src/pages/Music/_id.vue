@@ -366,7 +366,7 @@ export default {
       this.info.desp = this.filterHtmlTags(data.desp)
       this.info.genre = data.genre
       this.price = data.price
-      this.info.id = data.music
+      this.info.id = data.musicTxid
       // 获取封面和音频
       await this.getCover(data.coverTxid)
 
