@@ -266,6 +266,7 @@ import miniAvatar from '@/components/User/MiniAvatar'
 
 import { clearCookie, getCookie, setCookie } from '@/util/cookie'
 import { FileUtil } from '@/util/file'
+import API from '../api/api'
 
 export default {
   components: {
@@ -288,6 +289,8 @@ export default {
       failMessage: '',
       warningSnackbar: false,
       warningMessage: '',
+      isWalletLoaded: false,
+      isWalletChanged: false,
       menuItems: [
         { title: this.$t('myProfile'), path: '/user/' },
         { title: this.$t('myLibrary'), path: '/library' },
@@ -391,9 +394,28 @@ export default {
     if (this.wallet) {
       this.menuItems[0].path = '/user/' + this.wallet
     }
+
+    // get the currently used wallet's address. "arweave-js" will handle everything under the hood (permissions, etc.)
+    // important: this funciton returns a promise and it will not be resolved until the user logs in
+    addEventListener('arweaveWalletLoaded', async () => {
+      this.isWalletLoaded = true
+      this.loginBtnLoading = true
+
+      const addr = await API.Arweave.wallets.getAddress()
+      const data = { address: addr }
+
+      await this.setWallet(data)
+      this.loginBtnLoading = false
+    })
+
+    // you can also listen for wallet switch events (when the user chooses to use an another wallet)
+    addEventListener('walletSwitch', (e) => {
+      const newAddr = e.detail.address
+      this.setWallet({ address: newAddr })
+    })
   },
   methods: {
-    ...mapActions(['setKey', 'logout']),
+    ...mapActions(['setKey', 'setWallet', 'logout']),
     ...mapMutations(['setAppLang']),
     scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
@@ -401,44 +423,52 @@ export default {
     },
     submit () {
       this.loginBtnLoading = true
-      this.keyFile = this.file
-      this.fileName = this.keyFile.name
-      const reader = new FileReader()
-      reader.readAsText(this.keyFile)
-      reader.onload = async (e) => {
-        try {
-          const fileContent = JSON.parse(e.target.result)
 
-          if (!await FileUtil.isValidKeyFile(fileContent)) { // 提前检查是否是Arweave的Key
+      try {
+        this.keyFile = this.file
+        this.fileName = this.keyFile.name
+        const reader = new FileReader()
+        reader.readAsText(this.keyFile)
+        reader.onload = async (e) => {
+          try {
+            const fileContent = JSON.parse(e.target.result)
+
+            if (!await FileUtil.isValidKeyFile(fileContent)) { // 提前检查是否是Arweave的Key
+              this.show = false
+              this.loginBtnLoading = false
+              this.failSnackbar = true
+              this.failMessage = this.$t('thisIsNotArweaveKey')
+              return
+            }
+
+            this.fileContent = fileContent
+            this.fileRaw = JSON.stringify(this.fileContent)
+            const data = {
+              file: this.file,
+              raw: this.fileRaw,
+              name: this.fileName,
+              content: this.fileContent
+            }
+            await this.setKey(data)
+            this.needUpload = false
+
+            this.snackbar = true
             this.show = false
-            this.loginBtnLoading = false
+            if (this.writeCookie) {
+              clearCookie('arclight_userkey')
+              setCookie('arclight_userkey', this.fileRaw, 7)
+            }
+          } catch (err) {
             this.failSnackbar = true
-            this.failMessage = this.$t('thisIsNotArweaveKey')
-            return
+            this.failMessage = this.$t('fileReadFail')
           }
-
-          this.fileContent = fileContent
-          this.fileRaw = JSON.stringify(this.fileContent)
-          const data = {
-            file: this.file,
-            raw: this.fileRaw,
-            name: this.fileName,
-            content: this.fileContent
-          }
-          await this.setKey(data)
-          this.needUpload = false
-
-          this.snackbar = true
-          this.show = false
-          if (this.writeCookie) {
-            clearCookie('arclight_userkey')
-            setCookie('arclight_userkey', this.fileRaw, 7)
-          }
-        } catch (err) {
-          this.failSnackbar = true
-          this.failMessage = this.$t('fileReadFail')
         }
+      } catch {
+        this.loginBtnLoading = false
+        this.failSnackbar = true
+        this.failMessage = this.$t('fileReadFail')
       }
+
       this.menuItems[0].path = '/user/' + this.wallet
     },
     goto (item) {
