@@ -200,7 +200,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['soundEffectCoverFile', 'soundEffectCoverRaw', 'isLoggedIn', 'keyFileContent', 'soundEffectLink', 'userType', 'soundEffectInfo'])
+    ...mapState(['soundEffectCoverFile', 'soundEffectCoverRaw', 'isLoggedIn', 'soundEffectLink', 'userType', 'soundEffectInfo'])
   },
   watch: {
     userType (val) {
@@ -366,7 +366,6 @@ export default {
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext], read: this.file },
-          key: this.keyFileContent,
           soundeffect: {
             title: this.soundeffectTitle,
             desp: this.soundeffectDesp,

@@ -68,7 +68,7 @@
             counter
             maxlength="1000"
           ></v-textarea>
-          <div class="name-desp side-title">{{ $t('类别') }}</div>
+          <div class="name-desp side-title">{{ $t('category') }}</div>
           <podcastSelect v-model="category" style="margin-bottom: 16px;" />
           <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
@@ -216,7 +216,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['podcastCoverFile', 'podcastCoverRaw', 'podcastInfo', 'isLoggedIn', 'keyFileContent', 'podcastLink', 'userType'])
+    ...mapState(['podcastCoverFile', 'podcastCoverRaw', 'podcastInfo', 'isLoggedIn', 'podcastLink', 'userType'])
   },
   watch: {
     userType (val) {
@@ -398,7 +398,6 @@ export default {
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext], read: this.file },
-          key: this.keyFileContent,
           podcast: {
             podcast: this.podcastTitle,
             title: this.programTitle,

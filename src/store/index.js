@@ -34,8 +34,6 @@ export default new Vuex.Store({
     appLang: 'en-US',
     isLoggedIn: false,
     keyFile: '',
-    // TODO: Remove
-    keyFileContent: '',
     isWalletLoaded: false,
     wallet: '',
     username: '',
@@ -99,9 +97,6 @@ export default new Vuex.Store({
     },
     setKeyFile (state, file) {
       state.keyFile = file
-    },
-    setKeyFileContent (state, content) {
-      state.keyFileContent = content
     },
     setIsWalletLoaded (state, status) {
       state.isWalletLoaded = status
@@ -306,7 +301,6 @@ export default new Vuex.Store({
     setKey ({ commit }, data) {
       return new Promise(async (resolve, reject) => {
         commit('setKeyFile', data.file)
-        commit('keyFileContent', data.content)
 
         try {
           let errorCaught = false
