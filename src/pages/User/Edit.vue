@@ -91,6 +91,9 @@
           <div class="submit-btn">
             <v-btn color="#E56D9B" depressed light class="side-title" large :loading="submitBtnLoading" @click="submit">{{ $t('save') }}</v-btn>
           </div>
+          <keyReader
+            v-model="showDialog"
+            @key-file="step2" />
         </div>
       </div>
       <v-snackbar
@@ -144,6 +147,7 @@ import { getCookie } from '@/util/cookie'
 
 import spaceLayout from '@/components/Layout/Space.vue'
 import avatar from '@/components/User/Avatar'
+import keyReader from '@/components/KeyReader'
 
 import neteaseLogo from '@/assets/image/neteasecloudmusic.png'
 import soundcloudLogo from '@/assets/image/soundcloud.png'
@@ -155,7 +159,8 @@ export default {
   inject: ['backPage'],
   components: {
     spaceLayout,
-    avatar
+    avatar,
+    keyReader
   },
   data () {
     return {
@@ -170,6 +175,8 @@ export default {
       bandcampId: '',
       bandcampLogo: bandcampLogo,
       submitBtnLoading: false,
+      showDialog: false,
+      keyFileContent: '',
       failSnackbar: false,
       failMessage: '',
       successSnackbar: false,
@@ -185,7 +192,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['username', 'keyFileContent', 'wallet', 'userAvatar'])
+    ...mapState(['username', 'wallet', 'userAvatar'])
   },
   watch: {
     wallet (val) {
@@ -229,8 +236,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateLocation', 'updateWebsite', 'updateIntro', 'updateNeteaseId', 'updateSoundCloudId', 'updateBandcampId', 'userInfoUpdateComplete']),
+    ...mapActions(['isWalletLoaded', 'updateLocation', 'updateWebsite', 'updateIntro', 'updateNeteaseId', 'updateSoundCloudId', 'updateBandcampId', 'userInfoUpdateComplete']),
     submit () {
+      if (this.isWalletLoaded) {
+        this.showDialog = true
+      } else {
+        this.step2()
+      }
+    },
+    step2 (key) {
+      this.keyFileContent = key
+      this.step3()
+    },
+    step3 () {
       if (this.location && this.location !== this.user.location) {
         this.updateLocation({ key: this.keyFileContent, value: this.location })
       }
