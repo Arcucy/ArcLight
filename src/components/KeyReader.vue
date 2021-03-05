@@ -5,7 +5,7 @@
     @click:outside="outsideReset"
   >
     <v-card dark class="wallet">
-      <h3 class="payment-title">
+      <h3 class="keyreader-title">
         {{ $t('insertYourKey') }}
       </h3>
       <div class="file-input-area" id="file-input-area">
@@ -13,7 +13,7 @@
         <span v-else >{{ fileName }}</span>
         <input class="file-input" id="file-input" type="file" accept="application/json">
       </div>
-      <p class="payment-content">
+      <p class="keyreader-content">
         {{ $t('pleaseInsertYourWalletKey') }}
       </p>
       <v-btn class="wallet-upload-button" depressed color="#E56D9B" :disabled="disallowStep2" block @click="step2">
@@ -150,7 +150,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.payment-title {
+.keyreader-title {
   margin-bottom: 24px;
   text-align: left;
 }
@@ -160,7 +160,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  .payment-content {
+  .keyreader-content {
     margin-top: 24px;
     margin-bottom: 24px;
     text-align: left;
