@@ -74,7 +74,7 @@
             </div>
           </div>
         </div>
-        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">{{ $t('submit') }}</v-btn>
+        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">{{ $t('submit') }}</v-btn>
         <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="jump">{{ $t('done') }}</v-btn>
         <div class="upload-status" v-if="submitBtnLoading">
           <div class="upload-status-cover" v-if="coverPct !== 100">
@@ -126,10 +126,13 @@
           </v-btn>
         </template>
       </v-snackbar>
+      <keyReader
+        v-model="showWallet"
+        @key-file="step2" />
       <uploadPriceReceipt
         v-model="showDialog"
         :bill="bill"
-        @confirm="submit"
+        @confirm="step3"
       />
       <v-dialog
         v-model="showUpload"
@@ -162,11 +165,13 @@ import { mapActions, mapState } from 'vuex'
 
 import spaceLayout from '@/components/Layout/Space.vue'
 import uploadPriceReceipt from '@/components/uploadPriceReceipt'
+import keyReader from '@/components/KeyReader'
 
 export default {
   components: {
     spaceLayout,
-    uploadPriceReceipt
+    uploadPriceReceipt,
+    keyReader
   },
   data () {
     return {
@@ -186,16 +191,18 @@ export default {
       musicPct: 0,
       uploadDone: false,
       bill: {},
+      showWallet: false,
       showDialog: false,
       showUpload: false,
       canGoBack: true,
       uploadStatusDisplay: '',
       priceDisplay: '',
-      albumInfoIdDisplay: ''
+      albumInfoIdDisplay: '',
+      keyFileContent: ''
     }
   },
   computed: {
-    ...mapState(['albumInfoId', 'keyFileContent', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
+    ...mapState(['isWalletLoaded', 'albumInfoId', 'username', 'albumCoverFile', 'albumCoverRaw', 'albumCoverType', 'albumInfo', 'uploadCoverPct', 'uploadMusicPct', 'uploadMusicNumber', 'albumUploadComplete', 'uploadStatus'])
   },
   watch: {
     albumUploadComplete (val) {
@@ -229,6 +236,18 @@ export default {
     ...mapActions(['uploadAlbum', 'resetAlbumInfo']),
     submit () {
       if (this.submitBtnLoading) return
+      if (this.isWalletLoaded) {
+        this.showDialog = true
+      } else {
+        this.showWallet = true
+      }
+    },
+    step2 (key) {
+      this.keyFileContent = key
+      this.showDialog = true
+    },
+    step3 () {
+      this.showDialog = true
       this.submitBtnLoading = true
       this.uploadDone = false
       this.musicPct = 0

@@ -36,7 +36,7 @@
           <v-divider dark />
           <p class="receipt-content-price">
             <span class="receipt-content-price-label">
-              {{ $t('total') }}
+              {{ $t('paymentTotal') }}
             </span>
             <span>
               {{ totalPrice }} AR

@@ -204,7 +204,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['wallet', 'singleCoverFile', 'singleCoverRaw', 'isLoggedIn', 'keyFileContent', 'singleLink', 'userType', 'singleInfo'])
+    ...mapState(['wallet', 'singleCoverFile', 'singleCoverRaw', 'isLoggedIn', 'singleLink', 'userType', 'singleInfo'])
   },
   watch: {
     $router (val) {
@@ -379,7 +379,6 @@ export default {
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext], read: this.file },
-          key: this.keyFileContent,
           single: {
             title: this.singleTitle,
             desp: this.singleDesp,

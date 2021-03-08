@@ -66,7 +66,7 @@
             <aplayer id="ap" v-if="audio !== ''" :music="audio" :lrcType="0" class="music-player" theme="#E56D9B" />
           </div>
         </div>
-        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="showDialog = true">{{ $t('submit') }}</v-btn>
+        <v-btn color="#E56D9B" v-if="!uploadDone" depressed light class="submit-btn" large :loading="submitBtnLoading" @click="submit">{{ $t('submit') }}</v-btn>
         <v-btn color="#E56D9B" v-else depressed light class="submit-btn" large :loading="submitBtnLoading" @click="jump">{{ $t('done') }}</v-btn>
         <!-- <div class="upload-status" v-if="submitBtnLoading"> -->
         <div class="upload-status">
@@ -119,10 +119,13 @@
           </v-btn>
         </template>
       </v-snackbar>
+      <keyReader
+        v-model="showWallet"
+        @key-file="step2" />
       <uploadPriceReceipt
         v-model="showDialog"
         :bill="bill"
-        @confirm="submit"
+        @confirm="step3"
       />
       <v-dialog
         v-model="showUpload"
@@ -155,11 +158,13 @@ import { mapActions, mapState } from 'vuex'
 
 import spaceLayout from '@/components/Layout/Space'
 import uploadPriceReceipt from '@/components/uploadPriceReceipt'
+import keyReader from '@/components/KeyReader'
 
 export default {
   components: {
     spaceLayout,
-    uploadPriceReceipt
+    uploadPriceReceipt,
+    keyReader
   },
   data () {
     return {
@@ -175,15 +180,17 @@ export default {
       musicPct: 0,
       uploadDone: false,
       bill: {},
+      showWallet: false,
       showDialog: false,
       showUpload: false,
       canGoBack: true,
       uploadStatusDisplay: '',
-      singleInfoIdDisplay: ''
+      singleInfoIdDisplay: '',
+      keyFileContent: ''
     }
   },
   computed: {
-    ...mapState(['singleInfoId', 'keyFileContent', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
+    ...mapState(['isWalletLoaded', 'singleInfoId', 'username', 'singleCoverFile', 'singleCoverRaw', 'singleCoverType', 'singleMusicType', 'singleInfo', 'uploadCoverPct', 'uploadMusicPct', 'singleUploadComplete', 'uploadStatus'])
   },
   watch: {
     singleUploadComplete (val) {
@@ -217,6 +224,18 @@ export default {
     ...mapActions(['uploadSingle', 'resetSingleInfo']),
     submit () {
       if (this.submitBtnLoading) return
+      if (this.isWalletLoaded) {
+        this.showDialog = true
+      } else {
+        this.showWallet = true
+      }
+    },
+    step2 (key) {
+      this.keyFileContent = key
+      this.showDialog = true
+    },
+    step3 () {
+      this.showDialog = true
       this.uploadDone = false
       this.musicPct = 0
       this.coverPct = 0

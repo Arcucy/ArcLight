@@ -228,7 +228,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType', 'albumInfo']),
+    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'albumLink', 'userType', 'albumInfo']),
     mainDisableDuration () {
       return !this.fileList.every(item => !item.disableDuration)
     },
@@ -472,7 +472,6 @@ export default {
       const dataObj = {
         img: { data: this.fileRaw, type: imgType[ext] },
         music: { data: this.music, read: musicList },
-        key: this.keyFileContent,
         album: {
           title: this.albumTitle,
           desp: this.albumDesp,
