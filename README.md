@@ -55,6 +55,8 @@ Payments are facilitated in Ar token, the native currency of the permaweb. Once 
 
 [@Garfield550](https://github.com/Garfield550) - Major Developer   
 
+[@LemonNeko](https://github.com/LemonNekoGH) - Major Developer   
+
 [@KagurazakaIzumi](https://github.com/KagurazakaIzumi) - Localization for Simplified/Traditional Chinese, Japanese   
 
 
