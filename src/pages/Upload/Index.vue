@@ -110,9 +110,7 @@ export default {
     }
 
     try {
-      API.arweave.getDataForPost(this.wallet).then(res => {
-        console.log(JSON.parse(res))
-      }).catch(err => console.log('出问题了', err))
+      API.arweave.getDataForPost(this.wallet).catch(err => console.error('出问题了', err))
     } catch (e) {
       console.error('有问题', e)
     }

@@ -2,19 +2,28 @@
 import Arweave from 'arweave'
 import Axios from 'axios'
 
-import { decryptBuffer } from '../util/encrypt'
+import { decryptBuffer } from '@/util/encrypt'
 import decode from '../util/decode'
 import stringUtil from '../util/string'
+import placeHolder from '@/assets/image/cover_placeholder.png'
 
-const arweaveHost = 'https://arweave.net/'
+// const arweaveHost = 'https://arweave.arcucy.io/'
+const arweaveHost = 'https://arweave.arcucy.io/'
 
 const ar = Arweave.init({
-  host: 'arweave.net',
+  host: 'arweave.arcucy.io',
   port: 443,
   protocol: 'https',
   timeout: 20000,
   logging: false
 })
+// const ar = Arweave.init({
+//   host: 'arweave.net',
+//   port: 443,
+//   protocol: 'https',
+//   timeout: 20000,
+//   logging: false
+// })
 
 // Configuration
 
@@ -388,10 +397,21 @@ const arweave = {
    * @param {String} txid(TransactionId)  - 图片的交易地址
    */
   getCover (txid) {
-    return new Promise((resolve, reject) => {
-      ar.transactions.getData(txid, { decode: true, string: true }).then(data => {
-        resolve(data)
-      })
+    let failedTimes = 0
+    return new Promise(async (resolve, reject) => {
+      let data
+      while (failedTimes < 3) {
+        try {
+          data = await ar.transactions.getData(txid, { decode: true, string: true })
+          if (data) {
+            break
+          }
+        } catch (e) {
+          failedTimes++
+        }
+      }
+      if (data) resolve(data)
+      else resolve(placeHolder)
     })
   },
 
@@ -1195,6 +1215,7 @@ const arweave = {
 
   /**
    * 获取用户上传的所有 post info 的 txid 列表
+   * post-info 将会在每次上传时进行更新
    * @param {*} address
    */
   getPostInfosByAddress (address) {
@@ -1223,6 +1244,10 @@ const arweave = {
     })
   },
 
+  /**
+   * 获取 post-info 的数据
+   * @param {String} address
+   */
   getDataForPost (address) {
     return new Promise(async (resolve, reject) => {
       const list = await this.getPostInfosByAddress(address)
@@ -1241,6 +1266,11 @@ const arweave = {
     })
   },
 
+  /**
+   * 获取 post-info 的数据的底层实现，如有需要，请直接调用 getDataForPost
+   * @param {String} txid
+   * @param {String} address
+   */
   async getPostData (txid, address) {
     let transaction
     try {
@@ -1248,16 +1278,19 @@ const arweave = {
     } catch (e) {
       if (e.type === 'TX_PENDING') {
         this.timerInterval = setTimeout(() => {
-          console.log('retry')
           this.getDataForPost(address)
         }, 2000)
       } else {
-        console.log(e)
+        console.error(e)
       }
     }
     return transaction
   },
 
+  /**
+   * 从账户地址中获取所有的 post-info
+   * @param {String} address
+   */
   getPostFromAddress (address) {
     return new Promise((resolve, reject) => {
       ar.arql({
@@ -1305,6 +1338,10 @@ const arweave = {
     })
   },
 
+  /**
+   * 构建搜索对象
+   * @param {Object} data
+   */
   getSearchObject (data) {
     return new Promise((resolve, reject) => {
       ar.arql({

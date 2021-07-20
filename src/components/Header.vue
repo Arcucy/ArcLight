@@ -62,7 +62,9 @@
     </div>
 
     <Search class="search-bar"/>
-    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true" :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}</v-btn>
+    <v-btn v-if="!isLoggedIn" depressed large color="#E56D9B" class="sign" @click="show = true"
+           :outlined="loginBtnLoading" :loading="loginBtnLoading">{{ $t('login') }}
+    </v-btn>
     <v-btn v-if="isLoggedIn" class="mobile-nav mobile-upload" fab dark x-small color="#E56D9B" @click="uploadMusic">
       <v-icon dark>mdi-upload</v-icon>
     </v-btn>
@@ -192,7 +194,7 @@
           <v-toolbar-title style="margin-right: 10px;">{{ $t('search') }}</v-toolbar-title>
         </v-toolbar>
         <v-list three-line subheader>
-          <Search @should-close="closeMobileDialog" class="mobile-search" />
+          <Search @should-close="closeMobileDialog" class="mobile-search"/>
         </v-list>
       </v-card>
     </v-dialog>
@@ -234,17 +236,37 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar
+      v-model="warningSnackbar"
+      color="#E53935"
+      timeout="3000"
+      top="top"
+    >
+      {{ warningMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          dark
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          {{ $t('close') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
-
 import { mapActions, mapState, mapMutations } from 'vuex'
 
 import Search from './Search.vue'
 import miniAvatar from '@/components/User/MiniAvatar'
 
-import { clearCookie, getCookie, setCookie } from '../util/cookie'
+import { clearCookie, getCookie, setCookie } from '@/util/cookie'
+import { FileUtil } from '@/util/file'
+import API from '../api/api'
 
 export default {
   components: {
@@ -265,6 +287,10 @@ export default {
       snackbar: false,
       failSnackbar: false,
       failMessage: '',
+      warningSnackbar: false,
+      warningMessage: '',
+      isWalletLoaded: false,
+      isWalletChanged: false,
       menuItems: [
         { title: this.$t('myProfile'), path: '/user/' },
         { title: this.$t('myLibrary'), path: '/library' },
@@ -283,13 +309,21 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'username', 'userAvatar', 'wallet', 'userNoBalanceFailure', 'userAccountFailure'])
+    ...mapState([
+      'gettingUserAvatarTimeoutFailure',
+      'isLoggedIn',
+      'username',
+      'userAvatar',
+      'wallet',
+      'userNoBalanceFailure',
+      'loginConnectionTimeoutFailure',
+      'userAccountFailure'])
   },
   watch: {
     wallet (val) {
       this.menuItems[0].path = '/user/' + val
     },
-    userNoBalanceFailure (val) {
+    userNoBalanceFailure (val) { // val: boolean
       if (val) {
         this.loginBtnLoading = false
         this.failSnackbar = true
@@ -301,6 +335,23 @@ export default {
         this.failSnackbar = true
         this.failMessage = this.$t('accountHasErroredTx')
       }
+    },
+    loginConnectionTimeoutFailure (val) { // val: boolean
+      if (val) {
+        this.failSnackbar = true
+        this.failMessage = this.$t('loginConnectionTimeout')
+        this.show = false
+        this.loginBtnLoading = false
+      }
+    },
+    gettingUserAvatarTimeoutFailure (val) { // val: boolean
+      if (val) {
+        this.warningSnackbar = true
+        this.warningMessage = this.$t('gettingAvatarTimeout')
+      }
+    },
+    isLoggedIn (val) {
+      if (val) this.show = false
     },
     async lang (val) {
       switch (val) {
@@ -343,44 +394,81 @@ export default {
     if (this.wallet) {
       this.menuItems[0].path = '/user/' + this.wallet
     }
+
+    // get the currently used wallet's address. "arweave-js" will handle everything under the hood (permissions, etc.)
+    // important: this funciton returns a promise and it will not be resolved until the user logs in
+    addEventListener('arweaveWalletLoaded', async () => {
+      this.isWalletLoaded = true
+      this.loginBtnLoading = true
+
+      const addr = await API.Arweave.wallets.getAddress()
+      const data = { address: addr }
+
+      await this.setWallet(data)
+      this.loginBtnLoading = false
+    })
+
+    // you can also listen for wallet switch events (when the user chooses to use an another wallet)
+    addEventListener('walletSwitch', (e) => {
+      const newAddr = e.detail.address
+      this.setWallet({ address: newAddr })
+    })
   },
   methods: {
-    ...mapActions(['setKey', 'logout']),
+    ...mapActions(['setKey', 'setWallet', 'logout']),
     ...mapMutations(['setAppLang']),
     scrollShow () {
       const currentTop = document.body.scrollTop || document.documentElement.scrollTop
-      if (currentTop > this.showPosition) this.frosted = true
-      else this.frosted = false
+      this.frosted = currentTop > this.showPosition // IDE提示这行可以简化
     },
     submit () {
       this.loginBtnLoading = true
-      this.keyFile = this.file
-      this.fileName = this.keyFile.name
-      const reader = new FileReader()
-      reader.readAsText(this.keyFile)
-      reader.onload = async (e) => {
-        try {
-          this.fileContent = JSON.parse(e.target.result)
-          this.fileRaw = JSON.stringify(this.fileContent)
-          const data = {
-            file: this.file,
-            raw: this.fileRaw,
-            name: this.fileName,
-            content: this.fileContent
+
+      try {
+        this.keyFile = this.file
+        this.fileName = this.keyFile.name
+        const reader = new FileReader()
+        reader.readAsText(this.keyFile)
+        reader.onload = async (e) => {
+          try {
+            const fileContent = JSON.parse(e.target.result)
+
+            if (!await FileUtil.isValidKeyFile(fileContent)) { // 提前检查是否是Arweave的Key
+              this.show = false
+              this.loginBtnLoading = false
+              this.failSnackbar = true
+              this.failMessage = this.$t('thisIsNotArweaveKey')
+              return
+            }
+
+            this.fileContent = fileContent
+            this.fileRaw = JSON.stringify(this.fileContent)
+            const data = {
+              file: this.file,
+              raw: this.fileRaw,
+              name: this.fileName,
+              content: this.fileContent
+            }
+            await this.setKey(data)
+            this.needUpload = false
+
+            this.snackbar = true
+            this.show = false
+            if (this.writeCookie) {
+              clearCookie('arclight_userkey')
+              setCookie('arclight_userkey', this.fileRaw, 7)
+            }
+          } catch (err) {
+            this.failSnackbar = true
+            this.failMessage = this.$t('fileReadFail')
           }
-          await this.setKey(data)
-          this.needUpload = false
-          this.snackbar = true
-          this.show = false
-          if (this.writeCookie) {
-            clearCookie('arclight_userkey')
-            setCookie('arclight_userkey', this.fileRaw, 7)
-          }
-        } catch (err) {
-          this.failSnackbar = true
-          this.failMessage = this.$t('fileReadFail')
         }
+      } catch {
+        this.loginBtnLoading = false
+        this.failSnackbar = true
+        this.failMessage = this.$t('fileReadFail')
       }
+
       this.menuItems[0].path = '/user/' + this.wallet
     },
     goto (item) {
@@ -442,6 +530,7 @@ export default {
   overflow: hidden;
   transition: all 0.3s;
   backdrop-filter: blur(0px);
+
   &.frosted {
     padding: 5px 0;
     background: #adadad4d;
@@ -461,6 +550,7 @@ export default {
   margin-left: .75rem;
   font-size: 1.2rem;
   color: white;
+
   img {
     height: 2.2rem;
   }
@@ -497,6 +587,7 @@ export default {
 .sign {
   margin-left: 1rem;
   margin-right: 2rem;
+
   /deep/ .v-btn__content {
     color: white;
   }
@@ -505,9 +596,11 @@ export default {
 .user {
   margin-left: 1rem;
   margin-right: 2rem;
+
   /deep/ .v-btn__content {
     color: white;
     max-width: 200px;
+
     .username {
       margin: 0;
       overflow: hidden;
@@ -540,6 +633,7 @@ export default {
 
 .upload {
   margin-left: 1rem;
+
   /deep/ i {
     color: white;
   }
@@ -551,12 +645,13 @@ export default {
 }
 
 .autocomplete {
-  /deep/ .v-label.theme--light{
+  /deep/ .v-label.theme--light {
     color: white;
   }
 
   /deep/ .v-icon.mdi-menu-down.theme--light {
     color: white;
+
     &.primary--text {
       color: #E56D9B !important;
       caret-color: #E56D9B !important;
@@ -567,23 +662,28 @@ export default {
 @media screen and (max-width: 1200px) {
   .link {
     font-size: 20px;
+
     img {
       height: 2rem;
     }
   }
+
   .upload {
     padding: 0 10px !important;
     height: 38px !important;
     font-size: 12px;
+
     /deep/ i {
       font-size: 18px !important;
     }
   }
+
   .user {
     padding: 0 10px !important;
     height: 38px !important;
     font-size: 12px;
   }
+
   .search-bar {
     display: none;
   }
@@ -596,6 +696,7 @@ export default {
   .localization {
     display: none;
   }
+
   .mobile-localization {
     display: block;
   }
@@ -605,26 +706,33 @@ export default {
   .link {
     font-size: 16px;
   }
+
   .main-link {
     display: none;
   }
+
   .upload {
     display: none;
   }
+
   .mobile-upload {
     display: block;
     margin-right: 16px;
   }
+
   .user {
     display: none;
   }
+
   .mobile-user {
     display: block;
     margin-right: .75rem;
   }
+
   .sign {
     display: none;
   }
+
   .mobile-sign {
     display: block;
     margin-right: .75rem;
@@ -640,10 +748,12 @@ export default {
 @media screen and (max-width: 480px) {
   .link {
     font-size: 15px;
+
     img {
       height: 1.8rem;
     }
   }
+
   .link-container {
     margin-left: 8px;
     margin-top: 5px;

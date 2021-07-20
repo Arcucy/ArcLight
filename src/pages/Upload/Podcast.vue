@@ -68,7 +68,7 @@
             counter
             maxlength="1000"
           ></v-textarea>
-          <div class="name-desp side-title">{{ $t('类别') }}</div>
+          <div class="name-desp side-title">{{ $t('category') }}</div>
           <podcastSelect v-model="category" style="margin-bottom: 16px;" />
           <div class="name-desp side-title">{{ $t('price') }}</div>
           <v-text-field
@@ -216,7 +216,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['podcastCoverFile', 'podcastCoverRaw', 'podcastInfo', 'isLoggedIn', 'keyFileContent', 'podcastLink', 'userType'])
+    ...mapState(['podcastCoverFile', 'podcastCoverRaw', 'podcastInfo', 'isLoggedIn', 'podcastLink', 'userType'])
   },
   watch: {
     userType (val) {
@@ -375,7 +375,6 @@ export default {
         webp: 'image/webp'
       }
       const ext = this.podcastCoverFile.name.split('.').pop()
-      console.log('Content-Type:', imgType[ext])
 
       const audioType = {
         mp3: 'audio/mp3',
@@ -385,7 +384,6 @@ export default {
       }
 
       const aext = this.file.name.split('.').pop()
-      console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
       reader.onload = async (e) => {
@@ -400,7 +398,6 @@ export default {
         const dataObj = {
           img: { data: this.fileRaw, type: imgType[ext] },
           music: { data: this.music, type: audioType[aext], read: this.file },
-          key: this.keyFileContent,
           podcast: {
             podcast: this.podcastTitle,
             title: this.programTitle,
@@ -444,15 +441,6 @@ export default {
     }
     if (this.$route.params.file) {
       this.file = this.$route.params.file
-      const audioType = {
-        mp3: 'audio/mp3',
-        flac: 'audio/flac',
-        wav: 'audio/wav',
-        ogg: 'audio/ogg'
-      }
-
-      const aext = this.file.name.split('.').pop()
-      console.log('Content-Type:', audioType[aext])
       const reader = new FileReader()
       reader.readAsArrayBuffer(this.file)
       reader.onload = async (e) => {

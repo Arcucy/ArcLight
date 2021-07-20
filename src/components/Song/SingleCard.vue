@@ -15,13 +15,13 @@
         </template>
       </v-img>
       <div v-else class="card-img-blink" />
-      <p class="card-title">
+      <p class="card-title" :title="card.title">
         {{ card.title }}
       </p>
-      <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }">
+      <router-link v-if="card.authorAddress" class="card-artist" :to="{ name: 'User', params: { id: card.authorAddress } }" :title="card.authorUsername">
         by {{ card.authorUsername }}
       </router-link>
-      <a v-else class="card-artist">
+      <a v-else class="card-artist" :title="card.authorUsername">
         {{ card.authorUsername }}
       </a>
       <p v-if="card.price != 0" class="card-price">
@@ -41,6 +41,7 @@
 import { mapState } from 'vuex'
 import api from '@/api/api'
 import { isNDaysAgo } from '@/util/momentFun'
+import placeholder from '@/assets/image/cover_placeholder.png'
 
 export default {
   components: {
@@ -85,9 +86,9 @@ export default {
           if (txid !== this.card.coverTxid) return
           this.cover = img
         } catch (e) {
-          this.cover = ''
+          await this.getCover()
         }
-      } else this.cover = ''
+      } else this.cover = placeholder
     },
     newBlink () {
       this.blink = true

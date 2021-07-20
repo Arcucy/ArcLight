@@ -228,7 +228,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'keyFileContent', 'albumLink', 'userType', 'albumInfo']),
+    ...mapState(['albumCoverFile', 'albumCoverRaw', 'isLoggedIn', 'albumLink', 'userType', 'albumInfo']),
     mainDisableDuration () {
       return !this.fileList.every(item => !item.disableDuration)
     },
@@ -448,7 +448,6 @@ export default {
         webp: 'image/webp'
       }
       const ext = this.albumCoverFile.name.split('.').pop()
-      console.log('Content-Type:', imgType[ext])
 
       const audioType = {
         mp3: 'audio/mp3',
@@ -462,7 +461,6 @@ export default {
       for (let i = 0; i < this.fileList.length; i++) {
         const aext = this.fileList[i].music.name.split('.').pop()
         this.fileList[i].type = audioType[aext]
-        console.log('Content-Type:', audioType[aext])
         musicList.push(await this.getMusicList(this.fileList[i], audioType[aext]))
       }
 
@@ -474,7 +472,6 @@ export default {
       const dataObj = {
         img: { data: this.fileRaw, type: imgType[ext] },
         music: { data: this.music, read: musicList },
-        key: this.keyFileContent,
         album: {
           title: this.albumTitle,
           desp: this.albumDesp,
@@ -542,7 +539,6 @@ export default {
     }
 
     if (this.albumInfo) {
-      console.log(this.albumInfo)
       this.albumTitle = this.albumInfo.title
       this.albumDesp = this.albumInfo.desp
       this.genre = this.albumInfo.genre
