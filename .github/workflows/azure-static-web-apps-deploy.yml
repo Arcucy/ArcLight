@@ -21,6 +21,9 @@ jobs:
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
+        env:
+          ENCRYPT_CODE: ${{ secrets.ENCRYPT_CODE }}
+          ENCRYPT_IV: ${{ secrets.ENCRYPT_IV }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_BUSH_029EA0B00 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
@@ -30,6 +33,7 @@ jobs:
           app_location: "/" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "dist" # Built app content directory - optional
+          app_build_command: rm -rf secrets/encrypt.json && touch secrets/encrypt.json && printf '{"code":"%s", "iv":"%s"}' "$ENCRYPT_CODE" "$ENCRYPT_IV" > secrets/encrypt.json && yarn run build
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
